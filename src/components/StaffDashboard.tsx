@@ -17,14 +17,16 @@ import {
   MapPin,
   ClipboardList,
   CalendarDays,
-  History
+  History,
+  Heart,
+  ArrowLeft
 } from 'lucide-react';
 import { useStaffAuth } from '../hooks/useStaffAuth';
 import StaffAppointmentDashboard from './StaffAppointmentDashboard';
 import StaffAvailabilityManager from './StaffAvailabilityManager';
 import SystemLogsViewer from './SystemLogsViewer';
 
-export default function StaffDashboard() {
+export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: () => void }) {
   const { staff, logout } = useStaffAuth();
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -69,51 +71,29 @@ export default function StaffDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Building2 className="w-8 h-8 text-blue-600 mr-3" />
+              <Heart className="w-8 h-8 text-red-600 mr-3" />
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Vitalita Admin</h1>
-                <p className="text-xs text-gray-500">Staff Management Portal</p>
+                <h1 className="text-xl font-bold text-gray-900">Vitalita Staff Portal</h1>
+                <p className="text-xs text-gray-500">Administrative dashboard and management</p>
               </div>
             </div>
-
-            <div className="flex items-center space-x-4">
-              {/* Search */}
-              <div className="relative hidden md:block">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-4 w-4 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="block w-64 pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-
-              {/* Notifications */}
-              <button className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-400"></span>
-              </button>
-
-              {/* User Menu */}
-              <div className="flex items-center space-x-3">
-                <div className="text-right hidden sm:block">
-                  <p className="text-sm font-medium text-gray-900">
-                    {staff.first_name} {staff.last_name}
-                  </p>
-                  <p className="text-xs text-gray-500">{staff.role?.role_name || 'Staff'}</p>
-                </div>
-                <div className="bg-blue-100 p-2 rounded-full">
-                  <UserCheck className="w-5 h-5 text-blue-600" />
-                </div>
+            <div className="flex items-center gap-2">
+              {onBackToLanding && (
                 <button
-                  onClick={logout}
-                  className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                  onClick={onBackToLanding}
+                  className="flex items-center px-4 py-2 text-sm font-medium text-red-600 border border-red-200 bg-white hover:bg-red-50 rounded-lg transition-colors duration-200"
                 >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  <span className="hidden sm:inline">Sign Out</span>
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Home
                 </button>
-              </div>
+              )}
+              <button
+                onClick={logout}
+                className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </button>
             </div>
           </div>
         </div>

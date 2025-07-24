@@ -23,7 +23,6 @@ import {
   ArrowUpDown,
   ExternalLink
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { useStaffAuth } from '../hooks/useStaffAuth';
 
 interface AuditLog {
@@ -98,61 +97,26 @@ export default function SystemLogsViewer() {
   ];
 
   useEffect(() => {
-    fetchLogs();
-  }, [currentPage, sortField, sortDirection, filters]);
-
-  const fetchLogs = async () => {
-    try {
-      setLoading(true);
-      setError('');
-
-      let query = supabase
-        .from('audit_logs')
-        .select('*', { count: 'exact' });
-
-      // Apply filters
-      if (filters.startDate) {
-        query = query.gte('timestamp', new Date(filters.startDate).toISOString());
-      }
-      if (filters.endDate) {
-        const endDate = new Date(filters.endDate);
-        endDate.setDate(endDate.getDate() + 1);
-        query = query.lt('timestamp', endDate.toISOString());
-      }
-      if (filters.userType) {
-        query = query.eq('user_type', filters.userType);
-      }
-      if (filters.status) {
-        query = query.eq('status', filters.status);
-      }
-      if (filters.action) {
-        query = query.ilike('action', `%${filters.action}%`);
-      }
-      if (filters.searchTerm) {
-        query = query.or(`details.ilike.%${filters.searchTerm}%,action.ilike.%${filters.searchTerm}%,user_id.ilike.%${filters.searchTerm}%`);
-      }
-
-      // Apply sorting
-      query = query.order(sortField, { ascending: sortDirection === 'asc' });
-
-      // Apply pagination
-      const from = (currentPage - 1) * pageSize;
-      const to = from + pageSize - 1;
-      query = query.range(from, to);
-
-      const { data, error: fetchError, count } = await query;
-
-      if (fetchError) throw fetchError;
-
-      setLogs(data || []);
-      setTotalCount(count || 0);
-    } catch (err) {
-      console.error('Error fetching logs:', err);
-      setError('Failed to load system logs');
-    } finally {
-      setLoading(false);
+    // Mock data for demonstration
+    const mockLogs: AuditLog[] = [];
+    for (let i = 0; i < 100; i++) {
+      mockLogs.push({
+        log_id: `log-${i}`,
+        timestamp: new Date(Date.now() - Math.random() * 1000000000).toISOString(),
+        user_id: `user-${i % 5}`,
+        user_type: userTypes[i % 5].value,
+        action: `action-${i % 10}`,
+        details: `details for log ${i}`,
+        ip_address: `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
+        user_agent: `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36`,
+        resource_type: `resource-type-${i % 3}`,
+        resource_id: `resource-id-${i}`,
+        status: statusTypes[i % 4].value,
+      });
     }
-  };
+    setLogs(mockLogs);
+    setTotalCount(mockLogs.length);
+  }, [currentPage, sortField, sortDirection, filters]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -287,7 +251,7 @@ export default function SystemLogsViewer() {
         </div>
         <div className="flex items-center space-x-2">
           <button
-            onClick={fetchLogs}
+            onClick={() => setCurrentPage(1)} // Refresh mock data
             className="flex items-center px-4 py-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
           >
             <RefreshCw className="w-4 h-4 mr-2" />

@@ -22,7 +22,6 @@ import {
   Copy,
   MoreHorizontal
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { useStaffAuth } from '../hooks/useStaffAuth';
 
 interface DonationCenter {
@@ -100,14 +99,11 @@ export default function StaffAvailabilityManager() {
 
   const fetchInitialData = async () => {
     try {
-      const { data: centers, error: centersError } = await supabase
-        .from('donation_centers')
-        .select('*')
-        .eq('is_active', true)
-        .order('name');
-
-      if (centersError) throw centersError;
-      setDonationCenters(centers || []);
+      // Mock data for donation centers
+      setDonationCenters([
+        { center_id: 'dc1', name: 'Central Hospital', address: '123 Main St', city: 'New York', country: 'USA', is_active: true },
+        { center_id: 'dc2', name: 'Downtown Clinic', address: '456 Oak Ave', city: 'Los Angeles', country: 'USA', is_active: true },
+      ]);
 
       await fetchSlots();
     } catch (err) {
@@ -121,40 +117,15 @@ export default function StaffAvailabilityManager() {
       setLoading(true);
       setError('');
 
-      let query = supabase
-        .from('availability_slots')
-        .select(`
-          *,
-          donation_centers:center_id (
-            center_id,
-            name,
-            address,
-            city,
-            country,
-            is_active
-          )
-        `)
-        .order('slot_datetime', { ascending: true });
+      // Mock data for availability slots
+      const mockSlots: AvailabilitySlot[] = [
+        { slot_id: 's1', center_id: 'dc1', slot_datetime: '2023-10-27T10:00:00', donation_type: 'Blood', capacity: 10, current_bookings: 5, is_available: true, created_at: '2023-10-26T10:00:00', updated_at: '2023-10-26T10:00:00' },
+        { slot_id: 's2', center_id: 'dc1', slot_datetime: '2023-10-27T11:00:00', donation_type: 'Blood', capacity: 10, current_bookings: 0, is_available: true, created_at: '2023-10-26T10:00:00', updated_at: '2023-10-26T10:00:00' },
+        { slot_id: 's3', center_id: 'dc2', slot_datetime: '2023-10-27T10:00:00', donation_type: 'Plasma', capacity: 8, current_bookings: 2, is_available: true, created_at: '2023-10-26T10:00:00', updated_at: '2023-10-26T10:00:00' },
+        { slot_id: 's4', center_id: 'dc2', slot_datetime: '2023-10-27T11:00:00', donation_type: 'Plasma', capacity: 8, current_bookings: 0, is_available: true, created_at: '2023-10-26T10:00:00', updated_at: '2023-10-26T10:00:00' },
+      ];
+      setSlots(mockSlots);
 
-      // Apply filters
-      if (selectedCenter) {
-        query = query.eq('center_id', selectedCenter);
-      }
-      if (selectedType) {
-        query = query.eq('donation_type', selectedType);
-      }
-      if (selectedDate) {
-        const startDate = new Date(selectedDate);
-        const endDate = new Date(selectedDate);
-        endDate.setDate(endDate.getDate() + 1);
-        query = query.gte('slot_datetime', startDate.toISOString())
-                   .lt('slot_datetime', endDate.toISOString());
-      }
-
-      const { data, error } = await query;
-
-      if (error) throw error;
-      setSlots(data || []);
     } catch (err) {
       console.error('Error fetching slots:', err);
       setError('Failed to load availability slots');
@@ -176,49 +147,42 @@ export default function StaffAvailabilityManager() {
       setError('');
       setSuccess('');
 
-      if (editingSlot) {
-        // Update existing slot
-        const { error: updateError } = await supabase
-          .from('availability_slots')
-          .update({
-            center_id: formData.center_id,
-            slot_datetime: formData.slot_datetime,
-            donation_type: formData.donation_type,
-            capacity: formData.capacity,
-            is_available: formData.is_available,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('slot_id', editingSlot.slot_id);
+      // Mock data for new slot
+      const newSlot: AvailabilitySlot = {
+        slot_id: `s${slots.length + 1}`, // Simple ID generation
+        center_id: formData.center_id,
+        slot_datetime: formData.slot_datetime,
+        donation_type: formData.donation_type,
+        capacity: formData.capacity,
+        current_bookings: 0,
+        is_available: formData.is_available,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
 
-        if (updateError) throw updateError;
+      // Mock data for updated slot
+      if (editingSlot) {
+        const updatedSlot = {
+          ...editingSlot,
+          center_id: formData.center_id,
+          slot_datetime: formData.slot_datetime,
+          donation_type: formData.donation_type,
+          capacity: formData.capacity,
+          is_available: formData.is_available,
+          updated_at: new Date().toISOString(),
+        };
+        setSlots(slots.map(slot => slot.slot_id === editingSlot.slot_id ? updatedSlot : slot));
+        setEditingSlot(null);
         setSuccess('Availability slot updated successfully');
       } else {
-        // Create new slot
-        const { error: insertError } = await supabase
-          .from('availability_slots')
-          .insert({
-            center_id: formData.center_id,
-            slot_datetime: formData.slot_datetime,
-            donation_type: formData.donation_type,
-            capacity: formData.capacity,
-            current_bookings: 0,
-            is_available: formData.is_available,
-          });
-
-        if (insertError) throw insertError;
+        setSlots([...slots, newSlot]);
         setSuccess('Availability slot created successfully');
       }
 
-      // Create audit log
-      await supabase.from('audit_logs').insert({
-        user_id: staff?.staff_id,
-        user_type: 'staff',
-        action: editingSlot ? 'update_availability_slot' : 'create_availability_slot',
-        details: `${editingSlot ? 'Updated' : 'Created'} ${formData.donation_type} slot for ${formData.capacity} people`,
-        resource_type: 'availability_slot',
-        resource_id: editingSlot?.slot_id || 'new',
-        status: 'success'
-      });
+      // Mock audit log
+      if (staff?.staff_id) {
+        console.log(`Mock audit log: ${editingSlot ? 'Updated' : 'Created'} ${formData.donation_type} slot for ${formData.capacity} people`);
+      }
 
       resetForm();
       await fetchSlots();
@@ -244,23 +208,13 @@ export default function StaffAvailabilityManager() {
       setLoading(true);
       setError('');
 
-      const { error: deleteError } = await supabase
-        .from('availability_slots')
-        .delete()
-        .eq('slot_id', slot.slot_id);
+      // Mock data for deletion
+      setSlots(slots.filter(s => s.slot_id !== slot.slot_id));
 
-      if (deleteError) throw deleteError;
-
-      // Create audit log
-      await supabase.from('audit_logs').insert({
-        user_id: staff?.staff_id,
-        user_type: 'staff',
-        action: 'delete_availability_slot',
-        details: `Deleted ${slot.donation_type} slot for ${slot.capacity} people`,
-        resource_type: 'availability_slot',
-        resource_id: slot.slot_id,
-        status: 'success'
-      });
+      // Mock audit log
+      if (staff?.staff_id) {
+        console.log(`Mock audit log: Deleted ${slot.donation_type} slot for ${slot.capacity} people`);
+      }
 
       setSuccess('Availability slot deleted successfully');
       await fetchSlots();

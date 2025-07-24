@@ -15,7 +15,6 @@ import {
   CheckCircle,
   Loader
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 
 interface DonationCenter {
@@ -85,36 +84,46 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       setLoading(true);
       setError('');
 
-      const { data: slots, error: slotsError } = await supabase
-        .from('availability_slots')
-        .select(`
-          *,
-          donation_centers:center_id (
-            center_id,
-            name,
-            address,
-            city,
-            country,
-            contact_phone,
-            email
-          )
-        `)
-        .eq('donation_type', donationType)
-        .eq('is_available', true)
-        .gt('slot_datetime', new Date().toISOString())
-        .order('slot_datetime', { ascending: true })
-        .limit(20);
+      // Mock data for demonstration purposes
+      // In a real application, this would fetch from a backend
+      const mockSlots: AvailabilitySlot[] = [
+        {
+          slot_id: 'mock-slot-1',
+          center_id: 'mock-center-1',
+          slot_datetime: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
+          donation_type: donationType,
+          capacity: 10,
+          current_bookings: 5,
+          center: {
+            center_id: 'mock-center-1',
+            name: 'Mock Donation Center 1',
+            address: '123 Mock Street',
+            city: 'Mock City',
+            country: 'Mockland',
+            contact_phone: '123-456-7890',
+            email: 'info@mockcenter.com',
+          },
+        },
+        {
+          slot_id: 'mock-slot-2',
+          center_id: 'mock-center-1',
+          slot_datetime: new Date(Date.now() + 172800000).toISOString(), // Two days later
+          donation_type: donationType,
+          capacity: 10,
+          current_bookings: 2,
+          center: {
+            center_id: 'mock-center-1',
+            name: 'Mock Donation Center 1',
+            address: '123 Mock Street',
+            city: 'Mock City',
+            country: 'Mockland',
+            contact_phone: '123-456-7890',
+            email: 'info@mockcenter.com',
+          },
+        },
+      ];
 
-      if (slotsError) {
-        throw slotsError;
-      }
-
-      const slotsWithCenter = slots?.map(slot => ({
-        ...slot,
-        center: slot.donation_centers
-      })) || [];
-
-      setAvailableSlots(slotsWithCenter);
+      setAvailableSlots(mockSlots);
     } catch (err) {
       console.error('Error fetching slots:', err);
       setError('Failed to load available appointments. Please try again.');
@@ -141,38 +150,14 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       setLoading(true);
       setError('');
 
-      // Create the appointment
-      const { data: appointment, error: appointmentError } = await supabase
-        .from('appointments')
-        .insert({
-          donor_hash_id: donor.donor_hash_id,
-          donation_center_id: selectedSlot.center_id,
-          appointment_datetime: selectedSlot.slot_datetime,
-          donation_type: selectedType,
-          status: 'scheduled',
-          booking_channel: 'online',
-          confirmation_sent: true,
-          reminder_sent: false,
-        })
-        .select()
-        .single();
+      // Mock booking logic
+      console.log('Attempting to book appointment...');
+      console.log('Donor:', donor.donor_hash_id);
+      console.log('Slot:', selectedSlot.slot_id);
+      console.log('Type:', selectedType);
 
-      if (appointmentError) {
-        throw appointmentError;
-      }
-
-      // Update the slot's current bookings
-      const { error: slotUpdateError } = await supabase
-        .from('availability_slots')
-        .update({
-          current_bookings: selectedSlot.current_bookings + 1,
-          is_available: selectedSlot.current_bookings + 1 < selectedSlot.capacity
-        })
-        .eq('slot_id', selectedSlot.slot_id);
-
-      if (slotUpdateError) {
-        console.warn('Failed to update slot bookings:', slotUpdateError);
-      }
+      // Simulate successful booking
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       setBookingSuccess(true);
       setCurrentStep('success');

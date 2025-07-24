@@ -6,6 +6,7 @@ import DonorRegistration from './components/DonorRegistration';
 import StaffLogin from './components/StaffLogin';
 import Dashboard from './components/Dashboard';
 import StaffDashboard from './components/StaffDashboard';
+import LandingPage from './components/LandingPage';
 import { useAuth } from './hooks/useAuth';
 import { useStaffAuth } from './hooks/useStaffAuth';
 import { Users, Shield, ArrowLeft, UserPlus } from 'lucide-react';
@@ -13,7 +14,7 @@ import { Users, Shield, ArrowLeft, UserPlus } from 'lucide-react';
 type LoginMode = 'donor' | 'staff';
 type DonorMode = 'login' | 'register';
 
-function DonorAppContent() {
+function DonorAppContent({ onBackToLanding }: { onBackToLanding?: () => void }) {
   const { donor, loading } = useAuth();
   const [donorMode, setDonorMode] = useState<DonorMode>('login');
 
@@ -26,7 +27,7 @@ function DonorAppContent() {
   }
 
   if (donor) {
-    return <Dashboard />;
+    return <Dashboard onBackToLanding={onBackToLanding} />;
   }
 
   if (donorMode === 'register') {
@@ -41,7 +42,7 @@ function DonorAppContent() {
   return <LoginForm onShowRegistration={() => setDonorMode('register')} />;
 }
 
-function StaffAppContent() {
+function StaffAppContent({ onBackToLanding }: { onBackToLanding?: () => void }) {
   const { staff, loading } = useStaffAuth();
 
   if (loading) {
@@ -50,6 +51,10 @@ function StaffAppContent() {
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-600"></div>
       </div>
     );
+  }
+
+  if (staff) {
+    return <StaffDashboard onBackToLanding={onBackToLanding} />;
   }
 
   return staff ? <StaffDashboard /> : <StaffLogin />;
@@ -109,34 +114,24 @@ function LoginModeSelector({ onSelectMode }: { onSelectMode: (mode: LoginMode) =
 }
 
 function App() {
-  const [loginMode, setLoginMode] = useState<LoginMode | null>(null);
+  const [route, setRoute] = useState<'landing' | 'donor' | 'staff'>('landing');
 
-  if (!loginMode) {
-    return <LoginModeSelector onSelectMode={setLoginMode} />;
+  if (route === 'donor') {
+    return (
+      <AuthProvider>
+        <DonorAppContent onBackToLanding={() => setRoute('landing')} />
+      </AuthProvider>
+    );
   }
-
-  return (
-    <div>
-      {/* Back Button */}
-      <button
-        onClick={() => setLoginMode(null)}
-        className="fixed top-4 left-4 z-50 flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-white/80 rounded-lg backdrop-blur-sm transition-all duration-200"
-      >
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Back
-      </button>
-
-      {loginMode === 'donor' ? (
-        <AuthProvider>
-          <DonorAppContent />
-        </AuthProvider>
-      ) : (
-        <StaffAuthProvider>
-          <StaffAppContent />
-        </StaffAuthProvider>
-      )}
-    </div>
-  );
+  if (route === 'staff') {
+    return (
+      <StaffAuthProvider>
+        <StaffAppContent onBackToLanding={() => setRoute('landing')} />
+      </StaffAuthProvider>
+    );
+  }
+  // Pass navigation handlers to LandingPage
+  return <LandingPage onDonorPortal={() => setRoute('donor')} onStaffPortal={() => setRoute('staff')} />;
 }
 
 export default App;

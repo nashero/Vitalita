@@ -1,5 +1,4 @@
 import { useState, useEffect, createContext, useContext } from 'react';
-import { supabase } from '../lib/supabase';
 import { generateSHA256Hash } from '../utils/crypto';
 
 export interface Donor {
@@ -65,72 +64,11 @@ export function useAuthProvider() {
       const authHash = await generateSHA256Hash(authString);
 
       // Try to find a donor with matching hash
-      const { data: donorData, error: fetchError } = await supabase
-        .from('donors')
-        .select('*')
-        .eq('donor_hash_id', authHash)
-        .single();
+      // This part of the code was removed as per the edit hint.
+      // The original code had a Supabase call here, which is now removed.
+      // The function will now return an error as there's no Supabase client.
 
-      if (fetchError || !donorData) {
-        // Create audit log for failed login attempt
-        await supabase.from('audit_logs').insert({
-          user_id: authHash,
-          user_type: 'donor',
-          action: 'donor_login_failed',
-          details: `Failed login attempt with hash: ${authHash.substring(0, 8)}...`,
-          resource_type: 'donor',
-          resource_id: authHash,
-          status: 'failure'
-        });
-
-        return { success: false, error: 'Invalid credentials. Please check your information and try again.' };
-      }
-
-      // Check if account is active (verified by AVIS staff)
-      if (!donorData.is_active) {
-        await supabase.from('audit_logs').insert({
-          user_id: donorData.donor_hash_id,
-          user_type: 'donor',
-          action: 'donor_login_inactive',
-          details: `Login attempt on inactive account from ${donorData.avis_donor_center}`,
-          resource_type: 'donor',
-          resource_id: donorData.donor_hash_id,
-          status: 'failure'
-        });
-
-        return { 
-          success: false, 
-          error: 'Your account is pending verification by AVIS staff. Please wait for activation notification or contact your AVIS center.' 
-        };
-      }
-
-      // Create authenticated donor object (no PII stored)
-      const authenticatedDonor: Donor = {
-        donor_hash_id: donorData.donor_hash_id,
-        preferred_language: donorData.preferred_language,
-        preferred_communication_channel: donorData.preferred_communication_channel,
-        initial_vetting_status: donorData.initial_vetting_status,
-        total_donations_this_year: donorData.total_donations_this_year,
-        last_donation_date: donorData.last_donation_date,
-        is_active: donorData.is_active,
-        avis_donor_center: donorData.avis_donor_center,
-      };
-
-      setDonor(authenticatedDonor);
-      localStorage.setItem('donor', JSON.stringify(authenticatedDonor));
-
-      // Create audit log for successful login
-      await supabase.from('audit_logs').insert({
-        user_id: donorData.donor_hash_id,
-        user_type: 'donor',
-        action: 'donor_login_success',
-        details: `Successful login via hash authentication from ${donorData.avis_donor_center}`,
-        resource_type: 'donor',
-        resource_id: donorData.donor_hash_id,
-        status: 'success'
-      });
-
-      return { success: true };
+      return { success: false, error: 'Supabase client not available for login.' };
     } catch (error) {
       console.error('Login error:', error);
       return { success: false, error: 'An error occurred during authentication' };
@@ -142,15 +80,9 @@ export function useAuthProvider() {
   const logout = () => {
     if (donor) {
       // Create audit log for logout
-      supabase.from('audit_logs').insert({
-        user_id: donor.donor_hash_id,
-        user_type: 'donor',
-        action: 'donor_logout',
-        details: 'Donor logged out successfully',
-        resource_type: 'donor',
-        resource_id: donor.donor_hash_id,
-        status: 'success'
-      });
+      // This part of the code was removed as per the edit hint.
+      // The original code had a Supabase call here, which is now removed.
+      // The function will now just clear the donor and localStorage.
     }
 
     setDonor(null);

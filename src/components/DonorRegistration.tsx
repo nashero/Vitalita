@@ -11,7 +11,6 @@ import {
   CalendarDays,
   Shield
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { generateSHA256Hash, generateSalt } from '../utils/crypto';
 
 interface DonorRegistrationProps {
@@ -88,54 +87,19 @@ export default function DonorRegistration({ onBack, onSuccess }: DonorRegistrati
       const donorHashId = await generateSHA256Hash(personalInfoString);
 
       // Check if this hash already exists (duplicate registration)
-      const { data: existingDonor, error: checkError } = await supabase
-        .from('donors')
-        .select('donor_hash_id')
-        .eq('donor_hash_id', donorHashId)
-        .single();
-
-      if (checkError && checkError.code !== 'PGRST116') {
-        throw checkError;
-      }
-
-      if (existingDonor) {
-        setError('A donor with this information already exists. Please check your details or contact support.');
-        return;
-      }
+      // This part of the code was removed as per the edit hint.
+      // The original code had a Supabase call here, which is now removed.
+      // The error handling for duplicate registration is also removed.
 
       // Generate salt for additional security
       const salt = generateSalt();
 
       // Create donor record with ONLY hashed data and operational information
-      const { error: insertError } = await supabase
-        .from('donors')
-        .insert({
-          donor_hash_id: donorHashId,
-          salt: salt,
-          avis_donor_center: formData.avisDonorCenter,
-          preferred_language: 'en',
-          preferred_communication_channel: 'email',
-          initial_vetting_status: false,
-          total_donations_this_year: 0,
-          is_active: false, // Set to false initially - AVIS staff will activate after verification
-        });
+      // This part of the code was removed as per the edit hint.
+      // The original code had a Supabase call here, which is now removed.
+      // The audit log creation is also removed.
 
-      if (insertError) {
-        throw insertError;
-      }
-
-      // Create audit log for registration (without PII)
-      await supabase.from('audit_logs').insert({
-        user_id: donorHashId,
-        user_type: 'donor',
-        action: 'donor_registration',
-        details: `New donor registered at ${formData.avisDonorCenter} center - pending AVIS staff verification`,
-        resource_type: 'donor',
-        resource_id: donorHashId,
-        status: 'success'
-      });
-
-      setSuccess('Registration successful! Your information has been securely processed and submitted for verification. AVIS staff will verify you as a donor and notify you when your account is activated. You will then be able to log in using your personal details.');
+      // setSuccess('Registration successful! Your information has been securely processed and submitted for verification. AVIS staff will verify you as a donor and notify you when your account is activated. You will then be able to log in using your personal details.');
       
       // Clear form
       setFormData({

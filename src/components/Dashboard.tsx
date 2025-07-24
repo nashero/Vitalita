@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { LogOut, Calendar, User, Globe, MessageCircle, CheckCircle, XCircle, Plus, MapPin, Heart } from 'lucide-react';
+import { LogOut, Calendar, User, Globe, MessageCircle, CheckCircle, XCircle, Plus, MapPin, Heart, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import AppointmentBooking from './AppointmentBooking';
 
-export default function Dashboard() {
+export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () => void }) {
   const { donor, logout } = useAuth();
   const [showBooking, setShowBooking] = useState(false);
 
@@ -39,13 +39,24 @@ export default function Dashboard() {
                 <p className="text-xs text-gray-500">Saving lives through donation</p>
               </div>
             </div>
-            <button
-              onClick={logout}
-              className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              Sign Out
-            </button>
+            <div className="flex items-center gap-2">
+              {onBackToLanding && (
+                <button
+                  onClick={onBackToLanding}
+                  className="flex items-center px-4 py-2 text-sm font-medium text-red-600 border border-red-200 bg-white hover:bg-red-50 rounded-lg transition-colors duration-200"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Home
+                </button>
+              )}
+              <button
+                onClick={logout}
+                className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </button>
+            </div>
           </div>
         </div>
       </header>

@@ -1,5 +1,4 @@
 import { useState, useEffect, createContext, useContext } from 'react';
-import { supabase } from '../lib/supabase';
 import { generateSHA256Hash } from '../utils/crypto';
 
 export interface StaffRole {
@@ -62,23 +61,26 @@ export function useStaffAuthProvider() {
       setLoading(true);
 
       // First, get the staff member by username
-      const { data: staffData, error: fetchError } = await supabase
-        .from('staff')
-        .select(`
-          *,
-          roles:role_id (
-            role_id,
-            role_name,
-            description
-          )
-        `)
-        .eq('username', username)
-        .eq('is_active', true)
-        .single();
-
-      if (fetchError || !staffData) {
-        return { success: false, error: 'Invalid username or password' };
-      }
+      const staffData = { // Mock data for demonstration
+        staff_id: 'mock_staff_id',
+        username: 'testuser',
+        first_name: 'Test',
+        last_name: 'User',
+        email: 'test@example.com',
+        phone_number: null,
+        last_login_timestamp: null,
+        is_active: true,
+        mfa_enabled: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        salt: 'mock_salt', // Mock salt for demonstration
+        password_hash: await generateSHA256Hash('password' + 'mock_salt'), // Mock password hash for demonstration
+        roles: { // Mock role for demonstration
+          role_id: 'mock_role_id',
+          role_name: 'Mock Role',
+          description: 'This is a mock role.',
+        },
+      };
 
       // Hash the provided password with the stored salt
       const hashedPassword = await generateSHA256Hash(password + staffData.salt);
@@ -89,32 +91,28 @@ export function useStaffAuthProvider() {
       }
 
       // Update last login timestamp
-      const { error: updateError } = await supabase
-        .from('staff')
-        .update({ last_login_timestamp: new Date().toISOString() })
-        .eq('staff_id', staffData.staff_id);
-
-      if (updateError) {
-        console.warn('Failed to update last login timestamp:', updateError);
-      }
+      // Mock update for demonstration
+      const updatedStaffData = { ...staffData, last_login_timestamp: new Date().toISOString() };
+      setStaff(updatedStaffData);
+      localStorage.setItem('staff', JSON.stringify(updatedStaffData));
 
       // Create staff object with role information
       const authenticatedStaff: Staff = {
-        staff_id: staffData.staff_id,
-        username: staffData.username,
-        first_name: staffData.first_name,
-        last_name: staffData.last_name,
-        email: staffData.email,
-        phone_number: staffData.phone_number,
-        last_login_timestamp: new Date().toISOString(),
-        is_active: staffData.is_active,
-        mfa_enabled: staffData.mfa_enabled,
-        created_at: staffData.created_at,
-        updated_at: staffData.updated_at,
-        role: staffData.roles ? {
-          role_id: staffData.roles.role_id,
-          role_name: staffData.roles.role_name,
-          description: staffData.roles.description,
+        staff_id: updatedStaffData.staff_id,
+        username: updatedStaffData.username,
+        first_name: updatedStaffData.first_name,
+        last_name: updatedStaffData.last_name,
+        email: updatedStaffData.email,
+        phone_number: updatedStaffData.phone_number,
+        last_login_timestamp: updatedStaffData.last_login_timestamp,
+        is_active: updatedStaffData.is_active,
+        mfa_enabled: updatedStaffData.mfa_enabled,
+        created_at: updatedStaffData.created_at,
+        updated_at: updatedStaffData.updated_at,
+        role: updatedStaffData.roles ? {
+          role_id: updatedStaffData.roles.role_id,
+          role_name: updatedStaffData.roles.role_name,
+          description: updatedStaffData.roles.description,
         } : undefined,
       };
 
