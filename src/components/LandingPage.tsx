@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Heart, Cross, Calendar, ShieldCheck, Clock, BarChart3, Menu, X, CheckCircle, MessageCircle, QrCode, Mail, Award, Group, ArrowDown } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 const stats = [
   { label: 'Donations per year', value: 500000, icon: <Heart className="w-7 h-7 text-red-600" /> },
@@ -65,6 +66,8 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<string>('Testing connection...');
+  
   const sectionRefs = {
     hero: useRef<HTMLDivElement>(null),
     statistics: useRef<HTMLDivElement>(null),
@@ -73,6 +76,27 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
     process: useRef<HTMLDivElement>(null),
     footer: useRef<HTMLDivElement>(null),
   };
+
+  // Test Supabase connection
+  useEffect(() => {
+    const testConnection = async () => {
+      try {
+        const { data, error } = await supabase.from('donation_centers').select('count').limit(1);
+        if (error) {
+          console.error('Supabase connection error:', error);
+          setConnectionStatus('Connection failed: ' + error.message);
+        } else {
+          console.log('Supabase connection successful');
+          setConnectionStatus('Connected to Supabase');
+        }
+      } catch (err) {
+        console.error('Connection test failed:', err);
+        setConnectionStatus('Connection test failed');
+      }
+    };
+    
+    testConnection();
+  }, []);
 
   const handleNav = (to: keyof typeof sectionRefs) => {
     setMenuOpen(false);
@@ -142,6 +166,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
 
       {/* Hero Section */}
       <section ref={sectionRefs.hero} className="relative flex flex-col items-center justify-center min-h-[50vh] px-4 py-10 bg-gradient-to-b from-white to-gray-50 text-center">
+        {/* Connection Status */}
+        <div className="absolute top-4 right-4 text-xs">
+          <span className={`px-2 py-1 rounded ${connectionStatus.includes('Connected') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+            {connectionStatus}
+          </span>
+        </div>
         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
           Donate Blood, <span className="text-red-600">Save Lives</span>
         </h1>
