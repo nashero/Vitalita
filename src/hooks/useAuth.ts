@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext, useContext } from 'react';
 import { generateSHA256Hash } from '../utils/crypto';
+import { supabase } from '../lib/supabase';
 
 export interface Donor {
   donor_hash_id: string;
@@ -58,17 +59,52 @@ export function useAuthProvider() {
     try {
       setLoading(true);
 
-      // Create a hash from the provided authentication data (without donorId)
-      // This hash should match the donor_hash_id stored in the database
+      // Create a hash from the provided authentication data
       const authString = `${authData.firstName}${authData.lastName}${authData.dateOfBirth}${authData.avisDonorCenter}`;
       const authHash = await generateSHA256Hash(authString);
 
       // Try to find a donor with matching hash
-      // This part of the code was removed as per the edit hint.
-      // The original code had a Supabase call here, which is now removed.
-      // The function will now return an error as there's no Supabase client.
+      const { data: donorData, error } = await supabase
+        .from('donors')
+        .select('*')
+        .eq('donor_hash_id', authHash)
+        .eq('is_active', true)
+        .single();
 
-      return { success: false, error: 'Supabase client not available for login.' };
+      if (error) {
+        console.error('Database error:', error);
+        return { success: false, error: 'Authentication failed. Please check your information.' };
+      }
+
+      if (!donorData) {
+        return { success: false, error: 'No active donor account found with these details.' };
+      }
+
+      // Create donor object with all required fields
+      const authenticatedDonor: Donor = {
+        donor_hash_id: donorData.donor_hash_id,
+        preferred_language: donorData.preferred_language || 'en',
+        preferred_communication_channel: donorData.preferred_communication_channel || 'email',
+        initial_vetting_status: donorData.initial_vetting_status || false,
+        total_donations_this_year: donorData.total_donations_this_year || 0,
+        last_donation_date: donorData.last_donation_date,
+        is_active: donorData.is_active,
+        avis_donor_center: donorData.avis_donor_center || authData.avisDonorCenter,
+      };
+
+      setDonor(authenticatedDonor);
+      localStorage.setItem('donor', JSON.stringify(authenticatedDonor));
+
+      // Create audit log for successful login
+      await supabase.rpc('create_audit_log', {
+        p_user_id: authenticatedDonor.donor_hash_id,
+        p_user_type: 'donor',
+        p_action: 'login',
+        p_details: 'Donor successfully logged in',
+        p_status: 'success'
+      });
+
+      return { success: true };
     } catch (error) {
       console.error('Login error:', error);
       return { success: false, error: 'An error occurred during authentication' };
@@ -80,9 +116,19 @@ export function useAuthProvider() {
   const logout = () => {
     if (donor) {
       // Create audit log for logout
-      // This part of the code was removed as per the edit hint.
-      // The original code had a Supabase call here, which is now removed.
-      // The function will now just clear the donor and localStorage.
+      (async () => {
+        try {
+          await supabase.rpc('create_audit_log', {
+            p_user_id: donor.donor_hash_id,
+            p_user_type: 'donor',
+            p_action: 'logout',
+            p_details: 'Donor logged out',
+            p_status: 'success'
+          });
+        } catch (error) {
+          console.error('Failed to create audit log:', error);
+        }
+      })();
     }
 
     setDonor(null);

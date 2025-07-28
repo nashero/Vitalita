@@ -11,6 +11,8 @@ import {
   CalendarDays,
   Shield
 } from 'lucide-react';
+import { generateSHA256Hash } from '../utils/crypto';
+import { supabase } from '../lib/supabase';
 
 interface DonorRegistrationProps {
   onBack: () => void;
@@ -44,7 +46,7 @@ export default function DonorRegistration({ onBack, onSuccess }: DonorRegistrati
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success] = useState('');
+  const [success, setSuccess] = useState('');
 
   const handleInputChange = (field: keyof RegistrationFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -84,22 +86,62 @@ export default function DonorRegistration({ onBack, onSuccess }: DonorRegistrati
       setLoading(true);
       setError('');
 
-      // Generate donor_hash_id from personal information (without donor ID)
-      // This will be the only identifier stored in the database
+      // Generate donor_hash_id from personal information
+      const authString = `${formData.firstName}${formData.lastName}${formData.dateOfBirth}${formData.avisDonorCenter}`;
+      const donorHashId = await generateSHA256Hash(authString);
 
       // Check if this hash already exists (duplicate registration)
-      // This part of the code was removed as per the edit hint.
-      // The original code had a Supabase call here, which is now removed.
-      // The error handling for duplicate registration is also removed.
+      const { data: existingDonor, error: checkError } = await supabase
+        .from('donors')
+        .select('donor_hash_id')
+        .eq('donor_hash_id', donorHashId)
+        .single();
+
+      if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "not found" error
+        console.error('Error checking existing donor:', checkError);
+        setError('Registration failed. Please try again.');
+        return;
+      }
+
+      if (existingDonor) {
+        setError('A donor account already exists with these details. Please contact AVIS staff for assistance.');
+        return;
+      }
 
       // Generate salt for additional security
+      const salt = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
       // Create donor record with ONLY hashed data and operational information
-      // This part of the code was removed as per the edit hint.
-      // The original code had a Supabase call here, which is now removed.
-      // The audit log creation is also removed.
+      const { error: insertError } = await supabase
+        .from('donors')
+        .insert({
+          donor_hash_id: donorHashId,
+          salt: salt,
+          preferred_language: 'en',
+          preferred_communication_channel: 'email',
+          initial_vetting_status: false,
+          total_donations_this_year: 0,
+          last_donation_date: null,
+          is_active: false, // Will be activated by staff
+          avis_donor_center: formData.avisDonorCenter,
+        });
 
-      // setSuccess('Registration successful! Your information has been securely processed and submitted for verification. AVIS staff will verify you as a donor and notify you when your account is activated. You will then be able to log in using your personal details.');
+      if (insertError) {
+        console.error('Error creating donor record:', insertError);
+        setError('Registration failed. Please try again.');
+        return;
+      }
+
+      // Create audit log for registration
+      await supabase.rpc('create_audit_log', {
+        p_user_id: donorHashId,
+        p_user_type: 'donor',
+        p_action: 'registration',
+        p_details: 'New donor registration submitted for verification',
+        p_status: 'success'
+      });
+
+      setSuccess('Registration successful! Your information has been securely processed and submitted for verification. AVIS staff will verify you as a donor and notify you when your account is activated. You will then be able to log in using your personal details.');
       
       // Clear form
       setFormData({

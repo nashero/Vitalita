@@ -16,6 +16,7 @@ import {
   Loader
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { supabase } from '../lib/supabase';
 
 interface DonationCenter {
   center_id: string;
@@ -84,46 +85,52 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       setLoading(true);
       setError('');
 
-      // Mock data for demonstration purposes
-      // In a real application, this would fetch from a backend
-      const mockSlots: AvailabilitySlot[] = [
-        {
-          slot_id: 'mock-slot-1',
-          center_id: 'mock-center-1',
-          slot_datetime: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
-          donation_type: donationType,
-          capacity: 10,
-          current_bookings: 5,
-          center: {
-            center_id: 'mock-center-1',
-            name: 'Mock Donation Center 1',
-            address: '123 Mock Street',
-            city: 'Mock City',
-            country: 'Mockland',
-            contact_phone: '123-456-7890',
-            email: 'info@mockcenter.com',
-          },
-        },
-        {
-          slot_id: 'mock-slot-2',
-          center_id: 'mock-center-1',
-          slot_datetime: new Date(Date.now() + 172800000).toISOString(), // Two days later
-          donation_type: donationType,
-          capacity: 10,
-          current_bookings: 2,
-          center: {
-            center_id: 'mock-center-1',
-            name: 'Mock Donation Center 1',
-            address: '123 Mock Street',
-            city: 'Mock City',
-            country: 'Mockland',
-            contact_phone: '123-456-7890',
-            email: 'info@mockcenter.com',
-          },
-        },
-      ];
+      // Fetch available slots from the database
+      const { data: slots, error: slotsError } = await supabase
+        .from('availability_slots')
+        .select(`
+          *,
+          donation_centers!inner (
+            center_id,
+            name,
+            address,
+            city,
+            country,
+            contact_phone,
+            email
+          )
+        `)
+        .eq('donation_type', donationType)
+        .eq('is_available', true)
+        .gt('slot_datetime', new Date().toISOString())
+        .order('slot_datetime', { ascending: true });
 
-      setAvailableSlots(mockSlots);
+      if (slotsError) {
+        console.error('Error fetching slots:', slotsError);
+        setError('Failed to load available appointments. Please try again.');
+        return;
+      }
+
+      // Transform the data to match our interface
+      const transformedSlots: AvailabilitySlot[] = slots?.map(slot => ({
+        slot_id: slot.slot_id,
+        center_id: slot.center_id,
+        slot_datetime: slot.slot_datetime,
+        donation_type: slot.donation_type,
+        capacity: slot.capacity,
+        current_bookings: slot.current_bookings,
+        center: slot.donation_centers ? {
+          center_id: slot.donation_centers.center_id,
+          name: slot.donation_centers.name,
+          address: slot.donation_centers.address,
+          city: slot.donation_centers.city,
+          country: slot.donation_centers.country,
+          contact_phone: slot.donation_centers.contact_phone,
+          email: slot.donation_centers.email,
+        } : undefined,
+      })) || [];
+
+      setAvailableSlots(transformedSlots);
     } catch (err) {
       console.error('Error fetching slots:', err);
       setError('Failed to load available appointments. Please try again.');
@@ -150,14 +157,51 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       setLoading(true);
       setError('');
 
-      // Mock booking logic
-      console.log('Attempting to book appointment...');
-      console.log('Donor:', donor.donor_hash_id);
-      console.log('Slot:', selectedSlot.slot_id);
-      console.log('Type:', selectedType);
+      // Create the appointment record
+      const { data: appointment, error: appointmentError } = await supabase
+        .from('appointments')
+        .insert({
+          donor_hash_id: donor.donor_hash_id,
+          donation_center_id: selectedSlot.center_id,
+          appointment_datetime: selectedSlot.slot_datetime,
+          donation_type: selectedType,
+          status: 'scheduled',
+          booking_channel: 'online',
+          confirmation_sent: false,
+          reminder_sent: false,
+        })
+        .select()
+        .single();
 
-      // Simulate successful booking
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (appointmentError) {
+        console.error('Error creating appointment:', appointmentError);
+        setError('Failed to book appointment. Please try again.');
+        return;
+      }
+
+      // Update the availability slot to increment current_bookings
+      const { error: slotUpdateError } = await supabase
+        .from('availability_slots')
+        .update({ 
+          current_bookings: selectedSlot.current_bookings + 1 
+        })
+        .eq('slot_id', selectedSlot.slot_id);
+
+      if (slotUpdateError) {
+        console.error('Error updating slot:', slotUpdateError);
+        // Note: We don't fail the booking here as the appointment was created
+      }
+
+      // Create audit log for the booking
+      await supabase.rpc('create_audit_log', {
+        p_user_id: donor.donor_hash_id,
+        p_user_type: 'donor',
+        p_action: 'appointment_booking',
+        p_details: `Appointment booked for ${selectedType} donation on ${new Date(selectedSlot.slot_datetime).toLocaleDateString()}`,
+        p_resource_type: 'appointments',
+        p_resource_id: appointment.appointment_id,
+        p_status: 'success'
+      });
 
       setBookingSuccess(true);
       setCurrentStep('success');

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   LogOut, 
   Calendar, 
@@ -22,13 +22,81 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { useStaffAuth } from '../hooks/useStaffAuth';
+import { supabase } from '../lib/supabase';
 import StaffAppointmentDashboard from './StaffAppointmentDashboard';
 import StaffAvailabilityManager from './StaffAvailabilityManager';
 import SystemLogsViewer from './SystemLogsViewer';
 
+interface DashboardStats {
+  todayAppointments: number;
+  activeDonors: number;
+  activeCenters: number;
+  pendingReviews: number;
+}
+
 export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: () => void }) {
   const { staff, logout } = useStaffAuth();
   const [activeTab, setActiveTab] = useState('overview');
+  const [stats, setStats] = useState<DashboardStats>({
+    todayAppointments: 0,
+    activeDonors: 0,
+    activeCenters: 0,
+    pendingReviews: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (staff) {
+      fetchDashboardStats();
+    }
+  }, [staff]);
+
+  const fetchDashboardStats = async () => {
+    try {
+      setLoading(true);
+
+      // Get today's date range
+      const today = new Date();
+      const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
+      const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59).toISOString();
+
+      // Fetch today's appointments
+      const { count: todayAppointments } = await supabase
+        .from('appointments')
+        .select('*', { count: 'exact', head: true })
+        .gte('appointment_datetime', startOfDay)
+        .lte('appointment_datetime', endOfDay);
+
+      // Fetch active donors count
+      const { count: activeDonors } = await supabase
+        .from('donors')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_active', true);
+
+      // Fetch active centers count
+      const { count: activeCenters } = await supabase
+        .from('donation_centers')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_active', true);
+
+      // Fetch pending reviews (donors with initial_vetting_status = false)
+      const { count: pendingReviews } = await supabase
+        .from('donors')
+        .select('*', { count: 'exact', head: true })
+        .eq('initial_vetting_status', false);
+
+      setStats({
+        todayAppointments: todayAppointments || 0,
+        activeDonors: activeDonors || 0,
+        activeCenters: activeCenters || 0,
+        pendingReviews: pendingReviews || 0,
+      });
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!staff) return null;
 
@@ -177,12 +245,14 @@ export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: 
                       </div>
                       <div className="ml-4">
                         <p className="text-sm font-medium text-gray-600">Today's Appointments</p>
-                        <p className="text-2xl font-bold text-gray-900">24</p>
+                        <p className="text-2xl font-bold text-gray-900">
+                          {loading ? '...' : stats.todayAppointments}
+                        </p>
                       </div>
                     </div>
                     <div className="mt-4 flex items-center text-sm">
                       <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-                      <span className="text-green-600">+12% from yesterday</span>
+                      <span className="text-green-600">Scheduled for today</span>
                     </div>
                   </div>
 
@@ -193,12 +263,14 @@ export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: 
                       </div>
                       <div className="ml-4">
                         <p className="text-sm font-medium text-gray-600">Active Donors</p>
-                        <p className="text-2xl font-bold text-gray-900">1,247</p>
+                        <p className="text-2xl font-bold text-gray-900">
+                          {loading ? '...' : stats.activeDonors}
+                        </p>
                       </div>
                     </div>
                     <div className="mt-4 flex items-center text-sm">
-                      <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-                      <span className="text-green-600">+5% this month</span>
+                      <CheckCircle className="w-4 h-4 text-green-500 mr-1" />
+                      <span className="text-green-600">Verified and active</span>
                     </div>
                   </div>
 
@@ -209,7 +281,9 @@ export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: 
                       </div>
                       <div className="ml-4">
                         <p className="text-sm font-medium text-gray-600">Active Centers</p>
-                        <p className="text-2xl font-bold text-gray-900">8</p>
+                        <p className="text-2xl font-bold text-gray-900">
+                          {loading ? '...' : stats.activeCenters}
+                        </p>
                       </div>
                     </div>
                     <div className="mt-4 flex items-center text-sm">
@@ -225,7 +299,9 @@ export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: 
                       </div>
                       <div className="ml-4">
                         <p className="text-sm font-medium text-gray-600">Pending Reviews</p>
-                        <p className="text-2xl font-bold text-gray-900">7</p>
+                        <p className="text-2xl font-bold text-gray-900">
+                          {loading ? '...' : stats.pendingReviews}
+                        </p>
                       </div>
                     </div>
                     <div className="mt-4 flex items-center text-sm">

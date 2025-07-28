@@ -1,11 +1,83 @@
-import React, { useState } from 'react';
-import { LogOut, Calendar, User, Globe, MessageCircle, CheckCircle, XCircle, Plus, MapPin, Heart, ArrowLeft } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { LogOut, Calendar, User, Globe, MessageCircle, CheckCircle, XCircle, Plus, MapPin, Heart, ArrowLeft, Clock, AlertCircle } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { supabase } from '../lib/supabase';
 import AppointmentBooking from './AppointmentBooking';
+
+interface Appointment {
+  appointment_id: string;
+  appointment_datetime: string;
+  donation_type: string;
+  status: string;
+  donation_centers: {
+    name: string;
+    address: string;
+    city: string;
+  };
+}
 
 export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () => void }) {
   const { donor, logout } = useAuth();
   const [showBooking, setShowBooking] = useState(false);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (donor) {
+      fetchAppointments();
+    }
+  }, [donor]);
+
+  const fetchAppointments = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      const { data, error: fetchError } = await supabase
+        .from('appointments')
+        .select(`
+          appointment_id,
+          appointment_datetime,
+          donation_type,
+          status,
+          donation_centers (
+            name,
+            address,
+            city
+          )
+        `)
+        .eq('donor_hash_id', donor?.donor_hash_id)
+        .order('appointment_datetime', { ascending: false })
+        .limit(5);
+
+      if (fetchError) {
+        console.error('Error fetching appointments:', fetchError);
+        setError('Failed to load appointment history');
+        return;
+      }
+
+      // Transform the data to match our interface
+      const transformedAppointments: Appointment[] = (data || []).map(appointment => ({
+        appointment_id: appointment.appointment_id,
+        appointment_datetime: appointment.appointment_datetime,
+        donation_type: appointment.donation_type,
+        status: appointment.status,
+        donation_centers: (appointment.donation_centers as any)?.[0] || {
+          name: 'Unknown Center',
+          address: 'Address not available',
+          city: 'City not available'
+        }
+      }));
+
+      setAppointments(transformedAppointments);
+    } catch (err) {
+      console.error('Error fetching appointments:', err);
+      setError('Failed to load appointment history');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!donor) return null;
 
@@ -18,12 +90,29 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
     return new Date(dateString).toLocaleDateString();
   };
 
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return {
+      date: date.toLocaleDateString(),
+      time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+  };
+
   const getStatusColor = (status: boolean) => {
     return status ? 'text-green-600' : 'text-red-600';
   };
 
   const getStatusIcon = (status: boolean) => {
     return status ? CheckCircle : XCircle;
+  };
+
+  const getAppointmentStatusColor = (status: string) => {
+    switch (status) {
+      case 'scheduled': return 'bg-blue-100 text-blue-800';
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
   };
 
   return (
@@ -171,6 +260,55 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
                   <p className="text-sm text-gray-600">See past appointments and donations</p>
                 </button>
               </div>
+            </div>
+
+            {/* Recent Appointments */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Appointments</h3>
+              {loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Clock className="w-6 h-6 animate-spin text-blue-600 mr-2" />
+                  <span className="text-gray-600">Loading appointments...</span>
+                </div>
+              ) : error ? (
+                <div className="flex items-center justify-center py-8">
+                  <AlertCircle className="w-6 h-6 text-red-600 mr-2" />
+                  <span className="text-red-600">{error}</span>
+                </div>
+              ) : appointments.length === 0 ? (
+                <div className="text-center py-8">
+                  <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                  <p className="text-gray-600">No appointments found</p>
+                  <p className="text-sm text-gray-500">Schedule your first donation appointment</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {appointments.map((appointment) => {
+                    const dateTime = formatDateTime(appointment.appointment_datetime);
+                    return (
+                      <div key={appointment.appointment_id} className="flex items-center justify-between p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div className="flex items-center space-x-4">
+                          <div className="bg-blue-100 p-2 rounded-lg">
+                            <Calendar className="w-4 h-4 text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">{appointment.donation_type} Donation</p>
+                            <p className="text-sm text-gray-600">
+                              {dateTime.date} at {dateTime.time}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {appointment.donation_centers.name}, {appointment.donation_centers.city}
+                            </p>
+                          </div>
+                        </div>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getAppointmentStatusColor(appointment.status)}`}>
+                          {appointment.status}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
 
