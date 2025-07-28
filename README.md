@@ -108,11 +108,11 @@ npm run seed
 ```
 
 This will create:
-- 3 donation centers
+- 7 donation centers
 - 5 staff roles
 - 14 permissions
 - 2 staff members (admin and staff)
-- 3 sample donors
+- 7 sample donors
 - Availability slots for the next 7 days
 - Sample appointments
 
@@ -126,6 +126,10 @@ This will create:
 - **Mario Rossi**: FirstName=`Mario`, LastName=`Rossi`, DateOfBirth=`1985-03-15`, Center=`Casalmaggiore`
 - **Giulia Bianchi**: FirstName=`Giulia`, LastName=`Bianchi`, DateOfBirth=`1990-07-22`, Center=`Gussola`
 - **Luca Verdi**: FirstName=`Luca`, LastName=`Verdi`, DateOfBirth=`1988-11-08`, Center=`Viadana`
+- **Sofia Neri**: FirstName=`Sofia`, LastName=`Neri`, DateOfBirth=`1992-05-14`, Center=`Piadena`
+- **Marco Bianchi**: FirstName=`Marco`, LastName=`Bianchi`, DateOfBirth=`1987-09-03`, Center=`Rivarolo del Re`
+- **Elena Rossi**: FirstName=`Elena`, LastName=`Rossi`, DateOfBirth=`1991-12-21`, Center=`Scandolara-Ravara`
+- **Antonio Ferrari**: FirstName=`Antonio`, LastName=`Ferrari`, DateOfBirth=`1986-08-17`, Center=`Calvatone`
 
 ## 🛠️ Development
 

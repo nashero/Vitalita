@@ -43,6 +43,42 @@ async function seedDatabase() {
         contact_phone: '+39 0375 789012',
         email: 'info@avisviadana.it',
         is_active: true
+      },
+      {
+        name: 'AVIS Piadena',
+        address: 'Via Mazzini 89',
+        city: 'Piadena',
+        country: 'Italy',
+        contact_phone: '+39 0375 456789',
+        email: 'info@avispiadena.it',
+        is_active: true
+      },
+      {
+        name: 'AVIS Rivarolo del Re',
+        address: 'Via Vittorio Emanuele 12',
+        city: 'Rivarolo del Re',
+        country: 'Italy',
+        contact_phone: '+39 0375 234567',
+        email: 'info@avisrivarolo.it',
+        is_active: true
+      },
+      {
+        name: 'AVIS Scandolara-Ravara',
+        address: 'Via Nazionale 34',
+        city: 'Scandolara-Ravara',
+        country: 'Italy',
+        contact_phone: '+39 0375 345678',
+        email: 'info@avisscandolara.it',
+        is_active: true
+      },
+      {
+        name: 'AVIS Calvatone',
+        address: 'Via Roma 56',
+        city: 'Calvatone',
+        country: 'Italy',
+        contact_phone: '+39 0375 567890',
+        email: 'info@aviscalvatone.it',
+        is_active: true
       }
     ];
 
@@ -175,6 +211,30 @@ async function seedDatabase() {
         lastName: 'Verdi',
         dateOfBirth: '1988-11-08',
         avisDonorCenter: 'Viadana'
+      },
+      {
+        firstName: 'Sofia',
+        lastName: 'Neri',
+        dateOfBirth: '1992-05-14',
+        avisDonorCenter: 'Piadena'
+      },
+      {
+        firstName: 'Marco',
+        lastName: 'Bianchi',
+        dateOfBirth: '1987-09-03',
+        avisDonorCenter: 'Rivarolo del Re'
+      },
+      {
+        firstName: 'Elena',
+        lastName: 'Rossi',
+        dateOfBirth: '1991-12-21',
+        avisDonorCenter: 'Scandolara-Ravara'
+      },
+      {
+        firstName: 'Antonio',
+        lastName: 'Ferrari',
+        dateOfBirth: '1986-08-17',
+        avisDonorCenter: 'Calvatone'
       }
     ];
 
@@ -300,6 +360,10 @@ async function seedDatabase() {
     console.log('Mario Rossi: FirstName=Mario, LastName=Rossi, DateOfBirth=1985-03-15, Center=Casalmaggiore');
     console.log('Giulia Bianchi: FirstName=Giulia, LastName=Bianchi, DateOfBirth=1990-07-22, Center=Gussola');
     console.log('Luca Verdi: FirstName=Luca, LastName=Verdi, DateOfBirth=1988-11-08, Center=Viadana');
+    console.log('Sofia Neri: FirstName=Sofia, LastName=Neri, DateOfBirth=1992-05-14, Center=Piadena');
+    console.log('Marco Bianchi: FirstName=Marco, LastName=Bianchi, DateOfBirth=1987-09-03, Center=Rivarolo del Re');
+    console.log('Elena Rossi: FirstName=Elena, LastName=Rossi, DateOfBirth=1991-12-21, Center=Scandolara-Ravara');
+    console.log('Antonio Ferrari: FirstName=Antonio, LastName=Ferrari, DateOfBirth=1986-08-17, Center=Calvatone');
 
   } catch (error) {
     console.error('❌ Error during seeding:', error);
