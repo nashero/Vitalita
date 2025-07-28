@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, User, Lock, Shield, XCircle } from 'lucide-react';
+import { Eye, EyeOff, User, Lock, Shield, XCircle, ArrowLeft } from 'lucide-react';
 import { useStaffAuth } from '../hooks/useStaffAuth';
 
-export default function StaffLogin() {
+interface StaffLoginProps {
+  onBackToLanding?: () => void;
+}
+
+export default function StaffLogin({ onBackToLanding }: StaffLoginProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -25,20 +29,34 @@ export default function StaffLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-pink-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-slate-800 to-blue-800 px-8 py-8">
-            <div className="flex items-center justify-center mb-4">
-              <div className="bg-white/20 p-4 rounded-full backdrop-blur-sm">
-                <Shield className="w-10 h-10 text-white" />
+          <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-8">
+            <div className="flex items-center justify-between">
+              {onBackToLanding && (
+                <button
+                  onClick={onBackToLanding}
+                  className="flex items-center text-white/80 hover:text-white transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5 mr-2" />
+                  Back to Home
+                </button>
+              )}
+              <div className="text-center flex-1">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="bg-white/20 p-4 rounded-full backdrop-blur-sm">
+                    <Shield className="w-10 h-10 text-white" />
+                  </div>
+                </div>
+                <h1 className="text-2xl font-bold text-white">Staff Portal</h1>
+                <p className="text-red-100 text-sm mt-2">
+                  Secure access to administrative dashboard
+                </p>
               </div>
+              <div className="w-16"></div> {/* Spacer for centering */}
             </div>
-            <h1 className="text-2xl font-bold text-white text-center">Staff Portal</h1>
-            <p className="text-blue-100 text-center text-sm mt-2">
-              Secure access to administrative dashboard
-            </p>
           </div>
 
           {/* Form */}
@@ -58,7 +76,7 @@ export default function StaffLogin() {
                     id="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
                     placeholder="Enter your username"
                     disabled={loading}
                     autoComplete="username"
@@ -80,7 +98,7 @@ export default function StaffLogin() {
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+                    className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
                     placeholder="Enter your password"
                     disabled={loading}
                     autoComplete="current-password"
@@ -118,7 +136,7 @@ export default function StaffLogin() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-slate-700 to-blue-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-slate-800 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 {loading ? (
                   <div className="flex items-center justify-center">

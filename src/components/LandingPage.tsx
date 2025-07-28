@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Heart, Cross, Calendar, ShieldCheck, Clock, BarChart3, Menu, X, CheckCircle, MessageCircle, QrCode, Mail, Award, Group, ArrowDown } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase, testSupabaseConnection } from '../lib/supabase';
 
 const stats = [
   { label: 'Donations per year', value: 500000, icon: <Heart className="w-7 h-7 text-red-600" /> },
@@ -67,6 +67,9 @@ interface LandingPageProps {
 const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<string>('Testing connection...');
+  const [connectionDetails, setConnectionDetails] = useState<string>('');
+  
+  console.log('LandingPage: Component rendering', { onDonorPortal, onStaffPortal });
   
   const sectionRefs = {
     hero: useRef<HTMLDivElement>(null),
@@ -79,19 +82,25 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
 
   // Test Supabase connection
   useEffect(() => {
+    console.log('LandingPage: useEffect running');
     const testConnection = async () => {
       try {
-        const { data, error } = await supabase.from('donation_centers').select('count').limit(1);
-        if (error) {
-          console.error('Supabase connection error:', error);
-          setConnectionStatus('Connection failed: ' + error.message);
-        } else {
+        console.log('LandingPage: Testing Supabase connection...');
+        const result = await testSupabaseConnection();
+        
+        if (result.success) {
           console.log('Supabase connection successful');
           setConnectionStatus('Connected to Supabase');
+          setConnectionDetails('Database connection working');
+        } else {
+          console.error('Supabase connection failed:', result.error);
+          setConnectionStatus('Connection failed');
+          setConnectionDetails(result.error?.toString() || 'Unknown error');
         }
       } catch (err) {
         console.error('Connection test failed:', err);
         setConnectionStatus('Connection test failed');
+        setConnectionDetails(err?.toString() || 'Unknown error');
       }
     };
     
@@ -165,12 +174,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
       </header>
 
       {/* Hero Section */}
-      <section ref={sectionRefs.hero} className="relative flex flex-col items-center justify-center min-h-[50vh] px-4 py-10 bg-gradient-to-b from-white to-gray-50 text-center">
+      <section ref={sectionRefs.hero} className="relative flex flex-col items-center justify-center min-h-[40vh] px-4 py-6 bg-gradient-to-b from-white to-gray-50 text-center">
         {/* Connection Status */}
         <div className="absolute top-4 right-4 text-xs">
-          <span className={`px-2 py-1 rounded ${connectionStatus.includes('Connected') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-            {connectionStatus}
-          </span>
+          <div className={`px-2 py-1 rounded ${connectionStatus.includes('Connected') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+            <div className="font-semibold">{connectionStatus}</div>
+            {connectionDetails && (
+              <div className="text-xs opacity-75">{connectionDetails}</div>
+            )}
+          </div>
         </div>
         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
           Donate Blood, <span className="text-red-600">Save Lives</span>
@@ -186,11 +198,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
             Learn More
           </button>
         </div>
-        <ArrowDown className="mx-auto mt-12 animate-bounce text-red-400 w-8 h-8" />
       </section>
 
       {/* Statistics Section */}
-      <section ref={sectionRefs.statistics} className="max-w-7xl mx-auto px-4 py-8">
+      <section ref={sectionRefs.statistics} className="max-w-7xl mx-auto px-4 py-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-white rounded-2xl shadow-lg p-8">
           {stats.map((stat, i) => (
             <div key={stat.label} className="flex flex-col items-center text-center">
