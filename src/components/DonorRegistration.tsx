@@ -11,7 +11,6 @@ import {
   CalendarDays,
   Shield
 } from 'lucide-react';
-import { generateSHA256Hash, generateSalt } from '../utils/crypto';
 
 interface DonorRegistrationProps {
   onBack: () => void;
@@ -26,9 +25,13 @@ interface RegistrationFormData {
 }
 
 const AVIS_CENTERS = [
-  { value: 'Pompano', label: 'AVIS Pompano' },
-  { value: 'Milan', label: 'AVIS Milan' },
-  { value: 'Rome', label: 'AVIS Rome' },
+  { value: 'Casalmaggiore', label: 'AVIS Casalmaggiore' },
+  { value: 'Gussola', label: 'AVIS Gussola' },
+  { value: 'Viadana', label: 'AVIS Viadana' },
+  { value: 'Piadena', label: 'AVIS Piadena' },
+  { value: 'Rivarolo del Re', label: 'AVIS Rivarolo del Re' },
+  { value: 'Scandolara-Ravara', label: 'AVIS Scandolara-Ravara' },
+  { value: 'Calvatone', label: 'AVIS Calvatone' },
 ];
 
 export default function DonorRegistration({ onBack, onSuccess }: DonorRegistrationProps) {
@@ -41,7 +44,7 @@ export default function DonorRegistration({ onBack, onSuccess }: DonorRegistrati
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [success] = useState('');
 
   const handleInputChange = (field: keyof RegistrationFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -83,8 +86,6 @@ export default function DonorRegistration({ onBack, onSuccess }: DonorRegistrati
 
       // Generate donor_hash_id from personal information (without donor ID)
       // This will be the only identifier stored in the database
-      const personalInfoString = `${formData.firstName.trim()}${formData.lastName.trim()}${formData.dateOfBirth}${formData.avisDonorCenter}`;
-      const donorHashId = await generateSHA256Hash(personalInfoString);
 
       // Check if this hash already exists (duplicate registration)
       // This part of the code was removed as per the edit hint.
@@ -92,7 +93,6 @@ export default function DonorRegistration({ onBack, onSuccess }: DonorRegistrati
       // The error handling for duplicate registration is also removed.
 
       // Generate salt for additional security
-      const salt = generateSalt();
 
       // Create donor record with ONLY hashed data and operational information
       // This part of the code was removed as per the edit hint.

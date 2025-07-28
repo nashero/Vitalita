@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Heart, Cross, Users, Calendar, ShieldCheck, Clock, BarChart3, HelpCircle, Menu, X, ArrowRight, UserPlus, CheckCircle, MessageCircle, QrCode, Mail, Smartphone, CalendarDays, Award, Group, Star, Info, ArrowDown } from 'lucide-react';
+import { Heart, Cross, Calendar, ShieldCheck, Clock, BarChart3, Menu, X, CheckCircle, MessageCircle, QrCode, Mail, Award, Group, ArrowDown } from 'lucide-react';
 
 const stats = [
   { label: 'Donations per year', value: 500000, icon: <Heart className="w-7 h-7 text-red-600" /> },
