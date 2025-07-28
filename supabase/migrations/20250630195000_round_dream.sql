@@ -56,15 +56,21 @@ COMMENT ON COLUMN donors.last_donation_date IS 'Last donation date for schedulin
 COMMENT ON COLUMN donors.is_active IS 'Account active status';
 COMMENT ON COLUMN donors.avis_donor_center IS 'Associated donation center for operational purposes';
 
--- Ensure the avis_donor_center constraint still exists
+-- Ensure the avis_donor_center constraint exists with correct center names
 DO $$
 BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM information_schema.table_constraints
     WHERE constraint_name = 'chk_donors_avis_center'
+    AND table_name = 'donors'
   ) THEN
     ALTER TABLE donors ADD CONSTRAINT chk_donors_avis_center 
-    CHECK (avis_donor_center IN ('Pompano', 'Milan', 'Rome'));
+    CHECK (avis_donor_center IN ('Casalmaggiore', 'Gussola', 'Viadana', 'Piadena', 'Rivarolo del Re', 'Scandolara-Ravara', 'Calvatone'));
+  ELSE
+    -- Update existing constraint if it exists
+    ALTER TABLE donors DROP CONSTRAINT chk_donors_avis_center;
+    ALTER TABLE donors ADD CONSTRAINT chk_donors_avis_center 
+    CHECK (avis_donor_center IN ('Casalmaggiore', 'Gussola', 'Viadana', 'Piadena', 'Rivarolo del Re', 'Scandolara-Ravara', 'Calvatone'));
   END IF;
 END $$;
 
@@ -85,54 +91,60 @@ CREATE POLICY "Anyone can register as donor"
   TO public
   WITH CHECK (true);
 
--- Ensure audit logging is maintained for compliance
-CREATE OR REPLACE FUNCTION log_donor_access()
-RETURNS TRIGGER AS $$
+-- Create audit logging function (only if audit_logs table exists)
+DO $$
 BEGIN
-  -- Log access attempts for audit compliance
-  INSERT INTO audit_logs (
-    user_id,
-    user_type,
-    action,
-    details,
-    resource_type,
-    resource_id,
-    status
-  ) VALUES (
-    NEW.donor_hash_id,
-    'donor',
-    'donor_data_access',
-    'Donor data accessed via hash authentication',
-    'donor',
-    NEW.donor_hash_id,
-    'success'
-  );
-  
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'audit_logs') THEN
+    -- Ensure audit logging is maintained for compliance
+    CREATE OR REPLACE FUNCTION log_donor_access()
+    RETURNS TRIGGER AS $$
+    BEGIN
+      -- Log access attempts for audit compliance
+      INSERT INTO audit_logs (
+        user_id,
+        user_type,
+        action,
+        details,
+        resource_type,
+        resource_id,
+        status
+      ) VALUES (
+        NEW.donor_hash_id,
+        'donor',
+        'donor_data_access',
+        'Donor data accessed via hash authentication',
+        'donor',
+        NEW.donor_hash_id,
+        'success'
+      );
+      
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
 
--- Create trigger for audit logging
-DROP TRIGGER IF EXISTS trigger_log_donor_access ON donors;
-CREATE TRIGGER trigger_log_donor_access
-  AFTER SELECT ON donors
-  FOR EACH ROW
-  EXECUTE FUNCTION log_donor_access();
+    -- Create trigger for audit logging
+    DROP TRIGGER IF EXISTS trigger_log_donor_access ON donors;
+    CREATE TRIGGER trigger_log_donor_access
+      AFTER SELECT ON donors
+      FOR EACH ROW
+      EXECUTE FUNCTION log_donor_access();
 
--- Create audit log entry for GDPR compliance update
-INSERT INTO audit_logs (
-  user_type,
-  action,
-  details,
-  resource_type,
-  status
-) VALUES (
-  'system',
-  'gdpr_compliance_update',
-  'Donors table updated for GDPR compliance - removed all PII fields, maintaining hash-based authentication only',
-  'donors',
-  'success'
-);
+    -- Create audit log entry for GDPR compliance update
+    INSERT INTO audit_logs (
+      user_type,
+      action,
+      details,
+      resource_type,
+      status
+    ) VALUES (
+      'system',
+      'gdpr_compliance_update',
+      'Donors table updated for GDPR compliance - removed all PII fields, maintaining hash-based authentication only',
+      'donors',
+      'success'
+    );
+  END IF;
+END $$;
 
 -- Clean up backup table (uncomment if you want to remove it)
 -- DROP TABLE IF EXISTS donors_backup;
