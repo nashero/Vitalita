@@ -11,8 +11,8 @@ import {
   CalendarDays,
   Shield
 } from 'lucide-react';
+import { generateSHA256Hash } from '../utils/crypto';
 import { supabase } from '../lib/supabase';
-import { generateSHA256Hash, generateSalt } from '../utils/crypto';
 
 interface DonorRegistrationProps {
   onBack: () => void;
@@ -27,9 +27,13 @@ interface RegistrationFormData {
 }
 
 const AVIS_CENTERS = [
-  { value: 'Pompano', label: 'AVIS Pompano' },
-  { value: 'Milan', label: 'AVIS Milan' },
-  { value: 'Rome', label: 'AVIS Rome' },
+  { value: 'Casalmaggiore', label: 'AVIS Casalmaggiore' },
+  { value: 'Gussola', label: 'AVIS Gussola' },
+  { value: 'Viadana', label: 'AVIS Viadana' },
+  { value: 'Piadena', label: 'AVIS Piadena' },
+  { value: 'Rivarolo del Re', label: 'AVIS Rivarolo del Re' },
+  { value: 'Scandolara-Ravara', label: 'AVIS Scandolara-Ravara' },
+  { value: 'Calvatone', label: 'AVIS Calvatone' },
 ];
 
 export default function DonorRegistration({ onBack, onSuccess }: DonorRegistrationProps) {
@@ -82,10 +86,9 @@ export default function DonorRegistration({ onBack, onSuccess }: DonorRegistrati
       setLoading(true);
       setError('');
 
-      // Generate donor_hash_id from personal information (without donor ID)
-      // This will be the only identifier stored in the database
-      const personalInfoString = `${formData.firstName.trim()}${formData.lastName.trim()}${formData.dateOfBirth}${formData.avisDonorCenter}`;
-      const donorHashId = await generateSHA256Hash(personalInfoString);
+      // Generate donor_hash_id from personal information
+      const authString = `${formData.firstName}${formData.lastName}${formData.dateOfBirth}${formData.avisDonorCenter}`;
+      const donorHashId = await generateSHA256Hash(authString);
 
       // Check if this hash already exists (duplicate registration)
       const { data: existingDonor, error: checkError } = await supabase
@@ -94,17 +97,19 @@ export default function DonorRegistration({ onBack, onSuccess }: DonorRegistrati
         .eq('donor_hash_id', donorHashId)
         .single();
 
-      if (checkError && checkError.code !== 'PGRST116') {
-        throw checkError;
+      if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "not found" error
+        console.error('Error checking existing donor:', checkError);
+        setError('Registration failed. Please try again.');
+        return;
       }
 
       if (existingDonor) {
-        setError('A donor with this information already exists. Please check your details or contact support.');
+        setError('A donor account already exists with these details. Please contact AVIS staff for assistance.');
         return;
       }
 
       // Generate salt for additional security
-      const salt = generateSalt();
+      const salt = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
       // Create donor record with ONLY hashed data and operational information
       const { error: insertError } = await supabase
@@ -112,27 +117,28 @@ export default function DonorRegistration({ onBack, onSuccess }: DonorRegistrati
         .insert({
           donor_hash_id: donorHashId,
           salt: salt,
-          avis_donor_center: formData.avisDonorCenter,
           preferred_language: 'en',
           preferred_communication_channel: 'email',
           initial_vetting_status: false,
           total_donations_this_year: 0,
-          is_active: false, // Set to false initially - AVIS staff will activate after verification
+          last_donation_date: null,
+          is_active: false, // Will be activated by staff
+          avis_donor_center: formData.avisDonorCenter,
         });
 
       if (insertError) {
-        throw insertError;
+        console.error('Error creating donor record:', insertError);
+        setError('Registration failed. Please try again.');
+        return;
       }
 
-      // Create audit log for registration (without PII)
-      await supabase.from('audit_logs').insert({
-        user_id: donorHashId,
-        user_type: 'donor',
-        action: 'donor_registration',
-        details: `New donor registered at ${formData.avisDonorCenter} center - pending AVIS staff verification`,
-        resource_type: 'donor',
-        resource_id: donorHashId,
-        status: 'success'
+      // Create audit log for registration
+      await supabase.rpc('create_audit_log', {
+        p_user_id: donorHashId,
+        p_user_type: 'donor',
+        p_action: 'registration',
+        p_details: 'New donor registration submitted for verification',
+        p_status: 'success'
       });
 
       setSuccess('Registration successful! Your information has been securely processed and submitted for verification. AVIS staff will verify you as a donor and notify you when your account is activated. You will then be able to log in using your personal details.');

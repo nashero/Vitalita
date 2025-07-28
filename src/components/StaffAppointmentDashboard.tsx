@@ -23,7 +23,6 @@ import {
   Users,
   Activity
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { useStaffAuth } from '../hooks/useStaffAuth';
 
 interface Appointment {
@@ -123,14 +122,12 @@ export default function StaffAppointmentDashboard() {
 
   const fetchInitialData = async () => {
     try {
-      const { data: centers, error: centersError } = await supabase
-        .from('donation_centers')
-        .select('center_id, name, city')
-        .eq('is_active', true)
-        .order('name');
-
-      if (centersError) throw centersError;
-      setDonationCenters(centers || []);
+      const centers = [
+        { center_id: 'center1', name: 'Donation Center A', city: 'City A' },
+        { center_id: 'center2', name: 'Donation Center B', city: 'City B' },
+        { center_id: 'center3', name: 'Donation Center C', city: 'City A' },
+      ];
+      setDonationCenters(centers);
 
       await fetchAppointments();
     } catch (err) {
@@ -144,54 +141,70 @@ export default function StaffAppointmentDashboard() {
       setLoading(true);
       setError('');
 
-      let query = supabase
-        .from('appointments')
-        .select(`
-          *,
-          donation_centers:donation_center_id (
-            center_id,
-            name,
-            address,
-            city,
-            country,
-            contact_phone,
-            email
-          ),
-          donors:donor_hash_id (
-            donor_hash_id,
-            preferred_language,
-            preferred_communication_channel,
-            initial_vetting_status,
-            is_active
-          )
-        `)
-        .order('appointment_datetime', { ascending: true });
+      let data = [
+        {
+          appointment_id: 'apt1', donor_hash_id: 'donor1', staff_id: 'staff1', donation_center_id: 'center1',
+          appointment_datetime: '2023-10-26T10:00:00Z', donation_type: 'Blood', status: 'scheduled',
+          booking_channel: 'Online', confirmation_sent: false, reminder_sent: false,
+          creation_timestamp: '2023-10-25T10:00:00Z', last_updated_timestamp: '2023-10-25T10:00:00Z',
+          donation_centers: { center_id: 'center1', name: 'Donation Center A', address: 'Address A', city: 'City A', country: 'Country A', contact_phone: '123-456-7890', email: 'info@centera.com' },
+          donors: { donor_hash_id: 'donor1', preferred_language: 'English', preferred_communication_channel: 'Email', initial_vetting_status: true, is_active: true }
+        },
+        {
+          appointment_id: 'apt2', donor_hash_id: 'donor2', staff_id: 'staff1', donation_center_id: 'center2',
+          appointment_datetime: '2023-10-26T11:00:00Z', donation_type: 'Plasma', status: 'confirmed',
+          booking_channel: 'Phone', confirmation_sent: true, reminder_sent: false,
+          creation_timestamp: '2023-10-25T11:00:00Z', last_updated_timestamp: '2023-10-25T11:00:00Z',
+          donation_centers: { center_id: 'center2', name: 'Donation Center B', address: 'Address B', city: 'City B', country: 'Country B', contact_phone: '987-654-3210', email: 'info@centerb.com' },
+          donors: { donor_hash_id: 'donor2', preferred_language: 'Spanish', preferred_communication_channel: 'SMS', initial_vetting_status: false, is_active: true }
+        },
+        {
+          appointment_id: 'apt3', donor_hash_id: 'donor1', staff_id: 'staff2', donation_center_id: 'center1',
+          appointment_datetime: '2023-10-27T09:00:00Z', donation_type: 'Blood', status: 'cancelled',
+          booking_channel: 'Walk-in', confirmation_sent: false, reminder_sent: false,
+          creation_timestamp: '2023-10-26T09:00:00Z', last_updated_timestamp: '2023-10-26T09:00:00Z',
+          donation_centers: { center_id: 'center1', name: 'Donation Center A', address: 'Address A', city: 'City A', country: 'Country A', contact_phone: '123-456-7890', email: 'info@centera.com' },
+          donors: { donor_hash_id: 'donor1', preferred_language: 'English', preferred_communication_channel: 'Email', initial_vetting_status: true, is_active: true }
+        },
+        {
+          appointment_id: 'apt4', donor_hash_id: 'donor3', staff_id: 'staff1', donation_center_id: 'center3',
+          appointment_datetime: '2023-10-27T10:00:00Z', donation_type: 'Plasma', status: 'completed',
+          booking_channel: 'Online', confirmation_sent: true, reminder_sent: true,
+          creation_timestamp: '2023-10-26T10:00:00Z', last_updated_timestamp: '2023-10-26T10:00:00Z',
+          donation_centers: { center_id: 'center3', name: 'Donation Center C', address: 'Address C', city: 'City A', country: 'Country A', contact_phone: '111-222-3333', email: 'info@centerc.com' },
+          donors: { donor_hash_id: 'donor3', preferred_language: 'English', preferred_communication_channel: 'Email', initial_vetting_status: true, is_active: true }
+        },
+        {
+          appointment_id: 'apt5', donor_hash_id: 'donor2', staff_id: 'staff2', donation_center_id: 'center2',
+          appointment_datetime: '2023-10-28T11:00:00Z', donation_type: 'Blood', status: 'no-show',
+          booking_channel: 'Phone', confirmation_sent: false, reminder_sent: false,
+          creation_timestamp: '2023-10-27T11:00:00Z', last_updated_timestamp: '2023-10-27T11:00:00Z',
+          donation_centers: { center_id: 'center2', name: 'Donation Center B', address: 'Address B', city: 'City B', country: 'Country B', contact_phone: '987-654-3210', email: 'info@centerb.com' },
+          donors: { donor_hash_id: 'donor2', preferred_language: 'Spanish', preferred_communication_channel: 'SMS', initial_vetting_status: false, is_active: true }
+        },
+      ];
 
       // Apply filters
       if (selectedCenter) {
-        query = query.eq('donation_center_id', selectedCenter);
+        data = data.filter(appointment => appointment.donation_center_id === selectedCenter);
       }
       if (selectedStatus) {
-        query = query.eq('status', selectedStatus);
+        data = data.filter(appointment => appointment.status === selectedStatus);
       }
       if (selectedDate) {
         const startDate = new Date(selectedDate);
         const endDate = new Date(selectedDate);
         endDate.setDate(endDate.getDate() + 1);
-        query = query.gte('appointment_datetime', startDate.toISOString())
-                   .lt('appointment_datetime', endDate.toISOString());
+        data = data.filter(appointment => {
+          const appointmentDate = new Date(appointment.appointment_datetime);
+          return appointmentDate >= startDate && appointmentDate < endDate;
+        });
       }
-
-      const { data, error } = await query;
-
-      if (error) throw error;
-
-      let filteredData = data || [];
 
       // Apply search filter
       if (searchTerm) {
         const searchLower = searchTerm.toLowerCase();
-        filteredData = filteredData.filter(appointment => 
+        data = data.filter(appointment => 
           appointment.donor_hash_id.toLowerCase().includes(searchLower) ||
           appointment.donation_centers?.name.toLowerCase().includes(searchLower) ||
           appointment.donation_type.toLowerCase().includes(searchLower) ||
@@ -199,7 +212,7 @@ export default function StaffAppointmentDashboard() {
         );
       }
 
-      setAppointments(filteredData);
+      setAppointments(data);
     } catch (err) {
       console.error('Error fetching appointments:', err);
       setError('Failed to load appointments');
@@ -213,14 +226,18 @@ export default function StaffAppointmentDashboard() {
       setLoading(true);
       setError('');
 
-      const { data, error } = await supabase
-        .from('audit_logs')
-        .select('*')
-        .order('timestamp', { ascending: false })
-        .range((auditPage - 1) * auditPageSize, auditPage * auditPageSize - 1);
+      const data = [
+        { log_id: 'log1', timestamp: '2023-10-26T10:00:00Z', user_id: 'staff1', user_type: 'staff', action: 'create_appointment', details: 'Created new appointment', resource_type: 'appointment', resource_id: 'apt1', status: 'success' },
+        { log_id: 'log2', timestamp: '2023-10-26T10:05:00Z', user_id: 'staff1', user_type: 'staff', action: 'update_appointment_status', details: 'Changed appointment status to confirmed', resource_type: 'appointment', resource_id: 'apt2', status: 'success' },
+        { log_id: 'log3', timestamp: '2023-10-26T10:10:00Z', user_id: 'staff2', user_type: 'staff', action: 'cancel_appointment', details: 'Cancelled appointment', resource_type: 'appointment', resource_id: 'apt3', status: 'success' },
+        { log_id: 'log4', timestamp: '2023-10-26T10:15:00Z', user_id: 'staff1', user_type: 'staff', action: 'send_reminder', details: 'Sent reminder for appointment', resource_type: 'appointment', resource_id: 'apt1', status: 'success' },
+        { log_id: 'log5', timestamp: '2023-10-26T10:20:00Z', user_id: 'staff2', user_type: 'staff', action: 'send_confirmation', details: 'Sent confirmation for appointment', resource_type: 'appointment', resource_id: 'apt2', status: 'success' },
+      ];
 
-      if (error) throw error;
-      setAuditLogs(data || []);
+      // Pagination
+      const startIndex = (auditPage - 1) * auditPageSize;
+      const endIndex = startIndex + auditPageSize;
+      setAuditLogs(data.slice(startIndex, endIndex));
     } catch (err) {
       console.error('Error fetching audit logs:', err);
       setError('Failed to load audit logs');
@@ -231,17 +248,7 @@ export default function StaffAppointmentDashboard() {
 
   const updateAppointmentStatus = async (appointmentId: string, newStatus: AppointmentStatus) => {
     try {
-      const { error } = await supabase
-        .from('appointments')
-        .update({ 
-          status: newStatus,
-          last_updated_timestamp: new Date().toISOString()
-        })
-        .eq('appointment_id', appointmentId);
-
-      if (error) throw error;
-
-      // Update local state
+      // Simulate update in local state
       setAppointments(prev => 
         prev.map(apt => 
           apt.appointment_id === appointmentId 
@@ -250,16 +257,10 @@ export default function StaffAppointmentDashboard() {
         )
       );
 
-      // Create audit log entry
-      await supabase.from('audit_logs').insert({
-        user_id: staff?.staff_id,
-        user_type: 'staff',
-        action: 'update_appointment_status',
-        details: `Changed appointment status to ${newStatus}`,
-        resource_type: 'appointment',
-        resource_id: appointmentId,
-        status: 'success'
-      });
+      // Simulate audit log creation
+      console.log(`Simulating update for appointment ${appointmentId} to status ${newStatus}`);
+      // In a real app, you would call a Supabase function here
+      // await supabase.from('audit_logs').insert({ ... });
 
     } catch (err) {
       console.error('Error updating appointment status:', err);

@@ -1,6 +1,6 @@
 import { useState, useEffect, createContext, useContext } from 'react';
-import { supabase } from '../lib/supabase';
 import { generateSHA256Hash } from '../utils/crypto';
+import { supabase } from '../lib/supabase';
 
 export interface Donor {
   donor_hash_id: string;
@@ -59,75 +59,49 @@ export function useAuthProvider() {
     try {
       setLoading(true);
 
-      // Create a hash from the provided authentication data (without donorId)
-      // This hash should match the donor_hash_id stored in the database
+      // Create a hash from the provided authentication data
       const authString = `${authData.firstName}${authData.lastName}${authData.dateOfBirth}${authData.avisDonorCenter}`;
       const authHash = await generateSHA256Hash(authString);
 
       // Try to find a donor with matching hash
-      const { data: donorData, error: fetchError } = await supabase
+      const { data: donorData, error } = await supabase
         .from('donors')
         .select('*')
         .eq('donor_hash_id', authHash)
+        .eq('is_active', true)
         .single();
 
-      if (fetchError || !donorData) {
-        // Create audit log for failed login attempt
-        await supabase.from('audit_logs').insert({
-          user_id: authHash,
-          user_type: 'donor',
-          action: 'donor_login_failed',
-          details: `Failed login attempt with hash: ${authHash.substring(0, 8)}...`,
-          resource_type: 'donor',
-          resource_id: authHash,
-          status: 'failure'
-        });
-
-        return { success: false, error: 'Invalid credentials. Please check your information and try again.' };
+      if (error) {
+        console.error('Database error:', error);
+        return { success: false, error: 'Authentication failed. Please check your information.' };
       }
 
-      // Check if account is active (verified by AVIS staff)
-      if (!donorData.is_active) {
-        await supabase.from('audit_logs').insert({
-          user_id: donorData.donor_hash_id,
-          user_type: 'donor',
-          action: 'donor_login_inactive',
-          details: `Login attempt on inactive account from ${donorData.avis_donor_center}`,
-          resource_type: 'donor',
-          resource_id: donorData.donor_hash_id,
-          status: 'failure'
-        });
-
-        return { 
-          success: false, 
-          error: 'Your account is pending verification by AVIS staff. Please wait for activation notification or contact your AVIS center.' 
-        };
+      if (!donorData) {
+        return { success: false, error: 'No active donor account found with these details.' };
       }
 
-      // Create authenticated donor object (no PII stored)
+      // Create donor object with all required fields
       const authenticatedDonor: Donor = {
         donor_hash_id: donorData.donor_hash_id,
-        preferred_language: donorData.preferred_language,
-        preferred_communication_channel: donorData.preferred_communication_channel,
-        initial_vetting_status: donorData.initial_vetting_status,
-        total_donations_this_year: donorData.total_donations_this_year,
+        preferred_language: donorData.preferred_language || 'en',
+        preferred_communication_channel: donorData.preferred_communication_channel || 'email',
+        initial_vetting_status: donorData.initial_vetting_status || false,
+        total_donations_this_year: donorData.total_donations_this_year || 0,
         last_donation_date: donorData.last_donation_date,
         is_active: donorData.is_active,
-        avis_donor_center: donorData.avis_donor_center,
+        avis_donor_center: donorData.avis_donor_center || authData.avisDonorCenter,
       };
 
       setDonor(authenticatedDonor);
       localStorage.setItem('donor', JSON.stringify(authenticatedDonor));
 
       // Create audit log for successful login
-      await supabase.from('audit_logs').insert({
-        user_id: donorData.donor_hash_id,
-        user_type: 'donor',
-        action: 'donor_login_success',
-        details: `Successful login via hash authentication from ${donorData.avis_donor_center}`,
-        resource_type: 'donor',
-        resource_id: donorData.donor_hash_id,
-        status: 'success'
+      await supabase.rpc('create_audit_log', {
+        p_user_id: authenticatedDonor.donor_hash_id,
+        p_user_type: 'donor',
+        p_action: 'login',
+        p_details: 'Donor successfully logged in',
+        p_status: 'success'
       });
 
       return { success: true };
@@ -142,15 +116,19 @@ export function useAuthProvider() {
   const logout = () => {
     if (donor) {
       // Create audit log for logout
-      supabase.from('audit_logs').insert({
-        user_id: donor.donor_hash_id,
-        user_type: 'donor',
-        action: 'donor_logout',
-        details: 'Donor logged out successfully',
-        resource_type: 'donor',
-        resource_id: donor.donor_hash_id,
-        status: 'success'
-      });
+      (async () => {
+        try {
+          await supabase.rpc('create_audit_log', {
+            p_user_id: donor.donor_hash_id,
+            p_user_type: 'donor',
+            p_action: 'logout',
+            p_details: 'Donor logged out',
+            p_status: 'success'
+          });
+        } catch (error) {
+          console.error('Failed to create audit log:', error);
+        }
+      })();
     }
 
     setDonor(null);

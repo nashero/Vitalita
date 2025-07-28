@@ -1,6 +1,6 @@
 import { useState, useEffect, createContext, useContext } from 'react';
-import { supabase } from '../lib/supabase';
 import { generateSHA256Hash } from '../utils/crypto';
+import { supabase } from '../lib/supabase';
 
 export interface StaffRole {
   role_id: string;
@@ -62,7 +62,7 @@ export function useStaffAuthProvider() {
       setLoading(true);
 
       // First, get the staff member by username
-      const { data: staffData, error: fetchError } = await supabase
+      const { data: staffData, error: staffError } = await supabase
         .from('staff')
         .select(`
           *,
@@ -76,7 +76,12 @@ export function useStaffAuthProvider() {
         .eq('is_active', true)
         .single();
 
-      if (fetchError || !staffData) {
+      if (staffError) {
+        console.error('Staff lookup error:', staffError);
+        return { success: false, error: 'Invalid username or password' };
+      }
+
+      if (!staffData) {
         return { success: false, error: 'Invalid username or password' };
       }
 
@@ -95,7 +100,7 @@ export function useStaffAuthProvider() {
         .eq('staff_id', staffData.staff_id);
 
       if (updateError) {
-        console.warn('Failed to update last login timestamp:', updateError);
+        console.error('Failed to update last login timestamp:', updateError);
       }
 
       // Create staff object with role information
@@ -121,6 +126,15 @@ export function useStaffAuthProvider() {
       setStaff(authenticatedStaff);
       localStorage.setItem('staff', JSON.stringify(authenticatedStaff));
 
+      // Create audit log for successful login
+      await supabase.rpc('create_audit_log', {
+        p_user_id: authenticatedStaff.staff_id,
+        p_user_type: 'staff',
+        p_action: 'login',
+        p_details: 'Staff member successfully logged in',
+        p_status: 'success'
+      });
+
       return { success: true };
     } catch (error) {
       console.error('Staff login error:', error);
@@ -131,6 +145,23 @@ export function useStaffAuthProvider() {
   };
 
   const logout = () => {
+    if (staff) {
+      // Create audit log for logout
+      (async () => {
+        try {
+          await supabase.rpc('create_audit_log', {
+            p_user_id: staff.staff_id,
+            p_user_type: 'staff',
+            p_action: 'logout',
+            p_details: 'Staff member logged out',
+            p_status: 'success'
+          });
+        } catch (error) {
+          console.error('Failed to create audit log:', error);
+        }
+      })();
+    }
+
     setStaff(null);
     localStorage.removeItem('staff');
   };

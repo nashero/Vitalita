@@ -15,8 +15,8 @@ import {
   CheckCircle,
   Loader
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
+import { supabase } from '../lib/supabase';
 
 interface DonationCenter {
   center_id: string;
@@ -85,11 +85,12 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       setLoading(true);
       setError('');
 
+      // Fetch available slots from the database
       const { data: slots, error: slotsError } = await supabase
         .from('availability_slots')
         .select(`
           *,
-          donation_centers:center_id (
+          donation_centers!inner (
             center_id,
             name,
             address,
@@ -102,19 +103,34 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         .eq('donation_type', donationType)
         .eq('is_available', true)
         .gt('slot_datetime', new Date().toISOString())
-        .order('slot_datetime', { ascending: true })
-        .limit(20);
+        .order('slot_datetime', { ascending: true });
 
       if (slotsError) {
-        throw slotsError;
+        console.error('Error fetching slots:', slotsError);
+        setError('Failed to load available appointments. Please try again.');
+        return;
       }
 
-      const slotsWithCenter = slots?.map(slot => ({
-        ...slot,
-        center: slot.donation_centers
+      // Transform the data to match our interface
+      const transformedSlots: AvailabilitySlot[] = slots?.map(slot => ({
+        slot_id: slot.slot_id,
+        center_id: slot.center_id,
+        slot_datetime: slot.slot_datetime,
+        donation_type: slot.donation_type,
+        capacity: slot.capacity,
+        current_bookings: slot.current_bookings,
+        center: slot.donation_centers ? {
+          center_id: slot.donation_centers.center_id,
+          name: slot.donation_centers.name,
+          address: slot.donation_centers.address,
+          city: slot.donation_centers.city,
+          country: slot.donation_centers.country,
+          contact_phone: slot.donation_centers.contact_phone,
+          email: slot.donation_centers.email,
+        } : undefined,
       })) || [];
 
-      setAvailableSlots(slotsWithCenter);
+      setAvailableSlots(transformedSlots);
     } catch (err) {
       console.error('Error fetching slots:', err);
       setError('Failed to load available appointments. Please try again.');
@@ -141,7 +157,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       setLoading(true);
       setError('');
 
-      // Create the appointment
+      // Create the appointment record
       const { data: appointment, error: appointmentError } = await supabase
         .from('appointments')
         .insert({
@@ -151,28 +167,41 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           donation_type: selectedType,
           status: 'scheduled',
           booking_channel: 'online',
-          confirmation_sent: true,
+          confirmation_sent: false,
           reminder_sent: false,
         })
         .select()
         .single();
 
       if (appointmentError) {
-        throw appointmentError;
+        console.error('Error creating appointment:', appointmentError);
+        setError('Failed to book appointment. Please try again.');
+        return;
       }
 
-      // Update the slot's current bookings
+      // Update the availability slot to increment current_bookings
       const { error: slotUpdateError } = await supabase
         .from('availability_slots')
-        .update({
-          current_bookings: selectedSlot.current_bookings + 1,
-          is_available: selectedSlot.current_bookings + 1 < selectedSlot.capacity
+        .update({ 
+          current_bookings: selectedSlot.current_bookings + 1 
         })
         .eq('slot_id', selectedSlot.slot_id);
 
       if (slotUpdateError) {
-        console.warn('Failed to update slot bookings:', slotUpdateError);
+        console.error('Error updating slot:', slotUpdateError);
+        // Note: We don't fail the booking here as the appointment was created
       }
+
+      // Create audit log for the booking
+      await supabase.rpc('create_audit_log', {
+        p_user_id: donor.donor_hash_id,
+        p_user_type: 'donor',
+        p_action: 'appointment_booking',
+        p_details: `Appointment booked for ${selectedType} donation on ${new Date(selectedSlot.slot_datetime).toLocaleDateString()}`,
+        p_resource_type: 'appointments',
+        p_resource_id: appointment.appointment_id,
+        p_status: 'success'
+      });
 
       setBookingSuccess(true);
       setCurrentStep('success');
