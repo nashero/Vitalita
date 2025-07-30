@@ -63,17 +63,8 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
     setInputText('');
     setIsLoading(true);
 
-    // Debug logging
-    console.log('Chat Widget Debug:', {
-      envUrl: CHAT_CONFIG.debug.envUrl,
-      finalUrl: CHAT_CONFIG.debug.finalUrl,
-      webhookUrl: n8nWebhookUrl,
-      message: text.trim()
-    });
-
     try {
       // Send message to n8n webhook
-      console.log('Sending message to n8n webhook:', n8nWebhookUrl);
       
       const requestBody = {
         message: text.trim(),
@@ -83,7 +74,6 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         source: 'vitalita-chat-widget'
       };
       
-      console.log('Request body:', requestBody);
       
       const response = await fetch(n8nWebhookUrl, {
         method: 'POST',
@@ -94,11 +84,9 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         body: JSON.stringify(requestBody)
       });
 
-      console.log('Response status:', response.status, response.statusText);
       
       if (response.ok) {
         const data = await response.json();
-        console.log('n8n Response:', data);
         
         // Handle different response formats
         let responseText = 'Thank you for your message. I\'ll get back to you soon!';
@@ -121,32 +109,6 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         };
         setMessages(prev => [...prev, botMessage]);
       } else {
-        // Try to get error details from response
-        let errorDetails = '';
-        try {
-          const errorData = await response.text();
-          errorDetails = errorData;
-        } catch (e) {
-          // ignore
-        }
-        // ELABORATE ERROR MESSAGE
-        console.error(
-          [
-            '❌ [Vitalita Chat Widget] n8n Webhook Connection Failed!',
-            `• Status: ${response.status} ${response.statusText}`,
-            `• Webhook URL: ${n8nWebhookUrl}`,
-            `• Request Body: ${JSON.stringify(requestBody, null, 2)}`,
-            `• Response Headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}`,
-            errorDetails ? `• Response Body: ${errorDetails}` : '',
-            '---',
-            'Troubleshooting steps:',
-            '1. Check that the n8n workflow is active and the webhook URL is correct.',
-            '2. Ensure your n8n instance allows CORS requests from this domain.',
-            '3. Check n8n logs for errors or workflow execution failures.',
-            '4. If using authentication, ensure credentials are correct.',
-            '5. Try the Test Connection button in development mode.',
-          ].filter(Boolean).join('\n')
-        );
         // Fallback response if n8n is not available
         const fallbackMessage: Message = {
           id: (Date.now() + 1).toString(),
@@ -157,8 +119,6 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         setMessages(prev => [...prev, fallbackMessage]);
       }
     } catch (error) {
-      console.error('Error sending message to n8n:', error);
-      console.error('Webhook URL used:', n8nWebhookUrl);
       // Fallback response on error
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -184,53 +144,8 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
     }
   };
 
-  // Test webhook connection
-  const testWebhookConnection = async () => {
-    console.log('Testing webhook connection...');
-    try {
-      const response = await fetch(n8nWebhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: 'Test connection',
-          timestamp: new Date().toISOString(),
-          sessionId: 'test-connection',
-          source: 'vitalita-chat-widget-test'
-        })
-      });
-      
-      console.log('Test response status:', response.status);
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Test response data:', data);
-        alert('Webhook connection successful!');
-      } else {
-        console.error('Test failed:', response.status, response.statusText);
-        alert('Webhook connection failed. Check console for details.');
-      }
-    } catch (error) {
-      console.error('Test connection error:', error);
-      alert('Webhook connection error. Check console for details.');
-    }
-  };
-
   return (
     <div className="fixed bottom-4 right-4 z-50">
-      {/* Debug Info (only in development) */}
-      {import.meta.env.DEV && (
-        <div className="mb-2 text-xs text-gray-500 bg-white p-2 rounded border">
-          <div>Webhook: {CHAT_CONFIG.debug.envUrl}</div>
-          <div>URL: {n8nWebhookUrl}</div>
-          <button
-            onClick={testWebhookConnection}
-            className="mt-1 px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
-          >
-            Test Connection
-          </button>
-        </div>
-      )}
       
       {/* Chat Toggle Button */}
       {!isOpen && (
