@@ -121,19 +121,32 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         };
         setMessages(prev => [...prev, botMessage]);
       } else {
-        console.error('n8n Webhook Error:', response.status, response.statusText);
-        console.error('Response headers:', Object.fromEntries(response.headers.entries()));
-        
         // Try to get error details from response
         let errorDetails = '';
         try {
           const errorData = await response.text();
-          console.error('Error response body:', errorData);
           errorDetails = errorData;
         } catch (e) {
-          console.error('Could not read error response body');
+          // ignore
         }
-        
+        // ELABORATE ERROR MESSAGE
+        console.error(
+          [
+            '❌ [Vitalita Chat Widget] n8n Webhook Connection Failed!',
+            `• Status: ${response.status} ${response.statusText}`,
+            `• Webhook URL: ${n8nWebhookUrl}`,
+            `• Request Body: ${JSON.stringify(requestBody, null, 2)}`,
+            `• Response Headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}`,
+            errorDetails ? `• Response Body: ${errorDetails}` : '',
+            '---',
+            'Troubleshooting steps:',
+            '1. Check that the n8n workflow is active and the webhook URL is correct.',
+            '2. Ensure your n8n instance allows CORS requests from this domain.',
+            '3. Check n8n logs for errors or workflow execution failures.',
+            '4. If using authentication, ensure credentials are correct.',
+            '5. Try the Test Connection button in development mode.',
+          ].filter(Boolean).join('\n')
+        );
         // Fallback response if n8n is not available
         const fallbackMessage: Message = {
           id: (Date.now() + 1).toString(),
