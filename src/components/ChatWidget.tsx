@@ -88,19 +88,17 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
       if (response.ok) {
         const data = await response.json();
         
-        // Handle different response formats
         let responseText = 'Thank you for your message. I\'ll get back to you soon!';
-        
-        if (data.response) {
-          responseText = data.response;
-        } else if (data.message) {
-          responseText = data.message;
-        } else if (data.text) {
-          responseText = data.text;
+
+        if (Array.isArray(data) && data.length > 0 && data[0] && typeof data[0].output === 'string') {
+          responseText = data[0].output;
+        } else if (typeof data === 'object' && data !== null && typeof data.output === 'string') {
+          responseText = data.output;
         } else if (typeof data === 'string') {
           responseText = data;
         }
-        
+
+        // Now display responseText in the chat
         const botMessage: Message = {
           id: (Date.now() + 1).toString(),
           text: responseText,
