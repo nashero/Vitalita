@@ -28,13 +28,13 @@ interface RegistrationFormData {
 }
 
 const AVIS_CENTERS = [
-  { value: 'Casalmaggiore', label: 'AVIS Casalmaggiore' },
-  { value: 'Gussola', label: 'AVIS Gussola' },
-  { value: 'Viadana', label: 'AVIS Viadana' },
-  { value: 'Piadena', label: 'AVIS Piadena' },
-  { value: 'Rivarolo del Re', label: 'AVIS Rivarolo del Re' },
-  { value: 'Scandolara-Ravara', label: 'AVIS Scandolara-Ravara' },
-  { value: 'Calvatone', label: 'AVIS Calvatone' },
+  { value: 'Avis Casalmaggiore', label: 'AVIS Casalmaggiore' },
+  { value: 'Avis Gussola', label: 'AVIS Gussola' },
+  { value: 'Avis Viadana', label: 'AVIS Viadana' },
+  { value: 'Avis Piadena', label: 'AVIS Piadena' },
+  { value: 'Avis Rivarolo del Re', label: 'AVIS Rivarolo del Re' },
+  { value: 'Avis Scandolara-Ravara', label: 'AVIS Scandolara-Ravara' },
+  { value: 'Avis Calvatone', label: 'AVIS Calvatone' },
 ];
 
 export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }: DonorRegistrationProps) {

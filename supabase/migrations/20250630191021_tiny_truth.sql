@@ -108,7 +108,7 @@ BEGIN
     WHERE constraint_name = 'chk_donors_avis_center'
   ) THEN
     ALTER TABLE donors ADD CONSTRAINT chk_donors_avis_center 
-    CHECK (avis_donor_center IN ('Pompano', 'Milan', 'Rome'));
+    CHECK (avis_donor_center IN ('AVIS Casalmaggiore','AVIS Gussola','AVIS Viadana','AVIS Piadena','AVIS Rivarolo del Re','AVIS Scandolara-Ravara','AVIS Calvatone'));
   END IF;
 END $$;
 

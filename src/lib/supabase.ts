@@ -2,20 +2,20 @@ import { createClient } from '@supabase/supabase-js';
 
 // Try to get from environment variables, fallback to hardcoded for testing
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://pxvimagfvontwxygmtgpi.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4dmltYWdmdm9ud3h5Z210Z3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEyODg4NjcsImV4cCI6MjA2Njg2NDg2N30.U0ZAojLgRS680JpP2HXZhm1Q_vce6i8o9k5zZ3Jx6LA';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4dmltYWdmdm9ud3h5Z210Z3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEyODg4NjcsImV4cCI6MjA2Njg2NDg2N30.U0ZAojLgRS680JpP2HXZhm1Q_vce6i8o9k5zZ3Jx6LA';
 
 // Debug logging to help identify environment variable issues
 console.log('Environment check:', {
   envUrl: import.meta.env.VITE_SUPABASE_URL ? 'Set' : 'Missing',
-  envKey: import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Set' : 'Missing',
+  envKey: 'Set (hardcoded anon key)',
   finalUrl: supabaseUrl ? 'Set' : 'Missing',
-  finalKey: supabaseAnonKey ? 'Set' : 'Missing'
+  finalKey: 'Set (hardcoded anon key)',
 });
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error('Missing Supabase credentials:', {
     url: supabaseUrl,
-    key: supabaseAnonKey ? 'Present' : 'Missing'
+    key: supabaseAnonKey ? 'Present' : 'Missing',
   });
   throw new Error('Missing Supabase credentials. Please check your .env file.');
 }
@@ -29,38 +29,11 @@ export async function testSupabaseConnection() {
     console.log('Using URL:', supabaseUrl);
     console.log('Using Key:', supabaseAnonKey ? 'Present' : 'Missing');
     
-    // First test basic client creation
-    if (!supabaseUrl || !supabaseAnonKey) {
-      return { 
-        success: false, 
-        error: 'Missing Supabase credentials. Please check your .env file.' 
-      };
-    }
-    
     // Test a simple query
     const { data, error } = await supabase.from('donation_centers').select('count').limit(1);
     
     if (error) {
       console.error('Supabase connection failed:', error);
-      
-      // Provide more specific error messages
-      if (error.message.includes('relation') && error.message.includes('does not exist')) {
-        return { 
-          success: false, 
-          error: 'Database table not found. Please run your Supabase migrations.' 
-        };
-      } else if (error.message.includes('JWT')) {
-        return { 
-          success: false, 
-          error: 'Invalid API key. Please check your Supabase credentials.' 
-        };
-      } else if (error.message.includes('fetch')) {
-        return { 
-          success: false, 
-          error: 'Network error. Please check your internet connection and Supabase URL.' 
-        };
-      }
-      
       return { success: false, error: error.message };
     } else {
       console.log('Supabase connection successful!');

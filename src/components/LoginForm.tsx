@@ -8,9 +8,13 @@ interface LoginFormProps {
 }
 
 const AVIS_CENTERS = [
-  { value: 'Pompano', label: 'AVIS Pompano' },
-  { value: 'Milan', label: 'AVIS Milan' },
-  { value: 'Rome', label: 'AVIS Rome' },
+  { value: 'AVIS Casalmaggiore', label: 'AVIS Casalmaggiore' },
+  { value: 'AVIS Gussola', label: 'AVIS Gussola' },
+  { value: 'AVIS Viadana', label: 'AVIS Viadana' },
+   { value: 'AVIS Piadena', label: 'AVIS Piadena' },
+  { value: 'AVIS Rivarolo del Re', label: 'AVIS Rivarolo del Re' },
+  { value: 'AVIS Scandolara-Ravara', label: 'AVIS Scandolara-Ravara' },
+  { value: 'AVIS Calvatone', label: 'AVIS Calvatone' },
 ];
 
 export default function LoginForm({ onShowRegistration, onBackToLanding }: LoginFormProps) {
