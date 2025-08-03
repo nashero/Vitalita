@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Heart, Cross, Calendar, ShieldCheck, Clock, BarChart3, Menu, X, CheckCircle, MessageCircle, QrCode, Mail, Award, Group, ArrowDown } from 'lucide-react';
-import { supabase, testSupabaseConnection } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 
 const stats = [
   { label: 'Donations per year', value: 500000, icon: <Heart className="w-7 h-7 text-red-600" /> },
@@ -31,10 +31,10 @@ const highlights = [
 ];
 
 const benefits = [
-  { icon: <Heart className="w-8 h-8 text-red-600" />, title: 'Save Lives', desc: 'A single donation can save up to 3 people.' },
-  { icon: <ShieldCheck className="w-8 h-8 text-red-600" />, title: 'Safety', desc: 'Highest safety and hygiene standards.' },
-  { icon: <Group className="w-8 h-8 text-red-600" />, title: 'Community', desc: 'Join the great AWS family.' },
-  { icon: <Award className="w-8 h-8 text-red-600" />, title: 'Recognition', desc: 'Receive certificates for your social contribution.' },
+  { icon: <Calendar className="w-8 h-8 text-red-600" />, title: 'Easy Booking', desc: 'Reserve in a few clicks.' },
+  { icon: <ShieldCheck className="w-8 h-8 text-red-600" />, title: 'Maximum Safety', desc: 'All centers certified.' },
+  { icon: <Heart className="w-8 h-8 text-red-600" />, title: 'Save Lives', desc: 'One donation saves up to 3 people.' },
+  { icon: <Clock className="w-8 h-8 text-red-600" />, title: 'Flexible Hours', desc: 'Times that fit your schedule.' },
 ];
 
 function useAnimatedCounter(target: number, duration = 1200) {
@@ -66,10 +66,9 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal }) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<string>('Testing connection...');
-  const [connectionDetails, setConnectionDetails] = useState<string>('');
+  const [secondaryMenuOpen, setSecondaryMenuOpen] = useState(false);
   
-  console.log('LandingPage: Component rendering', { onDonorPortal, onStaffPortal });
+
   
   const sectionRefs = {
     hero: useRef<HTMLDivElement>(null),
@@ -80,32 +79,25 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
     footer: useRef<HTMLDivElement>(null),
   };
 
-  // Test Supabase connection
+
+
+  // Close secondary menu when clicking outside
   useEffect(() => {
-    console.log('LandingPage: useEffect running');
-    const testConnection = async () => {
-      try {
-        console.log('LandingPage: Testing Supabase connection...');
-        const result = await testSupabaseConnection();
-        
-        if (result.success) {
-          console.log('Supabase connection successful');
-          setConnectionStatus('Connected to Supabase');
-          setConnectionDetails('Database connection working');
-        } else {
-          console.error('Supabase connection failed:', result.error);
-          setConnectionStatus('Connection failed');
-          setConnectionDetails(result.error?.toString() || 'Unknown error');
-        }
-      } catch (err) {
-        console.error('Connection test failed:', err);
-        setConnectionStatus('Connection test failed');
-        setConnectionDetails(err?.toString() || 'Unknown error');
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.secondary-menu')) {
+        setSecondaryMenuOpen(false);
       }
     };
-    
-    testConnection();
-  }, []);
+
+    if (secondaryMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [secondaryMenuOpen]);
 
   const handleNav = (to: keyof typeof sectionRefs) => {
     setMenuOpen(false);
@@ -125,9 +117,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
     { label: 'Home', to: 'hero', onClick: undefined },
     { label: 'Book Donation', to: 'process', onClick: undefined },
     { label: 'Donor Portal', to: 'registration', onClick: onDonorPortal },
+    { label: 'FAQ', to: 'footer', onClick: undefined },
+  ];
+
+  // Secondary menu items
+  const secondaryNavItems = [
     { label: 'Analytics', to: 'statistics', onClick: undefined },
     { label: 'Staff Area', to: 'features', onClick: onStaffPortal },
-    { label: 'FAQ', to: 'footer', onClick: undefined },
   ];
 
   return (
@@ -140,16 +136,52 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
               <Heart className="w-7 h-7 mr-1" fill="#DC2626" /> Vitalita
             </span>
           </div>
-          <div className="hidden md:flex space-x-8 text-base font-medium">
+          <div className="hidden md:flex items-center space-x-8 text-base font-medium">
             {navLinks.map(link => (
               <button
                 key={link.label}
                 onClick={link.onClick ? link.onClick : () => handleNav(link.to as keyof typeof sectionRefs)}
-                className="hover:text-red-600 transition-colors focus:outline-none"
+                className={`transition-all focus:outline-none ${
+                  link.label === 'Book Donation'
+                    ? 'bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 shadow-md hover:shadow-lg transform hover:scale-105'
+                    : 'hover:text-red-600'
+                }`}
               >
                 {link.label}
               </button>
             ))}
+            
+            {/* Secondary Menu Dropdown */}
+            <div className="relative secondary-menu">
+              <button
+                onClick={() => setSecondaryMenuOpen(!secondaryMenuOpen)}
+                className="flex items-center space-x-1 hover:text-red-600 transition-colors focus:outline-none"
+              >
+                <span>More</span>
+                <ArrowDown className={`w-4 h-4 transition-transform ${secondaryMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {secondaryMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                  {secondaryNavItems.map(link => (
+                    <button
+                      key={link.label}
+                      onClick={() => {
+                        setSecondaryMenuOpen(false);
+                        if (link.onClick) {
+                          link.onClick();
+                        } else {
+                          handleNav(link.to as keyof typeof sectionRefs);
+                        }
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 hover:text-red-600 transition-colors"
+                    >
+                      {link.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
           <button className="md:hidden p-2 rounded-lg hover:bg-gray-100" onClick={() => setMenuOpen(v => !v)} aria-label="Open menu">
             {menuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
@@ -163,11 +195,36 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
                 <button
                   key={link.label}
                   onClick={link.onClick ? link.onClick : () => handleNav(link.to as keyof typeof sectionRefs)}
-                  className="text-lg text-left py-2 px-2 rounded hover:bg-gray-100 focus:outline-none"
+                  className={`text-lg text-left py-2 px-2 rounded focus:outline-none ${
+                    link.label === 'Book Donation'
+                      ? 'bg-red-600 text-white font-semibold hover:bg-red-700 shadow-md'
+                      : 'hover:bg-gray-100'
+                  }`}
                 >
                   {link.label}
                 </button>
               ))}
+              
+              {/* Secondary menu items in mobile */}
+              <div className="border-t border-gray-200 pt-2 mt-2">
+                <div className="text-xs font-medium text-gray-500 mb-2 px-2">More Options</div>
+                {secondaryNavItems.map(link => (
+                  <button
+                    key={link.label}
+                    onClick={() => {
+                      setMenuOpen(false);
+                      if (link.onClick) {
+                        link.onClick();
+                      } else {
+                        handleNav(link.to as keyof typeof sectionRefs);
+                      }
+                    }}
+                    className="text-lg text-left py-2 px-2 rounded hover:bg-gray-100 focus:outline-none text-gray-600"
+                  >
+                    {link.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -175,64 +232,56 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
 
       {/* Hero Section */}
       <section ref={sectionRefs.hero} className="relative flex flex-col items-center justify-center min-h-[40vh] px-4 py-6 bg-gradient-to-b from-white to-gray-50 text-center">
-        {/* Connection Status */}
-        <div className="absolute top-4 right-4 text-xs">
-          <div className={`px-2 py-1 rounded ${connectionStatus.includes('Connected') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-            <div className="font-semibold">{connectionStatus}</div>
-            {connectionDetails && (
-              <div className="text-xs opacity-75">{connectionDetails}</div>
-            )}
-          </div>
-        </div>
         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
-          Donate Blood, <span className="text-red-600">Save Lives</span>
+          Schedule Your Donation, <span className="text-red-600">Save Lives</span>
         </h1>
         <p className="max-w-2xl mx-auto text-lg md:text-xl text-gray-700 mb-8">
-          Vitalita's online booking system allows you to schedule your blood or plasma donation simply and quickly. Our virtual assistant will guide you through every step of the process.
+          Book your blood or plasma donation online in minutes.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex justify-center">
           <button className="bg-red-600 text-white px-8 py-3 rounded-lg font-semibold shadow-md hover:bg-red-700 transition-all focus:outline-none focus:ring-2 focus:ring-red-400">
             Book Donation
-          </button>
-          <button className="border-2 border-red-600 text-red-600 px-8 py-3 rounded-lg font-semibold hover:bg-red-50 transition-all focus:outline-none focus:ring-2 focus:ring-red-400">
-            Learn More
           </button>
         </div>
       </section>
 
       {/* Statistics Section */}
       <section ref={sectionRefs.statistics} className="max-w-7xl mx-auto px-4 py-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-white rounded-2xl shadow-lg p-8">
-          {stats.map((stat, i) => (
-            <div key={stat.label} className="flex flex-col items-center text-center">
-              <div className="mb-2">{stat.icon}</div>
-              <div className="text-3xl md:text-4xl font-bold text-gray-900">
-                {i === 0 && <span>{statCounts[0].toLocaleString()}+</span>}
-                {i === 1 && <span>{statCounts[1]}+</span>}
-                {i === 2 && <span>{statCounts[2].toLocaleString()}+</span>}
-                {i === 3 && <span>{statCounts[3]}/7</span>}
-              </div>
-              <div className="text-gray-600 text-base mt-1 font-medium">{stat.label}</div>
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          <div className="flex flex-wrap justify-center items-center gap-8 text-center">
+            <div className="flex items-center space-x-2">
+              <Heart className="w-6 h-6 text-red-600" />
+              <span className="text-2xl md:text-3xl font-bold text-gray-900">
+                {statCounts[0].toLocaleString()}+
+              </span>
+              <span className="text-gray-600 font-medium">Donations</span>
             </div>
-          ))}
+            <div className="flex items-center space-x-2">
+              <Cross className="w-6 h-6 text-red-600" />
+              <span className="text-2xl md:text-3xl font-bold text-gray-900">
+                {statCounts[1]}+
+              </span>
+              <span className="text-gray-600 font-medium">Centers</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <CheckCircle className="w-6 h-6 text-red-600" />
+              <span className="text-2xl md:text-3xl font-bold text-gray-900">
+                {statCounts[2].toLocaleString()}+
+              </span>
+              <span className="text-gray-600 font-medium">Lives Saved</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <MessageCircle className="w-6 h-6 text-red-600" />
+              <span className="text-2xl md:text-3xl font-bold text-gray-900">
+                {statCounts[3]}/7
+              </span>
+              <span className="text-gray-600 font-medium">Support</span>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section ref={sectionRefs.features} className="max-w-7xl mx-auto px-4 py-8">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Why Choose Vitalita?</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-          {features.map(f => (
-            <div key={f.title} className="flex items-start bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
-              <div className="mr-4">{f.icon}</div>
-              <div>
-                <h3 className="text-lg font-semibold mb-1">{f.title}</h3>
-                <p className="text-gray-600 text-base">{f.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      
 
       {/* Registration Section */}
       <section ref={sectionRefs.registration} className="max-w-4xl mx-auto px-4 py-8 text-center">
@@ -288,12 +337,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
       {/* Why Choose Vitalita Section */}
       <section className="max-w-6xl mx-auto px-4 py-8">
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Why Choose Vitalita?</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {benefits.map(b => (
-            <div key={b.title} className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center hover:shadow-lg transition-shadow">
-              <div className="mb-2">{b.icon}</div>
-              <h3 className="text-lg font-semibold mb-1 text-center">{b.title}</h3>
-              <p className="text-gray-600 text-center text-base">{b.desc}</p>
+            <div key={b.title} className="bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition-shadow border border-gray-100">
+              <div className="mb-3">{b.icon}</div>
+              <h3 className="text-lg font-semibold mb-2 text-gray-900">{b.title}</h3>
+              <p className="text-gray-600 text-sm">{b.desc}</p>
             </div>
           ))}
         </div>

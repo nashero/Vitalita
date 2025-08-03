@@ -25,6 +25,7 @@ interface RegistrationFormData {
   lastName: string;
   dateOfBirth: string;
   avisDonorCenter: string;
+  email: string;
 }
 
 const AVIS_CENTERS = [
@@ -43,6 +44,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
     lastName: '',
     dateOfBirth: '',
     avisDonorCenter: '',
+    email: '',
   });
 
   const [loading, setLoading] = useState(false);
@@ -59,6 +61,13 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
     if (!formData.lastName.trim()) return 'Last name is required';
     if (!formData.dateOfBirth) return 'Date of birth is required';
     if (!formData.avisDonorCenter) return 'AVIS Donor Center is required';
+    if (!formData.email.trim()) return 'Email address is required';
+
+    // Validate email format
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    if (!emailRegex.test(formData.email)) {
+      return 'Please enter a valid email address';
+    }
 
     // Validate date of birth (must be at least 18 years old)
     const birthDate = new Date(formData.dateOfBirth);
@@ -109,22 +118,34 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
         return;
       }
 
+      // Check if email already exists
+      const { data: existingEmail, error: emailCheckError } = await supabase
+        .from('donors')
+        .select('email')
+        .eq('email', formData.email)
+        .single();
+
+      if (emailCheckError && emailCheckError.code !== 'PGRST116') {
+        console.error('Error checking existing email:', emailCheckError);
+        setError('Registration failed. Please try again.');
+        return;
+      }
+
+      if (existingEmail) {
+        setError('An account with this email address already exists. Please use a different email or contact AVIS staff for assistance.');
+        return;
+      }
+
       // Generate salt for additional security
       const salt = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
-      // Create donor record with ONLY hashed data and operational information
-      const { error: insertError } = await supabase
-        .from('donors')
-        .insert({
-          donor_hash_id: donorHashId,
-          salt: salt,
-          preferred_language: 'en',
-          preferred_communication_channel: 'email',
-          initial_vetting_status: false,
-          total_donations_this_year: 0,
-          last_donation_date: null,
-          is_active: false, // Will be activated by staff
-          avis_donor_center: formData.avisDonorCenter,
+      // Use the new database function for registration with email verification
+      const { data: registrationResult, error: insertError } = await supabase
+        .rpc('register_donor_with_email', {
+          p_donor_hash_id: donorHashId,
+          p_salt: salt,
+          p_email: formData.email,
+          p_avis_donor_center: formData.avisDonorCenter
         });
 
       if (insertError) {
@@ -142,7 +163,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
         p_status: 'success'
       });
 
-      setSuccess('Registration successful! Your information has been securely processed and submitted for verification. AVIS staff will verify you as a donor and notify you when your account is activated. You will then be able to log in using your personal details.');
+      setSuccess('Registration successful! A verification email has been sent to your email address. Please check your inbox and click the verification link to complete your registration. After email verification, AVIS staff will review your application and activate your account. You will receive a notification when your account is ready for use.');
       
       // Clear form
       setFormData({
@@ -150,6 +171,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
         lastName: '',
         dateOfBirth: '',
         avisDonorCenter: '',
+        email: '',
       });
 
       // Redirect to success or login after a delay
@@ -337,13 +359,40 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                 </div>
               </div>
 
+              {/* Email Address */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Email Address *
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <input
+                    type="email"
+                    id="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200"
+                    placeholder="Enter your email address"
+                    disabled={loading}
+                    required
+                  />
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  We'll send a verification email to this address
+                </p>
+              </div>
+
               {/* Important Notice */}
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                 <div className="flex items-start">
                   <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5 mr-3" />
                   <div className="text-sm text-amber-800">
                     <p className="font-medium mb-1">Important:</p>
-                    <p>After registration and AVIS staff verification, you will log in using these exact details (First Name, Last Name, Date of Birth, and AVIS Center). Please ensure all information is accurate as it cannot be changed later.</p>
+                    <p>After registration and AVIS staff verification, you will log in using these exact details (First Name, Last Name, Date of Birth, and AVIS Center). Please ensure all information is accurate as it cannot be changed later. You will receive a verification email to confirm your email address.</p>
                   </div>
                 </div>
               </div>
@@ -354,7 +403,10 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                   <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 mr-3" />
                   <div className="text-sm text-blue-800">
                     <p className="font-medium mb-1">Verification Process:</p>
-                    <p>After submitting your registration, AVIS staff will verify your eligibility as a donor and activate your account. You will be notified when your account is ready for use.</p>
+                    <p>1. Submit registration form<br/>
+                    2. Check your email and click the verification link<br/>
+                    3. AVIS staff will review and activate your account<br/>
+                    4. You'll receive a notification when ready to donate</p>
                   </div>
                 </div>
               </div>

@@ -52,32 +52,59 @@ export type Database = {
         Row: {
           donor_hash_id: string;
           salt: string;
+          email: string | null;
+          email_verified: boolean;
+          verification_token: string | null;
+          verification_token_expires: string | null;
+          account_activated: boolean;
+          activation_date: string | null;
           preferred_language: string;
           preferred_communication_channel: string;
           initial_vetting_status: boolean;
           total_donations_this_year: number;
           last_donation_date: string | null;
           is_active: boolean;
+          avis_donor_center: string;
+          created_at: string;
+          updated_at: string;
         };
         Insert: {
           donor_hash_id: string;
           salt: string;
+          email?: string | null;
+          email_verified?: boolean;
+          verification_token?: string | null;
+          verification_token_expires?: string | null;
+          account_activated?: boolean;
+          activation_date?: string | null;
           preferred_language?: string;
           preferred_communication_channel?: string;
           initial_vetting_status?: boolean;
           total_donations_this_year?: number;
           last_donation_date?: string | null;
           is_active?: boolean;
+          avis_donor_center: string;
+          created_at?: string;
+          updated_at?: string;
         };
         Update: {
           donor_hash_id?: string;
           salt?: string;
+          email?: string | null;
+          email_verified?: boolean;
+          verification_token?: string | null;
+          verification_token_expires?: string | null;
+          account_activated?: boolean;
+          activation_date?: string | null;
           preferred_language?: string;
           preferred_communication_channel?: string;
           initial_vetting_status?: boolean;
           total_donations_this_year?: number;
           last_donation_date?: string | null;
           is_active?: boolean;
+          avis_donor_center?: string;
+          created_at?: string;
+          updated_at?: string;
         };
       };
       appointments: {
@@ -366,6 +393,44 @@ export type Database = {
           p_status?: string;
         };
         Returns: string;
+      };
+      register_donor_with_email: {
+        Args: {
+          p_donor_hash_id: string;
+          p_salt: string;
+          p_email: string;
+          p_avis_donor_center: string;
+        };
+        Returns: boolean;
+      };
+      verify_donor_email: {
+        Args: {
+          p_verification_token: string;
+        };
+        Returns: boolean;
+      };
+      activate_donor_account: {
+        Args: {
+          p_donor_hash_id: string;
+          p_staff_user_id: string;
+        };
+        Returns: boolean;
+      };
+      generate_verification_token: {
+        Args: {};
+        Returns: string;
+      };
+      send_verification_email: {
+        Args: {
+          p_email: string;
+          p_verification_token: string;
+          p_donor_hash_id: string;
+        };
+        Returns: boolean;
+      };
+      cleanup_expired_tokens: {
+        Args: {};
+        Returns: number;
       };
     };
   };

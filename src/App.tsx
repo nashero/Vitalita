@@ -257,7 +257,6 @@ function App() {
   // Pass navigation handlers to LandingPage
   return (
     <ErrorBoundary>
-      <ConnectionStatus />
       <LandingPage onDonorPortal={() => setRoute('donor')} onStaffPortal={() => setRoute('staff')} />
       <ChatWidget 
         n8nWebhookUrl={CHAT_CONFIG.n8nWebhookUrl}
