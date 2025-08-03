@@ -7,6 +7,9 @@ import StaffLogin from './components/StaffLogin';
 import Dashboard from './components/Dashboard';
 import StaffDashboard from './components/StaffDashboard';
 import LandingPage from './components/LandingPage';
+import ConnectionStatus from './components/ConnectionStatus';
+import ChatWidget from './components/ChatWidget';
+import { CHAT_CONFIG } from './config/chat';
 import { useAuth } from './hooks/useAuth';
 import { useStaffAuth } from './hooks/useStaffAuth';
 import { Users, Shield, ArrowLeft, UserPlus } from 'lucide-react';
@@ -14,9 +17,104 @@ import { Users, Shield, ArrowLeft, UserPlus } from 'lucide-react';
 type LoginMode = 'donor' | 'staff';
 type DonorMode = 'login' | 'register';
 
+// Add error boundary component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error?: Error }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('App Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-red-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md">
+            <h1 className="text-xl font-bold text-red-600 mb-4">Something went wrong</h1>
+            <p className="text-gray-600 mb-4">The application encountered an error. Please refresh the page.</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+            >
+              Refresh Page
+            </button>
+            <details className="mt-4">
+              <summary className="cursor-pointer text-sm text-gray-500">Error Details</summary>
+              <pre className="mt-2 text-xs bg-gray-100 p-2 rounded overflow-auto">
+                {this.state.error?.toString()}
+              </pre>
+            </details>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+// Simple test component without any external dependencies
+function TestComponent() {
+  console.log('TestComponent: Rendering');
+  return (
+    <div style={{ 
+      minHeight: '100vh', 
+      backgroundColor: '#f0f9ff', 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center' 
+    }}>
+      <div style={{ 
+        backgroundColor: 'white', 
+        padding: '2rem', 
+        borderRadius: '0.5rem', 
+        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' 
+      }}>
+        <h1 style={{ 
+          fontSize: '1.5rem', 
+          fontWeight: 'bold', 
+          color: '#2563eb', 
+          marginBottom: '1rem' 
+        }}>
+          Test Component
+        </h1>
+        <p style={{ color: '#6b7280' }}>
+          If you can see this, React is working!
+        </p>
+        <button 
+          style={{ 
+            marginTop: '1rem', 
+            backgroundColor: '#2563eb', 
+            color: 'white', 
+            padding: '0.5rem 1rem', 
+            borderRadius: '0.25rem', 
+            border: 'none', 
+            cursor: 'pointer' 
+          }}
+          onClick={() => alert('Button clicked!')}
+        >
+          Test Button
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function DonorAppContent({ onBackToLanding }: { onBackToLanding?: () => void }) {
   const { donor, loading } = useAuth();
   const [donorMode, setDonorMode] = useState<DonorMode>('login');
+
+  console.log('DonorAppContent render:', { donor, loading, donorMode });
 
   if (loading) {
     return (
@@ -35,15 +133,18 @@ function DonorAppContent({ onBackToLanding }: { onBackToLanding?: () => void }) 
       <DonorRegistration 
         onBack={() => setDonorMode('login')}
         onSuccess={() => setDonorMode('login')}
+        onBackToLanding={onBackToLanding}
       />
     );
   }
 
-  return <LoginForm onShowRegistration={() => setDonorMode('register')} />;
+  return <LoginForm onShowRegistration={() => setDonorMode('register')} onBackToLanding={onBackToLanding} />;
 }
 
 function StaffAppContent({ onBackToLanding }: { onBackToLanding?: () => void }) {
   const { staff, loading } = useStaffAuth();
+
+  console.log('StaffAppContent render:', { staff, loading });
 
   if (loading) {
     return (
@@ -57,7 +158,7 @@ function StaffAppContent({ onBackToLanding }: { onBackToLanding?: () => void }) 
     return <StaffDashboard onBackToLanding={onBackToLanding} />;
   }
 
-  return staff ? <StaffDashboard /> : <StaffLogin />;
+  return staff ? <StaffDashboard /> : <StaffLogin onBackToLanding={onBackToLanding} />;
 }
 
 function LoginModeSelector({ onSelectMode }: { onSelectMode: (mode: LoginMode) => void }) {
@@ -116,22 +217,54 @@ function LoginModeSelector({ onSelectMode }: { onSelectMode: (mode: LoginMode) =
 function App() {
   const [route, setRoute] = useState<'landing' | 'donor' | 'staff'>('landing');
 
+  console.log('App render:', { route });
+
+  // Add a simple loading state
+  if (typeof window === 'undefined') {
+    return <div>Loading...</div>;
+  }
+
   if (route === 'donor') {
     return (
-      <AuthProvider>
-        <DonorAppContent onBackToLanding={() => setRoute('landing')} />
-      </AuthProvider>
+      <ErrorBoundary>
+        <ConnectionStatus />
+        <AuthProvider>
+          <DonorAppContent onBackToLanding={() => setRoute('landing')} />
+        </AuthProvider>
+        <ChatWidget 
+          n8nWebhookUrl={CHAT_CONFIG.n8nWebhookUrl}
+          title={CHAT_CONFIG.title}
+          welcomeMessage={CHAT_CONFIG.welcomeMessage}
+        />
+      </ErrorBoundary>
     );
   }
   if (route === 'staff') {
     return (
-      <StaffAuthProvider>
-        <StaffAppContent onBackToLanding={() => setRoute('landing')} />
-      </StaffAuthProvider>
+      <ErrorBoundary>
+        <ConnectionStatus />
+        <StaffAuthProvider>
+          <StaffAppContent onBackToLanding={() => setRoute('landing')} />
+        </StaffAuthProvider>
+        <ChatWidget 
+          n8nWebhookUrl={CHAT_CONFIG.n8nWebhookUrl}
+          title={CHAT_CONFIG.title}
+          welcomeMessage={CHAT_CONFIG.welcomeMessage}
+        />
+      </ErrorBoundary>
     );
   }
   // Pass navigation handlers to LandingPage
-  return <LandingPage onDonorPortal={() => setRoute('donor')} onStaffPortal={() => setRoute('staff')} />;
+  return (
+    <ErrorBoundary>
+      <LandingPage onDonorPortal={() => setRoute('donor')} onStaffPortal={() => setRoute('staff')} />
+      <ChatWidget 
+        n8nWebhookUrl={CHAT_CONFIG.n8nWebhookUrl}
+        title={CHAT_CONFIG.title}
+        welcomeMessage={CHAT_CONFIG.welcomeMessage}
+      />
+    </ErrorBoundary>
+  );
 }
 
 export default App;

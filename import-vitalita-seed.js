@@ -198,43 +198,43 @@ async function seedDatabase() {
         firstName: 'Mario',
         lastName: 'Rossi',
         dateOfBirth: '1985-03-15',
-        avisDonorCenter: 'Casalmaggiore'
+        avisDonorCenter: 'AVIS Casalmaggiore'
       },
       {
         firstName: 'Giulia',
         lastName: 'Bianchi',
         dateOfBirth: '1990-07-22',
-        avisDonorCenter: 'Gussola'
+        avisDonorCenter: 'AVIS Gussola'
       },
       {
         firstName: 'Luca',
         lastName: 'Verdi',
         dateOfBirth: '1988-11-08',
-        avisDonorCenter: 'Viadana'
+        avisDonorCenter: 'AVIS Viadana'
       },
       {
         firstName: 'Sofia',
         lastName: 'Neri',
         dateOfBirth: '1992-05-14',
-        avisDonorCenter: 'Piadena'
+        avisDonorCenter: 'AVIS Piadena'
       },
       {
         firstName: 'Marco',
         lastName: 'Bianchi',
         dateOfBirth: '1987-09-03',
-        avisDonorCenter: 'Rivarolo del Re'
+        avisDonorCenter: 'AVIS Rivarolo del Re'
       },
       {
         firstName: 'Elena',
         lastName: 'Rossi',
         dateOfBirth: '1991-12-21',
-        avisDonorCenter: 'Scandolara-Ravara'
+        avisDonorCenter: 'AVIS Scandolara-Ravara'
       },
       {
         firstName: 'Antonio',
         lastName: 'Ferrari',
         dateOfBirth: '1986-08-17',
-        avisDonorCenter: 'Calvatone'
+        avisDonorCenter: 'AVIS Calvatone'
       }
     ];
 

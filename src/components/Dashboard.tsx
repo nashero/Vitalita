@@ -108,7 +108,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
 
   const getAppointmentStatusColor = (status: string) => {
     switch (status) {
-      case 'scheduled': return 'bg-blue-100 text-blue-800';
+      case 'scheduled': return 'bg-red-100 text-red-800';
       case 'completed': return 'bg-green-100 text-green-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
@@ -155,8 +155,8 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
         {/* Welcome Section */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
           <div className="flex items-center mb-6">
-            <div className="bg-blue-100 p-3 rounded-full mr-4">
-              <User className="w-6 h-6 text-blue-600" />
+            <div className="bg-red-100 p-3 rounded-full mr-4">
+              <User className="w-6 h-6 text-red-600" />
             </div>
             <div>
               <h2 className="text-2xl font-bold text-gray-900">
@@ -239,13 +239,13 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <button 
                   onClick={() => setShowBooking(true)}
-                  className="p-6 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 text-left group"
+                  className="p-6 border border-gray-200 rounded-lg hover:bg-red-50 hover:border-red-300 transition-all duration-200 text-left group"
                 >
                   <div className="flex items-center mb-3">
-                    <div className="bg-blue-100 p-2 rounded-lg group-hover:bg-blue-200 transition-colors">
-                      <Plus className="w-5 h-5 text-blue-600" />
+                    <div className="bg-red-100 p-2 rounded-lg group-hover:bg-red-200 transition-colors">
+                      <Plus className="w-5 h-5 text-red-600" />
                     </div>
-                    <Calendar className="w-6 h-6 text-blue-600 ml-2" />
+                    <Calendar className="w-6 h-6 text-red-600 ml-2" />
                   </div>
                   <h4 className="font-semibold text-gray-900 mb-1">Schedule Appointment</h4>
                   <p className="text-sm text-gray-600">Book your next donation appointment</p>
@@ -267,7 +267,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Appointments</h3>
               {loading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Clock className="w-6 h-6 animate-spin text-blue-600 mr-2" />
+                  <Clock className="w-6 h-6 animate-spin text-red-600 mr-2" />
                   <span className="text-gray-600">Loading appointments...</span>
                 </div>
               ) : error ? (
@@ -288,9 +288,9 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
                     return (
                       <div key={appointment.appointment_id} className="flex items-center justify-between p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
                         <div className="flex items-center space-x-4">
-                          <div className="bg-blue-100 p-2 rounded-lg">
-                            <Calendar className="w-4 h-4 text-blue-600" />
-                          </div>
+                                          <div className="bg-red-100 p-2 rounded-lg">
+                  <Calendar className="w-4 h-4 text-red-600" />
+                </div>
                           <div>
                             <p className="font-medium text-gray-900">{appointment.donation_type} Donation</p>
                             <p className="text-sm text-gray-600">

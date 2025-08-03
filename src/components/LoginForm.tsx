@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
-import { User, Calendar, LogIn, UserPlus, MapPin, CalendarDays } from 'lucide-react';
+import { User, Calendar, LogIn, UserPlus, MapPin, CalendarDays, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 interface LoginFormProps {
   onShowRegistration?: () => void;
+  onBackToLanding?: () => void;
 }
 
 const AVIS_CENTERS = [
-  { value: 'Pompano', label: 'AVIS Pompano' },
-  { value: 'Milan', label: 'AVIS Milan' },
-  { value: 'Rome', label: 'AVIS Rome' },
+  { value: 'AVIS Casalmaggiore', label: 'AVIS Casalmaggiore' },
+  { value: 'AVIS Gussola', label: 'AVIS Gussola' },
+  { value: 'AVIS Viadana', label: 'AVIS Viadana' },
+   { value: 'AVIS Piadena', label: 'AVIS Piadena' },
+  { value: 'AVIS Rivarolo del Re', label: 'AVIS Rivarolo del Re' },
+  { value: 'AVIS Scandolara-Ravara', label: 'AVIS Scandolara-Ravara' },
+  { value: 'AVIS Calvatone', label: 'AVIS Calvatone' },
 ];
 
-export default function LoginForm({ onShowRegistration }: LoginFormProps) {
+export default function LoginForm({ onShowRegistration, onBackToLanding }: LoginFormProps) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -54,20 +59,34 @@ export default function LoginForm({ onShowRegistration }: LoginFormProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-pink-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
-            <div className="flex items-center justify-center mb-2">
-              <div className="bg-white/20 p-3 rounded-full">
-                <LogIn className="w-8 h-8 text-white" />
+          <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-6">
+            <div className="flex items-center justify-between">
+              {onBackToLanding && (
+                <button
+                  onClick={onBackToLanding}
+                  className="flex items-center text-white/80 hover:text-white transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5 mr-2" />
+                  Back to Home
+                </button>
+              )}
+              <div className="text-center flex-1">
+                <div className="flex items-center justify-center mb-2">
+                  <div className="bg-white/20 p-3 rounded-full">
+                    <LogIn className="w-8 h-8 text-white" />
+                  </div>
+                </div>
+                <h1 className="text-2xl font-bold text-white">Donor Portal</h1>
+                <p className="text-red-100 text-sm mt-1">
+                  Sign in to access your AVIS account
+                </p>
               </div>
+              <div className="w-16"></div> {/* Spacer for centering */}
             </div>
-            <h1 className="text-2xl font-bold text-white text-center">Donor Portal</h1>
-            <p className="text-blue-100 text-center text-sm mt-1">
-              Sign in to access your AVIS account
-            </p>
           </div>
 
           {/* Form */}
@@ -87,7 +106,7 @@ export default function LoginForm({ onShowRegistration }: LoginFormProps) {
                     id="firstName"
                     value={formData.firstName}
                     onChange={(e) => handleInputChange('firstName', e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
                     placeholder="Enter your first name"
                     disabled={loading}
                     autoComplete="given-name"
@@ -109,7 +128,7 @@ export default function LoginForm({ onShowRegistration }: LoginFormProps) {
                     id="lastName"
                     value={formData.lastName}
                     onChange={(e) => handleInputChange('lastName', e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
                     placeholder="Enter your last name"
                     disabled={loading}
                     autoComplete="family-name"
@@ -131,7 +150,7 @@ export default function LoginForm({ onShowRegistration }: LoginFormProps) {
                     id="dateOfBirth"
                     value={formData.dateOfBirth}
                     onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-gray-900"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200 text-gray-900"
                     disabled={loading}
                     autoComplete="bday"
                   />
@@ -151,7 +170,7 @@ export default function LoginForm({ onShowRegistration }: LoginFormProps) {
                     id="avisDonorCenter"
                     value={formData.avisDonorCenter}
                     onChange={(e) => handleInputChange('avisDonorCenter', e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 appearance-none bg-white text-gray-900"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200 appearance-none bg-white text-gray-900"
                     disabled={loading}
                   >
                     <option value="">Select your AVIS center</option>
@@ -175,7 +194,7 @@ export default function LoginForm({ onShowRegistration }: LoginFormProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 {loading ? (
                   <div className="flex items-center justify-center">
@@ -200,7 +219,7 @@ export default function LoginForm({ onShowRegistration }: LoginFormProps) {
                   </p>
                   <button
                     onClick={onShowRegistration}
-                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors duration-200"
                   >
                     <UserPlus className="w-4 h-4 mr-2" />
                     Register as New Donor

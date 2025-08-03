@@ -114,9 +114,9 @@ export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: 
   const getRoleColor = (roleName: string) => {
     const colors = {
       'admin': 'bg-red-100 text-red-800',
-      'manager': 'bg-purple-100 text-purple-800',
-      'coordinator': 'bg-blue-100 text-blue-800',
-      'staff': 'bg-green-100 text-green-800',
+      'manager': 'bg-red-100 text-red-800',
+      'coordinator': 'bg-red-100 text-red-800',
+      'staff': 'bg-red-100 text-red-800',
       'default': 'bg-gray-100 text-gray-800'
     };
     return colors[roleName.toLowerCase() as keyof typeof colors] || colors.default;
@@ -181,7 +181,7 @@ export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: 
                       onClick={() => setActiveTab(item.id)}
                       className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
                         activeTab === item.id
-                          ? 'bg-blue-100 text-blue-700'
+                          ? 'bg-red-100 text-red-700'
                           : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                       }`}
                     >
@@ -227,11 +227,11 @@ export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: 
             {activeTab === 'overview' && (
               <div className="space-y-6">
                 {/* Welcome Section */}
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white">
+                <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-xl p-6 text-white">
                   <h2 className="text-2xl font-bold mb-2">
                     Welcome back, {staff.first_name}!
                   </h2>
-                  <p className="text-blue-100">
+                  <p className="text-red-100">
                     Here's what's happening with your donation centers today.
                   </p>
                 </div>
@@ -240,8 +240,8 @@ export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div className="flex items-center">
-                      <div className="bg-blue-100 p-3 rounded-full">
-                        <Calendar className="w-6 h-6 text-blue-600" />
+                      <div className="bg-red-100 p-3 rounded-full">
+                        <Calendar className="w-6 h-6 text-red-600" />
                       </div>
                       <div className="ml-4">
                         <p className="text-sm font-medium text-gray-600">Today's Appointments</p>
@@ -258,8 +258,8 @@ export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: 
 
                   <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div className="flex items-center">
-                      <div className="bg-green-100 p-3 rounded-full">
-                        <Users className="w-6 h-6 text-green-600" />
+                      <div className="bg-red-100 p-3 rounded-full">
+                        <Users className="w-6 h-6 text-red-600" />
                       </div>
                       <div className="ml-4">
                         <p className="text-sm font-medium text-gray-600">Active Donors</p>
@@ -276,8 +276,8 @@ export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: 
 
                   <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div className="flex items-center">
-                      <div className="bg-purple-100 p-3 rounded-full">
-                        <Building2 className="w-6 h-6 text-purple-600" />
+                      <div className="bg-red-100 p-3 rounded-full">
+                        <Building2 className="w-6 h-6 text-red-600" />
                       </div>
                       <div className="ml-4">
                         <p className="text-sm font-medium text-gray-600">Active Centers</p>
@@ -294,8 +294,8 @@ export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: 
 
                   <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div className="flex items-center">
-                      <div className="bg-orange-100 p-3 rounded-full">
-                        <Clock className="w-6 h-6 text-orange-600" />
+                      <div className="bg-red-100 p-3 rounded-full">
+                        <Clock className="w-6 h-6 text-red-600" />
                       </div>
                       <div className="ml-4">
                         <p className="text-sm font-medium text-gray-600">Pending Reviews</p>
@@ -326,9 +326,9 @@ export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: 
                       ].map((activity, index) => (
                         <div key={index} className="flex items-center space-x-3">
                           <div className={`w-2 h-2 rounded-full ${
-                            activity.type === 'appointment' ? 'bg-blue-500' :
-                            activity.type === 'donor' ? 'bg-green-500' :
-                            activity.type === 'center' ? 'bg-purple-500' : 'bg-gray-500'
+                            activity.type === 'appointment' ? 'bg-red-500' :
+                            activity.type === 'donor' ? 'bg-red-500' :
+                            activity.type === 'center' ? 'bg-red-500' : 'bg-gray-500'
                           }`}></div>
                           <div className="flex-1">
                             <p className="text-sm text-gray-900">{activity.action}</p>
