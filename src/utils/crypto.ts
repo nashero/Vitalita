@@ -1,12 +1,16 @@
-/**
- * Generates SHA-256 hash using Web Crypto API
- */
-export async function generateSHA256Hash(input: string): Promise<string> {
+// src/utils/crypto.ts - Browser-compatible crypto utility
+
+export async function generateSHA256Hash(data: string): Promise<string> {
+  // Use Web Crypto API for browser compatibility
   const encoder = new TextEncoder();
-  const data = encoder.encode(input);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const dataBuffer = encoder.encode(data);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
+  
+  // Convert buffer to hex string
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  
+  return hashHex;
 }
 
 /**
