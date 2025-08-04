@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Heart, Cross, Calendar, ShieldCheck, Clock, BarChart3, Menu, X, CheckCircle, MessageCircle, QrCode, Mail, Award, Group, ArrowDown } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import bloodDonationImage from '../assets/images/Blood Donation.jpg';
 
 const stats = [
   { label: 'Donations per year', value: 500000, icon: <Heart className="w-7 h-7 text-red-600" /> },
@@ -115,7 +116,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
   // Move navLinks here so it can use props
   const navLinks = [
     { label: 'Home', to: 'hero', onClick: undefined },
-    { label: 'Book Donation', to: 'process', onClick: undefined },
     { label: 'Donor Portal', to: 'registration', onClick: onDonorPortal },
     { label: 'FAQ', to: 'footer', onClick: undefined },
   ];
@@ -137,19 +137,19 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
             </span>
           </div>
           <div className="hidden md:flex items-center space-x-8 text-base font-medium">
-            {navLinks.map(link => (
-              <button
-                key={link.label}
-                onClick={link.onClick ? link.onClick : () => handleNav(link.to as keyof typeof sectionRefs)}
-                className={`transition-all focus:outline-none ${
-                  link.label === 'Book Donation'
-                    ? 'bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 shadow-md hover:shadow-lg transform hover:scale-105'
-                    : 'hover:text-red-600'
-                }`}
-              >
-                {link.label}
-              </button>
-            ))}
+                         {navLinks.map(link => (
+               <button
+                 key={link.label}
+                 onClick={link.onClick ? link.onClick : () => handleNav(link.to as keyof typeof sectionRefs)}
+                 className={`transition-all focus:outline-none ${
+                   link.label === 'Donor Portal'
+                     ? 'bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 shadow-md hover:shadow-lg transform hover:scale-105'
+                     : 'hover:text-red-600'
+                 }`}
+               >
+                 {link.label}
+               </button>
+             ))}
             
             {/* Secondary Menu Dropdown */}
             <div className="relative secondary-menu">
@@ -191,19 +191,19 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
         {menuOpen && (
           <div className="md:hidden bg-white shadow-lg border-t border-gray-100 animate-fade-in-down">
             <div className="flex flex-col px-6 py-4 space-y-2">
-              {navLinks.map(link => (
-                <button
-                  key={link.label}
-                  onClick={link.onClick ? link.onClick : () => handleNav(link.to as keyof typeof sectionRefs)}
-                  className={`text-lg text-left py-2 px-2 rounded focus:outline-none ${
-                    link.label === 'Book Donation'
-                      ? 'bg-red-600 text-white font-semibold hover:bg-red-700 shadow-md'
-                      : 'hover:bg-gray-100'
-                  }`}
-                >
-                  {link.label}
-                </button>
-              ))}
+                             {navLinks.map(link => (
+                 <button
+                   key={link.label}
+                   onClick={link.onClick ? link.onClick : () => handleNav(link.to as keyof typeof sectionRefs)}
+                   className={`text-lg text-left py-2 px-2 rounded focus:outline-none ${
+                     link.label === 'Donor Portal'
+                       ? 'bg-red-600 text-white font-semibold hover:bg-red-700 shadow-md'
+                       : 'hover:bg-gray-100'
+                   }`}
+                 >
+                   {link.label}
+                 </button>
+               ))}
               
               {/* Secondary menu items in mobile */}
               <div className="border-t border-gray-200 pt-2 mt-2">
@@ -230,61 +230,70 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
         )}
       </header>
 
-      {/* Hero Section */}
-      <section ref={sectionRefs.hero} className="relative flex flex-col items-center justify-center min-h-[40vh] px-4 py-6 bg-gradient-to-b from-white to-gray-50 text-center">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
-          Schedule Your Donation, <span className="text-red-600">Save Lives</span>
-        </h1>
-        <p className="max-w-2xl mx-auto text-lg md:text-xl text-gray-700 mb-8">
-          Book your blood or plasma donation online in minutes.
-        </p>
-        <div className="flex justify-center">
-          <button className="bg-red-600 text-white px-8 py-3 rounded-lg font-semibold shadow-md hover:bg-red-700 transition-all focus:outline-none focus:ring-2 focus:ring-red-400">
-            Book Donation
-          </button>
-        </div>
-      </section>
+             {/* Hero Section */}
+       <section ref={sectionRefs.hero} className="relative flex flex-col items-center justify-center min-h-[60vh] px-4 py-12 bg-gradient-to-br from-red-50 via-white to-gray-50 text-center overflow-hidden">
+         {/* Background Image */}
+         <div className="absolute inset-0 z-0">
+           <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/80 to-transparent"></div>
+           <img 
+             src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTIwMCA4MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZGllbnQpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50IiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6I2YlZjVmNjsgc3RvcC1vcGFjaXR5OjEiIC8+CjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I2Y5ZmFmYjsgc3RvcC1vcGFjaXR5OjEiIC8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPC9zdmc+" 
+             alt="Blood donation process" 
+             className="w-full h-full object-cover opacity-10"
+             style={{
+               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23fef2f2;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23f9fafb;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23bg)'/%3E%3C/svg%3E")`,
+               backgroundSize: 'cover',
+               backgroundPosition: 'center'
+             }}
+           />
+         </div>
+         
+         {/* Content */}
+         <div className="relative z-10 max-w-6xl mx-auto">
+           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+             {/* Text Content */}
+             <div className="text-left">
+               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
+                 Schedule Your Donation, <span className="text-red-600">Save Lives</span>
+               </h1>
+                               <p className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed">
+                  Book your blood or plasma donation online in minutes. Join thousands of donors making a difference every day.
+                </p>
+             </div>
+             
+                                         {/* Blood Donation Image */}
+               <div className="relative">
+                 <div className="rounded-2xl shadow-2xl overflow-hidden">
+                   <img 
+                     src={bloodDonationImage} 
+                     alt="Blood donation process" 
+                     className="w-full h-auto object-cover"
+                   />
+                 </div>
+                 
+                 {/* Decorative elements */}
+                 <div className="absolute -top-4 -right-4 w-8 h-8 bg-red-400 rounded-full opacity-60"></div>
+                 <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-red-300 rounded-full opacity-60"></div>
+                 
+                 {/* Medical Icons */}
+                 <div className="absolute -top-2 left-4">
+                   <div className="w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center">
+                     <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                     </svg>
+                   </div>
+                 </div>
+               </div>
+           </div>
+         </div>
+         
+         {/* Floating elements */}
+         <div className="absolute top-20 left-10 w-4 h-4 bg-red-300 rounded-full opacity-40 animate-pulse"></div>
+         <div className="absolute top-40 right-20 w-3 h-3 bg-red-400 rounded-full opacity-60 animate-ping"></div>
+         <div className="absolute bottom-20 left-20 w-5 h-5 bg-red-200 rounded-full opacity-50 animate-bounce"></div>
+       </section>
 
-      {/* Statistics Section */}
-      <section ref={sectionRefs.statistics} className="max-w-7xl mx-auto px-4 py-4">
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <div className="flex flex-wrap justify-center items-center gap-8 text-center">
-            <div className="flex items-center space-x-2">
-              <Heart className="w-6 h-6 text-red-600" />
-              <span className="text-2xl md:text-3xl font-bold text-gray-900">
-                {statCounts[0].toLocaleString()}+
-              </span>
-              <span className="text-gray-600 font-medium">Donations</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Cross className="w-6 h-6 text-red-600" />
-              <span className="text-2xl md:text-3xl font-bold text-gray-900">
-                {statCounts[1]}+
-              </span>
-              <span className="text-gray-600 font-medium">Centers</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <CheckCircle className="w-6 h-6 text-red-600" />
-              <span className="text-2xl md:text-3xl font-bold text-gray-900">
-                {statCounts[2].toLocaleString()}+
-              </span>
-              <span className="text-gray-600 font-medium">Lives Saved</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <MessageCircle className="w-6 h-6 text-red-600" />
-              <span className="text-2xl md:text-3xl font-bold text-gray-900">
-                {statCounts[3]}/7
-              </span>
-              <span className="text-gray-600 font-medium">Support</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      
-
-      {/* Registration Section */}
-      <section ref={sectionRefs.registration} className="max-w-4xl mx-auto px-4 py-8 text-center">
+       {/* Registration Section */}
+       <section ref={sectionRefs.registration} className="max-w-4xl mx-auto px-4 py-4 text-center">
         <h2 className="text-2xl md:text-3xl font-bold mb-3">Donor Registration &amp; Login</h2>
         <p className="text-gray-700 mb-6">New to Vitalita? Register as a donor or login to your existing account to manage appointments.</p>
         <button
@@ -301,9 +310,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
           <div className="flex-1">
             <h2 className="text-2xl md:text-3xl font-bold mb-3">Book Your Donation</h2>
             <p className="text-gray-700 mb-6">Our advanced booking system will guide you step by step through the process. Complete eligibility checking, smart scheduling, and instant confirmation.</p>
-            <button className="bg-red-600 text-white px-8 py-3 rounded-lg font-semibold shadow-md hover:bg-red-700 transition-all focus:outline-none focus:ring-2 focus:ring-red-400">
-              Start Advanced Booking
-            </button>
           </div>
           <div className="flex-1">
             <ol className="space-y-4">
@@ -334,21 +340,58 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
         </div>
       </section>
 
-      {/* Why Choose Vitalita Section */}
-      <section className="max-w-6xl mx-auto px-4 py-8">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Why Choose Vitalita?</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {benefits.map(b => (
-            <div key={b.title} className="bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition-shadow border border-gray-100">
-              <div className="mb-3">{b.icon}</div>
-              <h3 className="text-lg font-semibold mb-2 text-gray-900">{b.title}</h3>
-              <p className="text-gray-600 text-sm">{b.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+             {/* Why Choose Vitalita Section */}
+       <section className="max-w-6xl mx-auto px-4 py-8">
+         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Why Choose Vitalita?</h2>
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+           {benefits.map(b => (
+             <div key={b.title} className="bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition-shadow border border-gray-100">
+               <div className="mb-3">{b.icon}</div>
+               <h3 className="text-lg font-semibold mb-2 text-gray-900">{b.title}</h3>
+               <p className="text-gray-600 text-sm">{b.desc}</p>
+             </div>
+           ))}
+         </div>
+       </section>
 
-      {/* Footer */}
+       {/* Analytics Section */}
+       <section ref={sectionRefs.statistics} className="max-w-7xl mx-auto px-4 py-8">
+         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Analytics & Statistics</h2>
+         <div className="bg-white rounded-2xl shadow-lg p-6">
+           <div className="flex flex-wrap justify-center items-center gap-8 text-center">
+             <div className="flex items-center space-x-2">
+               <Heart className="w-6 h-6 text-red-600" />
+               <span className="text-2xl md:text-3xl font-bold text-gray-900">
+                 {statCounts[0].toLocaleString()}+
+               </span>
+               <span className="text-gray-600 font-medium">Donations</span>
+             </div>
+             <div className="flex items-center space-x-2">
+               <Cross className="w-6 h-6 text-red-600" />
+               <span className="text-2xl md:text-3xl font-bold text-gray-900">
+                 {statCounts[1]}+
+               </span>
+               <span className="text-gray-600 font-medium">Centers</span>
+             </div>
+             <div className="flex items-center space-x-2">
+               <CheckCircle className="w-6 h-6 text-red-600" />
+               <span className="text-2xl md:text-3xl font-bold text-gray-900">
+                 {statCounts[2].toLocaleString()}+
+               </span>
+               <span className="text-gray-600 font-medium">Lives Saved</span>
+             </div>
+             <div className="flex items-center space-x-2">
+               <MessageCircle className="w-6 h-6 text-red-600" />
+               <span className="text-2xl md:text-3xl font-bold text-gray-900">
+                 {statCounts[3]}/7
+               </span>
+               <span className="text-gray-600 font-medium">Support</span>
+             </div>
+           </div>
+         </div>
+       </section>
+
+       {/* Footer */}
       <footer ref={sectionRefs.footer} className="bg-white border-t border-gray-200 mt-4">
         <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center space-x-2">
