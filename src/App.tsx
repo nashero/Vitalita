@@ -7,7 +7,7 @@ import StaffLogin from './components/StaffLogin';
 import Dashboard from './components/Dashboard';
 import StaffDashboard from './components/StaffDashboard';
 import LandingPage from './components/LandingPage';
-import ConnectionStatus from './components/ConnectionStatus';
+
 import ChatWidget from './components/ChatWidget';
 import { CHAT_CONFIG } from './config/chat';
 import { useAuth } from './hooks/useAuth';
@@ -227,7 +227,6 @@ function App() {
   if (route === 'donor') {
     return (
       <ErrorBoundary>
-        <ConnectionStatus />
         <AuthProvider>
           <DonorAppContent onBackToLanding={() => setRoute('landing')} />
         </AuthProvider>
@@ -242,7 +241,6 @@ function App() {
   if (route === 'staff') {
     return (
       <ErrorBoundary>
-        <ConnectionStatus />
         <StaffAuthProvider>
           <StaffAppContent onBackToLanding={() => setRoute('landing')} />
         </StaffAuthProvider>
