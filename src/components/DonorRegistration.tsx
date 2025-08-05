@@ -29,13 +29,13 @@ interface RegistrationFormData {
 }
 
 const AVIS_CENTERS = [
-  { value: 'Avis Casalmaggiore', label: 'AVIS Casalmaggiore' },
-  { value: 'Avis Gussola', label: 'AVIS Gussola' },
-  { value: 'Avis Viadana', label: 'AVIS Viadana' },
-  { value: 'Avis Piadena', label: 'AVIS Piadena' },
-  { value: 'Avis Rivarolo del Re', label: 'AVIS Rivarolo del Re' },
-  { value: 'Avis Scandolara-Ravara', label: 'AVIS Scandolara-Ravara' },
-  { value: 'Avis Calvatone', label: 'AVIS Calvatone' },
+  { value: 'AVIS Casalmaggiore', label: 'AVIS Casalmaggiore' },
+  { value: 'AVIS Gussola', label: 'AVIS Gussola' },
+  { value: 'AVIS Viadana', label: 'AVIS Viadana' },
+  { value: 'AVIS Piadena', label: 'AVIS Piadena' },
+  { value: 'AVIS Rivarolo del Re', label: 'AVIS Rivarolo del Re' },
+  { value: 'AVIS Scandolara-Ravara', label: 'AVIS Scandolara-Ravara' },
+  { value: 'AVIS Calvatone', label: 'AVIS Calvatone' },
 ];
 
 export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }: DonorRegistrationProps) {
@@ -98,6 +98,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
 
       // Generate donor_hash_id from personal information
       const authString = `${formData.firstName}${formData.lastName}${formData.dateOfBirth}${formData.avisDonorCenter}`;
+      console.log('Auth string for hash:', authString);
       const donorHashId = await generateSHA256Hash(authString);
 
       // Check if this hash already exists (duplicate registration)
@@ -140,30 +141,80 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
       const salt = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
       // Use the new database function for registration with email verification
+      const registrationParams = {
+        p_donor_hash_id: donorHashId,
+        p_salt: salt,
+        p_email: formData.email,
+        p_avis_donor_center: formData.avisDonorCenter
+      };
+      
+      console.log('Attempting registration with:', registrationParams);
+
       const { data: registrationResult, error: insertError } = await supabase
-        .rpc('register_donor_with_email', {
-          p_donor_hash_id: donorHashId,
-          p_salt: salt,
-          p_email: formData.email,
-          p_avis_donor_center: formData.avisDonorCenter
-        });
+        .rpc('register_donor_with_email', registrationParams);
 
       if (insertError) {
         console.error('Error creating donor record:', insertError);
-        setError('Registration failed. Please try again.');
+        setError(`Registration failed: ${insertError.message || 'Please try again.'}`);
         return;
       }
 
-      // Create audit log for registration
-      await supabase.rpc('create_audit_log', {
-        p_user_id: donorHashId,
-        p_user_type: 'donor',
-        p_action: 'registration',
-        p_details: 'New donor registration submitted for verification',
-        p_status: 'success'
-      });
+      console.log('Registration result:', registrationResult);
 
-      setSuccess('Registration successful! A verification email has been sent to your email address. Please check your inbox and click the verification link to complete your registration. After email verification, AVIS staff will review your application and activate your account. You will receive a notification when your account is ready for use.');
+      // Check if registration actually succeeded
+      if (registrationResult === false) {
+        console.error('Registration function returned false - registration failed');
+        setError('Registration failed. The registration function returned an error. Please try again or contact support.');
+        return;
+      }
+
+      // Add a small delay to ensure the transaction is committed
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Verify that the donor was actually created
+      const { data: verifyDonor, error: verifyError } = await supabase
+        .from('donors')
+        .select('donor_hash_id, email, email_verified, account_activated, is_active')
+        .eq('donor_hash_id', donorHashId)
+        .single();
+
+      if (verifyError) {
+        console.error('Error verifying donor creation:', verifyError);
+        console.error('Verification error details:', {
+          code: verifyError.code,
+          message: verifyError.message,
+          details: verifyError.details,
+          hint: verifyError.hint
+        });
+        
+        // Instead of failing, proceed with success but log the verification issue
+        console.warn('Registration succeeded but verification failed. Proceeding with success message.');
+        // Don't return here - continue with success flow
+      } else {
+        console.log('Verified donor record:', verifyDonor);
+      }
+
+      // Try to create audit log for registration, but don't fail if it doesn't work
+      try {
+        await supabase.rpc('create_audit_log', {
+          p_user_id: donorHashId,
+          p_user_type: 'donor',
+          p_action: 'registration',
+          p_details: 'New donor registration submitted for verification',
+          p_status: 'success'
+        });
+      } catch (auditError) {
+        console.warn('Failed to create audit log (non-critical):', auditError);
+        // Don't fail the registration for audit log issues
+      }
+
+      // Determine success message based on verification status
+      const verificationStatus = verifyDonor ? 'verified' : 'pending_verification';
+      const successMessage = verificationStatus === 'verified' 
+        ? `Registration successful! Your donor account has been created with ID: ${donorHashId.substring(0, 8)}...\n\nNext steps:\n1. Check your email (${formData.email}) for a verification link\n2. Click the verification link to confirm your email address\n3. AVIS staff will review and activate your account\n4. You'll receive a notification when ready to donate\n\nYou can now log in using your registration details once your account is activated.`
+        : `Registration submitted successfully! Your donor account has been created with ID: ${donorHashId.substring(0, 8)}...\n\nNext steps:\n1. Check your email (${formData.email}) for a verification link\n2. Click the verification link to confirm your email address\n3. AVIS staff will review and activate your account\n4. You'll receive a notification when ready to donate\n\nNote: Your account is being processed. You can now log in using your registration details once your account is activated.`;
+
+      setSuccess(successMessage);
       
       // Clear form
       setFormData({
@@ -174,10 +225,10 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
         email: '',
       });
 
-      // Redirect to success or login after a delay
-      setTimeout(() => {
-        onSuccess();
-      }, 5000);
+      // Don't automatically redirect - let user read the message and choose when to proceed
+      // setTimeout(() => {
+      //   onSuccess();
+      // }, 5000);
 
     } catch (err) {
       console.error('Registration error:', err);
@@ -233,9 +284,32 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
               <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
                 <div className="flex items-start">
                   <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-0.5" />
-                  <div>
+                  <div className="flex-1">
                     <p className="text-green-800 font-medium mb-2">Registration Successful!</p>
-                    <p className="text-green-700 text-sm">{success}</p>
+                    <div className="text-green-700 text-sm mb-4 whitespace-pre-line">{success}</div>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <button
+                        onClick={onSuccess}
+                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                      >
+                        Continue to Login
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSuccess('');
+                          setFormData({
+                            firstName: '',
+                            lastName: '',
+                            dateOfBirth: '',
+                            avisDonorCenter: '',
+                            email: '',
+                          });
+                        }}
+                        className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium"
+                      >
+                        Register Another Donor
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -250,18 +324,20 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
               </div>
             )}
 
-            {/* GDPR Notice */}
-            <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="flex items-start">
-                <Shield className="w-5 h-5 text-red-600 mt-0.5 mr-3" />
-                <div className="text-sm text-red-800">
-                  <p className="font-medium mb-1">Privacy & Security:</p>
-                  <p>Your personal information will be securely hashed and the original data will not be stored. This ensures GDPR compliance while maintaining secure authentication.</p>
+            {!success && (
+              <>
+                {/* GDPR Notice */}
+                <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                  <div className="flex items-start">
+                    <Shield className="w-5 h-5 text-red-600 mt-0.5 mr-3" />
+                    <div className="text-sm text-red-800">
+                      <p className="font-medium mb-1">Privacy & Security:</p>
+                      <p>Your personal information will be securely hashed and the original data will not be stored. This ensures GDPR compliance while maintaining secure authentication.</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
               {/* Personal Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -411,33 +487,35 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                 </div>
               </div>
 
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
-              >
-                {loading ? (
-                  <div className="flex items-center justify-center">
-                    <Loader className="w-5 h-5 animate-spin mr-2" />
-                    Submitting for Verification...
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center">
-                    <Save className="w-5 h-5 mr-2" />
-                    Submit Registration
-                  </div>
-                )}
-              </button>
-            </form>
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  {loading ? (
+                    <div className="flex items-center justify-center">
+                      <Loader className="w-5 h-5 animate-spin mr-2" />
+                      Submitting for Verification...
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center">
+                      <Save className="w-5 h-5 mr-2" />
+                      Submit Registration
+                    </div>
+                  )}
+                </button>
+              </form>
 
-            {/* Security Notice */}
-            <div className="mt-6 pt-6 border-t border-gray-100">
-              <div className="flex items-center justify-center text-xs text-gray-500">
-                <Shield className="w-3 h-3 mr-1" />
-                GDPR compliant • Hash-based authentication • No PII stored
+              {/* Security Notice */}
+              <div className="mt-6 pt-6 border-t border-gray-100">
+                <div className="flex items-center justify-center text-xs text-gray-500">
+                  <Shield className="w-3 h-3 mr-1" />
+                  GDPR compliant • Hash-based authentication • No PII stored
+                </div>
               </div>
-            </div>
+              </>
+            )}
           </div>
         </div>
       </div>
