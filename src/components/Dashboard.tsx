@@ -3,6 +3,7 @@ import { LogOut, Calendar, User, Globe, MessageCircle, CheckCircle, XCircle, Plu
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import AppointmentBooking from './AppointmentBooking';
+import DonorHistory from './DonorHistory';
 
 interface Appointment {
   appointment_id: string;
@@ -19,6 +20,7 @@ interface Appointment {
 export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () => void }) {
   const { donor, logout } = useAuth();
   const [showBooking, setShowBooking] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -83,6 +85,10 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
 
   if (showBooking) {
     return <AppointmentBooking onBack={() => setShowBooking(false)} />;
+  }
+
+  if (showHistory) {
+    return <DonorHistory onBack={() => setShowHistory(false)} />;
   }
 
   const formatDate = (dateString: string | null) => {
@@ -250,7 +256,10 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
                   <h4 className="font-semibold text-gray-900 mb-1">Schedule Appointment</h4>
                   <p className="text-sm text-gray-600">Book your next donation appointment</p>
                 </button>
-                <button className="p-6 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-300 transition-all duration-200 text-left group">
+                <button 
+                  onClick={() => setShowHistory(true)}
+                  className="p-6 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-300 transition-all duration-200 text-left group"
+                >
                   <div className="flex items-center mb-3">
                     <div className="bg-green-100 p-2 rounded-lg group-hover:bg-green-200 transition-colors">
                       <User className="w-5 h-5 text-green-600" />
