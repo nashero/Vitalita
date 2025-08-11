@@ -133,7 +133,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
         <nav className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:py-4">
           <div className="flex items-center space-x-2 cursor-pointer" onClick={() => handleNav('hero')}>
             <span className="inline-flex items-center text-2xl font-bold text-red-600">
-              <Heart className="w-7 h-7 mr-1" fill="#DC2626" /> Vitalita
+              <Heart className="w-7 h-7 mr-1" fill="#DC2626" />
+              Vitalita
             </span>
           </div>
           <div className="hidden md:flex items-center space-x-8 text-base font-medium">

@@ -2,20 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { 
   ArrowLeft, 
   Calendar, 
-  Heart, 
   MapPin, 
   User, 
   Clock, 
+  Heart, 
+  BarChart3, 
   TrendingUp, 
-  Award,
-  Filter,
-  Search,
-  Download,
-  RefreshCw,
-  CheckCircle,
+  Award, 
+  CheckCircle, 
   XCircle,
   AlertCircle,
-  BarChart3
+  Info,
+  Search,
+  RefreshCw
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';

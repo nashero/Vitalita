@@ -189,7 +189,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
                 </div>
                 <div className="flex items-center text-gray-600">
                   <MessageCircle className="w-4 h-4 mr-2" />
-                  <span>Contact: {donor.preferred_communication_channel}</span>
+                  <span>Preferred Method of Contact: {donor.preferred_communication_channel}</span>
                 </div>
               </div>
             </div>
