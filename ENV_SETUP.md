@@ -10,7 +10,7 @@ VITE_SUPABASE_URL=http://host.docker.internal:54321
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4dmltYWdmdm9ud3h5Z210Z3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEyODg4NjcsImV4cCI6MjA2Njg2NDg2N30.U0ZAojLgRS680JpP2HXZhm1Q_vce6i8o9k5zZ3Jx6LA
 
 # n8n Webhook Configuration for Chat Widget
-VITE_N8N_WEBHOOK_URL=http://n8n.nashero.aero/webhook/71d0f3a7-040d-465e-b365-c0c8f3cd586f
+VITE_N8N_WEBHOOK_URL=https://n8n.nashero.aero/webhook/2abffb6c-6b78-4631-b2ba-0a7ff61b653f
 ```
 
 ## n8n Webhook Setup
