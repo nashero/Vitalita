@@ -23,10 +23,12 @@ export interface Staff {
   role?: StaffRole;
 }
 
+type LoginResult = { success: boolean; error?: string };
+
 interface StaffAuthContextType {
   staff: Staff | null;
   loading: boolean;
-  login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  login: (username: string, password: string) => Promise<LoginResult>;
   logout: () => void;
 }
 
@@ -57,9 +59,11 @@ export function useStaffAuthProvider() {
     setLoading(false);
   }, []);
 
-  const login = async (username: string, password: string): Promise<{ success: boolean; error?: string }> => {
+  const login = async (username: string, password: string): Promise<LoginResult> => {
     try {
       setLoading(true);
+
+      console.log('Attempting staff login for username:', username);
 
       // First, get the staff member by username
       const { data: staffData, error: staffError } = await supabase
@@ -78,20 +82,42 @@ export function useStaffAuthProvider() {
 
       if (staffError) {
         console.error('Staff lookup error:', staffError);
-        return { success: false, error: 'Invalid username or password' };
+        if (staffError.code === 'PGRST116') {
+          return { success: false, error: 'Invalid username or password' };
+        }
+        return { success: false, error: `Database error: ${staffError.message}` };
       }
 
       if (!staffData) {
+        console.log('No staff member found with username:', username);
         return { success: false, error: 'Invalid username or password' };
       }
+
+      console.log('Staff member found:', {
+        username: staffData.username,
+        is_active: staffData.is_active,
+        has_salt: !!staffData.salt,
+        has_password_hash: !!staffData.password_hash
+      });
 
       // Hash the provided password with the stored salt
       const hashedPassword = await generateSHA256Hash(password + staffData.salt);
+      
+      console.log('Password verification:', {
+        provided_password_length: password.length,
+        salt: staffData.salt,
+        hashed_password: hashedPassword.substring(0, 20) + '...',
+        stored_hash: staffData.password_hash.substring(0, 20) + '...',
+        hash_match: hashedPassword === staffData.password_hash
+      });
 
       // Compare with stored password hash
       if (hashedPassword !== staffData.password_hash) {
+        console.log('Password hash mismatch - login failed');
         return { success: false, error: 'Invalid username or password' };
       }
+
+      console.log('Password verification successful');
 
       // Update last login timestamp
       const { error: updateError } = await supabase
@@ -127,13 +153,19 @@ export function useStaffAuthProvider() {
       localStorage.setItem('staff', JSON.stringify(authenticatedStaff));
 
       // Create audit log for successful login
-      await supabase.rpc('create_audit_log', {
-        p_user_id: authenticatedStaff.staff_id,
-        p_user_type: 'staff',
-        p_action: 'login',
-        p_details: 'Staff member successfully logged in',
-        p_status: 'success'
-      });
+      try {
+        await supabase.rpc('create_audit_log', {
+          p_user_id: authenticatedStaff.staff_id,
+          p_user_type: 'staff',
+          p_action: 'login',
+          p_details: 'Staff member successfully logged in',
+          p_status: 'success'
+        });
+        console.log('Audit log created successfully');
+      } catch (auditError) {
+        console.warn('Failed to create audit log:', auditError);
+        // Don't fail the login if audit log creation fails
+      }
 
       return { success: true };
     } catch (error) {
