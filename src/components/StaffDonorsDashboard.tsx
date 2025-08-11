@@ -604,7 +604,7 @@ export default function StaffDonorsDashboard() {
 
         {/* Search Form */}
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div className="flex-1">
               <label htmlFor="donorId" className="block text-sm font-medium text-gray-700 mb-2">
                 Donor ID *
@@ -637,11 +637,11 @@ export default function StaffDonorsDashboard() {
                 <option value="history">History</option>
               </select>
             </div>
-            <div className="flex items-end">
+            <div className="flex items-center">
               <button
                 onClick={searchDonations}
                 disabled={loading || !donorId.trim()}
-                className="px-6 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center px-6 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed min-w-[100px] h-[42px]"
               >
                 {loading ? <Loader className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
                 <span className="ml-2">Search</span>
