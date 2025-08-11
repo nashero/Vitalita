@@ -162,11 +162,21 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
       console.log('Registration result:', registrationResult);
 
       // Check if registration actually succeeded
-      if (registrationResult === false) {
-        console.error('Registration function returned false - registration failed');
+      if (!registrationResult || !Array.isArray(registrationResult) || registrationResult.length === 0) {
+        console.error('Registration function returned invalid result - registration failed');
         setError('Registration failed. The registration function returned an error. Please try again or contact support.');
         return;
       }
+
+      const result = registrationResult[0];
+      if (!result.success) {
+        console.error('Registration function returned failure:', result.message);
+        setError(`Registration failed: ${result.message || 'Please try again or contact support.'}`);
+        return;
+      }
+
+      const generatedDonorId = result.donor_id;
+      console.log('Generated donor ID:', generatedDonorId);
 
       // Add a small delay to ensure the transaction is committed
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -211,8 +221,8 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
       // Determine success message based on verification status
       const verificationStatus = verifyDonor ? 'verified' : 'pending_verification';
       const successMessage = verificationStatus === 'verified' 
-        ? `Registration successful! Your donor account has been created with ID: ${donorHashId.substring(0, 8)}...\n\nNext steps:\n1. Check your email (${formData.email}) for a verification link\n2. Click the verification link to confirm your email address\n3. AVIS staff will review and activate your account\n4. You'll receive a notification when ready to donate\n\nYou can now log in using your registration details once your account is activated.`
-        : `Registration submitted successfully! Your donor account has been created with ID: ${donorHashId.substring(0, 8)}...\n\nNext steps:\n1. Check your email (${formData.email}) for a verification link\n2. Click the verification link to confirm your email address\n3. AVIS staff will review and activate your account\n4. You'll receive a notification when ready to donate\n\nNote: Your account is being processed. You can now log in using your registration details once your account is activated.`;
+        ? `Registration successful! Your donor account has been created with ID: ${generatedDonorId}\n\nNext steps:\n1. Check your email (${formData.email}) for a verification link\n2. Click the verification link to confirm your email address\n3. AVIS staff will review and activate your account\n4. You'll receive a notification when ready to donate\n\nYou can now log in using your registration details once your account is activated.`
+        : `Registration submitted successfully! Your donor account has been created with ID: ${generatedDonorId}\n\nNext steps:\n1. Check your email (${formData.email}) for a verification link\n2. Click the verification link to confirm your email address\n3. AVIS staff will review and activate your account\n4. You'll receive a notification when ready to donate\n\nNote: Your account is being processed. You can now log in using your registration details once your account is activated.`;
 
       setSuccess(successMessage);
       
@@ -273,6 +283,11 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                 <p className="text-red-100 text-sm mt-1">
                   Create your secure AVIS donor account
                 </p>
+                <div className="flex items-center justify-center mt-2">
+                  <div className="bg-white/20 px-3 py-1 rounded-full">
+                    <span className="text-white text-xs font-medium">Auto-generated Donor ID</span>
+                  </div>
+                </div>
               </div>
               <div className="w-16"></div> {/* Spacer for centering */}
             </div>
@@ -286,6 +301,39 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                   <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-0.5" />
                   <div className="flex-1">
                     <p className="text-green-800 font-medium mb-2">Registration Successful!</p>
+                    
+                    {/* Donor ID Display */}
+                    {success.includes('Your donor account has been created with ID:') && (
+                      <div className="mb-4 p-3 bg-white border border-green-300 rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-green-800">Your Donor ID:</span>
+                          <div className="flex items-center space-x-2">
+                            <div className="bg-green-100 px-3 py-1 rounded-md">
+                              <span className="font-mono font-bold text-green-800 text-lg">
+                                {success.match(/ID: ([A-Z]{3}-\d{4}-\d{4})/)?.[1] || 'Generated'}
+                              </span>
+                            </div>
+                            <button
+                              onClick={() => {
+                                const donorId = success.match(/ID: ([A-Z]{3}-\d{4}-\d{4})/)?.[1];
+                                if (donorId) {
+                                  navigator.clipboard.writeText(donorId);
+                                  // You could add a toast notification here
+                                }
+                              }}
+                              className="text-green-600 hover:text-green-800 transition-colors"
+                              title="Copy Donor ID"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                        <p className="text-xs text-green-600 mt-1">Save this ID for future reference</p>
+                      </div>
+                    )}
+                    
                     <div className="text-green-700 text-sm mb-4 whitespace-pre-line">{success}</div>
                     <div className="flex flex-col sm:flex-row gap-3">
                       <button
@@ -460,6 +508,22 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                 <p className="text-xs text-gray-500 mt-1">
                   We'll send a verification email to this address
                 </p>
+              </div>
+
+              {/* Donor ID Information */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-start">
+                  <div className="bg-blue-600 p-2 rounded-full mr-3">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V4a2 2 0 114 0v2m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                    </svg>
+                  </div>
+                  <div className="text-sm text-blue-800">
+                    <p className="font-medium mb-1">Your Donor ID:</p>
+                    <p>A unique donor identifier will be automatically generated and displayed after successful registration. This ID will be in the format: <strong>XXX-2025-XXXX</strong> (e.g., CAS-2025-1001 for AVIS Casalmaggiore).</p>
+                    <p className="mt-2 text-xs text-blue-600">This ID will be your permanent reference number for all future interactions with AVIS.</p>
+                  </div>
+                </div>
               </div>
 
               {/* Important Notice */}

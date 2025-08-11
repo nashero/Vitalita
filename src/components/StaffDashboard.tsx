@@ -26,6 +26,7 @@ import { supabase } from '../lib/supabase';
 import StaffAppointmentDashboard from './StaffAppointmentDashboard';
 import StaffAvailabilityManager from './StaffAvailabilityManager';
 import SystemLogsViewer from './SystemLogsViewer';
+import StaffDonorsDashboard from './StaffDonorsDashboard';
 
 interface DashboardStats {
   todayAppointments: number;
@@ -345,8 +346,9 @@ export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: 
             {activeTab === 'appointments' && <StaffAppointmentDashboard />}
             {activeTab === 'availability' && <StaffAvailabilityManager />}
             {activeTab === 'logs' && <SystemLogsViewer />}
+            {activeTab === 'donors' && <StaffDonorsDashboard />}
 
-            {(activeTab !== 'overview' && activeTab !== 'appointments' && activeTab !== 'availability' && activeTab !== 'logs') && (
+            {(activeTab !== 'overview' && activeTab !== 'appointments' && activeTab !== 'availability' && activeTab !== 'logs' && activeTab !== 'donors') && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
                 <div className="bg-gray-100 p-4 rounded-full w-16 h-16 mx-auto mb-4">
                   <Settings className="w-8 h-8 text-gray-400 mx-auto mt-1" />
