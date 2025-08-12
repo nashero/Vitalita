@@ -89,7 +89,7 @@ async function testDonorHistory() {
 
     console.log('\n--- Test 3: Statistics calculation ---');
     if (historyData && historyData.length > 0) {
-      const donations = historyData.filter(d => d.status === 'completed');
+      const donations = historyData.filter(d => d.status === 'COMPLETED');
       const now = new Date();
       const thisYear = new Date(now.getFullYear(), 0, 1);
       const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);

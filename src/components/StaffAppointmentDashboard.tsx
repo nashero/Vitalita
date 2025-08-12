@@ -76,7 +76,7 @@ interface DonationCenter {
   city: string;
 }
 
-type AppointmentStatus = 'scheduled' | 'confirmed' | 'cancelled' | 'completed' | 'no-show';
+type AppointmentStatus = 'scheduled' | 'confirmed' | 'cancelled' | 'COMPLETED' | 'no-show';
 type ViewMode = 'appointments' | 'audit';
 
 export default function StaffAppointmentDashboard() {
@@ -104,7 +104,7 @@ export default function StaffAppointmentDashboard() {
     { value: 'scheduled', label: 'Scheduled', color: 'bg-blue-100 text-blue-800', icon: Clock },
     { value: 'confirmed', label: 'Confirmed', color: 'bg-green-100 text-green-800', icon: CheckCircle },
     { value: 'cancelled', label: 'Cancelled', color: 'bg-red-100 text-red-800', icon: XCircle },
-    { value: 'completed', label: 'Completed', color: 'bg-purple-100 text-purple-800', icon: CheckCircle },
+    { value: 'COMPLETED', label: 'Completed', color: 'bg-purple-100 text-purple-800', icon: CheckCircle },
     { value: 'no-show', label: 'No Show', color: 'bg-gray-100 text-gray-800', icon: AlertCircle },
   ];
 
@@ -168,7 +168,7 @@ export default function StaffAppointmentDashboard() {
         },
         {
           appointment_id: 'apt4', donor_hash_id: 'donor3', staff_id: 'staff1', donation_center_id: 'center3',
-          appointment_datetime: '2023-10-27T10:00:00Z', donation_type: 'Plasma', status: 'completed',
+          appointment_datetime: '2023-10-27T10:00:00Z', donation_type: 'Plasma', status: 'COMPLETED',
           booking_channel: 'Online', confirmation_sent: true, reminder_sent: true,
           creation_timestamp: '2023-10-26T10:00:00Z', last_updated_timestamp: '2023-10-26T10:00:00Z',
           donation_centers: { center_id: 'center3', name: 'Donation Center C', address: 'Address C', city: 'City A', country: 'Country A', contact_phone: '111-222-3333', email: 'info@centerc.com' },

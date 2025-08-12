@@ -39,7 +39,7 @@ async function testDonationHistory() {
     const { data: completedAppointments, error: appointmentsError } = await supabase
       .from('appointments')
       .select('*')
-      .eq('status', 'completed')
+      .eq('status', 'COMPLETED')
       .limit(5);
 
     if (appointmentsError) {

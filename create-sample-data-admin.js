@@ -62,7 +62,7 @@ async function createSampleData() {
             donation_volume: 450,
             donation_center_id: appointment.donation_center_id,
             staff_id: null, // No staff assigned for now
-            status: 'completed',
+            status: 'COMPLETED',
             notes: `Sample donation completed at ${center.name}`,
             completion_timestamp: new Date().toISOString()
           };
@@ -95,7 +95,7 @@ async function createSampleData() {
             donation_volume: 450,
             donation_center_id: center.center_id,
             staff_id: null,
-            status: 'completed',
+            status: 'COMPLETED',
             notes: `Sample whole blood donation completed at ${center.name}`,
             completion_timestamp: new Date(Date.now() - (30 * 24 * 60 * 60 * 1000)).toISOString()
           },
@@ -107,7 +107,7 @@ async function createSampleData() {
             donation_volume: 600,
             donation_center_id: center.center_id,
             staff_id: null,
-            status: 'completed',
+            status: 'COMPLETED',
             notes: `Sample plasma donation completed at ${center.name}`,
             completion_timestamp: new Date(Date.now() - (60 * 24 * 60 * 60 * 1000)).toISOString()
           },
@@ -119,7 +119,7 @@ async function createSampleData() {
             donation_volume: 200,
             donation_center_id: center.center_id,
             staff_id: null,
-            status: 'completed',
+            status: 'COMPLETED',
             notes: `Sample platelet donation completed at ${center.name}`,
             completion_timestamp: new Date(Date.now() - (90 * 24 * 60 * 60 * 1000)).toISOString()
           }

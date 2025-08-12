@@ -47,7 +47,7 @@ async function disableRLSTemporarily() {
       
       const { error: updateError } = await supabase
         .from('appointments')
-        .update({ status: 'completed' })
+        .update({ status: 'COMPLETED' })
         .eq('appointment_id', appointment.appointment_id);
 
       if (updateError) {

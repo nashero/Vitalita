@@ -91,6 +91,7 @@ export default function StaffDonorsDashboard() {
   const [donorInfo, setDonorInfo] = useState<DonorInfo | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [expandedDonations, setExpandedDonations] = useState<Set<string>>(new Set());
   const [expandedAppointments, setExpandedAppointments] = useState<Set<string>>(new Set());
   const [showFilters, setShowFilters] = useState(false);
@@ -367,6 +368,7 @@ export default function StaffDonorsDashboard() {
     setAppointments([]);
     setDonorInfo(null);
     setError('');
+    setSuccessMessage('');
     setExpandedDonations(new Set());
     setExpandedAppointments(new Set());
     setEditingAppointment(null);
@@ -393,6 +395,12 @@ export default function StaffDonorsDashboard() {
   };
 
   const startEditingAppointment = (appointmentId: string, currentStatus: string) => {
+    // Prevent editing if appointment is already completed
+    if (currentStatus === 'COMPLETED') {
+      setError('Cannot edit completed appointments. The status field is disabled for completed appointments.');
+      return;
+    }
+    
     setEditingAppointment(appointmentId);
     setAppointmentStatus(currentStatus);
   };
@@ -404,6 +412,13 @@ export default function StaffDonorsDashboard() {
 
   const saveAppointmentStatus = async (appointmentId: string) => {
     try {
+      // Prevent saving if trying to change a completed appointment
+      const currentAppointment = appointments.find(apt => apt.appointment_id === appointmentId);
+      if (currentAppointment && currentAppointment.status === 'COMPLETED') {
+        setError('Cannot modify completed appointments. The status field is disabled for completed appointments.');
+        return;
+      }
+
       const { error: updateError } = await supabase
         .from('appointments')
         .update({ 
@@ -417,6 +432,10 @@ export default function StaffDonorsDashboard() {
         return;
       }
 
+      // Clear any previous messages
+      setError('');
+      setSuccessMessage('');
+
       // Update local state
       setAppointments(prev => prev.map(apt => 
         apt.appointment_id === appointmentId 
@@ -426,6 +445,24 @@ export default function StaffDonorsDashboard() {
 
       setEditingAppointment(null);
       setAppointmentStatus('');
+      
+      // Show success message for completed appointments
+      if (appointmentStatus === 'COMPLETED') {
+        setSuccessMessage('Appointment marked as completed! The appointment has been automatically migrated to donation history and removed from the appointments list.');
+        // The appointment will be automatically migrated to donation_history and removed from appointments
+        // Refresh the appointments list to show the updated state
+        if (donorInfo) {
+          setTimeout(async () => {
+            await fetchAppointments(donorInfo.donor_hash_id);
+            // Clear success message after refresh
+            setSuccessMessage('');
+          }, 2000);
+        }
+      } else {
+        setSuccessMessage(`Appointment status updated to ${appointmentStatus.replace(/_/g, ' ')} successfully.`);
+        // Clear success message after 3 seconds
+        setTimeout(() => setSuccessMessage(''), 3000);
+      }
     } catch (err) {
       console.error('Error updating appointment status:', err);
       setError('Failed to update appointment status. Please try again.');
@@ -672,6 +709,16 @@ export default function StaffDonorsDashboard() {
          </div>
        )}
 
+      {/* Success Message Display */}
+      {successMessage && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div className="flex items-center">
+            <CheckCircle className="w-5 h-5 text-green-400 mr-2" />
+            <p className="text-green-800">{successMessage}</p>
+          </div>
+        </div>
+      )}
+
        
 
 
@@ -843,27 +890,29 @@ export default function StaffDonorsDashboard() {
                         <p className="text-sm text-gray-500">Status</p>
                         {editingAppointment === appointment.appointment_id ? (
                           <div className="flex items-center space-x-2 mt-1">
-                                                         <select
-                               value={appointmentStatus}
-                               onChange={(e) => setAppointmentStatus(e.target.value)}
-                               className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                             >
-                               <option value="">Select a status</option>
-                               {loadingStatuses ? (
-                                 <option value="" disabled>Loading statuses...</option>
-                               ) : donationStatuses.length === 0 ? (
-                                 <option value="" disabled>No statuses available</option>
-                               ) : (
-                                 donationStatuses.map((status) => (
-                                   <option key={status} value={status}>
-                                     {status.replace(/_/g, ' ')}
-                                   </option>
-                                 ))
-                               )}
-                             </select>
+                            <select
+                              value={appointmentStatus}
+                              onChange={(e) => setAppointmentStatus(e.target.value)}
+                              className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                              disabled={appointment.status === 'COMPLETED'}
+                            >
+                              <option value="">Select a status</option>
+                              {loadingStatuses ? (
+                                <option value="" disabled>Loading statuses...</option>
+                              ) : donationStatuses.length === 0 ? (
+                                <option value="" disabled>No statuses available</option>
+                              ) : (
+                                donationStatuses.map((status) => (
+                                  <option key={status} value={status}>
+                                    {status.replace(/_/g, ' ')}
+                                  </option>
+                                ))
+                              )}
+                            </select>
                             <button
                               onClick={() => saveAppointmentStatus(appointment.appointment_id)}
                               className="p-1 text-green-600 hover:text-green-800"
+                              disabled={appointment.status === 'COMPLETED'}
                             >
                               <Save className="w-4 h-4" />
                             </button>
@@ -880,13 +929,20 @@ export default function StaffDonorsDashboard() {
                               {getStatusIcon(appointment.status)}
                               <span className="ml-1">{getStatusDisplayName(appointment.status)}</span>
                             </span>
-                            <button
-                              onClick={() => startEditingAppointment(appointment.appointment_id, appointment.status)}
-                              className="p-1 text-blue-600 hover:text-blue-800"
-                              title="Edit Status"
-                            >
-                              <Edit3 className="w-4 h-4" />
-                            </button>
+                            {appointment.status !== 'COMPLETED' && (
+                              <button
+                                onClick={() => startEditingAppointment(appointment.appointment_id, appointment.status)}
+                                className="p-1 text-blue-600 hover:text-blue-800"
+                                title="Edit Status"
+                              >
+                                <Edit3 className="w-4 h-4" />
+                              </button>
+                            )}
+                            {appointment.status === 'COMPLETED' && (
+                              <span className="text-xs text-gray-500 ml-2">
+                                (Status locked - appointment completed)
+                              </span>
+                            )}
                           </div>
                         )}
                       </div>

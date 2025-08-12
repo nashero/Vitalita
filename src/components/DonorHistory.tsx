@@ -90,7 +90,7 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
         .from('donation_history')
         .select('*')
         .eq('donor_hash_id', donor?.donor_hash_id)
-        .eq('status', 'completed');
+        .eq('status', 'COMPLETED');
 
       if (fallbackError) {
         console.error('Error fetching donation history for statistics:', fallbackError);
@@ -297,7 +297,7 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
+      case 'COMPLETED': return 'bg-green-100 text-green-800';
       case 'scheduled': return 'bg-blue-100 text-blue-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       case 'failed': return 'bg-red-100 text-red-800';
@@ -308,7 +308,7 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'completed': return <CheckCircle className="w-4 h-4" />;
+      case 'COMPLETED': return <CheckCircle className="w-4 h-4" />;
       case 'scheduled': return <Clock className="w-4 h-4" />;
       case 'cancelled': return <XCircle className="w-4 h-4" />;
       case 'failed': return <XCircle className="w-4 h-4" />;

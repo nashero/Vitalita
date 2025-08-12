@@ -249,47 +249,39 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-pink-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-pink-50 p-4">
+      {/* Back to Home Button - Outside the main card */}
+      {onBackToLanding && (
+        <div className="max-w-2xl mx-auto mb-4">
+          <button
+            onClick={onBackToLanding}
+            className="flex items-center text-gray-600 hover:text-gray-800 transition-colors text-sm font-medium"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Home
+          </button>
+        </div>
+      )}
+      
+      <div className="w-full max-w-2xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={onBack}
-                  className="flex items-center text-white/80 hover:text-white transition-colors"
-                >
-                  <ArrowLeft className="w-5 h-5 mr-2" />
-                  Back
-                </button>
-                {onBackToLanding && (
-                  <button
-                    onClick={onBackToLanding}
-                    className="flex items-center text-white/60 hover:text-white transition-colors text-sm"
-                  >
-                    <ArrowLeft className="w-4 h-4 mr-1" />
-                    Home
-                  </button>
-                )}
-              </div>
-              <div className="text-center flex-1">
-                <div className="flex items-center justify-center mb-2">
-                  <div className="bg-white/20 p-3 rounded-full">
-                    <UserPlus className="w-8 h-8 text-white" />
-                  </div>
-                </div>
-                <h1 className="text-2xl font-bold text-white">Donor Registration</h1>
-                <p className="text-red-100 text-sm mt-1">
-                  Create your secure AVIS donor account
-                </p>
-                <div className="flex items-center justify-center mt-2">
-                  <div className="bg-white/20 px-3 py-1 rounded-full">
-                    <span className="text-white text-xs font-medium">Auto-generated Donor ID</span>
-                  </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center mb-2">
+                <div className="bg-white/20 p-3 rounded-full">
+                  <UserPlus className="w-8 h-8 text-white" />
                 </div>
               </div>
-              <div className="w-16"></div> {/* Spacer for centering */}
+              <h1 className="text-2xl font-bold text-white">Donor Registration</h1>
+              <p className="text-red-100 text-sm mt-1">
+                Create your secure AVIS donor account
+              </p>
+              <div className="flex items-center justify-center mt-2">
+                <div className="bg-white/20 px-3 py-1 rounded-full">
+                  <span className="text-white text-xs font-medium">Auto-generated Donor ID</span>
+                </div>
+              </div>
             </div>
           </div>
 
