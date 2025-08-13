@@ -1,13 +1,13 @@
 // Chat Widget Configuration
 export const CHAT_CONFIG = {
   // n8n Webhook URL - Replace with your actual n8n instance URL
-  n8nWebhookUrl: import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n.nashero.aero/webhook/2abffb6c-6b78-4631-b2ba-0a7ff61b653f',
+  n8nWebhookUrl: import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n.nashero.aero/webhook-test/2abffb6c-6b78-4631-b2ba-0a7ff61b653f',
   
   // Debug logging for environment variables
   debug: {
     envUrl: import.meta.env.VITE_N8N_WEBHOOK_URL ? 'Set' : 'Missing',
     finalUrl: import.meta.env.VITE_N8N_WEBHOOK_URL || 'Using fallback URL',
-    actualUrl: import.meta.env.VITE_N8N_WEBHOOK_URL || 'http://n8n.nashero.aero/webhook/2abffb6c-6b78-4631-b2ba-0a7ff61b653f'
+    actualUrl: import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n.nashero.aero/webhook-test/2abffb6c-6b78-4631-b2ba-0a7ff61b653f'
   },
   
   // Chat Widget Settings
