@@ -1,7 +1,7 @@
 // Debug script to test webhook connection
 // Run with: node debug-webhook.js
 
-const testWebhookUrl = process.env.VITE_N8N_WEBHOOK_URL || 'http://n8n.nashero.aero/webhook/2abffb6c-6b78-4631-b2ba-0a7ff61b653f';
+const testWebhookUrl = process.env.VITE_N8N_WEBHOOK_URL || 'http://n8n.nashero.aero/webhook-test/2abffb6c-6b78-4631-b2ba-0a7ff61b653f';
 
 console.log('🔍 Testing webhook connection...');
 console.log('📡 Webhook URL:', testWebhookUrl);
