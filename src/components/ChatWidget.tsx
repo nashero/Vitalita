@@ -65,6 +65,8 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
 
     try {
       // Send message to n8n webhook
+      console.log('🔗 Webhook URL being used:', n8nWebhookUrl);
+      console.log('📤 Sending message to n8n webhook...');
       
       const requestBody = {
         message: text.trim(),
@@ -74,6 +76,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         source: 'vitalita-chat-widget'
       };
       
+      console.log('📋 Request body:', requestBody);
       
       const response = await fetch(n8nWebhookUrl, {
         method: 'POST',
@@ -84,9 +87,12 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         body: JSON.stringify(requestBody)
       });
 
+      console.log('📡 Response status:', response.status);
+      console.log('📡 Response headers:', Object.fromEntries(response.headers.entries()));
       
       if (response.ok) {
         const data = await response.json();
+        console.log('✅ n8n Response:', data);
         
         let responseText = 'Thank you for your message. I\'ll get back to you soon!';
 
@@ -107,6 +113,10 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         };
         setMessages(prev => [...prev, botMessage]);
       } else {
+        console.error('❌ Webhook request failed:', response.status, response.statusText);
+        const errorText = await response.text().catch(() => 'No error details available');
+        console.error('❌ Error response body:', errorText);
+        
         // Fallback response if n8n is not available
         const fallbackMessage: Message = {
           id: (Date.now() + 1).toString(),
