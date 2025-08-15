@@ -119,10 +119,10 @@ export default function StaffAvailabilityManager() {
 
       // Mock data for availability slots
       const mockSlots: AvailabilitySlot[] = [
-        { slot_id: 's1', center_id: 'dc1', slot_datetime: '2023-10-27T10:00:00', donation_type: 'Blood', capacity: 10, current_bookings: 5, is_available: true, created_at: '2023-10-26T10:00:00', updated_at: '2023-10-26T10:00:00' },
-        { slot_id: 's2', center_id: 'dc1', slot_datetime: '2023-10-27T11:00:00', donation_type: 'Blood', capacity: 10, current_bookings: 0, is_available: true, created_at: '2023-10-26T10:00:00', updated_at: '2023-10-26T10:00:00' },
-        { slot_id: 's3', center_id: 'dc2', slot_datetime: '2023-10-27T10:00:00', donation_type: 'Plasma', capacity: 8, current_bookings: 2, is_available: true, created_at: '2023-10-26T10:00:00', updated_at: '2023-10-26T10:00:00' },
-        { slot_id: 's4', center_id: 'dc2', slot_datetime: '2023-10-27T11:00:00', donation_type: 'Plasma', capacity: 8, current_bookings: 0, is_available: true, created_at: '2023-10-26T10:00:00', updated_at: '2023-10-26T10:00:00' },
+        { slot_id: 's1', center_id: 'dc1', slot_datetime: '2023-10-27T10:00:00', donation_type: 'whole_blood', capacity: 10, current_bookings: 5, is_available: true, created_at: '2023-10-26T10:00:00', updated_at: '2023-10-26T10:00:00' },
+        { slot_id: 's2', center_id: 'dc1', slot_datetime: '2023-10-27T11:00:00', donation_type: 'whole_blood', capacity: 10, current_bookings: 0, is_available: true, created_at: '2023-10-26T10:00:00', updated_at: '2023-10-26T10:00:00' },
+        { slot_id: 's3', center_id: 'dc2', slot_datetime: '2023-10-27T10:00:00', donation_type: 'plasma', capacity: 8, current_bookings: 2, is_available: true, created_at: '2023-10-26T10:00:00', updated_at: '2023-10-26T10:00:00' },
+        { slot_id: 's4', center_id: 'dc2', slot_datetime: '2023-10-27T11:00:00', donation_type: 'plasma', capacity: 8, current_bookings: 0, is_available: true, created_at: '2023-10-26T10:00:00', updated_at: '2023-10-26T10:00:00' },
       ];
       setSlots(mockSlots);
 

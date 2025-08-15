@@ -1,119 +1,55 @@
-/*
-  # Complete Appointment Completion Setup
+-- Setup Appointment Completion Trigger System
+-- This script creates a comprehensive trigger system that:
+-- 1. Automatically migrates completed appointments to donation_history
+-- 2. Deletes completed appointments from the appointments table
+-- 3. Wraps all operations in transactions for data safety
+-- 4. Handles proper field mapping and data validation
 
-  This script provides a complete solution for the appointment completion feature,
-  including fixes for RLS policy issues that commonly prevent the trigger from working.
-  
-  Run this script in your Supabase SQL Editor to set up everything needed.
-*/
-
--- ========================================
--- STEP 1: Remove Conflicting Triggers and Functions
--- ========================================
-
--- Remove any conflicting triggers that might exist
-DROP TRIGGER IF EXISTS trigger_create_donation_history ON appointments;
-DROP TRIGGER IF EXISTS trigger_appointment_completion ON appointments;
-
--- Drop conflicting functions
-DROP FUNCTION IF EXISTS create_donation_history_from_appointment() CASCADE;
-DROP FUNCTION IF EXISTS handle_appointment_completion() CASCADE;
-
--- ========================================
--- STEP 2: Fix RLS Policies on donation_history
--- ========================================
-
--- First, let's check the current RLS policies
+-- First, let's ensure we have the correct table structure
+-- Check if donation_history table exists and has the right structure
 DO $$
 BEGIN
-  RAISE NOTICE 'Checking current RLS policies on donation_history table...';
-END $$;
-
--- Display current RLS policies
-SELECT 
-  schemaname,
-  tablename,
-  policyname,
-  permissive,
-  roles,
-  cmd,
-  qual,
-  with_check
-FROM pg_policies 
-WHERE tablename = 'donation_history';
-
--- Check if RLS is enabled
-DO $$
-BEGIN
-  IF EXISTS (
-    SELECT 1 FROM pg_tables 
-    WHERE tablename = 'donation_history' 
-    AND rowsecurity = true
-  ) THEN
-    RAISE NOTICE 'RLS is ENABLED on donation_history table';
-  ELSE
-    RAISE NOTICE 'RLS is DISABLED on donation_history table';
+  IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'donation_history') THEN
+    RAISE EXCEPTION 'donation_history table does not exist. Please run the donation history migration first.';
   END IF;
 END $$;
 
--- Remove overly restrictive policies and create more permissive ones
-DROP POLICY IF EXISTS "System can insert donation history" ON donation_history;
-DROP POLICY IF EXISTS "Allow appointment completion inserts" ON donation_history;
-DROP POLICY IF EXISTS "Comprehensive donation history access" ON donation_history;
+-- Drop existing trigger and function if they exist
+DROP TRIGGER IF EXISTS appointment_completion_trigger ON appointments;
+DROP FUNCTION IF EXISTS handle_appointment_completion();
 
--- Create a permissive policy for system operations
-CREATE POLICY "System can insert donation history"
-  ON donation_history
-  FOR INSERT
-  TO authenticated
-  WITH CHECK (true);
-
--- Create a policy specifically for appointment completion
-CREATE POLICY "Allow appointment completion inserts"
-  ON donation_history
-  FOR INSERT
-  TO authenticated
-  WITH CHECK (
-    -- Allow inserts from the appointment completion process
-    appointment_id IS NOT NULL
-  );
-
--- Create a comprehensive policy for all operations
-CREATE POLICY "Comprehensive donation history access"
-  ON donation_history
-  FOR ALL
-  TO authenticated
-  USING (true)
-  WITH CHECK (true);
-
--- ========================================
--- STEP 3: Create the Trigger Function
--- ========================================
-
--- Create the trigger function with SECURITY DEFINER
+-- Create the comprehensive appointment completion handler function
 CREATE OR REPLACE FUNCTION handle_appointment_completion()
 RETURNS TRIGGER AS $$
 DECLARE
   donation_volume INTEGER;
+  normalized_donation_type VARCHAR;
+  new_history_id UUID;
 BEGIN
-  -- Only proceed if status changed to 'COMPLETED'
-  IF NEW.status = 'COMPLETED' AND (OLD.status IS NULL OR OLD.status != 'COMPLETED') THEN
+  -- Only proceed if status is changed to 'COMPLETED'
+  IF NEW.status = 'COMPLETED' AND OLD.status != 'COMPLETED' THEN
     
-    -- Start transaction
+    -- Start transaction for data safety
     BEGIN
-      -- Set default donation volume based on donation type
-      donation_volume := CASE 
-        WHEN NEW.donation_type = 'whole_blood' THEN 450
-        WHEN NEW.donation_type = 'plasma' THEN 600
-        WHEN NEW.donation_type = 'platelets' THEN 200
-        WHEN NEW.donation_type = 'double_red' THEN 400
-        WHEN NEW.donation_type = 'power_red' THEN 400
+      -- Normalize donation type for consistency
+      normalized_donation_type := LOWER(NEW.donation_type);
+      
+      -- Set donation volume based on donation type
+      donation_volume := CASE normalized_donation_type
+        WHEN 'whole_blood' OR 'blood' THEN 450
+        WHEN 'plasma' THEN 600
+        WHEN 'platelets' THEN 200
+        WHEN 'double_red' THEN 400
+        WHEN 'power_red' THEN 400
         ELSE 450 -- Default fallback
       END;
       
-      -- Insert the completed appointment into donation_history
-      -- SECURITY DEFINER ensures this bypasses RLS policies
+      -- Generate new history ID
+      new_history_id := gen_random_uuid();
+      
+      -- Insert appointment data into donation_history table
       INSERT INTO donation_history (
+        history_id,
         donor_hash_id,
         appointment_id,
         donation_date,
@@ -125,10 +61,11 @@ BEGIN
         notes,
         completion_timestamp
       ) VALUES (
+        new_history_id,
         NEW.donor_hash_id,
         NEW.appointment_id,
         NEW.appointment_datetime,
-        NEW.donation_type,
+        normalized_donation_type,
         donation_volume,
         NEW.donation_center_id,
         NEW.staff_id,
@@ -137,246 +74,163 @@ BEGIN
         now()
       );
       
-      -- Log the successful migration
-      RAISE NOTICE 'Appointment % automatically migrated to donation_history', NEW.appointment_id;
+      -- Log the successful completion
+      PERFORM create_audit_log(
+        p_user_id := NEW.staff_id,
+        p_user_type := 'staff',
+        p_action := 'appointment_completed',
+        p_details := 'Appointment ' || NEW.appointment_id || ' completed and migrated to donation_history with ID: ' || new_history_id,
+        p_resource_type := 'appointments',
+        p_resource_id := NEW.appointment_id,
+        p_status := 'success'
+      );
       
-      -- Return NULL to prevent the appointment from being updated (it will be deleted instead)
-      RETURN NULL;
+      -- Delete the completed appointment from appointments table
+      DELETE FROM appointments WHERE appointment_id = NEW.appointment_id;
       
-    EXCEPTION WHEN OTHERS THEN
-      -- Log the error
-      RAISE EXCEPTION 'Failed to migrate appointment % to donation_history: %', NEW.appointment_id, SQLERRM;
+      -- Log the deletion
+      PERFORM create_audit_log(
+        p_user_id := NEW.staff_id,
+        p_user_type := 'staff',
+        p_action := 'appointment_deleted_after_completion',
+        p_details := 'Completed appointment ' || NEW.appointment_id || ' removed from appointments table after migration to donation_history',
+        p_resource_type := 'appointments',
+        p_resource_id := NEW.appointment_id,
+        p_status := 'success'
+      );
+      
+      -- If we reach here, the transaction was successful
+      RAISE NOTICE 'Appointment % successfully completed and migrated to donation_history with ID: %', NEW.appointment_id, new_history_id;
+      
+    EXCEPTION
+      WHEN OTHERS THEN
+        -- Log the error
+        PERFORM create_audit_log(
+          p_user_id := NEW.staff_id,
+          p_user_type := 'staff',
+          p_action := 'appointment_completion_failed',
+          p_details := 'Failed to complete appointment ' || NEW.appointment_id || ': ' || SQLERRM,
+          p_resource_type := 'appointments',
+          p_resource_id := NEW.appointment_id,
+          p_status := 'error'
+        );
+        
+        -- Re-raise the error to prevent the appointment status change
+        RAISE EXCEPTION 'Failed to complete appointment %: %', NEW.appointment_id, SQLERRM;
     END;
-    
-  ELSE
-    -- For non-completion status changes, return the NEW record as usual
-    RETURN NEW;
   END IF;
+  
+  -- Return NEW to allow the status change to proceed
+  RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- ========================================
--- STEP 4: Create the Trigger
--- ========================================
-
--- Create the trigger on the appointments table
-CREATE TRIGGER trigger_appointment_completion
+-- Create the trigger that fires after appointment status updates
+CREATE TRIGGER appointment_completion_trigger
   AFTER UPDATE ON appointments
   FOR EACH ROW
   EXECUTE FUNCTION handle_appointment_completion();
 
--- ========================================
--- STEP 5: Create Migration Function
--- ========================================
+-- Grant necessary permissions to the function
+GRANT EXECUTE ON FUNCTION handle_appointment_completion() TO authenticated;
+GRANT EXECUTE ON FUNCTION handle_appointment_completion() TO postgres;
 
--- Create a function to manually trigger the completion process for existing records
+-- Create a function to manually migrate existing completed appointments
 CREATE OR REPLACE FUNCTION migrate_existing_completed_appointments()
 RETURNS INTEGER AS $$
 DECLARE
-  completed_count INTEGER;
-  migrated_count INTEGER;
+  appointment_count INTEGER;
+  migrated_count INTEGER := 0;
+  appointment_record RECORD;
 BEGIN
   -- Count existing completed appointments
-  SELECT COUNT(*) INTO completed_count
+  SELECT COUNT(*) INTO appointment_count 
   FROM appointments 
   WHERE status = 'COMPLETED';
   
-  IF completed_count = 0 THEN
-    RAISE NOTICE 'No existing completed appointments found to migrate.';
-    RETURN 0;
-  END IF;
+  RAISE NOTICE 'Found % existing completed appointments to migrate', appointment_count;
   
-  RAISE NOTICE 'Found % existing completed appointments to migrate.', completed_count;
+  -- Process each completed appointment
+  FOR appointment_record IN 
+    SELECT * FROM appointments WHERE status = 'COMPLETED'
+  LOOP
+    BEGIN
+      -- Call the completion handler for each existing completed appointment
+      PERFORM handle_appointment_completion();
+      migrated_count := migrated_count + 1;
+      
+      RAISE NOTICE 'Migrated appointment % (% of %)', 
+        appointment_record.appointment_id, migrated_count, appointment_count;
+        
+    EXCEPTION
+      WHEN OTHERS THEN
+        RAISE NOTICE 'Failed to migrate appointment %: %', 
+          appointment_record.appointment_id, SQLERRM;
+    END;
+  END LOOP;
   
-  -- Insert existing completed appointments into donation_history
-  INSERT INTO donation_history (
-    donor_hash_id,
-    appointment_id,
-    donation_date,
-    donation_type,
-    donation_volume,
-    donation_center_id,
-    staff_id,
-    status,
-    notes,
-    completion_timestamp
-  )
-  SELECT 
-    a.donor_hash_id,
-    a.appointment_id,
-    a.appointment_datetime AS donation_date,
-    a.donation_type,
-    CASE 
-      WHEN a.donation_type = 'whole_blood' THEN 450
-      WHEN a.donation_type = 'plasma' THEN 600
-      WHEN a.donation_type = 'platelets' THEN 200
-      WHEN a.donation_type = 'double_red' THEN 400
-      WHEN a.donation_type = 'power_red' THEN 400
-      ELSE 450
-    END AS donation_volume,
-    a.donation_center_id,
-    a.staff_id,
-    'completed' AS status,
-    'Donation successfully completed.' AS notes,
-    now() AS completion_timestamp
-  FROM appointments a
-  WHERE a.status = 'COMPLETED';
-  
-  GET DIAGNOSTICS migrated_count = ROW_COUNT;
-  
-  -- Delete the migrated appointments
-  DELETE FROM appointments 
-  WHERE status = 'COMPLETED';
-  
-  RAISE NOTICE 'Successfully migrated % existing completed appointments to donation_history.', migrated_count;
-  
+  RAISE NOTICE 'Migration completed. Successfully migrated % of % appointments', 
+    migrated_count, appointment_count;
+    
   RETURN migrated_count;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- ========================================
--- STEP 6: Grant Permissions
--- ========================================
-
--- Grant execute permissions on functions
-GRANT EXECUTE ON FUNCTION handle_appointment_completion() TO authenticated;
+-- Grant execute permission on migration function
 GRANT EXECUTE ON FUNCTION migrate_existing_completed_appointments() TO authenticated;
+GRANT EXECUTE ON FUNCTION migrate_existing_completed_appointments() TO postgres;
 
--- Ensure the function creator has proper permissions
+-- Verify the setup
 DO $$
 BEGIN
-  -- Grant INSERT permission on donation_history to the function schema owner
-  EXECUTE 'GRANT INSERT ON donation_history TO CURRENT_USER';
-  
-  -- Grant USAGE on the schema if needed
-  EXECUTE 'GRANT USAGE ON SCHEMA public TO CURRENT_USER';
-  
-  -- Grant SELECT permission for the trigger function to read appointment data
-  EXECUTE 'GRANT SELECT ON appointments TO CURRENT_USER';
-  
-  RAISE NOTICE 'Granted necessary permissions to function schema owner';
-END $$;
-
--- ========================================
--- STEP 7: Add Documentation
--- ========================================
-
--- Add comments for documentation
-COMMENT ON FUNCTION handle_appointment_completion() IS 'Automatically migrates completed appointments to donation_history table and deletes the appointment record. Runs with SECURITY DEFINER to bypass RLS policies.';
-COMMENT ON FUNCTION migrate_existing_completed_appointments() IS 'Migrates existing completed appointments to donation_history table. Runs with SECURITY DEFINER to bypass RLS policies.';
-
--- ========================================
--- STEP 8: Test the Setup
--- ========================================
-
--- Test if the trigger function can now access the table
-DO $$
-BEGIN
-  RAISE NOTICE 'Testing RLS policies and trigger function...';
-  
-  -- Try to insert a test record (this will be rolled back)
-  BEGIN
-    INSERT INTO donation_history (
-      donor_hash_id,
-      appointment_id,
-      donation_date,
-      donation_type,
-      donation_volume,
-      donation_center_id,
-      status,
-      notes,
-      completion_timestamp
-    ) VALUES (
-      'test-donor-hash',
-      gen_random_uuid(),
-      now(),
-      'whole_blood',
-      450,
-      gen_random_uuid(),
-      'completed',
-      'Test record for RLS policy verification',
-      now()
-    );
-    
-    RAISE NOTICE '✅ RLS policies are working correctly - test insert succeeded';
-    
-    -- Rollback the test insert
-    ROLLBACK;
-    
-  EXCEPTION WHEN OTHERS THEN
-    RAISE NOTICE '❌ RLS policies still have issues: %', SQLERRM;
-  END;
-END $$;
-
--- ========================================
--- STEP 9: Final Verification
--- ========================================
-
--- Display final RLS policies
-DO $$
-BEGIN
-  RAISE NOTICE 'Final RLS policies on donation_history table:';
-END $$;
-
-SELECT 
-  schemaname,
-  tablename,
-  policyname,
-  permissive,
-  roles,
-  cmd,
-  qual,
-  with_check
-FROM pg_policies 
-WHERE tablename = 'donation_history';
-
--- Check if trigger was created
-DO $$
-BEGIN
+  -- Check if trigger exists
   IF EXISTS (
-    SELECT 1 FROM information_schema.triggers 
-    WHERE trigger_name = 'trigger_appointment_completion'
+    SELECT 1 FROM pg_trigger 
+    WHERE tgname = 'appointment_completion_trigger'
   ) THEN
-    RAISE NOTICE '✅ Trigger created successfully';
+    RAISE NOTICE '✅ Appointment completion trigger created successfully';
   ELSE
-    RAISE NOTICE '❌ Trigger creation failed';
+    RAISE NOTICE '❌ Appointment completion trigger creation failed';
   END IF;
-END $$;
-
--- Check if function was created
-DO $$
-BEGIN
+  
+  -- Check if function exists
   IF EXISTS (
     SELECT 1 FROM pg_proc 
     WHERE proname = 'handle_appointment_completion'
   ) THEN
-    RAISE NOTICE '✅ Function created successfully';
+    RAISE NOTICE '✅ Appointment completion function created successfully';
   ELSE
-    RAISE NOTICE '❌ Function creation failed';
+    RAISE NOTICE '❌ Appointment completion function creation failed';
+  END IF;
+  
+  -- Check if migration function exists
+  IF EXISTS (
+    SELECT 1 FROM pg_proc 
+    WHERE proname = 'migrate_existing_completed_appointments'
+  ) THEN
+    RAISE NOTICE '✅ Migration function created successfully';
+  ELSE
+    RAISE NOTICE '❌ Migration function creation failed';
   END IF;
 END $$;
 
--- ========================================
--- COMPLETION MESSAGE
--- ========================================
+-- Display current trigger information
+SELECT 
+  trigger_name,
+  event_manipulation,
+  action_timing,
+  action_statement
+FROM information_schema.triggers 
+WHERE trigger_name = 'appointment_completion_trigger';
 
-DO $$
-BEGIN
-  RAISE NOTICE '';
-  RAISE NOTICE '🎉 APPOINTMENT COMPLETION SETUP COMPLETED SUCCESSFULLY!';
-  RAISE NOTICE '';
-  RAISE NOTICE 'The system is now configured to:';
-  RAISE NOTICE '1. ✅ Automatically migrate completed appointments to donation_history';
-  RAISE NOTICE '2. ✅ Delete completed appointments from appointments table';
-  RAISE NOTICE '3. ✅ Bypass RLS policies using SECURITY DEFINER';
-  RAISE NOTICE '4. ✅ Handle all future appointment completions automatically';
-  RAISE NOTICE '';
-  RAISE NOTICE 'Next steps:';
-  RAISE NOTICE '1. Test the functionality by changing an appointment status to COMPLETED';
-  RAISE NOTICE '2. Run the test script: node test-appointment-completion.js';
-  RAISE NOTICE '3. Monitor the system for any issues';
-  RAISE NOTICE '';
-  RAISE NOTICE 'If you have existing completed appointments, run:';
-  RAISE NOTICE 'SELECT migrate_existing_completed_appointments();';
-  RAISE NOTICE '';
-END $$;
+-- Display function information
+SELECT 
+  proname as function_name,
+  prosrc as source_code
+FROM pg_proc 
+WHERE proname IN ('handle_appointment_completion', 'migrate_existing_completed_appointments');
+
+-- Instructions for usage:
+-- 1. To test the trigger: Update any appointment status to 'COMPLETED'
+-- 2. To migrate existing completed appointments: SELECT migrate_existing_completed_appointments();
+-- 3. Monitor the process through audit logs and database queries

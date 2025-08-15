@@ -180,3 +180,4 @@ If you continue to experience issues after applying this fix:
 2. Verify the migration was applied successfully
 3. Check Supabase logs for any additional errors
 4. Ensure all related functions and triggers are properly configured
+

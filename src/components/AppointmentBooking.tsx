@@ -13,11 +13,31 @@ import {
   Mail,
   AlertCircle,
   CheckCircle,
-  Loader
+  Loader,
+  RefreshCw
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
+import { getAppointmentError, AppointmentError } from '../utils/appointmentErrors';
+import AppointmentErrorDisplay from './AppointmentErrorDisplay';
 
+/**
+ * AppointmentBooking Component
+ * 
+ * Features:
+ * - Real-time slot validation to prevent "INVALID_SLOT" errors
+ * - Optimistic locking to handle concurrent bookings
+ * - Automatic rollback on slot update failures
+ * - Enhanced error handling with specific error codes
+ * - Refresh functionality for slot availability
+ * 
+ * Real-time Validation Benefits:
+ * - Prevents race condition errors
+ * - Ensures data consistency
+ * - Provides immediate feedback on slot changes
+ * - Reduces failed booking attempts
+ * - Improves user experience
+ */
 interface DonationCenter {
   center_id: string;
   name: string;
@@ -52,7 +72,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
   const [availableSlots, setAvailableSlots] = useState<AvailabilitySlot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<AvailabilitySlot | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<AppointmentError | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
   const donationTypes = [
@@ -83,7 +103,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
   const fetchAvailableSlots = async (donationType: DonationType) => {
     try {
       setLoading(true);
-      setError('');
+      setError(null);
 
       // Fetch available slots from the database
       const { data: slots, error: slotsError } = await supabase
@@ -107,7 +127,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
 
       if (slotsError) {
         console.error('Error fetching slots:', slotsError);
-        setError('Failed to load available appointments. Please try again.');
+        setError(getAppointmentError(slotsError));
         return;
       }
 
@@ -133,7 +153,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       setAvailableSlots(transformedSlots);
     } catch (err) {
       console.error('Error fetching slots:', err);
-      setError('Failed to load available appointments. Please try again.');
+      setError(getAppointmentError(err));
     } finally {
       setLoading(false);
     }
@@ -142,12 +162,231 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
   const handleTypeSelection = (type: DonationType) => {
     setSelectedType(type);
     setCurrentStep('slots');
+    setError(null); // Clear any previous errors
     fetchAvailableSlots(type);
+  };
+
+  const refreshAndRetry = async () => {
+    if (!selectedType) return;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Refresh available slots
+      await fetchAvailableSlots(selectedType);
+      
+      // If the previously selected slot is no longer available, clear the selection
+      if (selectedSlot) {
+        const isStillAvailable = availableSlots.some(slot => 
+          slot.slot_id === selectedSlot.slot_id && 
+          slot.current_bookings < slot.capacity
+        );
+        
+        if (!isStillAvailable) {
+          setSelectedSlot(null);
+          setCurrentStep('slots');
+        }
+      }
+      
+      setLoading(false);
+    } catch (err) {
+      console.error('Error refreshing slots:', err);
+      setError(getAppointmentError(err));
+      setLoading(false);
+    }
+  };
+
+  const retryCurrentStep = async () => {
+    setError(null);
+    
+    if (currentStep === 'confirmation' && selectedSlot) {
+      // Re-validate the selected slot
+      const validation = await validateSlotAvailability(selectedSlot);
+      if (!validation.isValid && validation.error) {
+        setError(validation.error);
+        return;
+      }
+      
+      // If validation passes, try to confirm again
+      await confirmBooking();
+    }
+  };
+
+  const handleContactSupport = () => {
+    // You can implement various contact methods here
+    const supportInfo = {
+      phone: '+39 0123 456 789',
+      email: 'support@vitalita.org',
+      hours: 'Monday - Friday, 9:00 AM - 6:00 PM'
+    };
+    
+    // For now, just show an alert with contact information
+    alert(`Contact Support:\nPhone: ${supportInfo.phone}\nEmail: ${supportInfo.email}\nHours: ${supportInfo.hours}`);
+    
+    // In a real application, you might:
+    // - Open a contact form
+    // - Initiate a phone call
+    // - Open an email client
+    // - Show a live chat widget
   };
 
   const handleSlotSelection = (slot: AvailabilitySlot) => {
     setSelectedSlot(slot);
     setCurrentStep('confirmation');
+    setError(null); // Clear any previous errors
+  };
+
+  // Real-time slot validation function
+  const validateSlotAvailability = async (slot: AvailabilitySlot): Promise<{ isValid: boolean; error?: AppointmentError }> => {
+    try {
+      // Add timeout to prevent hanging requests
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Validation timeout')), 10000)
+      );
+
+      // Fetch the latest slot information from the database
+      const fetchPromise = supabase
+        .from('availability_slots')
+        .select('slot_id, current_bookings, capacity, is_available, slot_datetime')
+        .eq('slot_id', slot.slot_id)
+        .single();
+
+      const { data: currentSlot, error: fetchError } = await Promise.race([fetchPromise, timeoutPromise]) as any;
+
+      if (fetchError) {
+        console.error('Error fetching current slot data:', fetchError);
+        
+        // Handle specific database errors
+        if (fetchError.code === 'PGRST116') {
+          return {
+            isValid: false,
+            error: getAppointmentError({ 
+              code: 'SLOT_NOT_FOUND', 
+              message: 'Slot no longer exists',
+              userMessage: 'The selected time slot no longer exists.',
+              suggestion: 'Please refresh and select from available time slots.',
+              severity: 'warning'
+            })
+          };
+        }
+        
+        return {
+          isValid: false,
+          error: getAppointmentError({ 
+            code: 'SLOT_FETCH_ERROR', 
+            message: 'Failed to fetch current slot information',
+            userMessage: 'Unable to verify slot availability.',
+            suggestion: 'Please try again or select a different time slot.',
+            severity: 'error'
+          })
+        };
+      }
+
+      if (!currentSlot) {
+        return {
+          isValid: false,
+          error: getAppointmentError({ 
+            code: 'SLOT_NOT_FOUND', 
+            message: 'Slot no longer exists',
+            userMessage: 'The selected time slot no longer exists.',
+            suggestion: 'Please refresh and select from available time slots.',
+            severity: 'warning'
+          })
+        };
+      }
+
+      // Check if slot is still available
+      if (!currentSlot.is_available) {
+        return {
+          isValid: false,
+          error: getAppointmentError({ 
+            code: 'SLOT_UNAVAILABLE', 
+            message: 'Slot is no longer available',
+            userMessage: 'This time slot is no longer available for booking.',
+            suggestion: 'Please select a different time or date.',
+            severity: 'warning'
+          })
+        };
+      }
+
+      // Check if slot is at capacity
+      if (currentSlot.current_bookings >= currentSlot.capacity) {
+        return {
+          isValid: false,
+          error: getAppointmentError({ 
+            code: 'SLOT_FULL', 
+            message: 'Slot is at full capacity',
+            userMessage: 'This time slot has reached its maximum capacity.',
+            suggestion: 'Please select a different time or check back later for cancellations.',
+            severity: 'warning'
+          })
+        };
+      }
+
+      // Check if slot is in the past
+      const slotDateTime = new Date(currentSlot.slot_datetime);
+      if (slotDateTime <= new Date()) {
+        return {
+          isValid: false,
+          error: getAppointmentError({ 
+            code: 'PAST_DATE', 
+            message: 'Attempted to book appointment in the past',
+            userMessage: 'You cannot book appointments for past dates.',
+            suggestion: 'Please select a current or future date.',
+            severity: 'warning'
+          })
+        };
+      }
+
+      // Check if there's a significant difference in current_bookings (race condition detection)
+      if (Math.abs(currentSlot.current_bookings - slot.current_bookings) > 0) {
+        return {
+          isValid: false,
+          error: getAppointmentError({ 
+            code: 'SLOT_CHANGED', 
+            message: 'Slot availability has changed since selection',
+            userMessage: 'This time slot\'s availability has changed since you selected it.',
+            suggestion: 'Please refresh and select from the updated available times.',
+            severity: 'warning'
+          })
+        };
+      }
+
+      // Additional validation: check if the slot is still within acceptable booking window
+      const now = new Date();
+      const slotTime = new Date(currentSlot.slot_datetime);
+      const timeDiff = slotTime.getTime() - now.getTime();
+      const hoursDiff = timeDiff / (1000 * 60 * 60);
+      
+      // If slot is less than 1 hour away, it might be too late to book
+      if (hoursDiff < 1) {
+        return {
+          isValid: false,
+          error: getAppointmentError({ 
+            code: 'SLOT_TOO_SOON', 
+            message: 'Slot is too close to book',
+            userMessage: 'This time slot is too close to book now.',
+            suggestion: 'Please select a time slot at least 1 hour in the future.',
+            severity: 'warning'
+          })
+        };
+      }
+
+      return { isValid: true };
+    } catch (err) {
+      console.error('Error validating slot availability:', err);
+      return {
+        isValid: false,
+        error: getAppointmentError({ 
+          code: 'VALIDATION_ERROR', 
+          message: 'Error during slot validation',
+          userMessage: 'Unable to verify slot availability.',
+          suggestion: 'Please try again or contact support if the problem persists.',
+          severity: 'error'
+        })
+      };
+    }
   };
 
   const confirmBooking = async () => {
@@ -155,7 +394,15 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
 
     try {
       setLoading(true);
-      setError('');
+      setError(null);
+
+      // Real-time slot validation before proceeding
+      const validation = await validateSlotAvailability(selectedSlot);
+      if (!validation.isValid && validation.error) {
+        console.log('Slot validation failed:', validation.error);
+        setError(validation.error);
+        return;
+      }
 
       // Create the appointment record
       const { data: appointment, error: appointmentError } = await supabase
@@ -164,8 +411,8 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           donor_hash_id: donor.donor_hash_id,
           donation_center_id: selectedSlot.center_id,
           appointment_datetime: selectedSlot.slot_datetime,
-          donation_type: selectedType,
-          status: 'scheduled',
+          donation_type: selectedType === 'Blood' ? 'Blood' : 'Plasma',
+          status: 'SCHEDULED',
           booking_channel: 'online',
           confirmation_sent: false,
           reminder_sent: false,
@@ -175,21 +422,48 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
 
       if (appointmentError) {
         console.error('Error creating appointment:', appointmentError);
-        setError('Failed to book appointment. Please try again.');
+        console.error('Error details:', {
+          code: appointmentError.code,
+          message: appointmentError.message,
+          details: appointmentError.details,
+          hint: appointmentError.hint
+        });
+        setError(getAppointmentError(appointmentError));
         return;
       }
 
-      // Update the availability slot to increment current_bookings
+      // Update the availability slot with optimistic locking
       const { error: slotUpdateError } = await supabase
         .from('availability_slots')
         .update({ 
           current_bookings: selectedSlot.current_bookings + 1 
         })
-        .eq('slot_id', selectedSlot.slot_id);
+        .eq('slot_id', selectedSlot.slot_id)
+        .eq('current_bookings', selectedSlot.current_bookings) // Optimistic locking
+        .eq('is_available', true); // Double-check availability
 
       if (slotUpdateError) {
         console.error('Error updating slot:', slotUpdateError);
-        // Note: We don't fail the booking here as the appointment was created
+        
+        // If slot update failed, we need to rollback the appointment
+        const { error: rollbackError } = await supabase
+          .from('appointments')
+          .delete()
+          .eq('appointment_id', appointment.appointment_id);
+        
+        if (rollbackError) {
+          console.error('Error rolling back appointment:', rollbackError);
+        }
+
+        // Set error and return to prevent inconsistent state
+        setError(getAppointmentError({ 
+          code: 'SLOT_UPDATE_FAILED', 
+          message: 'Failed to update slot availability',
+          userMessage: 'Unable to secure your time slot.',
+          suggestion: 'Please try again or select a different time slot.',
+          severity: 'error'
+        }));
+        return;
       }
 
       // Create audit log for the booking
@@ -197,7 +471,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         p_user_id: donor.donor_hash_id,
         p_user_type: 'donor',
         p_action: 'appointment_booking',
-        p_details: `Appointment booked for ${selectedType} donation on ${new Date(selectedSlot.slot_datetime).toLocaleDateString()}`,
+        p_details: `Appointment booked for ${selectedType === 'Blood' ? 'blood' : 'plasma'} donation on ${new Date(selectedSlot.slot_datetime).toLocaleDateString()}`,
         p_resource_type: 'appointments',
         p_resource_id: appointment.appointment_id,
         p_status: 'success'
@@ -207,7 +481,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       setCurrentStep('success');
     } catch (err) {
       console.error('Error booking appointment:', err);
-      setError('Failed to book appointment. Please try again.');
+      setError(getAppointmentError(err));
     } finally {
       setLoading(false);
     }
@@ -317,6 +591,16 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Available Appointments</h2>
         <p className="text-gray-600">Choose a convenient time for your {selectedType?.toLowerCase()} donation</p>
+        
+        {/* Refresh button */}
+        <button
+          onClick={() => fetchAvailableSlots(selectedType!)}
+          disabled={loading}
+          className="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          {loading ? 'Refreshing...' : 'Refresh Slots'}
+        </button>
       </div>
 
       {loading ? (
@@ -499,7 +783,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         
         <div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Appointment Confirmed!</h2>
-          <p className="text-gray-600 text-lg">Your {selectedType.toLowerCase()} donation is scheduled</p>
+                          <p className="text-gray-600 text-lg">Your {selectedType === 'Blood' ? 'blood' : 'plasma'} donation is scheduled</p>
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -563,14 +847,13 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         {renderStepIndicator()}
 
         {error && (
-          <div className="max-w-2xl mx-auto mb-6">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="flex items-center">
-                <AlertCircle className="w-5 h-5 text-red-600 mr-3" />
-                <p className="text-red-800 font-medium">{error}</p>
-              </div>
-            </div>
-          </div>
+          <AppointmentErrorDisplay 
+            error={error}
+            onRetry={retryCurrentStep}
+            onRefresh={refreshAndRetry}
+            onContactSupport={handleContactSupport}
+            className="mb-6"
+          />
         )}
 
         {currentStep === 'type' && renderTypeSelection()}

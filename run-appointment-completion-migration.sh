@@ -3,50 +3,73 @@
 echo "========================================"
 echo "  Vitalita Appointment Completion Setup"
 echo "========================================"
-echo
-
-echo "This script will set up the automatic appointment completion trigger."
-echo
-
-echo "Before running this script, ensure:"
-echo "1. You have access to your Supabase database"
-echo "2. The donation_history table exists"
-echo "3. You have the necessary permissions"
-echo
-
-read -p "Do you want to continue? (y/N): " confirm
-if [[ ! $confirm =~ ^[Yy]$ ]]; then
-    echo "Setup cancelled."
-    exit 0
-fi
-
-echo
-echo "Setting up appointment completion trigger..."
-echo
-
-echo "RECOMMENDED: Use the complete setup script that fixes all RLS policy issues:"
-echo
-echo "1. Copy the content from: setup-appointment-completion-complete.sql"
-echo "2. Go to your Supabase dashboard"
-echo "3. Navigate to SQL Editor"
-echo "4. Paste the content and click 'Run'"
-echo
-
-echo "ALTERNATIVE: If you prefer manual setup:"
-echo "1. First run: fix-rls-policies.sql (to fix RLS issues)"
-echo "2. Then run: migrate-completed-appointments.sql (to create trigger)"
-echo
-
-echo "After running the migration, test it with:"
-echo "  node test-appointment-completion.js"
-echo
-
-echo "========================================"
-echo "  Setup Instructions Complete"
-echo "========================================"
-echo
-echo "NOTE: The complete setup script automatically fixes the common"
-echo "'RLS policy violation' error that prevents the trigger from working."
-echo
-
+echo ""
+echo "This script will set up the automatic appointment completion"
+echo "trigger system in your Supabase database."
+echo ""
+echo "Prerequisites:"
+echo "- Supabase project is set up and running"
+echo "- donation_history table exists"
+echo "- appointments table exists"
+echo ""
+echo "Please ensure you have:"
+echo "1. Your Supabase project URL and anon key"
+echo "2. Access to the Supabase SQL Editor"
+echo "3. Proper database permissions"
+echo ""
 read -p "Press Enter to continue..."
+echo ""
+echo "========================================"
+echo "   Setup Instructions"
+echo "========================================"
+echo ""
+echo "1. Open your Supabase project dashboard"
+echo "2. Go to SQL Editor"
+echo "3. Copy the contents of setup-appointment-completion-complete.sql"
+echo "4. Paste and execute the SQL script"
+echo "5. Verify the setup was successful"
+echo ""
+echo "========================================"
+echo "   Testing the System"
+echo "========================================"
+echo ""
+echo "After setup, test the system with:"
+echo ""
+echo "node test-appointment-completion.js"
+echo ""
+echo "This will verify that:"
+echo "- Trigger function was created"
+echo "- Trigger is properly attached"
+echo "- Data migration works correctly"
+echo ""
+echo "========================================"
+echo "   Verification Commands"
+echo "========================================"
+echo ""
+echo "In Supabase SQL Editor, run these to verify:"
+echo ""
+echo "-- Check if trigger exists"
+echo "SELECT * FROM information_schema.triggers"
+echo "WHERE trigger_name = 'appointment_completion_trigger';"
+echo ""
+echo "-- Check if function exists"
+echo "SELECT proname, prosrc FROM pg_proc"
+echo "WHERE proname = 'handle_appointment_completion';"
+echo ""
+echo "-- Check current appointments"
+echo "SELECT status, COUNT(*) as count"
+echo "FROM appointments GROUP BY status;"
+echo ""
+echo "========================================"
+echo "   Next Steps"
+echo "========================================"
+echo ""
+echo "1. Complete the SQL setup in Supabase"
+echo "2. Test the system with the test script"
+echo "3. Monitor the system in production"
+echo "4. Check audit logs for completion activities"
+echo ""
+echo "For detailed documentation, see:"
+echo "AUTOMATIC_APPOINTMENT_TRIGGER_README.md"
+echo ""
+read -p "Press Enter to exit..."

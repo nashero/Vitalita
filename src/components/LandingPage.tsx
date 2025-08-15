@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Heart, Cross, Calendar, ShieldCheck, Clock, BarChart3, Menu, X, CheckCircle, MessageCircle, QrCode, Mail, Award, Group, ArrowDown } from 'lucide-react';
+import { Heart, Cross, Calendar, ShieldCheck, Clock, BarChart3, Menu, X, CheckCircle, MessageCircle, QrCode, Mail, Award, Group, ArrowDown, Shield, Server, Code } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import bloodDonationImage from '../assets/images/Blood Donation.jpg';
 
@@ -63,9 +63,10 @@ function useAnimatedCounter(target: number, duration = 1200) {
 interface LandingPageProps {
   onDonorPortal?: () => void;
   onStaffPortal?: () => void;
+  onDeployProject?: () => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal, onDeployProject }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [secondaryMenuOpen, setSecondaryMenuOpen] = useState(false);
   
@@ -305,6 +306,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
         </button>
       </section>
 
+
+
       {/* Process Section */}
       <section ref={sectionRefs.process} className="max-w-5xl mx-auto px-4 py-8">
         <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col md:flex-row items-center gap-8">
@@ -392,8 +395,21 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal 
          </div>
        </section>
 
-       {/* Footer */}
-      <footer ref={sectionRefs.footer} className="bg-white border-t border-gray-200 mt-4">
+                                                                                               {/* Blood Donation Centers Section */}
+           <section className="bg-gradient-to-r from-green-50 to-emerald-50 py-16">
+             <div className="max-w-4xl mx-auto px-4 text-center">
+               <h2 className="text-2xl md:text-3xl font-bold mb-6">Transform Blood Donation Management — <span className="text-red-600">See How Vitalita Can Help</span></h2>
+               <button
+                 onClick={onDeployProject}
+                 className="bg-red-600 text-white px-8 py-4 rounded-lg font-semibold shadow-lg hover:bg-red-700 transition-all focus:outline-none focus:ring-2 focus:ring-red-400 text-lg"
+               >
+                 Show Me How
+               </button>
+             </div>
+           </section>
+
+        {/* Footer */}
+       <footer ref={sectionRefs.footer} className="bg-white border-t border-gray-200 mt-4">
         <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center space-x-2">
             <Heart className="w-6 h-6 text-red-600" fill="#DC2626" />
