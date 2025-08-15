@@ -1,14 +1,24 @@
 import { createClient } from '@supabase/supabase-js';
-import { generateSHA256Hash } from './src/utils/crypto.js';
+import dotenv from 'dotenv';
+import crypto from 'crypto';
 
+dotenv.config();
+
+// Use service role key for admin access
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+if (!supabaseUrl || !supabaseKey) {
+  console.error('Missing Supabase environment variables');
+  process.exit(1);
 }
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Simple SHA256 hash function for Node.js
+async function generateSHA256Hash(data) {
+  return crypto.createHash('sha256').update(data).digest('hex');
+}
 
 async function seedDatabase() {
   console.log('🌱 Starting database seeding...');

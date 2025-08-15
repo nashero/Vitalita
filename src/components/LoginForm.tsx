@@ -61,31 +61,32 @@ export default function LoginForm({ onShowRegistration, onBackToLanding }: Login
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-pink-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        {/* Back to Home Button - Positioned above the card */}
+        {onBackToLanding && (
+          <div className="mb-4 flex justify-start">
+            <button
+              onClick={onBackToLanding}
+              className="flex items-center text-gray-600 hover:text-gray-800 transition-colors px-3 py-2 rounded-lg hover:bg-white/50"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Home
+            </button>
+          </div>
+        )}
+        
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-6">
-            <div className="flex items-center justify-between">
-              {onBackToLanding && (
-                <button
-                  onClick={onBackToLanding}
-                  className="flex items-center text-white/80 hover:text-white transition-colors"
-                >
-                  <ArrowLeft className="w-5 h-5 mr-2" />
-                  Back to Home
-                </button>
-              )}
-              <div className="text-center flex-1">
-                <div className="flex items-center justify-center mb-2">
-                  <div className="bg-white/20 p-3 rounded-full">
-                    <LogIn className="w-8 h-8 text-white" />
-                  </div>
+            <div className="text-center">
+              <div className="flex items-center justify-center mb-2">
+                <div className="bg-white/20 p-3 rounded-full">
+                  <LogIn className="w-8 h-8 text-white" />
                 </div>
-                <h1 className="text-2xl font-bold text-white">Donor Portal</h1>
-                <p className="text-red-100 text-sm mt-1">
-                  Sign in to access your AVIS account
-                </p>
               </div>
-              <div className="w-16"></div> {/* Spacer for centering */}
+              <h1 className="text-2xl font-bold text-white">Donor Portal</h1>
+              <p className="text-red-100 text-sm mt-1">
+                Sign in to access your AVIS account
+              </p>
             </div>
           </div>
 

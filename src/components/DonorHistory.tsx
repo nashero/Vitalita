@@ -2,20 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { 
   ArrowLeft, 
   Calendar, 
-  Heart, 
   MapPin, 
   User, 
   Clock, 
+  Heart, 
+  BarChart3, 
   TrendingUp, 
-  Award,
-  Filter,
-  Search,
-  Download,
-  RefreshCw,
-  CheckCircle,
+  Award, 
+  CheckCircle, 
   XCircle,
   AlertCircle,
-  BarChart3
+  Info,
+  Search,
+  RefreshCw
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
@@ -86,77 +85,15 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
 
   const fetchStatistics = async () => {
     try {
-      const { data, error: statsError } = await supabase
-        .rpc('get_donor_statistics', {
-          p_donor_hash_id: donor?.donor_hash_id
-        });
+      // Use direct query instead of RPC function due to type issues
+      const { data: fallbackData, error: fallbackError } = await supabase
+        .from('donation_history')
+        .select('*')
+        .eq('donor_hash_id', donor?.donor_hash_id)
+        .eq('status', 'COMPLETED');
 
-      if (statsError) {
-        console.error('Error fetching statistics:', statsError);
-        
-        // Try fallback direct query if RPC fails
-        try {
-          const { data: fallbackData, error: fallbackError } = await supabase
-            .from('donation_history')
-            .select('*')
-            .eq('donor_hash_id', donor?.donor_hash_id)
-            .eq('status', 'completed');
-
-          if (fallbackError) {
-            console.error('Fallback query for statistics also failed:', fallbackError);
-            // Set default statistics for new donors
-            setStatistics({
-              total_donations: 0,
-              total_volume: 0,
-              first_donation_date: null,
-              last_donation_date: null,
-              donations_this_year: 0,
-              donations_this_month: 0,
-              preferred_donation_type: null,
-              total_centers_visited: 0
-            });
-            return;
-          }
-
-          // Calculate statistics from fallback data
-          const donations = fallbackData || [];
-          const now = new Date();
-          const thisYear = new Date(now.getFullYear(), 0, 1);
-          const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-          
-          const totalDonations = donations.length;
-          const totalVolume = donations.reduce((sum, d) => sum + (d.donation_volume || 0), 0);
-          const firstDonationDate = donations.length > 0 ? Math.min(...donations.map(d => new Date(d.donation_date).getTime())) : null;
-          const lastDonationDate = donations.length > 0 ? Math.max(...donations.map(d => new Date(d.donation_date).getTime())) : null;
-          const donationsThisYear = donations.filter(d => new Date(d.donation_date) >= thisYear).length;
-          const donationsThisMonth = donations.filter(d => new Date(d.donation_date) >= thisMonth).length;
-          
-          // Calculate preferred donation type
-          const typeCounts = donations.reduce((acc, d) => {
-            acc[d.donation_type] = (acc[d.donation_type] || 0) + 1;
-            return acc;
-          }, {} as Record<string, number>);
-          const preferredType = Object.keys(typeCounts).length > 0 
-            ? Object.entries(typeCounts).sort(([,a], [,b]) => b - a)[0][0] 
-            : null;
-          
-          const totalCentersVisited = new Set(donations.map(d => d.donation_center_id)).size;
-
-          setStatistics({
-            total_donations: totalDonations,
-            total_volume: totalVolume,
-            first_donation_date: firstDonationDate ? new Date(firstDonationDate).toISOString() : null,
-            last_donation_date: lastDonationDate ? new Date(lastDonationDate).toISOString() : null,
-            donations_this_year: donationsThisYear,
-            donations_this_month: donationsThisMonth,
-            preferred_donation_type: preferredType,
-            total_centers_visited: totalCentersVisited
-          });
-          return;
-        } catch (fallbackErr) {
-          console.error('Fallback query for statistics failed:', fallbackErr);
-        }
-        
+      if (fallbackError) {
+        console.error('Error fetching donation history for statistics:', fallbackError);
         // Set default statistics for new donors
         setStatistics({
           total_donations: 0,
@@ -171,21 +108,40 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
         return;
       }
 
-      if (data && data.length > 0) {
-        setStatistics(data[0]);
-      } else {
-        // Set default statistics for new donors
-        setStatistics({
-          total_donations: 0,
-          total_volume: 0,
-          first_donation_date: null,
-          last_donation_date: null,
-          donations_this_year: 0,
-          donations_this_month: 0,
-          preferred_donation_type: null,
-          total_centers_visited: 0
-        });
-      }
+      // Calculate statistics from data
+      const donations = fallbackData || [];
+      const now = new Date();
+      const thisYear = new Date(now.getFullYear(), 0, 1);
+      const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      
+      const totalDonations = donations.length;
+      const totalVolume = donations.reduce((sum, d) => sum + (d.donation_volume || 0), 0);
+      const firstDonationDate = donations.length > 0 ? Math.min(...donations.map(d => new Date(d.donation_date).getTime())) : null;
+      const lastDonationDate = donations.length > 0 ? Math.max(...donations.map(d => new Date(d.donation_date).getTime())) : null;
+      const donationsThisYear = donations.filter(d => new Date(d.donation_date) >= thisYear).length;
+      const donationsThisMonth = donations.filter(d => new Date(d.donation_date) >= thisMonth).length;
+      
+      // Calculate preferred donation type
+      const typeCounts = donations.reduce((acc, d) => {
+        acc[d.donation_type] = (acc[d.donation_type] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+      const preferredType = Object.keys(typeCounts).length > 0 
+        ? Object.entries(typeCounts).sort(([,a], [,b]) => b - a)[0][0] 
+        : null;
+      
+      const totalCentersVisited = new Set(donations.map(d => d.donation_center_id)).size;
+
+      setStatistics({
+        total_donations: totalDonations,
+        total_volume: totalVolume,
+        first_donation_date: firstDonationDate ? new Date(firstDonationDate).toISOString() : null,
+        last_donation_date: lastDonationDate ? new Date(lastDonationDate).toISOString() : null,
+        donations_this_year: donationsThisYear,
+        donations_this_month: donationsThisMonth,
+        preferred_donation_type: preferredType,
+        total_centers_visited: totalCentersVisited
+      });
     } catch (err) {
       console.error('Error fetching statistics:', err);
       // Set default statistics on error
@@ -210,159 +166,99 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
       const offset = (currentPage - 1) * itemsPerPage;
 
       if (activeTab === 'donations') {
-        const { data, error: historyError } = await supabase
-          .rpc('get_donor_donation_history', {
-            p_donor_hash_id: donor?.donor_hash_id,
-            p_limit: itemsPerPage,
-            p_offset: offset
-          });
+        // Use direct query instead of RPC function due to type issues
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('donation_history')
+          .select(`
+            history_id,
+            appointment_id,
+            donation_date,
+            donation_type,
+            donation_volume,
+            status,
+            notes,
+            completion_timestamp,
+            donation_centers!inner(name, address, city),
+            staff(first_name, last_name)
+          `)
+          .eq('donor_hash_id', donor?.donor_hash_id)
+          .order('donation_date', { ascending: false })
+          .limit(itemsPerPage)
+          .range(offset, offset + itemsPerPage - 1);
 
-        if (historyError) {
-          console.error('Error fetching donation history:', historyError);
-          
-          // Try fallback direct query if RPC fails
-          try {
-            const { data: fallbackData, error: fallbackError } = await supabase
-              .from('donation_history')
-              .select(`
-                history_id,
-                appointment_id,
-                donation_date,
-                donation_type,
-                donation_volume,
-                status,
-                notes,
-                completion_timestamp,
-                donation_centers!inner(name, address, city),
-                staff(first_name, last_name)
-              `)
-              .eq('donor_hash_id', donor?.donor_hash_id)
-              .order('donation_date', { ascending: false })
-              .limit(itemsPerPage)
-              .range(offset, offset + itemsPerPage - 1);
-
-            if (fallbackError) {
-              console.error('Fallback query for donation history also failed:', fallbackError);
-              setDonationHistory([]);
-              setHasMore(false);
-              return;
-            }
-
-            // Transform fallback data to match expected format
-            const transformedData = (fallbackData || []).map(item => ({
-              history_id: item.history_id,
-              appointment_id: item.appointment_id,
-              donation_date: item.donation_date,
-              donation_type: item.donation_type,
-              donation_volume: item.donation_volume,
-              donation_center_name: item.donation_centers?.name || 'Unknown Center',
-              donation_center_address: item.donation_centers?.address || '',
-              donation_center_city: item.donation_centers?.city || '',
-              staff_name: item.staff ? `${item.staff.first_name} ${item.staff.last_name}` : null,
-              status: item.status,
-              notes: item.notes,
-              completion_timestamp: item.completion_timestamp
-            }));
-
-            setDonationHistory(transformedData);
-            setHasMore(transformedData.length === itemsPerPage);
-            return;
-          } catch (fallbackErr) {
-            console.error('Fallback query for donation history failed:', fallbackErr);
-          }
-          
-          // Don't set error for empty results, just show empty state
-          if (historyError.code === 'PGRST116' || 
-              historyError.message?.includes('not found') ||
-              historyError.message?.includes('No rows returned')) {
-            setDonationHistory([]);
-            setHasMore(false);
-          } else {
-            setError('Failed to load donation history');
-          }
+        if (fallbackError) {
+          console.error('Error fetching donation history:', fallbackError);
+          setDonationHistory([]);
+          setHasMore(false);
           return;
         }
 
-        setDonationHistory(data || []);
-        setHasMore((data || []).length === itemsPerPage);
+        // Transform data to match expected format
+        const transformedData = (fallbackData || []).map(item => ({
+          history_id: item.history_id,
+          appointment_id: item.appointment_id,
+          donation_date: item.donation_date,
+          donation_type: item.donation_type,
+          donation_volume: item.donation_volume,
+          donation_center_name: item.donation_centers?.name || 'Unknown Center',
+          donation_center_address: item.donation_centers?.address || '',
+          donation_center_city: item.donation_centers?.city || '',
+          staff_name: item.staff ? `${item.staff.first_name} ${item.staff.last_name}` : null,
+          status: item.status,
+          notes: item.notes,
+          completion_timestamp: item.completion_timestamp
+        }));
+
+        setDonationHistory(transformedData);
+        setHasMore(transformedData.length === itemsPerPage);
       } else {
-        const { data, error: appointmentError } = await supabase
-          .rpc('get_donor_appointment_history', {
-            p_donor_hash_id: donor?.donor_hash_id,
-            p_limit: itemsPerPage,
-            p_offset: offset
-          });
+        // Use direct query instead of RPC function due to type issues
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('appointments')
+          .select(`
+            appointment_id,
+            appointment_datetime,
+            donation_type,
+            status,
+            booking_channel,
+            confirmation_sent,
+            reminder_sent,
+            creation_timestamp,
+            last_updated_timestamp,
+            donation_centers!inner(name, address, city),
+            staff(first_name, last_name)
+          `)
+          .eq('donor_hash_id', donor?.donor_hash_id)
+          .order('appointment_datetime', { ascending: false })
+          .limit(itemsPerPage)
+          .range(offset, offset + itemsPerPage - 1);
 
-        if (appointmentError) {
-          console.error('Error fetching appointment history:', appointmentError);
-          
-          // Try fallback direct query if RPC fails
-          try {
-            const { data: fallbackData, error: fallbackError } = await supabase
-              .from('appointments')
-              .select(`
-                appointment_id,
-                appointment_datetime,
-                donation_type,
-                status,
-                booking_channel,
-                confirmation_sent,
-                reminder_sent,
-                creation_timestamp,
-                last_updated_timestamp,
-                donation_centers!inner(name, address, city),
-                staff(first_name, last_name)
-              `)
-              .eq('donor_hash_id', donor?.donor_hash_id)
-              .order('appointment_datetime', { ascending: false })
-              .limit(itemsPerPage)
-              .range(offset, offset + itemsPerPage - 1);
-
-            if (fallbackError) {
-              console.error('Fallback query also failed:', fallbackError);
-              setAppointmentHistory([]);
-              setHasMore(false);
-              return;
-            }
-
-            // Transform fallback data to match expected format
-            const transformedData = (fallbackData || []).map(item => ({
-              appointment_id: item.appointment_id,
-              appointment_datetime: item.appointment_datetime,
-              donation_type: item.donation_type,
-              status: item.status,
-              donation_center_name: item.donation_centers?.name || 'Unknown Center',
-              donation_center_address: item.donation_centers?.address || '',
-              donation_center_city: item.donation_centers?.city || '',
-              staff_name: item.staff ? `${item.staff.first_name} ${item.staff.last_name}` : null,
-              booking_channel: item.booking_channel,
-              confirmation_sent: item.confirmation_sent,
-              reminder_sent: item.reminder_sent,
-              creation_timestamp: item.creation_timestamp,
-              last_updated_timestamp: item.last_updated_timestamp
-            }));
-
-            setAppointmentHistory(transformedData);
-            setHasMore(transformedData.length === itemsPerPage);
-            return;
-          } catch (fallbackErr) {
-            console.error('Fallback query failed:', fallbackErr);
-          }
-          
-          // Don't set error for empty results, just show empty state
-          if (appointmentError.code === 'PGRST116' || 
-              appointmentError.message?.includes('not found') ||
-              appointmentError.message?.includes('No rows returned')) {
-            setAppointmentHistory([]);
-            setHasMore(false);
-          } else {
-            setError('Failed to load appointment history');
-          }
+        if (fallbackError) {
+          console.error('Error fetching appointment history:', fallbackError);
+          setAppointmentHistory([]);
+          setHasMore(false);
           return;
         }
 
-        setAppointmentHistory(data || []);
-        setHasMore((data || []).length === itemsPerPage);
+        // Transform data to match expected format
+        const transformedData = (fallbackData || []).map(item => ({
+          appointment_id: item.appointment_id,
+          appointment_datetime: item.appointment_datetime,
+          donation_type: item.donation_type,
+          status: item.status,
+          donation_center_name: item.donation_centers?.name || 'Unknown Center',
+          donation_center_address: item.donation_centers?.address || '',
+          donation_center_city: item.donation_centers?.city || '',
+          staff_name: item.staff ? `${item.staff.first_name} ${item.staff.last_name}` : null,
+          booking_channel: item.booking_channel,
+          confirmation_sent: item.confirmation_sent,
+          reminder_sent: item.reminder_sent,
+          creation_timestamp: item.creation_timestamp,
+          last_updated_timestamp: item.last_updated_timestamp
+        }));
+
+        setAppointmentHistory(transformedData);
+        setHasMore(transformedData.length === itemsPerPage);
       }
     } catch (err) {
       console.error('Error fetching history:', err);
@@ -401,7 +297,7 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
+      case 'COMPLETED': return 'bg-green-100 text-green-800';
       case 'scheduled': return 'bg-blue-100 text-blue-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       case 'failed': return 'bg-red-100 text-red-800';
@@ -412,7 +308,7 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'completed': return <CheckCircle className="w-4 h-4" />;
+      case 'COMPLETED': return <CheckCircle className="w-4 h-4" />;
       case 'scheduled': return <Clock className="w-4 h-4" />;
       case 'cancelled': return <XCircle className="w-4 h-4" />;
       case 'failed': return <XCircle className="w-4 h-4" />;
@@ -463,6 +359,22 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
         {statistics && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Your Donation Statistics</h2>
+            {statistics.total_donations === 0 && (
+              <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <Heart className="h-5 w-5 text-blue-400" />
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-blue-800">Welcome to Vitalita!</h3>
+                    <div className="mt-2 text-sm text-blue-700">
+                      <p>As a new donor, you don't have any donation history yet. This is completely normal!</p>
+                      <p className="mt-1">Your statistics will populate automatically once you complete your first donation.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
               <div className="text-center">
                 <div className="bg-red-100 p-3 rounded-full w-12 h-12 mx-auto mb-2 flex items-center justify-center">
@@ -625,17 +537,22 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
                   <p className="text-gray-600">No completed donations found</p>
                   <p className="text-sm text-gray-500">
                     {donationHistory.length === 0 
-                      ? "You haven't completed any donations yet. Book an appointment to start your donation journey!"
+                      ? "You haven't completed any donations yet. This is normal for new donors. Your donation history will appear here once you complete your first donation appointment."
                       : "No donations match your current filters. Try adjusting your search criteria."
                     }
                   </p>
                   {donationHistory.length === 0 && (
-                    <button
-                      onClick={onBack}
-                      className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                    >
-                      Book Your First Appointment
-                    </button>
+                    <div className="mt-6 space-y-3">
+                      <button
+                        onClick={onBack}
+                        className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                      >
+                        Book Your First Appointment
+                      </button>
+                      <div className="text-xs text-gray-500">
+                        💡 Tip: After completing a donation, your history will automatically appear here
+                      </div>
+                    </div>
                   )}
                 </div>
               ) : (
@@ -695,12 +612,17 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
                     }
                   </p>
                   {appointmentHistory.length === 0 && (
-                    <button
-                      onClick={onBack}
-                      className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                    >
-                      Book Your First Appointment
-                    </button>
+                    <div className="mt-6 space-y-3">
+                      <button
+                        onClick={onBack}
+                        className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                      >
+                        Book Your First Appointment
+                      </button>
+                      <div className="text-xs text-gray-500">
+                        💡 Tip: Your appointment history will appear here once you book appointments
+                      </div>
+                    </div>
                   )}
                 </div>
               ) : (

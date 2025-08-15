@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 
 export interface Donor {
   donor_hash_id: string;
+  donor_id: string;
   preferred_language: string;
   preferred_communication_channel: string;
   initial_vetting_status: boolean;
@@ -66,7 +67,7 @@ export function useAuthProvider() {
       // Try to find a donor with matching hash
       const { data: donorData, error } = await supabase
         .from('donors')
-        .select('*')
+        .select('donor_hash_id, donor_id, preferred_language, preferred_communication_channel, initial_vetting_status, total_donations_this_year, last_donation_date, is_active, avis_donor_center')
         .eq('donor_hash_id', authHash)
         .eq('is_active', true)
         .single();
@@ -83,6 +84,7 @@ export function useAuthProvider() {
       // Create donor object with all required fields
       const authenticatedDonor: Donor = {
         donor_hash_id: donorData.donor_hash_id,
+        donor_id: donorData.donor_id,
         preferred_language: donorData.preferred_language || 'en',
         preferred_communication_channel: donorData.preferred_communication_channel || 'email',
         initial_vetting_status: donorData.initial_vetting_status || false,

@@ -76,7 +76,7 @@ interface DonationCenter {
   city: string;
 }
 
-type AppointmentStatus = 'scheduled' | 'confirmed' | 'cancelled' | 'completed' | 'no-show';
+type AppointmentStatus = 'SCHEDULED' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'NO_SHOW';
 type ViewMode = 'appointments' | 'audit';
 
 export default function StaffAppointmentDashboard() {
@@ -101,11 +101,11 @@ export default function StaffAppointmentDashboard() {
   const auditPageSize = 20;
 
   const appointmentStatuses: { value: AppointmentStatus; label: string; color: string; icon: React.ComponentType<any> }[] = [
-    { value: 'scheduled', label: 'Scheduled', color: 'bg-blue-100 text-blue-800', icon: Clock },
-    { value: 'confirmed', label: 'Confirmed', color: 'bg-green-100 text-green-800', icon: CheckCircle },
-    { value: 'cancelled', label: 'Cancelled', color: 'bg-red-100 text-red-800', icon: XCircle },
-    { value: 'completed', label: 'Completed', color: 'bg-purple-100 text-purple-800', icon: CheckCircle },
-    { value: 'no-show', label: 'No Show', color: 'bg-gray-100 text-gray-800', icon: AlertCircle },
+    { value: 'SCHEDULED', label: 'Scheduled', color: 'bg-blue-100 text-blue-800', icon: Clock },
+    { value: 'CONFIRMED', label: 'Confirmed', color: 'bg-green-100 text-green-800', icon: CheckCircle },
+    { value: 'CANCELLED', label: 'Cancelled', color: 'bg-red-100 text-red-800', icon: XCircle },
+    { value: 'COMPLETED', label: 'Completed', color: 'bg-purple-100 text-purple-800', icon: CheckCircle },
+    { value: 'NO_SHOW', label: 'No Show', color: 'bg-gray-100 text-gray-800', icon: AlertCircle },
   ];
 
   useEffect(() => {
@@ -144,7 +144,7 @@ export default function StaffAppointmentDashboard() {
       let data = [
         {
           appointment_id: 'apt1', donor_hash_id: 'donor1', staff_id: 'staff1', donation_center_id: 'center1',
-          appointment_datetime: '2023-10-26T10:00:00Z', donation_type: 'Blood', status: 'scheduled',
+          appointment_datetime: '2023-10-26T10:00:00Z', donation_type: 'whole_blood', status: 'SCHEDULED',
           booking_channel: 'Online', confirmation_sent: false, reminder_sent: false,
           creation_timestamp: '2023-10-25T10:00:00Z', last_updated_timestamp: '2023-10-25T10:00:00Z',
           donation_centers: { center_id: 'center1', name: 'Donation Center A', address: 'Address A', city: 'City A', country: 'Country A', contact_phone: '123-456-7890', email: 'info@centera.com' },
@@ -152,15 +152,15 @@ export default function StaffAppointmentDashboard() {
         },
         {
           appointment_id: 'apt2', donor_hash_id: 'donor2', staff_id: 'staff1', donation_center_id: 'center2',
-          appointment_datetime: '2023-10-26T11:00:00Z', donation_type: 'Plasma', status: 'confirmed',
+          appointment_datetime: '2023-10-26T11:00:00Z', donation_type: 'plasma', status: 'CONFIRMED',
           booking_channel: 'Phone', confirmation_sent: true, reminder_sent: false,
           creation_timestamp: '2023-10-25T11:00:00Z', last_updated_timestamp: '2023-10-25T11:00:00Z',
-          donation_centers: { center_id: 'center2', name: 'Donation Center B', address: 'Address B', city: 'City B', country: 'Country B', contact_phone: '987-654-3210', email: 'info@centerb.com' },
+          donation_centers: { center_id: 'center2', name: 'Donation Center B', address: 'Address B', city: 'City B', country: 'Country B', contact_phone: '123-456-7891', email: 'info@centerb.com' },
           donors: { donor_hash_id: 'donor2', preferred_language: 'Spanish', preferred_communication_channel: 'SMS', initial_vetting_status: false, is_active: true }
         },
         {
           appointment_id: 'apt3', donor_hash_id: 'donor1', staff_id: 'staff2', donation_center_id: 'center1',
-          appointment_datetime: '2023-10-27T09:00:00Z', donation_type: 'Blood', status: 'cancelled',
+          appointment_datetime: '2023-10-27T09:00:00Z', donation_type: 'whole_blood', status: 'CANCELLED',
           booking_channel: 'Walk-in', confirmation_sent: false, reminder_sent: false,
           creation_timestamp: '2023-10-26T09:00:00Z', last_updated_timestamp: '2023-10-26T09:00:00Z',
           donation_centers: { center_id: 'center1', name: 'Donation Center A', address: 'Address A', city: 'City A', country: 'Country A', contact_phone: '123-456-7890', email: 'info@centera.com' },
@@ -168,20 +168,20 @@ export default function StaffAppointmentDashboard() {
         },
         {
           appointment_id: 'apt4', donor_hash_id: 'donor3', staff_id: 'staff1', donation_center_id: 'center3',
-          appointment_datetime: '2023-10-27T10:00:00Z', donation_type: 'Plasma', status: 'completed',
+          appointment_datetime: '2023-10-27T10:00:00Z', donation_type: 'plasma', status: 'COMPLETED',
           booking_channel: 'Online', confirmation_sent: true, reminder_sent: true,
           creation_timestamp: '2023-10-26T10:00:00Z', last_updated_timestamp: '2023-10-26T10:00:00Z',
-          donation_centers: { center_id: 'center3', name: 'Donation Center C', address: 'Address C', city: 'City A', country: 'Country A', contact_phone: '111-222-3333', email: 'info@centerc.com' },
-          donors: { donor_hash_id: 'donor3', preferred_language: 'English', preferred_communication_channel: 'Email', initial_vetting_status: true, is_active: true }
+          donation_centers: { center_id: 'center3', name: 'Donation Center C', address: 'Address C', city: 'City A', country: 'Country A', contact_phone: '123-456-7892', email: 'info@centerc.com' },
+          donors: { donor_hash_id: 'donor3', preferred_language: 'French', preferred_communication_channel: 'Email', initial_vetting_status: true, is_active: false }
         },
         {
           appointment_id: 'apt5', donor_hash_id: 'donor2', staff_id: 'staff2', donation_center_id: 'center2',
-          appointment_datetime: '2023-10-28T11:00:00Z', donation_type: 'Blood', status: 'no-show',
+          appointment_datetime: '2023-10-28T11:00:00Z', donation_type: 'whole_blood', status: 'NO_SHOW',
           booking_channel: 'Phone', confirmation_sent: false, reminder_sent: false,
           creation_timestamp: '2023-10-27T11:00:00Z', last_updated_timestamp: '2023-10-27T11:00:00Z',
-          donation_centers: { center_id: 'center2', name: 'Donation Center B', address: 'Address B', city: 'City B', country: 'Country B', contact_phone: '987-654-3210', email: 'info@centerb.com' },
+          donation_centers: { center_id: 'center2', name: 'Donation Center B', address: 'Address B', city: 'City B', country: 'Country B', contact_phone: '123-456-7891', email: 'info@centerb.com' },
           donors: { donor_hash_id: 'donor2', preferred_language: 'Spanish', preferred_communication_channel: 'SMS', initial_vetting_status: false, is_active: true }
-        },
+        }
       ];
 
       // Apply filters
@@ -226,18 +226,52 @@ export default function StaffAppointmentDashboard() {
       setLoading(true);
       setError('');
 
-      const data = [
-        { log_id: 'log1', timestamp: '2023-10-26T10:00:00Z', user_id: 'staff1', user_type: 'staff', action: 'create_appointment', details: 'Created new appointment', resource_type: 'appointment', resource_id: 'apt1', status: 'success' },
-        { log_id: 'log2', timestamp: '2023-10-26T10:05:00Z', user_id: 'staff1', user_type: 'staff', action: 'update_appointment_status', details: 'Changed appointment status to confirmed', resource_type: 'appointment', resource_id: 'apt2', status: 'success' },
-        { log_id: 'log3', timestamp: '2023-10-26T10:10:00Z', user_id: 'staff2', user_type: 'staff', action: 'cancel_appointment', details: 'Cancelled appointment', resource_type: 'appointment', resource_id: 'apt3', status: 'success' },
-        { log_id: 'log4', timestamp: '2023-10-26T10:15:00Z', user_id: 'staff1', user_type: 'staff', action: 'send_reminder', details: 'Sent reminder for appointment', resource_type: 'appointment', resource_id: 'apt1', status: 'success' },
-        { log_id: 'log5', timestamp: '2023-10-26T10:20:00Z', user_id: 'staff2', user_type: 'staff', action: 'send_confirmation', details: 'Sent confirmation for appointment', resource_type: 'appointment', resource_id: 'apt2', status: 'success' },
+      const auditData = [
+        {
+          log_id: 'log1',
+          timestamp: '2023-10-25T10:00:00Z',
+          user_id: 'staff1',
+          user_type: 'staff',
+          action: 'appointment_created',
+          details: 'Created appointment for donor1',
+          ip_address: '192.168.1.100',
+          user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          resource_type: 'appointments',
+          resource_id: 'apt1',
+          status: 'success'
+        },
+        {
+          log_id: 'log2',
+          timestamp: '2023-10-25T11:00:00Z',
+          user_id: 'staff1',
+          user_type: 'staff',
+          action: 'appointment_confirmed',
+          details: 'Confirmed appointment for donor2',
+          ip_address: '192.168.1.100',
+          user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          resource_type: 'appointments',
+          resource_id: 'apt2',
+          status: 'success'
+        },
+        {
+          log_id: 'log3',
+          timestamp: '2023-10-25T12:00:00Z',
+          user_id: 'staff2',
+          user_type: 'staff',
+          action: 'appointment_cancelled',
+          details: 'Cancelled appointment for donor1',
+          ip_address: '192.168.1.101',
+          user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          resource_type: 'appointments',
+          resource_id: 'apt3',
+          status: 'success'
+        }
       ];
 
       // Pagination
       const startIndex = (auditPage - 1) * auditPageSize;
       const endIndex = startIndex + auditPageSize;
-      setAuditLogs(data.slice(startIndex, endIndex));
+      setAuditLogs(auditData.slice(startIndex, endIndex));
     } catch (err) {
       console.error('Error fetching audit logs:', err);
       setError('Failed to load audit logs');

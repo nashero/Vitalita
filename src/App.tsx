@@ -7,6 +7,8 @@ import StaffLogin from './components/StaffLogin';
 import Dashboard from './components/Dashboard';
 import StaffDashboard from './components/StaffDashboard';
 import LandingPage from './components/LandingPage';
+import DeployProject from './components/DeployProject';
+import BloodCenterForm from './components/BloodCenterForm';
 
 import ChatWidget from './components/ChatWidget';
 import { CHAT_CONFIG } from './config/chat';
@@ -16,6 +18,7 @@ import { Users, Shield, ArrowLeft, UserPlus } from 'lucide-react';
 
 type LoginMode = 'donor' | 'staff';
 type DonorMode = 'login' | 'register';
+type Route = 'landing' | 'donor' | 'staff' | 'deploy' | 'bloodCenterForm';
 
 // Add error boundary component
 class ErrorBoundary extends React.Component<
@@ -215,7 +218,7 @@ function LoginModeSelector({ onSelectMode }: { onSelectMode: (mode: LoginMode) =
 }
 
 function App() {
-  const [route, setRoute] = useState<'landing' | 'donor' | 'staff'>('landing');
+  const [route, setRoute] = useState<Route>('landing');
 
   console.log('App render:', { route });
 
@@ -252,10 +255,41 @@ function App() {
       </ErrorBoundary>
     );
   }
+  
+  if (route === 'deploy') {
+    return (
+      <ErrorBoundary>
+        <DeployProject onBackToLanding={() => setRoute('landing')} />
+        <ChatWidget 
+          n8nWebhookUrl={CHAT_CONFIG.n8nWebhookUrl}
+          title={CHAT_CONFIG.title}
+          welcomeMessage={CHAT_CONFIG.welcomeMessage}
+        />
+      </ErrorBoundary>
+    );
+  }
+  
+  if (route === 'bloodCenterForm') {
+    return (
+      <ErrorBoundary>
+        <BloodCenterForm onBackToLanding={() => setRoute('landing')} />
+        <ChatWidget 
+          n8nWebhookUrl={CHAT_CONFIG.n8nWebhookUrl}
+          title={CHAT_CONFIG.title}
+          welcomeMessage={CHAT_CONFIG.welcomeMessage}
+        />
+      </ErrorBoundary>
+    );
+  }
+  
   // Pass navigation handlers to LandingPage
   return (
     <ErrorBoundary>
-      <LandingPage onDonorPortal={() => setRoute('donor')} onStaffPortal={() => setRoute('staff')} />
+      <LandingPage 
+        onDonorPortal={() => setRoute('donor')} 
+        onStaffPortal={() => setRoute('staff')}
+        onDeployProject={() => setRoute('bloodCenterForm')}
+      />
       <ChatWidget 
         n8nWebhookUrl={CHAT_CONFIG.n8nWebhookUrl}
         title={CHAT_CONFIG.title}

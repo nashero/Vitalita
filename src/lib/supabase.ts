@@ -1,15 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Try to get from environment variables, fallback to hardcoded for testing
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://pxvimagfvontwxygmtgpi.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4dmltYWdmdm9ud3h5Z210Z3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEyODg4NjcsImV4cCI6MjA2Njg2NDg2N30.U0ZAojLgRS680JpP2HXZhm1Q_vce6i8o9k5zZ3Jx6LA';
+// Get from environment variables
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Debug logging to help identify environment variable issues
 console.log('Environment check:', {
   envUrl: import.meta.env.VITE_SUPABASE_URL ? 'Set' : 'Missing',
-  envKey: 'Set (hardcoded anon key)',
+  envKey: import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Set' : 'Missing',
   finalUrl: supabaseUrl ? 'Set' : 'Missing',
-  finalKey: 'Set (hardcoded anon key)',
+  finalKey: supabaseAnonKey ? 'Set' : 'Missing',
 });
 
 if (!supabaseUrl || !supabaseAnonKey) {
@@ -28,6 +28,13 @@ export async function testSupabaseConnection() {
     console.log('Testing Supabase connection...');
     console.log('Using URL:', supabaseUrl);
     console.log('Using Key:', supabaseAnonKey ? 'Present' : 'Missing');
+    
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return { 
+        success: false, 
+        error: 'Missing Supabase credentials. Please check your .env file.' 
+      };
+    }
     
     // Test a simple query
     const { data, error } = await supabase.from('donation_centers').select('count').limit(1);
