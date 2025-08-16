@@ -29,6 +29,7 @@
     - Foreign key constraint to donation_centers
     - Check constraint to ensure current_bookings <= capacity
     - Check constraint to ensure capacity > 0
+    - Unique constraint to prevent duplicate slots (center_id, slot_datetime, donation_type)
     - Automatic timestamp management with triggers
 */
 
@@ -58,6 +59,11 @@ CHECK (capacity > 0);
 ALTER TABLE availability_slots 
 ADD CONSTRAINT chk_availability_slots_bookings_valid 
 CHECK (current_bookings >= 0 AND current_bookings <= capacity);
+
+-- Add unique constraint to prevent duplicate slots
+ALTER TABLE availability_slots 
+ADD CONSTRAINT uk_availability_slots_unique 
+UNIQUE (center_id, slot_datetime, donation_type);
 
 -- Create indexes for performance
 CREATE INDEX IF NOT EXISTS idx_availability_slots_center ON availability_slots (center_id);
