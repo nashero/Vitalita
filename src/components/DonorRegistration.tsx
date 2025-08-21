@@ -169,9 +169,9 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
       }
 
       const result = registrationResult[0];
-      if (!result.success) {
-        console.error('Registration function returned failure:', result.message);
-        setError(`Registration failed: ${result.message || 'Please try again or contact support.'}`);
+      if (!result || !result.success) {
+        console.error('Registration function returned failure:', result?.message || 'Unknown error');
+        setError(`Registration failed: ${result?.message || 'Please try again or contact support.'}`);
         return;
       }
 

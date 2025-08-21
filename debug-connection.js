@@ -1,7 +1,7 @@
 // Debug script to test Supabase connection
 // Run with: node debug-connection.js
 
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
 // Use the same credentials as in your supabase.ts file
 const supabaseUrl = 'https://pxvimagfvontwxygmtgpi.supabase.co';
