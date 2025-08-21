@@ -141,7 +141,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
               Vitalita
             </span>
           </div>
-          <div className="hidden md:flex items-center space-x-8 text-base font-medium">
+          <div className="flex items-center space-x-8 text-base font-medium">
                          {navLinks.map(link => (
                <button
                  key={link.label}
@@ -337,31 +337,35 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
         </div>
       </section>
 
-      {/* Feature Highlights */}
-      <section className="max-w-6xl mx-auto px-4 py-8">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Feature Highlights</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-          {highlights.map(h => (
-            <div key={h.title} className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center hover:shadow-lg transition-shadow">
-              <div className="mb-2">{h.icon}</div>
-              <h3 className="text-lg font-semibold mb-1 text-center">{h.title}</h3>
-              <p className="text-gray-600 text-center text-base">{h.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+             {/* Feature Highlights Section */}
+       <section className="max-w-7xl mx-auto px-4 py-12 bg-gray-50">
+         <div className="px-4">
+           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Feature Highlights</h2>
+           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+             {highlights.map(h => (
+               <div key={h.title} className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center hover:shadow-lg transition-shadow">
+                 <div className="mb-2">{h.icon}</div>
+                 <h3 className="text-lg font-semibold mb-1 text-center">{h.title}</h3>
+                 <p className="text-gray-600 text-center text-sm">{h.desc}</p>
+               </div>
+             ))}
+           </div>
+         </div>
+       </section>
 
-             {/* Why Choose Vitalita Section */}
-       <section className="max-w-6xl mx-auto px-4 py-8">
-         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Why Choose Vitalita?</h2>
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-           {benefits.map(b => (
-             <div key={b.title} className="bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition-shadow border border-gray-100">
-               <div className="mb-3">{b.icon}</div>
-               <h3 className="text-lg font-semibold mb-2 text-gray-900">{b.title}</h3>
-               <p className="text-gray-600 text-sm">{b.desc}</p>
-             </div>
-           ))}
+       {/* Why Choose Vitalita Section */}
+       <section className="max-w-7xl mx-auto px-4 py-12 bg-white">
+         <div className="px-4">
+           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Why Choose Vitalita?</h2>
+           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+             {benefits.map(b => (
+               <div key={b.title} className="bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition-shadow border border-gray-100">
+                 <div className="mb-3">{b.icon}</div>
+                 <h3 className="text-lg font-semibold mb-2 text-gray-900">{b.title}</h3>
+                 <p className="text-gray-600 text-sm">{b.desc}</p>
+               </div>
+             ))}
+           </div>
          </div>
        </section>
 

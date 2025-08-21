@@ -549,21 +549,21 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
 
   return (
     <div 
-      className={`fixed z-30 pointer-events-auto ${className}`} 
+      className={`fixed z-50 pointer-events-auto ${className}`} 
       style={{ 
         pointerEvents: 'auto', 
         maxHeight: 'calc(100vh - 100px)',
         top: 'auto',
-        bottom: '24px',
+        bottom: '32px',
         left: 'auto',
-        right: '24px',
+        right: '32px',
         position: 'fixed',
         transform: 'translateZ(0)'
       }}
     >
-      {/* Compact Voice Agent */}
-      {!isExpanded && (
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 w-72 hover:shadow-2xl transition-all duration-300">
+             {/* Compact Voice Agent */}
+       {!isExpanded && (
+         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 w-64 hover:shadow-2xl transition-all duration-300">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-3">
               <div className="relative">
@@ -651,10 +651,10 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
         </div>
       )}
 
-      {/* Expanded Voice Agent */}
-      {isExpanded && (
-        <div 
-          className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-5 w-80" 
+             {/* Expanded Voice Agent */}
+       {isExpanded && (
+         <div 
+           className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-5 w-72"  
           style={{ 
             maxHeight: 'calc(100vh - 120px)', 
             overflowY: 'auto',
