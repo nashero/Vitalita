@@ -10,7 +10,6 @@ import LandingPage from './components/LandingPage';
 import DeployProject from './components/DeployProject';
 import BloodCenterForm from './components/BloodCenterForm';
 
-import ChatWidget from './components/ChatWidget';
 import { CHAT_CONFIG } from './config/chat';
 import { useAuth } from './hooks/useAuth';
 import { useStaffAuth } from './hooks/useStaffAuth';
@@ -233,11 +232,6 @@ function App() {
         <AuthProvider>
           <DonorAppContent onBackToLanding={() => setRoute('landing')} />
         </AuthProvider>
-        <ChatWidget 
-          n8nWebhookUrl={CHAT_CONFIG.n8nWebhookUrl}
-          title={CHAT_CONFIG.title}
-          welcomeMessage={CHAT_CONFIG.welcomeMessage}
-        />
       </ErrorBoundary>
     );
   }
@@ -247,11 +241,6 @@ function App() {
         <StaffAuthProvider>
           <StaffAppContent onBackToLanding={() => setRoute('landing')} />
         </StaffAuthProvider>
-        <ChatWidget 
-          n8nWebhookUrl={CHAT_CONFIG.n8nWebhookUrl}
-          title={CHAT_CONFIG.title}
-          welcomeMessage={CHAT_CONFIG.welcomeMessage}
-        />
       </ErrorBoundary>
     );
   }
@@ -260,11 +249,6 @@ function App() {
     return (
       <ErrorBoundary>
         <DeployProject onBackToLanding={() => setRoute('landing')} />
-        <ChatWidget 
-          n8nWebhookUrl={CHAT_CONFIG.n8nWebhookUrl}
-          title={CHAT_CONFIG.title}
-          welcomeMessage={CHAT_CONFIG.welcomeMessage}
-        />
       </ErrorBoundary>
     );
   }
@@ -273,11 +257,6 @@ function App() {
     return (
       <ErrorBoundary>
         <BloodCenterForm onBackToLanding={() => setRoute('landing')} />
-        <ChatWidget 
-          n8nWebhookUrl={CHAT_CONFIG.n8nWebhookUrl}
-          title={CHAT_CONFIG.title}
-          welcomeMessage={CHAT_CONFIG.welcomeMessage}
-        />
       </ErrorBoundary>
     );
   }
@@ -289,11 +268,6 @@ function App() {
         onDonorPortal={() => setRoute('donor')} 
         onStaffPortal={() => setRoute('staff')}
         onDeployProject={() => setRoute('bloodCenterForm')}
-      />
-      <ChatWidget 
-        n8nWebhookUrl={CHAT_CONFIG.n8nWebhookUrl}
-        title={CHAT_CONFIG.title}
-        welcomeMessage={CHAT_CONFIG.welcomeMessage}
       />
     </ErrorBoundary>
   );

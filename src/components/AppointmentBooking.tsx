@@ -396,6 +396,10 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       setLoading(true);
       setError(null);
 
+
+
+
+
       // Real-time slot validation before proceeding
       const validation = await validateSlotAvailability(selectedSlot);
       if (!validation.isValid && validation.error) {
@@ -559,6 +563,8 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         <p className="text-gray-600">Select the type of donation you'd like to make</p>
       </div>
 
+
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
         {donationTypes.map((donation) => {
           const Icon = donation.icon;
@@ -578,6 +584,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
                   <Clock className="w-4 h-4 mr-2" />
                   {donation.duration}
                 </div>
+
               </div>
             </button>
           );
@@ -602,6 +609,8 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           {loading ? 'Refreshing...' : 'Refresh Slots'}
         </button>
       </div>
+
+
 
       {loading ? (
         <div className="flex items-center justify-center py-12">

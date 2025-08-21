@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Heart, Cross, Calendar, ShieldCheck, Clock, BarChart3, Menu, X, CheckCircle, MessageCircle, QrCode, Mail, Award, Group, ArrowDown, Shield, Server, Code } from 'lucide-react';
+import { Heart, Cross, Calendar, ShieldCheck, Clock, BarChart3, Menu, X, CheckCircle, MessageCircle, QrCode, Mail, Award, Group, ArrowDown, Shield, Server, Code, Mic } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import bloodDonationImage from '../assets/images/Blood Donation.jpg';
+import VoiceAgent from './VoiceAgent';
+import N8nTestPanel from './N8nTestPanel';
 
 const stats = [
   { label: 'Donations per year', value: 500000, icon: <Heart className="w-7 h-7 text-red-600" /> },
@@ -15,6 +17,7 @@ const features = [
   { icon: <ShieldCheck className="w-8 h-8 text-red-600" />, title: 'Guaranteed Safety', desc: 'All AWS centers meet the highest safety standards.' },
   { icon: <Group className="w-8 h-8 text-red-600" />, title: 'AWS Community', desc: 'Join thousands of donors across the country.' },
   { icon: <Clock className="w-8 h-8 text-red-600" />, title: 'Flexible Hours', desc: 'Many available times to fit your schedule.' },
+  { icon: <Mic className="w-8 h-8 text-red-600" />, title: 'Voice Assistant', desc: 'Hands-free booking with our intelligent voice agent.' },
 ];
 
 const processSteps = [
@@ -130,7 +133,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
   return (
     <div className="font-sans bg-gray-50 text-gray-900">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-white/90 shadow-sm backdrop-blur-md">
+      <header className="sticky top-0 z-50 bg-white/90 shadow-sm backdrop-blur-md">
         <nav className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:py-4">
           <div className="flex items-center space-x-2 cursor-pointer" onClick={() => handleNav('hero')}>
             <span className="inline-flex items-center text-2xl font-bold text-red-600">
@@ -260,6 +263,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
                                <p className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed">
                   Book your blood or plasma donation online in minutes. Join thousands of donors making a difference every day.
                 </p>
+                <div className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
+                  <Mic className="w-4 h-4 text-red-500" />
+                  <span>Voice assistant available in bottom-left corner</span>
+                </div>
              </div>
              
                                          {/* Blood Donation Image */}
@@ -429,6 +436,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
         </div>
         <div className="text-center text-gray-400 text-xs pb-2">&copy; {new Date().getFullYear()} Vitalita. All rights reserved.</div>
       </footer>
+      
+      {/* Voice Agent */}
+      <VoiceAgent />
+      
+      {/* n8n Test Panel */}
+      <N8nTestPanel />
     </div>
   );
 };

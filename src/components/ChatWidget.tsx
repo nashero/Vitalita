@@ -65,15 +65,30 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
 
     try {
       // Send message to n8n webhook
+      console.log('🚀 ChatWidget: Sending message to n8n:', text);
+      console.log('📍 n8n Webhook URL:', n8nWebhookUrl);
+      
+      // Validate webhook URL
+      if (!n8nWebhookUrl || n8nWebhookUrl === 'undefined') {
+        console.error('❌ ChatWidget: Invalid n8n webhook URL:', n8nWebhookUrl);
+        throw new Error('n8n webhook URL not configured');
+      }
       
       const requestBody = {
         message: text.trim(),
         timestamp: new Date().toISOString(),
         sessionId: 'vitalita-chat-' + Date.now(),
         userAgent: navigator.userAgent,
-        source: 'vitalita-chat-widget'
+        source: 'vitalita-chat-widget',
+        inputType: 'text',
+        context: {
+          platform: 'vitalita-web',
+          component: 'chat-widget',
+          inputMethod: 'text'
+        }
       };
       
+      console.log('📤 ChatWidget: Request body:', requestBody);
       
       const response = await fetch(n8nWebhookUrl, {
         method: 'POST',
@@ -84,9 +99,12 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         body: JSON.stringify(requestBody)
       });
 
+      console.log('📥 ChatWidget: Response status:', response.status);
+      console.log('📥 ChatWidget: Response headers:', Object.fromEntries(response.headers.entries()));
       
       if (response.ok) {
         const data = await response.json();
+        console.log('✅ ChatWidget: Response data:', data);
         
         let responseText = 'Thank you for your message. I\'ll get back to you soon!';
 
@@ -98,6 +116,8 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
           responseText = data;
         }
 
+        console.log('✅ ChatWidget: Processed response:', responseText);
+
         // Now display responseText in the chat
         const botMessage: Message = {
           id: (Date.now() + 1).toString(),
@@ -107,6 +127,17 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         };
         setMessages(prev => [...prev, botMessage]);
       } else {
+        console.warn('❌ ChatWidget: n8n webhook error status:', response.status);
+        
+        // Try to get error details
+        let errorDetails = '';
+        try {
+          errorDetails = await response.text();
+          console.error('❌ ChatWidget: Error details:', errorDetails);
+        } catch (e) {
+          console.error('❌ ChatWidget: Could not read error response');
+        }
+        
         // Fallback response if n8n is not available
         const fallbackMessage: Message = {
           id: (Date.now() + 1).toString(),
@@ -116,11 +147,28 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         };
         setMessages(prev => [...prev, fallbackMessage]);
       }
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error('❌ ChatWidget: Error sending message to n8n:', error);
+      
+      // Provide specific error messages for common issues
+      let errorText = 'Sorry, I encountered an error processing your message.';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('n8n webhook URL not configured')) {
+          errorText = 'Chat system not properly configured. Please contact support.';
+        } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+          errorText = 'Network error: Could not connect to chat server.';
+          console.error('🔍 ChatWidget: Network connectivity issue detected');
+        } else if (error.name === 'TypeError' && error.message.includes('CORS')) {
+          errorText = 'CORS error: Chat server is blocking requests from this domain.';
+          console.error('🔍 ChatWidget: CORS issue detected');
+        }
+      }
+      
       // Fallback response on error
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: getRandomFallbackResponse(),
+        text: errorText,
         sender: 'bot',
         timestamp: new Date()
       };
