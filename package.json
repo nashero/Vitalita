@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
+    "@vapi-ai/web": "^2.3.8",
     "dotenv": "^17.2.1",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",

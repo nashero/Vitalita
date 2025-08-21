@@ -408,7 +408,11 @@ export type Database = {
           p_email: string;
           p_avis_donor_center: string;
         };
-        Returns: boolean;
+        Returns: {
+          donor_id: string;
+          success: boolean;
+          message: string;
+        }[];
       };
       verify_donor_email: {
         Args: {

@@ -1,8 +1,9 @@
-# Environment Variables Setup
+# Environment Setup for n8n Integration
 
 ## Required Environment Variables
 
 Create a `.env` file in your project root with the following variables:
+
 
 ```env
 # Supabase Configuration
@@ -13,42 +14,46 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 VITE_N8N_WEBHOOK_URL=http://n8n.nashero.aero/webhook/2abffb6c-6b78-4631-b2ba-0a7ff61b653f
 ```
 
-## n8n Webhook Setup
 
-### 1. Get Your n8n Webhook URL
-1. Go to your n8n instance
-2. Create a new workflow
-3. Add a "Webhook" trigger node
-4. Copy the webhook URL (it will look like: `https://your-n8n-instance.com/webhook/abc123`)
-5. Add this URL to your `.env` file
-
-### 2. Configure the Webhook Response
-Your n8n workflow should return a JSON response in this format:
-```json
-{
-  "response": "Your bot response message here"
-}
+# VAPI Voice Assistant Configuration
+VITE_VAPI_ASSISTANT_ID=7eed8831-dab4-4afa-b413-0818aecc0c57
+VAPI_API_KEY=b0bed86f-579d-4210-9982-449afa3b0a70
 ```
 
-### 3. Test the Connection
-The chat widget will automatically test the connection when a user sends a message.
+## Testing n8n Connectivity
 
-## Environment Variable Debugging
+1. **Browser Console Test**: Open browser console and run the test script from `test-n8n-connectivity.js`
+2. **Check Network Tab**: Look for failed requests to the n8n webhook
+3. **CORS Issues**: If you see CORS errors, the n8n server needs to allow your domain
 
-The chat widget will log the webhook URL being used. Check the browser console to see:
-- Whether the environment variable is being read correctly
-- The actual webhook URL being used
-- Any connection errors
+## Common Issues and Solutions
 
-## Example n8n Workflow
+### 1. CORS Error
+- **Problem**: `Access to fetch at 'http://n8n.nashero.aero/webhook/...' from origin 'http://localhost:3000' has been blocked by CORS policy`
+- **Solution**: Configure n8n to allow cross-origin requests from your domain
 
-1. **Webhook Trigger**: Receives POST requests from the chat widget
-2. **Process Message**: Extract the message from the request body
-3. **Generate Response**: Use AI, database lookup, or predefined responses
-4. **Return Response**: Send back JSON with the response message
+### 2. Network Error
+- **Problem**: `Failed to fetch` or connection timeout
+- **Solution**: 
+  - Check if n8n server is running
+  - Verify webhook URL is correct
+  - Check network connectivity
 
-## Troubleshooting
+### 3. Authentication Error
+- **Problem**: 401 Unauthorized or 403 Forbidden
+- **Solution**: Verify webhook URL and any required authentication
 
-- **Webhook not found**: Check that the URL is correct and the webhook is active
-- **CORS errors**: Ensure your n8n instance allows requests from your domain
-- **No response**: Check that your n8n workflow returns the correct JSON format 
+## n8n Server Configuration
+
+Ensure your n8n server allows:
+- POST requests to the webhook endpoint
+- Cross-origin requests from your frontend domain
+- JSON content-type in requests
+
+## Testing Steps
+
+1. **Environment Setup**: Create `.env` file with correct variables
+2. **Restart Dev Server**: Restart your development server after adding environment variables
+3. **Browser Test**: Run the connectivity test in browser console
+4. **Check Logs**: Look for console logs showing n8n requests/responses
+5. **Verify Integration**: Test both VoiceAgent and ChatWidget components 

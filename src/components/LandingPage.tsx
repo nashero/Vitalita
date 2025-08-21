@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Heart, Cross, Calendar, ShieldCheck, Clock, BarChart3, Menu, X, CheckCircle, MessageCircle, QrCode, Mail, Award, Group, ArrowDown, Shield, Server, Code } from 'lucide-react';
+import { Heart, Cross, Calendar, ShieldCheck, Clock, BarChart3, Menu, X, CheckCircle, MessageCircle, QrCode, Mail, Award, Group, ArrowDown, Shield, Server, Code, Mic } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import bloodDonationImage from '../assets/images/Blood Donation.jpg';
+import VoiceAgent from './VoiceAgent';
+import N8nTestPanel from './N8nTestPanel';
 
 const stats = [
   { label: 'Donations per year', value: 500000, icon: <Heart className="w-7 h-7 text-red-600" /> },
@@ -15,6 +17,7 @@ const features = [
   { icon: <ShieldCheck className="w-8 h-8 text-red-600" />, title: 'Guaranteed Safety', desc: 'All AWS centers meet the highest safety standards.' },
   { icon: <Group className="w-8 h-8 text-red-600" />, title: 'AWS Community', desc: 'Join thousands of donors across the country.' },
   { icon: <Clock className="w-8 h-8 text-red-600" />, title: 'Flexible Hours', desc: 'Many available times to fit your schedule.' },
+  { icon: <Mic className="w-8 h-8 text-red-600" />, title: 'Voice Assistant', desc: 'Hands-free booking with our intelligent voice agent.' },
 ];
 
 const processSteps = [
@@ -130,7 +133,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
   return (
     <div className="font-sans bg-gray-50 text-gray-900">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-white/90 shadow-sm backdrop-blur-md">
+      <header className="sticky top-0 z-50 bg-white/90 shadow-sm backdrop-blur-md">
         <nav className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:py-4">
           <div className="flex items-center space-x-2 cursor-pointer" onClick={() => handleNav('hero')}>
             <span className="inline-flex items-center text-2xl font-bold text-red-600">
@@ -138,7 +141,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
               Vitalita
             </span>
           </div>
-          <div className="hidden md:flex items-center space-x-8 text-base font-medium">
+          <div className="flex items-center space-x-8 text-base font-medium">
                          {navLinks.map(link => (
                <button
                  key={link.label}
@@ -260,6 +263,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
                                <p className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed">
                   Book your blood or plasma donation online in minutes. Join thousands of donors making a difference every day.
                 </p>
+                <div className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
+                  <Mic className="w-4 h-4 text-red-500" />
+                  <span>Voice assistant available in bottom-left corner</span>
+                </div>
              </div>
              
                                          {/* Blood Donation Image */}
@@ -330,31 +337,35 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
         </div>
       </section>
 
-      {/* Feature Highlights */}
-      <section className="max-w-6xl mx-auto px-4 py-8">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Feature Highlights</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-          {highlights.map(h => (
-            <div key={h.title} className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center hover:shadow-lg transition-shadow">
-              <div className="mb-2">{h.icon}</div>
-              <h3 className="text-lg font-semibold mb-1 text-center">{h.title}</h3>
-              <p className="text-gray-600 text-center text-base">{h.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+             {/* Feature Highlights Section */}
+       <section className="max-w-7xl mx-auto px-4 py-12 bg-gray-50">
+         <div className="px-4">
+           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Feature Highlights</h2>
+           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+             {highlights.map(h => (
+               <div key={h.title} className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center hover:shadow-lg transition-shadow">
+                 <div className="mb-2">{h.icon}</div>
+                 <h3 className="text-lg font-semibold mb-1 text-center">{h.title}</h3>
+                 <p className="text-gray-600 text-center text-sm">{h.desc}</p>
+               </div>
+             ))}
+           </div>
+         </div>
+       </section>
 
-             {/* Why Choose Vitalita Section */}
-       <section className="max-w-6xl mx-auto px-4 py-8">
-         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Why Choose Vitalita?</h2>
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-           {benefits.map(b => (
-             <div key={b.title} className="bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition-shadow border border-gray-100">
-               <div className="mb-3">{b.icon}</div>
-               <h3 className="text-lg font-semibold mb-2 text-gray-900">{b.title}</h3>
-               <p className="text-gray-600 text-sm">{b.desc}</p>
-             </div>
-           ))}
+       {/* Why Choose Vitalita Section */}
+       <section className="max-w-7xl mx-auto px-4 py-12 bg-white">
+         <div className="px-4">
+           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Why Choose Vitalita?</h2>
+           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+             {benefits.map(b => (
+               <div key={b.title} className="bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition-shadow border border-gray-100">
+                 <div className="mb-3">{b.icon}</div>
+                 <h3 className="text-lg font-semibold mb-2 text-gray-900">{b.title}</h3>
+                 <p className="text-gray-600 text-sm">{b.desc}</p>
+               </div>
+             ))}
+           </div>
          </div>
        </section>
 
@@ -429,6 +440,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
         </div>
         <div className="text-center text-gray-400 text-xs pb-2">&copy; {new Date().getFullYear()} Vitalita. All rights reserved.</div>
       </footer>
+      
+      {/* Voice Agent */}
+      <VoiceAgent />
+      
+      {/* n8n Test Panel */}
+      <N8nTestPanel />
     </div>
   );
 };
