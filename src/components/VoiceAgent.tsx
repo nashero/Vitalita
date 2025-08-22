@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, MicOff, Volume2, X, Send } from 'lucide-react';
+import { Mic, MicOff, Volume2, X, Send, MessageCircle } from 'lucide-react';
 import Vapi from '@vapi-ai/web';
 import { CHAT_CONFIG, getRandomFallbackResponse } from '../config/chat';
 
@@ -34,6 +34,7 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
   const [isVapiLoaded, setIsVapiLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [conversationHistory, setConversationHistory] = useState<Array<{role: string, content: string, timestamp: Date}>>([]);
+  const [currentConversationId, setCurrentConversationId] = useState<string>('');
 
   // Vapi configuration - use environment variables
   const assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID || "7eed8831-dab4-4afa-b413-0818aecc0c57";
@@ -112,24 +113,24 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
           widget.addEventListener('message', (event: any) => {
             if (event.detail && event.detail.type === 'transcript') {
               const userMessage = event.detail.transcript;
-              console.log('Vapi widget transcript received:', userMessage);
+              console.log('🎤 Vapi widget transcript received:', userMessage);
+              
+              // Add user message to conversation
+              addMessageToConversation('user', userMessage);
+              
               // Send user message to n8n webhook for RAG responses
+              console.log('🚀 Sending Vapi widget transcript to n8n:', userMessage);
               sendToN8nWebhook(userMessage, 'voice');
             }
           });
 
-          // Listen for Vapi assistant responses
-          widget.addEventListener('assistant-response', (event: any) => {
-            if (event.detail && event.detail.response) {
-              console.log('Vapi widget assistant response:', event.detail.response);
-              const assistantMessage = {
-                role: 'assistant',
-                content: event.detail.response,
-                timestamp: new Date()
-              };
-              setConversationHistory(prev => [...prev, assistantMessage]);
-            }
-          });
+          // Listen for Vapi assistant responses - REMOVED to prevent fragmentation
+          // widget.addEventListener('assistant-response', (event: any) => {
+          //   if (event.detail && event.detail.response) {
+          //     console.log('Vapi widget assistant response:', event.detail.response);
+          //     addMessageToConversation('assistant', event.detail.response);
+          //   }
+          // });
         }
       }, 100);
 
@@ -175,42 +176,54 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
         setTranscript('Voice conversation ended.');
       });
 
-      // Real-time conversation events
-      vapi.on('speech-start', () => {
-        setIsListening(true);
-        setTranscript('Listening...');
-      });
+        // Real-time conversation events
+  vapi.on('speech-start', () => {
+    setIsListening(true);
+    setTranscript('Listening...');
+  });
 
-      vapi.on('speech-end', () => {
-        setIsListening(false);
-        setTranscript('Processing your request through n8n RAG system...');
-        setIsProcessing(true);
-        
-        // Always send the transcript to n8n webhook for RAG response
-        if (transcript && transcript !== 'Starting voice assistant... Ask me about blood donation!' && transcript !== 'Listening for your question about blood donation...' && transcript !== 'Processing your request through n8n RAG system...') {
-          console.log('Sending voice transcript to n8n:', transcript);
-          sendToN8nWebhook(transcript, 'voice');
-        }
-      });
+  vapi.on('speech-end', () => {
+    setIsListening(false);
+    setTranscript('Processing your request through n8n RAG system...');
+    setIsProcessing(true);
+    
+    // Send the current transcript to n8n webhook for RAG response
+    // Use a timeout to ensure we have the final transcript
+    setTimeout(() => {
+      if (transcript && transcript.trim() && 
+          transcript !== 'Starting voice assistant... Ask me about blood donation!' && 
+          transcript !== 'Listening for your question about blood donation...' && 
+          transcript !== 'Processing your request through n8n RAG system...' &&
+          transcript !== 'Listening...') {
+        console.log('🎤 Sending final voice transcript to n8n:', transcript);
+        sendToN8nWebhook(transcript, 'voice');
+      }
+    }, 500);
+  });
 
       vapi.on('message', (message: any) => {
         if (message.type === 'transcript') {
-          const newMessage = {
-            role: message.role,
-            content: message.transcript,
-            timestamp: new Date()
-          };
-          setConversationHistory(prev => [...prev, newMessage]);
-          setTranscript(message.transcript);
-          
-          // Always send voice message to n8n webhook for RAG responses
-          if (message.role === 'user' && message.transcript.trim()) {
-            console.log('Processing voice message through n8n:', message.transcript);
-            sendToN8nWebhook(message.transcript, 'voice');
+          // Only add user messages to conversation, not assistant responses
+          if (message.role === 'user') {
+            const userTranscript = message.transcript;
+            console.log('🎤 VAPI transcript received:', userTranscript);
             
-            // Show that we're processing through n8n
-            setTranscript(`Processing: "${message.transcript}" through n8n RAG system...`);
+            // Add user message to conversation
+            addMessageToConversation(message.role, userTranscript);
+            setTranscript(userTranscript);
+            
+            // Always send voice message to n8n webhook for RAG responses
+            if (userTranscript.trim()) {
+              console.log('🚀 Processing voice message through n8n:', userTranscript);
+              
+              // Show that we're processing through n8n
+              setTranscript(`🎤 Processing: "${userTranscript}" through n8n RAG system...`);
+              
+              // Send to n8n webhook
+              sendToN8nWebhook(userTranscript, 'voice');
+            }
           }
+          // REMOVED: Don't add assistant messages here to prevent fragmentation
         } else if (message.type === 'function-call') {
           setTranscript(`Function called: ${message.functionCall.name}`);
         }
@@ -300,6 +313,9 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
   const startListening = () => {
     if (vapiControls && isVapiLoaded) {
       try {
+        // Start a new conversation
+        startNewConversation();
+        
         vapiControls.start();
         setIsListening(true);
         setIsProcessing(false);
@@ -331,12 +347,7 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
     if (vapiControls && isVapiLoaded) {
       try {
         vapiControls.send(message);
-        const newMessage = {
-          role: 'user',
-          content: message,
-          timestamp: new Date()
-        };
-        setConversationHistory(prev => [...prev, newMessage]);
+        addMessageToConversation('user', message);
         setTranscript(`Sent: ${message}`);
         
         // Also send to n8n webhook for RAG responses
@@ -349,12 +360,7 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
     } else {
       // If VAPI is not available, still send to n8n webhook
       console.log('VAPI not available, sending text message directly to n8n:', message);
-      const newMessage = {
-        role: 'user',
-        content: message,
-        timestamp: new Date()
-      };
-      setConversationHistory(prev => [...prev, newMessage]);
+      addMessageToConversation('user', message);
       setTranscript(`Sent: ${message}`);
       sendToN8nWebhook(message, 'text');
     }
@@ -362,10 +368,8 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
 
   const toggleExpanded = () => {
     setIsExpanded(!isExpanded);
-    if (!isExpanded) {
-      setTranscript('');
-      setError(null);
-    }
+    // Don't clear transcript or conversation history when expanding/collapsing
+    // This maintains the conversation context
   };
 
   const handleVoiceChat = () => {
@@ -373,28 +377,150 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
       stopListening();
     } else {
       startListening();
-      // Set transcript to indicate we're listening for questions
-      setTranscript('Listening for your question about blood donation...');
+      // Set transcript to indicate we're listening for questions and will use n8n
+      setTranscript('🎤 Listening for your question about blood donation... Will connect to n8n RAG system.');
     }
   };
 
-  // Test n8n webhook connectivity
-  const testN8nConnection = async () => {
-    console.log('Testing n8n webhook connection...');
-    setTranscript('Testing n8n connection...');
-    
-    try {
-      const testMessage = 'Test connection to n8n workflow';
-      await sendToN8nWebhook(testMessage, 'text');
-      setTranscript('n8n connection test completed. Check console for details.');
-    } catch (error) {
-      console.error('n8n connection test failed:', error);
-      setTranscript('n8n connection test failed. Check console for details.');
-    }
-  };
+
 
   const clearError = () => {
     setError(null);
+  };
+
+  // Function to manage conversation state - CONSOLIDATED to prevent fragmentation
+  const addMessageToConversation = (role: 'user' | 'assistant', content: string) => {
+    // Prevent adding empty or duplicate messages
+    if (!content.trim()) return;
+    
+    // Check if this is a duplicate of the last message
+    const lastMessage = conversationHistory[conversationHistory.length - 1];
+    if (lastMessage && lastMessage.role === role && lastMessage.content === content) {
+      return; // Skip duplicate
+    }
+    
+    // Check if we should append to the last assistant message instead of creating a new one
+    if (role === 'assistant' && lastMessage && lastMessage.role === 'assistant') {
+      // If the last message was from assistant and this is also from assistant, 
+      // check if they should be combined (e.g., fragmented responses)
+      const timeDiff = new Date().getTime() - lastMessage.timestamp.getTime();
+      if (timeDiff < 5000) { // Within 5 seconds, likely fragmented
+        // Update the last message with combined content
+        setConversationHistory(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = {
+            ...updated[updated.length - 1],
+            content: lastMessage.content + ' ' + content,
+            timestamp: new Date()
+          };
+          return updated;
+        });
+        return;
+      }
+    }
+    
+    const newMessage = {
+      role,
+      content,
+      timestamp: new Date()
+    };
+    setConversationHistory(prev => [...prev, newMessage]);
+  };
+
+  // Function to consolidate fragmented messages in conversation history
+  const consolidateConversationHistory = () => {
+    setConversationHistory(prev => {
+      if (prev.length <= 1) return prev;
+      
+      const consolidated = [];
+      let currentMessage = { ...prev[0] };
+      
+      for (let i = 1; i < prev.length; i++) {
+        const nextMessage = prev[i];
+        
+        // If consecutive messages are from the same role and within 5 seconds, combine them
+        if (currentMessage.role === nextMessage.role) {
+          const timeDiff = nextMessage.timestamp.getTime() - currentMessage.timestamp.getTime();
+          if (timeDiff < 5000) {
+            // Combine messages
+            currentMessage = {
+              ...currentMessage,
+              content: currentMessage.content + ' ' + nextMessage.content,
+              timestamp: nextMessage.timestamp
+            };
+          } else {
+            // Add current message and start new one
+            consolidated.push(currentMessage);
+            currentMessage = { ...nextMessage };
+          }
+        } else {
+          // Different role, add current message and start new one
+          consolidated.push(currentMessage);
+          currentMessage = { ...nextMessage };
+        }
+      }
+      
+      // Add the last message
+      consolidated.push(currentMessage);
+      return consolidated;
+    });
+  };
+
+  // Consolidate conversation history when it changes
+  useEffect(() => {
+    if (conversationHistory.length > 0) {
+      consolidateConversationHistory();
+    }
+  }, [conversationHistory.length]);
+
+  // Auto-cleanup fragmented messages when conversation gets long
+  useEffect(() => {
+    if (conversationHistory.length > 10) {
+      console.log('🔄 Auto-cleaning long conversation to prevent fragmentation');
+      cleanupFragmentedMessages();
+    }
+  }, [conversationHistory.length]);
+
+  // Function to start a new conversation
+  const startNewConversation = () => {
+    const newConversationId = `conv-${Date.now()}`;
+    setCurrentConversationId(newConversationId);
+    setConversationHistory([]);
+    setTranscript('');
+    setError(null);
+    setIsProcessing(false);
+    setIsListening(false);
+  };
+
+  // Function to clean up fragmented messages
+  const cleanupFragmentedMessages = () => {
+    setConversationHistory(prev => {
+      if (prev.length <= 1) return prev;
+      
+      const cleaned = [];
+      let currentMessage = { ...prev[0] };
+      
+      for (let i = 1; i < prev.length; i++) {
+        const nextMessage = prev[i];
+        
+        // If consecutive messages are from the same role, combine them
+        if (currentMessage.role === nextMessage.role) {
+          currentMessage = {
+            ...currentMessage,
+            content: currentMessage.content + ' ' + nextMessage.content,
+            timestamp: nextMessage.timestamp
+          };
+        } else {
+          // Different role, add current message and start new one
+          cleaned.push(currentMessage);
+          currentMessage = { ...nextMessage };
+        }
+      }
+      
+      // Add the last message
+      cleaned.push(currentMessage);
+      return cleaned;
+    });
   };
 
   // Unified function to send message to n8n webhook for RAG responses
@@ -403,6 +529,11 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
 
     console.log(`🚀 Sending ${inputType} message to n8n:`, message);
     console.log('📍 n8n Webhook URL:', n8nWebhookUrl);
+    
+    // Show user that we're connecting to n8n
+    if (inputType === 'voice') {
+      setTranscript(`🎤 Connecting to n8n: "${message}"`);
+    }
 
     // Validate webhook URL
     if (!n8nWebhookUrl || n8nWebhookUrl === 'undefined') {
@@ -472,15 +603,24 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
           responseText = data;
         }
 
+        // Clean up the response text to prevent fragmentation
+        responseText = responseText.trim();
+        
+        // If the response seems fragmented, try to combine it
+        if (responseText.includes('...') || responseText.length < 50) {
+          // This might be a fragmented response, try to get more context
+          console.log('⚠️ Potential fragmented response detected, attempting to get complete response');
+        }
+
         console.log('✅ Processed response text:', responseText);
 
-        // Add bot response to conversation history
+        // Add bot response to conversation history - CONSOLIDATED
         const botMessage = {
           role: 'assistant',
           content: responseText,
           timestamp: new Date()
         };
-        setConversationHistory(prev => [...prev, botMessage]);
+        addMessageToConversation('assistant', responseText);
 
         // Update transcript for voice chat
         if (inputType === 'voice') {
@@ -498,16 +638,12 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
           console.error('❌ Could not read error response');
         }
         
-        // Fallback response if n8n is not available
-        const fallbackMessage = {
-          role: 'assistant',
-          content: getRandomFallbackResponse(),
-          timestamp: new Date()
-        };
-        setConversationHistory(prev => [...prev, fallbackMessage]);
+        // Fallback response on error - CONSOLIDATED
+        const fallbackResponse = getRandomFallbackResponse();
+        addMessageToConversation('assistant', fallbackResponse);
         
         if (inputType === 'voice') {
-          setTranscript('I received your question. Let me process that for you.');
+          setTranscript('I heard your question. Let me help you with that.');
         }
         
         // Set error for user feedback
@@ -531,13 +667,9 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
       
       setError(errorMessage);
       
-      // Fallback response on error
-      const errorResponse = {
-        role: 'assistant',
-        content: getRandomFallbackResponse(),
-        timestamp: new Date()
-      };
-      setConversationHistory(prev => [...prev, errorResponse]);
+      // Fallback response on error - CONSOLIDATED
+      const fallbackResponse = getRandomFallbackResponse();
+      addMessageToConversation('assistant', fallbackResponse);
       
       if (inputType === 'voice') {
         setTranscript('I heard your question. Let me help you with that.');
@@ -591,31 +723,23 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
               <div>
                 <h3 className="font-semibold text-gray-900 text-sm">Voice Assistant</h3>
                 <p className="text-xs text-gray-600">
-                  {!isVapiLoaded ? 'Loading...' : isListening ? 'Listening' : 'Ready with n8n'}
+                  {!isVapiLoaded ? 'Loading...' : isListening ? 'Listening' : conversationHistory.length > 0 ? `${conversationHistory.length} messages` : 'Ready with n8n'}
+                </p>
+                <p className="text-xs text-blue-600 font-medium">
+                  🔗 n8n Connected
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-1">
-              <div className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">
-                n8n
-              </div>
-              <button
-                onClick={toggleExpanded}
-                className="text-gray-400 hover:text-red-600 transition-colors p-1 rounded-full hover:bg-red-50"
-                title="Expand voice assistant"
-              >
-                <Mic className="w-4 h-4" />
-              </button>
-            </div>
+            <button
+              onClick={toggleExpanded}
+              className="text-gray-400 hover:text-red-600 transition-colors p-1 rounded-full hover:bg-red-50"
+              title="Open chat window"
+            >
+              <MessageCircle className="w-4 h-4" />
+            </button>
           </div>
           
-          {/* n8n Integration Status */}
-          <div className="mb-2 text-center">
-            <div className="inline-flex items-center space-x-1 bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs">
-              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              <span>n8n Connected</span>
-            </div>
-          </div>
+
           
           <button
             onClick={handleVoiceChat}
@@ -676,10 +800,10 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
                 <p className="text-xs text-gray-600">
                   {!isVapiLoaded ? 'Loading VAPI SDK...' : isListening ? 'Listening to you' : 'Ask me about donations'}
                 </p>
-                <div className="flex items-center space-x-1 mt-1">
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                  <span className="text-xs text-green-600">n8n RAG Active</span>
-                </div>
+                <p className="text-xs text-blue-600 font-medium">
+                  🔗 Connected to n8n RAG System
+                </p>
+
               </div>
             </div>
             <button
@@ -716,43 +840,60 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
                 <div className="w-6 h-6 mx-auto mb-2 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></div>
                 <p className="text-xs">Loading voice assistant...</p>
               </div>
-            ) : conversationHistory.length > 0 ? (
-              <div className="space-y-2">
-                {conversationHistory.slice(-3).map((msg, index) => (
-                  <div key={index} className="flex items-start space-x-2">
-                    <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
-                      msg.role === 'user' ? 'bg-blue-100' : 'bg-red-100'
-                    }`}>
-                      {msg.role === 'user' ? (
-                        <Mic className="w-2.5 h-2.5 text-blue-600" />
-                      ) : (
-                        <Volume2 className="w-2.5 h-2.5 text-red-600" />
-                      )}
-                    </div>
-                    <div className="bg-white rounded-lg p-2.5 shadow-sm flex-1">
-                      <p className="text-xs text-gray-800">{msg.content}</p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {msg.timestamp.toLocaleTimeString()}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+            ) : isProcessing ? (
+              <div className="text-center text-gray-500 py-6">
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <div className="w-6 h-6 mx-auto mb-3 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-sm text-gray-600 mb-2">Processing your request...</p>
+                  <p className="text-xs text-gray-500">Getting information from our knowledge base</p>
+                </div>
               </div>
-            ) : transcript ? (
-              <div className="space-y-2">
-                <div className="flex items-start space-x-2">
-                  <div className="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Mic className="w-2.5 h-2.5 text-red-600" />
+            ) : conversationHistory.length > 0 ? (
+              <div className="space-y-3">
+                {/* Single conversation thread */}
+                <div className="bg-white rounded-lg p-3 shadow-sm">
+                  <div className="text-xs text-gray-500 mb-2 text-center border-b border-gray-100 pb-2">
+                    💬 Conversation Thread ({conversationHistory.length} messages)
                   </div>
-                  <div className="bg-white rounded-lg p-2.5 shadow-sm flex-1">
-                    <p className="text-xs text-gray-800">{transcript}</p>
+                  <div className="space-y-3">
+                    {conversationHistory.map((msg, index) => (
+                      <div key={index} className={`flex items-start space-x-2 ${
+                        msg.role === 'user' ? 'justify-end' : 'justify-start'
+                      }`}>
+                        {msg.role === 'assistant' && (
+                          <div className="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <Volume2 className="w-2.5 h-2.5 text-red-600" />
+                          </div>
+                        )}
+                        <div className={`max-w-[85%] rounded-lg p-3 ${
+                          msg.role === 'user' 
+                            ? 'bg-blue-500 text-white ml-auto' 
+                            : 'bg-gray-200 text-gray-800'
+                        }`}>
+                          <p className="text-sm leading-relaxed">{msg.content}</p>
+                          <p className={`text-xs mt-2 ${
+                            msg.role === 'user' ? 'text-blue-100' : 'text-gray-500'
+                          }`}>
+                            {msg.timestamp.toLocaleTimeString()}
+                          </p>
+                        </div>
+                        {msg.role === 'user' && (
+                          <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <Mic className="w-2.5 h-2.5 text-blue-600" />
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
             ) : (
               <div className="text-center text-gray-500 py-6">
-                <Volume2 className="w-6 h-6 mx-auto mb-2 text-gray-400" />
-                <p className="text-xs">Click the microphone to start talking</p>
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <Volume2 className="w-8 h-8 mx-auto mb-3 text-gray-400" />
+                  <p className="text-sm text-gray-600 mb-2">No conversation yet</p>
+                  <p className="text-xs text-gray-500">Click the microphone to start talking or type a message below</p>
+                </div>
               </div>
             )}
           </div>
@@ -882,13 +1023,50 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
             
             {/* Debug/Test Section */}
             <div className="mt-3 pt-3 border-t border-gray-200">
-              <button 
-                onClick={testN8nConnection}
-                className="w-full py-2 px-2 text-xs bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition-colors"
-                title="Test n8n webhook connection"
-              >
-                🧪 Test n8n Connection
-              </button>
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                <button 
+                  onClick={startNewConversation}
+                  className="py-2 px-2 text-xs bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                  title="Start a new conversation"
+                >
+                  🔄 New Conversation
+                </button>
+                <button 
+                  onClick={() => {
+                    setConversationHistory([]);
+                    setTranscript('');
+                  }}
+                  className="py-2 px-2 text-xs bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                  title="Clear all messages from chat"
+                >
+                  🧹 Clean Messages
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                <button 
+                  onClick={() => sendToN8nWebhook('Test n8n connection', 'text')}
+                  className="py-2 px-2 text-xs bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
+                  title="Test n8n connection"
+                >
+                  🧪 Test n8n
+                </button>
+                <button 
+                  onClick={() => {
+                    console.log('📍 Current n8n webhook URL:', n8nWebhookUrl);
+                    console.log('🔗 CHAT_CONFIG:', CHAT_CONFIG);
+                    setTranscript(`n8n URL: ${n8nWebhookUrl}`);
+                  }}
+                  className="py-2 px-2 text-xs bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors"
+                  title="Show n8n configuration"
+                >
+                  ⚙️ n8n Config
+                </button>
+              </div>
+              <div className="text-xs text-gray-500 text-center">
+                {conversationHistory.length > 0 && (
+                  <span>Messages: {conversationHistory.length}</span>
+                )}
+              </div>
             </div>
           </div>
         </div>

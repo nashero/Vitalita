@@ -3,7 +3,6 @@ import { Heart, Cross, Calendar, ShieldCheck, Clock, BarChart3, Menu, X, CheckCi
 import { supabase } from '../lib/supabase';
 import bloodDonationImage from '../assets/images/Blood Donation.jpg';
 import VoiceAgent from './VoiceAgent';
-import N8nTestPanel from './N8nTestPanel';
 
 const stats = [
   { label: 'Donations per year', value: 500000, icon: <Heart className="w-7 h-7 text-red-600" /> },
@@ -443,9 +442,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
       
       {/* Voice Agent */}
       <VoiceAgent />
-      
-      {/* n8n Test Panel */}
-      <N8nTestPanel />
     </div>
   );
 };
