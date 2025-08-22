@@ -537,23 +537,15 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
                   <p className="text-gray-600">No completed donations found</p>
                   <p className="text-sm text-gray-500">
                     {donationHistory.length === 0 
-                      ? "You haven't completed any donations yet. This is normal for new donors. Your donation history will appear here once you complete your first donation appointment."
+                      ? "You haven't completed any donations yet. This is normal for new donors. Your donation history will appear here once you complete your first donation."
                       : "No donations match your current filters. Try adjusting your search criteria."
                     }
                   </p>
-                  {donationHistory.length === 0 && (
-                    <div className="mt-6 space-y-3">
-                      <button
-                        onClick={onBack}
-                        className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                      >
-                        Book Your First Appointment
-                      </button>
-                      <div className="text-xs text-gray-500">
-                        💡 Tip: After completing a donation, your history will automatically appear here
-                      </div>
+                  <div className="mt-6">
+                    <div className="text-xs text-gray-500">
+                      💡 Tip: After completing a donation, your history will automatically appear here
                     </div>
-                  )}
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-4">

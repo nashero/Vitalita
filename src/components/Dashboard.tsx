@@ -43,7 +43,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
           appointment_datetime,
           donation_type,
           status,
-          donation_centers (
+          donation_centers!donation_center_id (
             name,
             address,
             city
@@ -65,7 +65,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
         appointment_datetime: appointment.appointment_datetime,
         donation_type: appointment.donation_type,
         status: appointment.status,
-        donation_centers: (appointment.donation_centers as any)?.[0] || {
+        donation_centers: appointment.donation_centers || {
           name: 'Unknown Center',
           address: 'Address not available',
           city: 'City not available'
