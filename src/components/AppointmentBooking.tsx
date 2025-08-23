@@ -25,6 +25,7 @@ import AppointmentErrorDisplay from './AppointmentErrorDisplay';
  * AppointmentBooking Component
  * 
  * Features:
+ * - Integrated calendar and time slot selection interface
  * - Real-time slot validation to prevent "INVALID_SLOT" errors
  * - Optimistic locking to handle concurrent bookings
  * - Automatic rollback on slot update failures
@@ -59,7 +60,7 @@ interface AvailabilitySlot {
 }
 
 type DonationType = 'Blood' | 'Plasma';
-type BookingStep = 'type' | 'slots' | 'confirmation' | 'success';
+type BookingStep = 'type' | 'booking' | 'confirmation' | 'success';
 
 interface AppointmentBookingProps {
   onBack: () => void;
@@ -71,9 +72,14 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
   const [selectedType, setSelectedType] = useState<DonationType | null>(null);
   const [availableSlots, setAvailableSlots] = useState<AvailabilitySlot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<AvailabilitySlot | null>(null);
+  const [selectedCenter, setSelectedCenter] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<AppointmentError | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [allCenters, setAllCenters] = useState<DonationCenter[]>([]);
+  const [showWeekends, setShowWeekends] = useState(false); // Weekend slot visibility toggle
 
   const donationTypes = [
     {
@@ -100,13 +106,31 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
     },
   ];
 
-  const fetchAvailableSlots = async (donationType: DonationType) => {
+  // Fetch all donation centers
+  const fetchCenters = async () => {
+    try {
+      const { data: centers, error } = await supabase
+        .from('donation_centers')
+        .select('*')
+        .order('name');
+
+      if (error) {
+        console.error('Error fetching centers:', error);
+        return;
+      }
+
+      setAllCenters(centers || []);
+    } catch (err) {
+      console.error('Error fetching centers:', err);
+    }
+  };
+
+  const fetchAvailableSlots = async (donationType: DonationType, date?: Date) => {
     try {
       setLoading(true);
       setError(null);
 
-      // Fetch available slots from the database
-      const { data: slots, error: slotsError } = await supabase
+      let query = supabase
         .from('availability_slots')
         .select(`
           *,
@@ -122,8 +146,23 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         `)
         .eq('donation_type', donationType)
         .eq('is_available', true)
-        .gt('slot_datetime', new Date().toISOString())
-        .order('slot_datetime', { ascending: true });
+        .gt('slot_datetime', new Date().toISOString());
+
+      if (date) {
+        const startOfDay = new Date(date);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(date);
+        endOfDay.setHours(23, 59, 59, 999);
+        
+        query = query
+          .gte('slot_datetime', startOfDay.toISOString())
+          .lte('slot_datetime', endOfDay.toISOString());
+      }
+
+      // Fetch slots with reasonable limit for production
+      const { data: slots, error: slotsError } = await query
+        .order('slot_datetime', { ascending: true })
+        .limit(1000); // Reasonable limit for production use
 
       if (slotsError) {
         console.error('Error fetching slots:', slotsError);
@@ -150,6 +189,8 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         } : undefined,
       })) || [];
 
+      // Production logging - only log errors, not debug info
+
       setAvailableSlots(transformedSlots);
     } catch (err) {
       console.error('Error fetching slots:', err);
@@ -161,9 +202,31 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
 
   const handleTypeSelection = (type: DonationType) => {
     setSelectedType(type);
-    setCurrentStep('slots');
-    setError(null); // Clear any previous errors
+    setCurrentStep('booking');
+    setError(null);
+    fetchCenters();
     fetchAvailableSlots(type);
+  };
+
+  const handleDateSelection = async (date: Date) => {
+    if (!selectedType) return;
+
+    setSelectedDate(date);
+    setSelectedCenter(null);
+    setSelectedSlot(null);
+    
+    await fetchAvailableSlots(selectedType, date);
+  };
+
+  const handleCenterSelection = (centerId: string) => {
+    setSelectedCenter(centerId);
+    setSelectedSlot(null);
+  };
+
+  const handleTimeSlotSelection = (slot: AvailabilitySlot) => {
+    setSelectedSlot(slot);
+    setCurrentStep('confirmation');
+    setError(null);
   };
 
   const refreshAndRetry = async () => {
@@ -173,8 +236,8 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       setLoading(true);
       setError(null);
       
-      // Refresh available slots
-      await fetchAvailableSlots(selectedType);
+              // Refresh available slots
+        await fetchAvailableSlots(selectedType, selectedDate || undefined);
       
       // If the previously selected slot is no longer available, clear the selection
       if (selectedSlot) {
@@ -185,7 +248,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         
         if (!isStillAvailable) {
           setSelectedSlot(null);
-          setCurrentStep('slots');
+          setCurrentStep('booking');
         }
       }
       
@@ -229,12 +292,6 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
     // - Initiate a phone call
     // - Open an email client
     // - Show a live chat widget
-  };
-
-  const handleSlotSelection = (slot: AvailabilitySlot) => {
-    setSelectedSlot(slot);
-    setCurrentStep('confirmation');
-    setError(null); // Clear any previous errors
   };
 
   // Real-time slot validation function
@@ -396,14 +453,9 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       setLoading(true);
       setError(null);
 
-
-
-
-
       // Real-time slot validation before proceeding
       const validation = await validateSlotAvailability(selectedSlot);
       if (!validation.isValid && validation.error) {
-        console.log('Slot validation failed:', validation.error);
         setError(validation.error);
         return;
       }
@@ -517,7 +569,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
   const renderStepIndicator = () => {
     const steps = [
       { id: 'type', label: 'Type', completed: currentStep !== 'type' },
-      { id: 'slots', label: 'Schedule', completed: currentStep === 'confirmation' || currentStep === 'success' },
+      { id: 'booking', label: 'Date & Time', completed: currentStep === 'confirmation' || currentStep === 'success' },
       { id: 'confirmation', label: 'Confirm', completed: currentStep === 'success' },
     ];
 
@@ -563,8 +615,6 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         <p className="text-gray-600">Select the type of donation you'd like to make</p>
       </div>
 
-
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
         {donationTypes.map((donation) => {
           const Icon = donation.icon;
@@ -584,7 +634,6 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
                   <Clock className="w-4 h-4 mr-2" />
                   {donation.duration}
                 </div>
-
               </div>
             </button>
           );
@@ -593,11 +642,133 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
     </div>
   );
 
-  const renderSlotSelection = () => (
+  const renderCalendar = () => {
+    const currentDate = new Date();
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+    const startDate = new Date(firstDayOfMonth);
+    startDate.setDate(startDate.getDate() - firstDayOfMonth.getDay());
+    
+    const endDate = new Date(lastDayOfMonth);
+    endDate.setDate(endDate.getDate() + (6 - lastDayOfMonth.getDay()));
+
+    const days = [];
+    const current = new Date(startDate);
+    
+    while (current <= endDate) {
+      days.push(new Date(current));
+      current.setDate(current.getDate() + 1);
+    }
+
+    const isToday = (date: Date) => {
+      return date.toDateString() === new Date().toDateString();
+    };
+
+    const isSelected = (date: Date) => {
+      return selectedDate && date.toDateString() === selectedDate.toDateString();
+    };
+
+    const isAvailable = (date: Date) => {
+      if (date < new Date()) return false;
+      if (!showWeekends && (date.getDay() === 0 || date.getDay() === 6)) return false; // Weekend
+      
+      // Check if there are available slots for this date
+      const hasSlots = availableSlots.some(slot => {
+        const slotDate = new Date(slot.slot_datetime);
+        return slotDate.toDateString() === date.toDateString();
+      });
+      
+              // Production: No debug logging needed
+      
+      return hasSlots;
+    };
+
+    const getMonthName = (date: Date) => {
+      return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    };
+
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+        <div className="flex items-center justify-between mb-6">
+          <button
+            onClick={() => setCurrentMonth(new Date(year, month - 1, 1))}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
+          
+          <h3 className="text-xl font-semibold text-gray-900">{getMonthName(currentMonth)}</h3>
+          
+          <button
+            onClick={() => setCurrentMonth(new Date(year, month + 1, 1))}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <ArrowRight className="w-5 h-5 text-gray-600" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-7 gap-1 mb-4">
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+            <div key={day} className="text-sm font-medium text-gray-500 text-center py-2">
+              {day}
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-7 gap-1">
+          {days.map((date, index) => {
+            const available = isAvailable(date);
+            const today = isToday(date);
+            const selected = isSelected(date);
+            const isCurrentMonth = date.getMonth() === month;
+            
+            // Count slots for this specific date
+            const slotsForDate = availableSlots.filter(slot => {
+              const slotDate = new Date(slot.slot_datetime);
+              return slotDate.toDateString() === date.toDateString();
+            });
+            
+            return (
+              <button
+                key={index}
+                onClick={() => available && handleDateSelection(date)}
+                disabled={!available}
+                title={available ? `${slotsForDate.length} slots available on ${date.toLocaleDateString()}` : 'No slots available'}
+                className={`
+                  h-12 w-full rounded-lg text-sm font-medium transition-all duration-200 relative
+                  ${today 
+                    ? 'bg-blue-600 text-white ring-2 ring-blue-300' 
+                    : selected
+                    ? 'bg-blue-600 text-white'
+                    : available
+                    ? 'text-gray-900 bg-white hover:bg-blue-50 hover:text-blue-700 hover:ring-2 hover:ring-blue-200 cursor-pointer'
+                    : 'text-gray-300 bg-gray-50 cursor-not-allowed'
+                  }
+                  ${!isCurrentMonth ? 'opacity-50' : ''}
+                `}
+              >
+                {date.getDate()}
+                {available && (
+                  <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  const renderBookingInterface = () => (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Available Appointments</h2>
-        <p className="text-gray-600">Choose a convenient time for your {selectedType?.toLowerCase()} donation</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Select Appointment Date</h2>
+        <p className="text-gray-600">Choose a convenient date for your {selectedType?.toLowerCase()} donation</p>
         
         {/* Refresh button */}
         <button
@@ -606,80 +777,203 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           className="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-          {loading ? 'Refreshing...' : 'Refresh Slots'}
+          {loading ? 'Refreshing...' : 'Refresh Availability'}
         </button>
+        
+        {/* Jump to latest available month button */}
+        {availableSlots.length > 0 && (
+          <button
+            onClick={jumpToLatestAvailableMonth}
+            className="mt-2 ml-2 inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+          >
+            <Calendar className="w-4 h-4 mr-2" />
+            Jump to Latest Available Month
+          </button>
+        )}
+        
+        {/* Weekend slot visibility toggle */}
+        <div className="mt-2 flex items-center">
+          <input
+            type="checkbox"
+            id="showWeekends"
+            checked={showWeekends}
+            onChange={(e) => setShowWeekends(e.target.checked)}
+            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+          />
+          <label htmlFor="showWeekends" className="ml-2 text-sm text-gray-600">
+            Show weekend slots
+          </label>
+        </div>
+        
+        {/* Availability information */}
+        {availableSlots.length > 0 && (
+          <div className="mt-4 text-sm text-gray-600">
+            <p>
+              <span className="font-medium">{availableSlots.length}</span> available slots from{' '}
+              <span className="font-medium">
+                {new Date(availableSlots[0].slot_datetime).toLocaleDateString('en-US', {
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric'
+                })}
+              </span>{' '}
+              to{' '}
+              <span className="font-medium">
+                {new Date(availableSlots[availableSlots.length - 1].slot_datetime).toLocaleDateString('en-US', {
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric'
+                })}
+              </span>
+            </p>
+            {(() => {
+              const coverage = checkSlotCoverage();
+              return coverage ? (
+                <p className="mt-1 text-xs text-gray-500">
+                  Coverage: {coverage.coverage}% ({coverage.daysWithSlots} out of {coverage.totalDays} days)
+                </p>
+              ) : null;
+            })()}
+            {checkIfLimitReached() && (
+              <p className="mt-1 text-xs text-orange-600 font-medium">
+                ⚠️ Warning: May have hit slot limit. Some slots might not be displayed.
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
-
-
-      {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader className="w-8 h-8 animate-spin text-blue-600" />
-          <span className="ml-3 text-gray-600">Loading available appointments...</span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Calendar Section */}
+        <div>
+          {renderCalendar()}
         </div>
-      ) : availableSlots.length === 0 ? (
-        <div className="text-center py-12">
-          <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No appointments available</h3>
-          <p className="text-gray-600">Please try again later or contact us for assistance.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
-          {availableSlots.map((slot) => {
-            const dateTime = formatDateTime(slot.slot_datetime);
-            const availabilityClass = getAvailabilityColor(slot.current_bookings, slot.capacity);
-            
-            return (
-              <div
-                key={slot.slot_id}
-                className="bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-200 overflow-hidden"
-              >
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                        {slot.center?.name}
-                      </h3>
-                      <div className="flex items-center text-gray-600 text-sm mb-2">
-                        <MapPin className="w-4 h-4 mr-1" />
-                        {slot.center?.address}, {slot.center?.city}
-                      </div>
-                    </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${availabilityClass}`}>
-                      {slot.capacity - slot.current_bookings} spots left
-                    </span>
-                  </div>
 
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-center text-gray-700">
-                      <Calendar className="w-4 h-4 mr-3 text-blue-600" />
-                      <span className="font-medium">{dateTime.date}</span>
-                    </div>
-                    <div className="flex items-center text-gray-700">
-                      <Clock className="w-4 h-4 mr-3 text-blue-600" />
-                      <span className="font-medium">{dateTime.time}</span>
-                    </div>
-                  </div>
+        {/* Appointment Details Section */}
+        <div className="space-y-6">
+          {selectedDate ? (
+            <>
+              {/* Selected Date Header */}
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  {selectedDate.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </h3>
+                <p className="text-gray-600">{selectedType} Donation Appointment</p>
+              </div>
 
-                  {slot.center?.contact_phone && (
-                    <div className="flex items-center text-sm text-gray-500 mb-2">
-                      <Phone className="w-3 h-3 mr-2" />
-                      {slot.center.contact_phone}
+              {/* Center Selection */}
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Select Donation Center:
+                </label>
+                <select
+                  value={selectedCenter || ''}
+                  onChange={(e) => handleCenterSelection(e.target.value)}
+                  className="w-full px-3 py-2 border border-orange-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                >
+                  <option value="">Choose a center...</option>
+                  {allCenters.map((center) => (
+                    <option key={center.center_id} value={center.center_id}>
+                      {center.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Time Slots */}
+              {selectedCenter && (
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Available Time Slots</h4>
+                  
+                  {loading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Loader className="w-6 h-6 animate-spin text-blue-600" />
+                      <span className="ml-2 text-gray-600">Loading time slots...</span>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      {(() => {
+                        // Filter slots for selected center and date
+                        const centerSlots = availableSlots.filter(slot => 
+                          slot.center_id === selectedCenter && 
+                          selectedDate && 
+                          new Date(slot.slot_datetime).toDateString() === selectedDate.toDateString()
+                        );
+                        
+                        // Filter slots for selected center and date
+                        
+                        // Extract and filter time slots between 7am and 3pm efficiently
+                        const timeSlotMap = new Map<string, AvailabilitySlot>();
+                        
+                        centerSlots.forEach(slot => {
+                          const slotTime = new Date(slot.slot_datetime);
+                          const hours = slotTime.getHours();
+                          
+                          // Only process slots between 7 AM and 3 PM (15:00)
+                          if (hours >= 7 && hours <= 15) {
+                            const timeString = slotTime.toLocaleTimeString('en-US', {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            });
+                            
+                            // Use Map to automatically handle duplicates - later slots override earlier ones
+                            timeSlotMap.set(timeString, slot);
+                          }
+                        });
+                        
+                        // Convert Map to sorted array
+                        const uniqueTimeSlots = Array.from(timeSlotMap.entries())
+                          .map(([timeString, slot]) => ({
+                            time: timeString,
+                            displayTime: timeString,
+                            slot: slot,
+                            hours: new Date(slot.slot_datetime).getHours(),
+                            minutes: new Date(slot.slot_datetime).getMinutes(),
+                            originalDateTime: slot.slot_datetime
+                          }))
+                          .sort((a, b) => a.time.localeCompare(b.time));
+                        
+                        if (uniqueTimeSlots.length === 0) {
+                          return (
+                            <div className="col-span-2">
+                              <div className="text-center py-8 text-gray-500">
+                                <Clock className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                                <h4 className="text-lg font-medium text-gray-700 mb-2">No Available Time Slots</h4>
+                                <p className="text-gray-500">No time slots available between 7:00 AM and 3:00 PM for this date.</p>
+                              </div>
+                            </div>
+                          );
+                        }
+                        
+                        return uniqueTimeSlots.map((timeSlot) => (
+                          <button
+                            key={timeSlot.slot.slot_id}
+                            onClick={() => handleTimeSlotSelection(timeSlot.slot)}
+                            className="px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all duration-200 font-medium"
+                          >
+                            {timeSlot.displayTime}
+                          </button>
+                        ));
+                      })()}
                     </div>
                   )}
-
-                  <button
-                    onClick={() => handleSlotSelection(slot)}
-                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
-                  >
-                    Select This Time
-                  </button>
                 </div>
-              </div>
-            );
-          })}
+              )}
+            </>
+          ) : (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center">
+              <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Select a Date</h3>
+              <p className="text-gray-600">Choose a date from the calendar to see available time slots</p>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 
@@ -751,11 +1045,11 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
 
         <div className="flex space-x-4">
           <button
-            onClick={() => setCurrentStep('slots')}
+            onClick={() => setCurrentStep('booking')}
             className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-200 transition-colors duration-200"
           >
             <ArrowLeft className="w-4 h-4 inline mr-2" />
-            Back to Slots
+            Back to Selection
           </button>
           <button
             onClick={confirmBooking}
@@ -792,7 +1086,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         
         <div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Appointment Confirmed!</h2>
-                          <p className="text-gray-600 text-lg">Your {selectedType === 'Blood' ? 'blood' : 'plasma'} donation is scheduled</p>
+          <p className="text-gray-600 text-lg">Your {selectedType === 'Blood' ? 'blood' : 'plasma'} donation is scheduled</p>
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
@@ -828,6 +1122,57 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         </button>
       </div>
     );
+  };
+
+  // Function to find the latest month with available slots
+  const findLatestMonthWithSlots = () => {
+    if (availableSlots.length === 0) return null;
+    
+    // Find the latest slot date
+    const latestSlot = availableSlots.reduce((latest, slot) => {
+      const slotDate = new Date(slot.slot_datetime);
+      return slotDate > latest ? slotDate : latest;
+    }, new Date(0));
+    
+    return new Date(latestSlot.getFullYear(), latestSlot.getMonth(), 1);
+  };
+
+  // Function to jump to the latest month with slots
+  const jumpToLatestAvailableMonth = () => {
+    const latestMonth = findLatestMonthWithSlots();
+    if (latestMonth) {
+      setCurrentMonth(latestMonth);
+    }
+  };
+
+  // Function to check if we have all available slots
+  const checkSlotCoverage = () => {
+    if (availableSlots.length === 0) return null;
+    
+    const dates = availableSlots.map(slot => new Date(slot.slot_datetime));
+    const sortedDates = dates.sort((a, b) => a.getTime() - b.getTime());
+    const earliestDate = sortedDates[0];
+    const latestDate = sortedDates[sortedDates.length - 1];
+    
+    // Check if we have slots for the full range
+    const totalDays = Math.ceil((latestDate.getTime() - earliestDate.getTime()) / (1000 * 60 * 60 * 24));
+    const daysWithSlots = new Set(dates.map(d => d.toDateString())).size;
+    
+    return {
+      totalDays,
+      daysWithSlots,
+      coverage: Math.round((daysWithSlots / totalDays) * 100),
+      earliestDate,
+      latestDate
+    };
+  };
+
+  // Function to check if we might be hitting the limit
+  const checkIfLimitReached = () => {
+    if (availableSlots.length === 0) return false;
+    
+    // If we have exactly 10,000 slots, we might be hitting the limit
+    return availableSlots.length >= 10000;
   };
 
   return (
@@ -866,7 +1211,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         )}
 
         {currentStep === 'type' && renderTypeSelection()}
-        {currentStep === 'slots' && renderSlotSelection()}
+        {currentStep === 'booking' && renderBookingInterface()}
         {currentStep === 'confirmation' && renderConfirmation()}
         {currentStep === 'success' && renderSuccess()}
       </main>

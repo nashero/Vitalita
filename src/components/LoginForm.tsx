@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { User, Calendar, LogIn, UserPlus, MapPin, CalendarDays, ArrowLeft } from 'lucide-react';
+import { User, Calendar, LogIn, UserPlus, MapPin, CalendarDays, ArrowLeft, Lock, Shield } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 interface LoginFormProps {
   onShowRegistration?: () => void;
   onBackToLanding?: () => void;
+  onPasswordLogin?: () => void;
 }
 
 const AVIS_CENTERS = [
@@ -17,7 +18,7 @@ const AVIS_CENTERS = [
   { value: 'AVIS Calvatone', label: 'AVIS Calvatone' },
 ];
 
-export default function LoginForm({ onShowRegistration, onBackToLanding }: LoginFormProps) {
+export default function LoginForm({ onShowRegistration, onBackToLanding, onPasswordLogin }: LoginFormProps) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -229,10 +230,28 @@ export default function LoginForm({ onShowRegistration, onBackToLanding }: Login
               </div>
             )}
 
+            {/* Password Login Option */}
+            {onPasswordLogin && (
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <div className="text-center">
+                  <p className="text-sm text-gray-600 mb-3">
+                    Have a password set up?
+                  </p>
+                  <button
+                    onClick={onPasswordLogin}
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+                  >
+                    <Lock className="w-4 h-4 mr-2" />
+                    Login with Password
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Security Notice */}
             <div className="mt-6 pt-6 border-t border-gray-100">
               <div className="flex items-center justify-center text-xs text-gray-500">
-                <Calendar className="w-3 h-3 mr-1" />
+                <Shield className="w-3 h-3 mr-1" />
                 Secure authentication using your personal information
               </div>
             </div>

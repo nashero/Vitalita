@@ -61,7 +61,7 @@ interface DonorStatistics {
   total_centers_visited: number;
 }
 
-export default function DonorHistory({ onBack }: { onBack: () => void }) {
+export default function DonorHistory({ onBack, onBookAppointment }: { onBack: () => void; onBookAppointment: () => void }) {
   const { donor } = useAuth();
   const [activeTab, setActiveTab] = useState<'donations' | 'appointments'>('donations');
   const [donationHistory, setDonationHistory] = useState<DonationHistoryItem[]>([]);
@@ -334,18 +334,18 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-14">
             <div className="flex items-center">
               <button
                 onClick={onBack}
-                className="flex items-center px-4 py-2 text-sm font-medium text-red-600 border border-red-200 bg-white hover:bg-red-50 rounded-lg transition-colors duration-200 mr-4"
+                className="flex items-center px-3 py-2 text-sm font-medium text-red-600 border border-red-200 bg-white hover:bg-red-50 rounded-lg transition-colors duration-200 mr-3"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Dashboard
               </button>
-              <Heart className="w-8 h-8 text-red-600 mr-3" />
+              <Heart className="w-7 h-7 text-red-600 mr-3" />
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Donation History</h1>
+                <h1 className="text-lg font-bold text-gray-900">Donation History</h1>
                 <p className="text-xs text-gray-500">Your complete donation journey</p>
               </div>
             </div>
@@ -354,86 +354,79 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Statistics Overview */}
         {statistics && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Your Donation Statistics</h2>
-            {statistics.total_donations === 0 && (
-              <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <Heart className="h-5 w-5 text-blue-400" />
-                  </div>
-                  <div className="ml-3">
-                    <h3 className="text-sm font-medium text-blue-800">Welcome to Vitalita!</h3>
-                    <div className="mt-2 text-sm text-blue-700">
-                      <p>As a new donor, you don't have any donation history yet. This is completely normal!</p>
-                      <p className="mt-1">Your statistics will populate automatically once you complete your first donation.</p>
-                    </div>
-                  </div>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">Your Donation Statistics</h2>
+              {statistics.total_donations === 0 && (
+                <div className="flex items-center px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+                  <Heart className="h-4 w-4 text-blue-400 mr-2" />
+                  <span className="text-sm text-blue-700">New donor - stats will populate after first donation</span>
                 </div>
-              </div>
-            )}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-              <div className="text-center">
-                <div className="bg-red-100 p-3 rounded-full w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-                  <Heart className="w-6 h-6 text-red-600" />
+              )}
+            </div>
+            
+            <div className="grid grid-cols-4 gap-3">
+              <div className="bg-gray-50 rounded-lg p-3 text-center">
+                <div className="bg-red-100 p-2 rounded-full w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                  <Heart className="w-5 h-5 text-red-600" />
                 </div>
-                <p className="text-2xl font-bold text-gray-900">{statistics.total_donations}</p>
+                <p className="text-xl font-bold text-gray-900">{statistics.total_donations}</p>
                 <p className="text-xs text-gray-600">Total Donations</p>
               </div>
-              <div className="text-center">
-                <div className="bg-blue-100 p-3 rounded-full w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-                  <BarChart3 className="w-6 h-6 text-blue-600" />
+              <div className="bg-gray-50 rounded-lg p-3 text-center">
+                <div className="bg-blue-100 p-2 rounded-full w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                  <BarChart3 className="w-5 h-5 text-blue-600" />
                 </div>
-                <p className="text-2xl font-bold text-gray-900">{statistics.total_volume}ml</p>
+                <p className="text-xl font-bold text-gray-900">{statistics.total_volume}ml</p>
                 <p className="text-xs text-gray-600">Total Volume</p>
               </div>
-              <div className="text-center">
-                <div className="bg-green-100 p-3 rounded-full w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-green-600" />
+              <div className="bg-gray-50 rounded-lg p-3 text-center">
+                <div className="bg-green-100 p-2 rounded-full w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-green-600" />
                 </div>
-                <p className="text-2xl font-bold text-gray-900">{statistics.donations_this_year}</p>
+                <p className="text-xl font-bold text-gray-900">{statistics.donations_this_year}</p>
                 <p className="text-xs text-gray-600">This Year</p>
               </div>
-              <div className="text-center">
-                <div className="bg-purple-100 p-3 rounded-full w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-                  <MapPin className="w-6 h-6 text-purple-600" />
+              <div className="bg-gray-50 rounded-lg p-3 text-center">
+                <div className="bg-purple-100 p-2 rounded-full w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                  <MapPin className="w-5 h-5 text-purple-600" />
                 </div>
-                <p className="text-2xl font-bold text-gray-900">{statistics.total_centers_visited}</p>
+                <p className="text-xl font-bold text-gray-900">{statistics.total_centers_visited}</p>
                 <p className="text-xs text-gray-600">Centers Visited</p>
               </div>
-              <div className="text-center">
-                <div className="bg-yellow-100 p-3 rounded-full w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-                  <Award className="w-6 h-6 text-yellow-600" />
+              <div className="bg-gray-50 rounded-lg p-3 text-center">
+                <div className="bg-yellow-100 p-2 rounded-full w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                  <Award className="w-5 h-5 text-yellow-600" />
                 </div>
-                <p className="text-lg font-bold text-gray-900">
+                <p className="text-sm font-bold text-gray-900">
                   {statistics.preferred_donation_type ? formatDonationType(statistics.preferred_donation_type) : 'N/A'}
                 </p>
                 <p className="text-xs text-gray-600">Preferred Type</p>
               </div>
-              <div className="text-center">
-                <div className="bg-indigo-100 p-3 rounded-full w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-                  <Calendar className="w-6 h-6 text-indigo-600" />
+              <div className="bg-gray-50 rounded-lg p-3 text-center">
+                <div className="bg-indigo-100 p-2 rounded-full w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-indigo-600" />
                 </div>
-                <p className="text-2xl font-bold text-gray-900">{statistics.donations_this_month}</p>
+                <p className="text-xl font-bold text-gray-900">{statistics.donations_this_month}</p>
                 <p className="text-xs text-gray-600">This Month</p>
               </div>
-              <div className="text-center">
-                <div className="bg-pink-100 p-3 rounded-full w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-pink-600" />
+              <div className="bg-gray-50 rounded-lg p-3 text-center">
+                <div className="bg-pink-100 p-2 rounded-full w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-pink-600" />
                 </div>
-                <p className="text-lg font-bold text-gray-900">
+                <p className="text-sm font-bold text-gray-900">
                   {statistics.first_donation_date ? formatDate(statistics.first_donation_date) : 'N/A'}
                 </p>
                 <p className="text-xs text-gray-600">First Donation</p>
               </div>
-              <div className="text-center">
-                <div className="bg-orange-100 p-3 rounded-full w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-                  <User className="w-6 h-6 text-orange-600" />
+              <div className="bg-gray-50 rounded-lg p-3 text-center">
+                <div className="bg-orange-100 p-2 rounded-full w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                  <User className="w-5 h-5 text-orange-600" />
                 </div>
-                <p className="text-lg font-bold text-gray-900">
+                <p className="text-sm font-bold text-gray-900">
                   {statistics.last_donation_date ? formatDate(statistics.last_donation_date) : 'N/A'}
                 </p>
                 <p className="text-xs text-gray-600">Last Donation</p>
@@ -443,8 +436,8 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
         )}
 
         {/* Tabs and Filters */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             {/* Tabs */}
             <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
               <button
@@ -452,7 +445,7 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
                   setActiveTab('donations');
                   setCurrentPage(1);
                 }}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                   activeTab === 'donations'
                     ? 'bg-white text-red-600 shadow-sm'
                     : 'text-gray-600 hover:text-gray-900'
@@ -466,7 +459,7 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
                   setActiveTab('appointments');
                   setCurrentPage(1);
                 }}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                   activeTab === 'appointments'
                     ? 'bg-white text-red-600 shadow-sm'
                     : 'text-gray-600 hover:text-gray-900'
@@ -478,7 +471,7 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
             </div>
 
             {/* Filters and Search */}
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-2">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
@@ -492,7 +485,7 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
               >
                 <option value="all">All Types</option>
                 <option value="whole_blood">Whole Blood</option>
@@ -506,7 +499,7 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
                   setCurrentPage(1);
                   fetchHistory();
                 }}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center"
+                className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center"
               >
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Refresh
@@ -517,7 +510,7 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
         </div>
 
         {/* History Content */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <RefreshCw className="w-6 h-6 animate-spin text-red-600 mr-2" />
@@ -537,23 +530,15 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
                   <p className="text-gray-600">No completed donations found</p>
                   <p className="text-sm text-gray-500">
                     {donationHistory.length === 0 
-                      ? "You haven't completed any donations yet. This is normal for new donors. Your donation history will appear here once you complete your first donation appointment."
+                      ? "You haven't completed any donations yet. This is normal for new donors. Your donation history will appear here once you complete your first donation."
                       : "No donations match your current filters. Try adjusting your search criteria."
                     }
                   </p>
-                  {donationHistory.length === 0 && (
-                    <div className="mt-6 space-y-3">
-                      <button
-                        onClick={onBack}
-                        className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                      >
-                        Book Your First Appointment
-                      </button>
-                      <div className="text-xs text-gray-500">
-                        💡 Tip: After completing a donation, your history will automatically appear here
-                      </div>
+                  <div className="mt-6">
+                    <div className="text-xs text-gray-500">
+                      💡 Tip: After completing a donation, your history will automatically appear here
                     </div>
-                  )}
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -614,7 +599,7 @@ export default function DonorHistory({ onBack }: { onBack: () => void }) {
                   {appointmentHistory.length === 0 && (
                     <div className="mt-6 space-y-3">
                       <button
-                        onClick={onBack}
+                        onClick={onBookAppointment}
                         className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                       >
                         Book Your First Appointment
