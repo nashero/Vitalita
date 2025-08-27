@@ -130,11 +130,15 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       setLoading(true);
       setError(null);
 
+      console.log('Fetching available slots for:', donationType, 'Date filter:', date);
+      
+      // Fetch slots from current date up to 2 years in the future to ensure calendar shows full range
+
       let query = supabase
         .from('availability_slots')
         .select(`
           *,
-          donation_centers!inner (
+          donation_centers (
             center_id,
             name,
             address,
@@ -146,7 +150,8 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         `)
         .eq('donation_type', donationType)
         .eq('is_available', true)
-        .gt('slot_datetime', new Date().toISOString());
+        .gte('slot_datetime', new Date().toISOString()) // Include current date and all future slots
+        .lte('slot_datetime', new Date(Date.now() + 2 * 365 * 24 * 60 * 60 * 1000).toISOString()); // Fetch slots up to 2 years in the future to show full calendar range
 
       if (date) {
         const startOfDay = new Date(date);
@@ -159,10 +164,42 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           .lte('slot_datetime', endOfDay.toISOString());
       }
 
-      // Fetch slots with reasonable limit for production
+      // Fetch ALL available slots with explicit high limit to ensure we get everything
+      // This ensures we get the full date range until August 2026
       const { data: slots, error: slotsError } = await query
         .order('slot_datetime', { ascending: true })
-        .limit(1000); // Reasonable limit for production use
+        .limit(100000); // Very high limit to ensure we get all slots
+
+      // If the first query fails or returns limited results, try a simpler query
+      if (!slots || slots.length < 100) {
+        console.log('First query returned limited results, trying simpler query...');
+        const { data: simpleSlots, error: simpleError } = await supabase
+          .from('availability_slots')
+          .select('*')
+          .eq('donation_type', donationType)
+          .eq('is_available', true)
+          .gte('slot_datetime', new Date().toISOString()) // Include current date and all future slots
+          .lte('slot_datetime', new Date(Date.now() + 2 * 365 * 24 * 60 * 60 * 1000).toISOString()) // Fetch slots up to 2 years in the future to show full calendar range
+          .order('slot_datetime', { ascending: true })
+          .limit(100000);
+        
+        if (simpleError) {
+          console.error('Simple query error:', simpleError);
+        } else {
+          console.log('Simple query result:', { 
+            slotsCount: simpleSlots?.length || 0,
+            firstSlot: simpleSlots?.[0]?.slot_datetime,
+            lastSlot: simpleSlots?.[simpleSlots?.length - 1]?.slot_datetime
+          });
+        }
+      }
+
+      console.log('Query result:', { 
+        slotsCount: slots?.length || 0, 
+        error: slotsError,
+        firstSlot: slots?.[0]?.slot_datetime,
+        lastSlot: slots?.[slots?.length - 1]?.slot_datetime
+      });
 
       if (slotsError) {
         console.error('Error fetching slots:', slotsError);
@@ -189,8 +226,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         } : undefined,
       })) || [];
 
-      // Production logging - only log errors, not debug info
-
+      console.log('Transformed slots count:', transformedSlots.length);
       setAvailableSlots(transformedSlots);
     } catch (err) {
       console.error('Error fetching slots:', err);

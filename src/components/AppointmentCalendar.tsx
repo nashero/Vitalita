@@ -87,6 +87,7 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
   const [calendarView, setCalendarView] = useState<CalendarView>('month');
   const [showSlotSelection, setShowSlotSelection] = useState(false);
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
+  const [showPastSlots, setShowPastSlots] = useState(true); // Show all slots including past ones
 
   // AVIS Centers configuration
   const avisCenters = [
@@ -108,6 +109,7 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
   // Generate calendar days for the current month/year
   const generateCalendarDays = (date: Date, view: CalendarView): CalendarDay[] => {
     const days: CalendarDay[] = [];
+    const today = new Date();
     
     if (view === 'month') {
       const year = date.getFullYear();
@@ -127,7 +129,7 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
           date: prevDate,
           isCurrentMonth: false,
           isToday: false,
-          isPast: prevDate < new Date(),
+          isPast: prevDate < today, // Mark as past if before today
           isWeekend: prevDate.getDay() === 0 || prevDate.getDay() === 6,
           isCenterOpen: isCenterOpen(prevDate),
           availableSlots: { blood: 0, plasma: 0 },
@@ -138,12 +140,11 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
       // Add days of current month
       for (let day = 1; day <= lastDay.getDate(); day++) {
         const currentDate = new Date(year, month, day);
-        const today = new Date();
         days.push({
           date: currentDate,
           isCurrentMonth: true,
           isToday: currentDate.toDateString() === today.toDateString(),
-          isPast: currentDate < today,
+          isPast: currentDate < today, // Mark as past if before today
           isWeekend: currentDate.getDay() === 0 || currentDate.getDay() === 6,
           isCenterOpen: isCenterOpen(currentDate),
           availableSlots: { blood: 0, plasma: 0 },
@@ -159,7 +160,7 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
           date: nextDate,
           isCurrentMonth: false,
           isToday: false,
-          isPast: nextDate < new Date(),
+          isPast: nextDate < today, // Mark as past if before today
           isWeekend: nextDate.getDay() === 0 || nextDate.getDay() === 6,
           isCenterOpen: isCenterOpen(nextDate),
           availableSlots: { blood: 0, plasma: 0 },
@@ -174,7 +175,7 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
           date: monthDate,
           isCurrentMonth: true,
           isToday: false,
-          isPast: monthDate < new Date(),
+          isPast: monthDate < today, // Mark as past if before today
           isWeekend: false,
           isCenterOpen: true, // Always true for month view
           availableSlots: { blood: 0, plasma: 0 },
@@ -215,13 +216,8 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
       setLoading(true);
       setError(null);
 
-      const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-      const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-      
-      // Set time to cover full operating hours
-      startOfMonth.setHours(0, 0, 0, 0);
-      endOfMonth.setHours(23, 59, 59, 999);
-
+      // Fetch ALL available slots from the database to show complete availability
+      // This allows users to see the full range of available dates
       const { data: slots, error: slotsError } = await supabase
         .from('availability_slots')
         .select(`
@@ -237,8 +233,6 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
             is_active
           )
         `)
-        .gte('slot_datetime', startOfMonth.toISOString())
-        .lte('slot_datetime', endOfMonth.toISOString())
         .eq('is_available', true)
         .order('slot_datetime', { ascending: true });
 
@@ -336,6 +330,54 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
     };
   };
 
+  // Calculate total availability information across all slots
+  const calculateTotalAvailability = () => {
+    if (monthAvailabilitySlots.length === 0) return null;
+    
+    const dates = monthAvailabilitySlots.map(slot => new Date(slot.slot_datetime));
+    const sortedDates = dates.sort((a, b) => a.getTime() - b.getTime());
+    const earliestDate = sortedDates[0];
+    const latestDate = sortedDates[sortedDates.length - 1];
+    
+    const totalBloodSlots = monthAvailabilitySlots
+      .filter(slot => slot.donation_type === 'Blood')
+      .reduce((total, slot) => total + (slot.capacity - slot.current_bookings), 0);
+    
+    const totalPlasmaSlots = monthAvailabilitySlots
+      .filter(slot => slot.donation_type === 'Plasma')
+      .reduce((total, slot) => total + (slot.capacity - slot.current_bookings), 0);
+    
+    return {
+      totalSlots: monthAvailabilitySlots.length,
+      totalBloodSlots,
+      totalPlasmaSlots,
+      earliestDate,
+      latestDate,
+      dateRange: `${earliestDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} to ${latestDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`
+    };
+  };
+
+  // Function to find the latest month with available slots
+  const findLatestMonthWithSlots = () => {
+    if (monthAvailabilitySlots.length === 0) return null;
+    
+    // Find the latest slot date
+    const latestSlot = monthAvailabilitySlots.reduce((latest, slot) => {
+      const slotDate = new Date(slot.slot_datetime);
+      return slotDate > latest ? slotDate : latest;
+    }, new Date(0));
+    
+    return new Date(latestSlot.getFullYear(), latestSlot.getMonth(), 1);
+  };
+
+  // Function to jump to the latest month with slots
+  const jumpToLatestAvailableMonth = () => {
+    const latestMonth = findLatestMonthWithSlots();
+    if (latestMonth) {
+      setCurrentDate(latestMonth);
+    }
+  };
+
   // Update calendar days with slot availability
   const updateCalendarWithAvailability = (slots: AvailabilitySlot[]) => {
     const updatedDays = generateCalendarDays(currentDate, calendarView).map(day => {
@@ -355,7 +397,9 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
 
   // Handle date selection
   const handleDateSelection = async (date: Date) => {
-    if (date < new Date() || !isCenterOpen(date)) return;
+    // Prevent selecting past dates, but allow all future dates
+    const today = new Date();
+    if (date < today || !isCenterOpen(date)) return;
     
     setSelectedDate(date);
     setShowSlotSelection(true);
@@ -514,6 +558,13 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
     fetchMonthAvailability(currentDate);
   }, [currentDate, calendarView]);
 
+  // Update calendar when showPastSlots changes
+  useEffect(() => {
+    if (monthAvailabilitySlots.length > 0) {
+      updateCalendarWithAvailability(monthAvailabilitySlots);
+    }
+  }, [showPastSlots]);
+
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
@@ -590,6 +641,38 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
               >
                 <RefreshCw className="w-4 h-4" />
               </button>
+              
+              {/* Toggle for showing past slots */}
+              <div className="flex items-center space-x-2">
+                <label className="text-sm font-medium text-gray-700">Show Past Slots:</label>
+                <button
+                  onClick={() => setShowPastSlots(!showPastSlots)}
+                  className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${
+                    showPastSlots 
+                      ? 'bg-green-600 text-white' 
+                      : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                  }`}
+                  title={showPastSlots ? 'Hide past slots' : 'Show all slots including past ones'}
+                >
+                  {showPastSlots ? 'ON' : 'OFF'}
+                </button>
+                {showPastSlots && (
+                  <div className="flex items-center text-xs text-orange-600">
+                    <Info className="w-3 h-3 mr-1" />
+                    Shows all available slots including past dates
+                  </div>
+                )}
+              </div>
+              {monthAvailabilitySlots.length > 0 && (
+                <button
+                  onClick={jumpToLatestAvailableMonth}
+                  className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-300 rounded-lg transition-colors"
+                  title="Jump to latest available month"
+                >
+                  <Calendar className="w-4 h-4 inline mr-2" />
+                  Jump to Latest Available Month
+                </button>
+              )}
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => setCalendarView('month')}
@@ -629,29 +712,50 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
           />
         )}
 
-        {/* Calendar Navigation */}
-        <div className="flex items-center justify-between mb-8">
-          {/* Month Summary */}
-          <div className="flex items-center space-x-6">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">
-                {monthAvailabilitySlots.filter(slot => slot.donation_type === 'Blood').reduce((total: number, slot: AvailabilitySlot) => total + (slot.capacity - slot.current_bookings), 0)}
+        {/* Total Availability Summary */}
+        {monthAvailabilitySlots.length > 0 && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-8">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-red-600">
+                    {calculateTotalAvailability()?.totalBloodSlots || 0}
+                  </div>
+                  <div className="text-sm text-gray-600">Total Blood Slots</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-blue-600">
+                    {calculateTotalAvailability()?.totalPlasmaSlots || 0}
+                  </div>
+                  <div className="text-sm text-gray-600">Total Plasma Slots</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-600">
+                    {calculateTotalAvailability()?.totalSlots || 0}
+                  </div>
+                  <div className="text-sm text-gray-600">Total Available Slots</div>
+                </div>
               </div>
-              <div className="text-sm text-gray-600">Blood Slots</div>
+                          <div className="text-right">
+              <div className="text-lg font-semibold text-blue-900 mb-1">
+                Available Date Range
+              </div>
+              <div className="text-sm text-blue-700">
+                {calculateTotalAvailability()?.dateRange || 'Loading...'}
+              </div>
+              {showPastSlots && (
+                <div className="text-xs text-orange-600 mt-1">
+                  ⚠️ Including past dates with available slots
+                </div>
+              )}
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">
-                {monthAvailabilitySlots.filter(slot => slot.donation_type === 'Plasma').reduce((total: number, slot: AvailabilitySlot) => total + (slot.capacity - slot.current_bookings), 0)}
-              </div>
-              <div className="text-sm text-gray-600">Plasma Slots</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
-                {monthAvailabilitySlots.length}
-              </div>
-              <div className="text-sm text-gray-600">Total Slots</div>
             </div>
           </div>
+        )}
+
+        {/* Calendar Navigation */}
+        <div className="flex items-center justify-between mb-8">
+          {/* Navigation Controls */}
           <div className="flex items-center space-x-4">
             <button
               onClick={calendarView === 'month' ? goToPreviousMonth : goToPreviousYear}
@@ -675,25 +779,75 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
             </button>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-              <span className="text-sm text-gray-600">Blood Donation</span>
+                      <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                <span className="text-sm text-gray-600">Blood Donation</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <span className="text-sm text-gray-600">Plasma Donation</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span className="text-sm text-gray-600">Available</span>
+              </div>
+              {showPastSlots && (
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                  <span className="text-sm text-gray-600">Past Available</span>
+                </div>
+              )}
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
+                <span className="text-sm text-gray-600">Closed/No Slots</span>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-              <span className="text-sm text-gray-600">Plasma Donation</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              <span className="text-sm text-gray-600">Available</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
-              <span className="text-sm text-gray-600">Closed/No Slots</span>
+        </div>
+
+        {/* Current Month Summary */}
+        {monthAvailabilitySlots.length > 0 && (
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center justify-center space-x-8">
+              <div className="text-center">
+                <div className="text-xl font-bold text-red-600">
+                  {monthAvailabilitySlots
+                    .filter(slot => {
+                      const slotDate = new Date(slot.slot_datetime);
+                      return slotDate.getMonth() === currentDate.getMonth() && 
+                             slotDate.getFullYear() === currentDate.getFullYear() &&
+                             slot.donation_type === 'Blood';
+                    })
+                    .reduce((total, slot) => total + (slot.capacity - slot.current_bookings), 0)}
+                </div>
+                <div className="text-sm text-gray-600">Blood Slots This Month</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-blue-600">
+                  {monthAvailabilitySlots
+                    .filter(slot => {
+                      const slotDate = new Date(slot.slot_datetime);
+                      return slotDate.getMonth() === currentDate.getMonth() && 
+                             slotDate.getFullYear() === currentDate.getFullYear() &&
+                             slot.donation_type === 'Plasma';
+                    })
+                    .reduce((total, slot) => total + (slot.capacity - slot.current_bookings), 0)}
+                </div>
+                <div className="text-sm text-gray-600">Plasma Slots This Month</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-green-600">
+                  {monthAvailabilitySlots.filter(slot => {
+                    const slotDate = new Date(slot.slot_datetime);
+                    return slotDate.getMonth() === currentDate.getMonth() && 
+                           slotDate.getFullYear() === currentDate.getFullYear();
+                  }).length}
+                </div>
+                <div className="text-sm text-gray-600">Total Slots This Month</div>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Calendar Grid */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -707,9 +861,9 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
               <Calendar className="w-16 h-16 text-gray-400 mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">No Available Slots</h3>
               <p className="text-gray-600 text-center mb-4">
-                There are no available donation slots for {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}.
+                There are currently no available donation slots in the system.
                 <br />
-                Please try a different month or contact the donation center for availability.
+                Please try refreshing or contact the donation center for availability.
               </p>
               <button
                 onClick={() => fetchMonthAvailability(currentDate)}
@@ -737,7 +891,7 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
                     {calendarDays.map((day, index) => {
                       const isSelected = selectedDate?.toDateString() === day.date.toDateString();
                       const hasAvailability = day.availableSlots.blood > 0 || day.availableSlots.plasma > 0;
-                      const isClickable = day.isCenterOpen && !day.isPast && hasAvailability;
+                      const isClickable = day.isCenterOpen && (showPastSlots || !day.isPast) && hasAvailability;
                       
                       return (
                         <div
@@ -746,11 +900,13 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
                           className={`min-h-[120px] p-2 border-r border-b border-gray-200 transition-all duration-200 ${
                             isSelected ? 'bg-blue-100 border-blue-300' : ''
                           } ${
-                            !day.isCenterOpen || day.isPast 
+                            !day.isCenterOpen 
                               ? 'bg-gray-50 cursor-not-allowed' 
-                              : hasAvailability 
-                                ? 'cursor-pointer hover:bg-blue-50' 
-                                : 'bg-gray-50 cursor-not-allowed'
+                              : (day.isPast && !showPastSlots)
+                                ? 'bg-gray-50 cursor-not-allowed'
+                                : hasAvailability 
+                                  ? (day.isPast ? 'cursor-pointer hover:bg-orange-50' : 'cursor-pointer hover:bg-blue-50')
+                                  : 'bg-gray-50 cursor-not-allowed'
                           }`}
                         >
                           <div className="text-right mb-1">
@@ -758,7 +914,7 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
                               day.isToday 
                                 ? 'bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center'
                                 : day.isCurrentMonth 
-                                  ? (isClickable ? 'text-gray-900' : 'text-gray-400')
+                                  ? (isClickable ? (day.isPast ? 'text-orange-700' : 'text-gray-900') : 'text-gray-400')
                                   : 'text-gray-400'
                             }`}>
                               {day.date.getDate()}
@@ -773,12 +929,12 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
                           </div>
 
                           {/* Slot Availability Indicators */}
-                          {day.isCenterOpen && !day.isPast && (
+                          {day.isCenterOpen && (showPastSlots || !day.isPast) && (
                             <div className="space-y-1">
                               {/* Blood Donation - Red color scheme */}
                               <div className={`text-xs px-2 py-1 rounded flex items-center justify-between ${
                                 day.availableSlots.blood > 0 
-                                  ? 'bg-red-100 text-red-800 border border-red-200' 
+                                  ? (day.isPast ? 'bg-orange-100 text-orange-800 border border-orange-200' : 'bg-red-100 text-red-800 border border-red-200')
                                   : 'bg-gray-100 text-gray-500'
                               }`}>
                                 <span className="flex items-center">
@@ -791,7 +947,7 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
                               {/* Plasma Donation - Blue color scheme */}
                               <div className={`text-xs px-2 py-1 rounded flex items-center justify-between ${
                                 day.availableSlots.plasma > 0 
-                                  ? 'bg-blue-100 text-blue-800 border border-blue-200' 
+                                  ? (day.isPast ? 'bg-orange-100 text-orange-800 border border-orange-200' : 'bg-blue-100 text-blue-800 border border-blue-200')
                                   : 'bg-gray-100 text-gray-500'
                               }`}>
                                 <span className="flex items-center">
@@ -806,8 +962,15 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
                           {/* Past Date or No Availability */}
                           {(day.isPast || (!hasAvailability && day.isCenterOpen)) && (
                             <div className="mt-2">
-                              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                                {day.isPast ? 'Past' : 'No slots'}
+                              <span className={`text-xs px-2 py-1 rounded-full ${
+                                day.isPast && hasAvailability && showPastSlots
+                                  ? 'text-orange-700 bg-orange-100'
+                                  : 'text-gray-500 bg-gray-100'
+                              }`}>
+                                {day.isPast 
+                                  ? (hasAvailability && showPastSlots ? 'Past (Available)' : 'Past')
+                                  : 'No slots'
+                                }
                               </span>
                             </div>
                           )}

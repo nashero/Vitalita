@@ -81,7 +81,7 @@ CREATE POLICY "Public can read available slots"
   ON availability_slots
   FOR SELECT
   TO public
-  USING (is_available = true AND slot_datetime > now());
+  USING (is_available = true);
 
 CREATE POLICY "Authenticated users can read all slots"
   ON availability_slots
@@ -116,7 +116,8 @@ CREATE OR REPLACE FUNCTION update_slot_availability()
 RETURNS TRIGGER AS $$
 BEGIN
   -- Update is_available based on current_bookings vs capacity
-  NEW.is_available = (NEW.current_bookings < NEW.capacity) AND (NEW.slot_datetime > now());
+  -- Removed date restriction to allow future slots to be marked as available
+  NEW.is_available = (NEW.current_bookings < NEW.capacity);
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

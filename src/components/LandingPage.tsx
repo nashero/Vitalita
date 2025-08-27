@@ -262,10 +262,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
                                <p className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed">
                   Book your blood or plasma donation online in minutes. Join thousands of donors making a difference every day.
                 </p>
-                <div className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
-                  <Mic className="w-4 h-4 text-red-500" />
-                  <span>Voice assistant available in bottom-left corner</span>
-                </div>
+
              </div>
              
                                          {/* Blood Donation Image */}

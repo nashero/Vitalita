@@ -975,30 +975,6 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
             <div className="grid grid-cols-2 gap-2">
               <button 
                 onClick={() => {
-                  const message = 'Book appointment';
-                  console.log('Quick action: Book appointment');
-                  sendTextMessage(message);
-                }}
-                className="py-2 px-2 text-xs bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                title="Ask about booking appointments"
-              >
-                Book appointment
-              </button>
-              <button 
-                onClick={() => {
-                  const message = 'Check eligibility';
-                  console.log('Quick action: Check eligibility');
-                  sendTextMessage(message);
-                }}
-                className="py-2 px-2 text-xs bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                title="Ask about donation eligibility"
-              >
-                Check eligibility
-              </button>
-            </div>
-            <div className="mt-2 grid grid-cols-2 gap-2">
-              <button 
-                onClick={() => {
                   const message = 'What are the requirements for blood donation?';
                   console.log('Quick action: Requirements');
                   sendTextMessage(message);
@@ -1020,6 +996,7 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
                 Center locations
               </button>
             </div>
+
             
             {/* Debug/Test Section */}
             <div className="mt-3 pt-3 border-t border-gray-200">
@@ -1042,26 +1019,7 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
                   🧹 Clean Messages
                 </button>
               </div>
-              <div className="grid grid-cols-2 gap-2 mb-2">
-                <button 
-                  onClick={() => sendToN8nWebhook('Test n8n connection', 'text')}
-                  className="py-2 px-2 text-xs bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
-                  title="Test n8n connection"
-                >
-                  🧪 Test n8n
-                </button>
-                <button 
-                  onClick={() => {
-                    console.log('📍 Current n8n webhook URL:', n8nWebhookUrl);
-                    console.log('🔗 CHAT_CONFIG:', CHAT_CONFIG);
-                    setTranscript(`n8n URL: ${n8nWebhookUrl}`);
-                  }}
-                  className="py-2 px-2 text-xs bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors"
-                  title="Show n8n configuration"
-                >
-                  ⚙️ n8n Config
-                </button>
-              </div>
+
               <div className="text-xs text-gray-500 text-center">
                 {conversationHistory.length > 0 && (
                   <span>Messages: {conversationHistory.length}</span>
