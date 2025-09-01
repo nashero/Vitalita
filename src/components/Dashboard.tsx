@@ -329,215 +329,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
             </div>
           </div>
 
-          {/* Password System Management */}
-          <div className="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center">
-                <div className="bg-blue-100 p-3 rounded-full mr-4">
-                  <Key className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Authentication Options</h3>
-                  <p className="text-sm text-gray-600">
-                    Choose your preferred authentication method
-                  </p>
-                </div>
-              </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Current Authentication Method */}
-              <div className="bg-white rounded-lg p-4 border border-blue-200">
-                <div className="flex items-center mb-3">
-                  <Shield className="w-5 h-5 text-blue-600 mr-2" />
-                  <h4 className="font-medium text-gray-900">Current Method</h4>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm">
-                    <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-                    <span className="text-gray-700">
-                      {hasPassword ? 'Password Authentication' : 'Hash-based Authentication'}
-                    </span>
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {hasPassword 
-                      ? 'You can log in with your password on any device'
-                      : 'You log in using your personal information (name, DOB, center)'
-                    }
-                  </div>
-                </div>
-              </div>
-
-              {/* Password Setup */}
-              <div className="bg-white rounded-lg p-4 border border-blue-200">
-                <div className="flex items-center mb-3">
-                  <Lock className="w-5 h-5 text-green-600 mr-2" />
-                  <h4 className="font-medium text-gray-900">Password Setup</h4>
-                </div>
-                <div className="space-y-3">
-                  {hasPassword ? (
-                    <div className="text-sm text-green-600">
-                      <CheckCircle className="w-4 h-4 inline mr-2" />
-                      Password is already set up
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => setShowPasswordSetup(true)}
-                      className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                    >
-                      <Lock className="w-4 h-4 inline mr-2" />
-                      Set Up Password
-                    </button>
-                  )}
-                  <div className="text-xs text-gray-500">
-                    {hasPassword 
-                      ? 'You can use either authentication method'
-                      : 'Add password authentication for easier login'
-                    }
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Authentication Method Comparison */}
-            <div className="mt-6 bg-white rounded-lg border border-blue-200 p-4">
-              <h4 className="font-medium text-gray-900 mb-3 flex items-center">
-                <Info className="w-4 h-4 mr-2 text-blue-600" />
-                Authentication Methods Comparison
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div>
-                  <h5 className="font-medium text-gray-700 mb-2 flex items-center">
-                    <Key className="w-4 h-4 mr-2 text-blue-600" />
-                    Hash-based Authentication
-                  </h5>
-                  <ul className="space-y-1 text-gray-600 text-xs">
-                    <li>• No password to remember</li>
-                    <li>• Uses your personal information</li>
-                    <li>• Secure and GDPR compliant</li>
-                    <li>• Works on any device</li>
-                  </ul>
-                </div>
-                <div>
-                  <h5 className="font-medium text-gray-700 mb-2 flex items-center">
-                    <Lock className="w-4 h-4 mr-2 text-green-600" />
-                    Password Authentication
-                  </h5>
-                  <ul className="space-y-1 text-gray-600 text-xs">
-                    <li>• Faster login process</li>
-                    <li>• More convenient for regular use</li>
-                    <li>• Device-specific sessions</li>
-                    <li>• Enhanced security features</li>
-                  </ul>
-                </div>
-              </div>
-              <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-                <p className="text-xs text-blue-800">
-                  <strong>Note:</strong> You can use both methods simultaneously. Setting up a password doesn't disable hash-based authentication.
-                </p>
-              </div>
-            </div>
-
-            {/* Password Setup Modal */}
-            {showPasswordSetup && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
-                  <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 rounded-t-xl">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold text-white">Set Up Password</h3>
-                      <button
-                        onClick={() => setShowPasswordSetup(false)}
-                        className="text-white hover:text-blue-100 transition-colors"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="p-6">
-                    {passwordSuccess ? (
-                      <div className="text-center">
-                        <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
-                        <p className="text-green-800 font-medium">{passwordSuccess}</p>
-                      </div>
-                    ) : (
-                      <form onSubmit={handlePasswordSetup} className="space-y-4">
-                        <div>
-                          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                            New Password
-                          </label>
-                          <div className="relative">
-                            <input
-                              type={passwordSetupData.showPassword ? 'text' : 'password'}
-                              id="password"
-                              value={passwordSetupData.password}
-                              onChange={(e) => setPasswordSetupData(prev => ({ ...prev, password: e.target.value }))}
-                              className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                              placeholder="Enter your new password"
-                              required
-                            />
-                            <button
-                              type="button"
-                              onClick={() => setPasswordSetupData(prev => ({ ...prev, showPassword: !prev.showPassword }))}
-                              className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                            >
-                              {passwordSetupData.showPassword ? (
-                                <EyeOff className="w-4 h-4 text-gray-400" />
-                              ) : (
-                                <Eye className="w-4 h-4 text-gray-400" />
-                              )}
-                            </button>
-                          </div>
-                        </div>
-
-                        <div>
-                          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                            Confirm Password
-                          </label>
-                          <input
-                            type="password"
-                            id="confirmPassword"
-                            value={passwordSetupData.confirmPassword}
-                            onChange={(e) => setPasswordSetupData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                            className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Confirm your new password"
-                            required
-                          />
-                        </div>
-
-                        {passwordError && (
-                          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                            <p className="text-sm text-red-600">{passwordError}</p>
-                          </div>
-                        )}
-
-                        <div className="text-xs text-gray-500">
-                          Password must be at least 8 characters with uppercase, lowercase, and number
-                        </div>
-
-                        <div className="flex gap-3">
-                          <button
-                            type="button"
-                            onClick={() => setShowPasswordSetup(false)}
-                            className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            type="submit"
-                            disabled={passwordLoading}
-                            className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-                          >
-                            {passwordLoading ? 'Setting...' : 'Set Password'}
-                          </button>
-                        </div>
-                      </form>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Dashboard Content */}
@@ -623,6 +415,116 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
                 </div>
               )}
             </div>
+
+            {/* Authentication Options */}
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-6 mt-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <div className="bg-blue-100 p-3 rounded-full mr-4">
+                    <Key className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Authentication Options</h3>
+                    <p className="text-sm text-gray-600">
+                      Choose your preferred authentication method
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Current Authentication Method */}
+                <div className="bg-white rounded-lg p-4 border border-blue-200">
+                  <div className="flex items-center mb-3">
+                    <Shield className="w-5 h-5 text-blue-600 mr-2" />
+                    <h4 className="font-medium text-gray-900">Current Method</h4>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center text-sm">
+                      <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
+                      <span className="text-gray-700">
+                        {hasPassword ? 'Password Authentication' : 'Hash-based Authentication'}
+                      </span>
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {hasPassword 
+                        ? 'You can log in with your password on any device'
+                        : 'You log in using your personal information (name, DOB, center)'
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                {/* Password Setup */}
+                <div className="bg-white rounded-lg p-4 border border-blue-200">
+                  <div className="flex items-center mb-3">
+                    <Lock className="w-5 h-5 text-green-600 mr-2" />
+                    <h4 className="font-medium text-gray-900">Password Setup</h4>
+                  </div>
+                  <div className="space-y-3">
+                    {hasPassword ? (
+                      <div className="text-sm text-green-600">
+                        <CheckCircle className="w-4 h-4 inline mr-2" />
+                        Password is already set up
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setShowPasswordSetup(true)}
+                        className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                      >
+                        <Lock className="w-4 h-4 inline mr-2" />
+                        Set Up Password
+                      </button>
+                    )}
+                    <div className="text-xs text-gray-500">
+                      {hasPassword 
+                        ? 'You can use either authentication method'
+                        : 'Add password authentication for easier login'
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Authentication Method Comparison */}
+              <div className="mt-6 bg-white rounded-lg border border-blue-200 p-4">
+                <h4 className="font-medium text-gray-900 mb-3 flex items-center">
+                  <Info className="w-4 h-4 mr-2 text-blue-600" />
+                  Authentication Methods Comparison
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <h5 className="font-medium text-gray-700 mb-2 flex items-center">
+                      <Key className="w-4 h-4 mr-2 text-blue-600" />
+                      Hash-based Authentication
+                    </h5>
+                    <ul className="space-y-1 text-gray-600 text-xs">
+                      <li>• No password to remember</li>
+                      <li>• Uses your personal information</li>
+                      <li>• Secure and GDPR compliant</li>
+                      <li>• Works on any device</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h5 className="font-medium text-gray-700 mb-2 flex items-center">
+                      <Lock className="w-4 h-4 mr-2 text-green-600" />
+                      Password Authentication
+                    </h5>
+                    <ul className="space-y-1 text-gray-600 text-xs">
+                      <li>• Faster login process</li>
+                      <li>• More convenient for regular use</li>
+                      <li>• Device-specific sessions</li>
+                      <li>• Enhanced security features</li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+                  <p className="text-xs text-blue-800">
+                    <strong>Note:</strong> You can use both methods simultaneously. Setting up a password doesn't disable hash-based authentication.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Right Sidebar */}
@@ -669,6 +571,106 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
           </div>
         </div>
       </main>
+
+      {/* Password Setup Modal */}
+      {showPasswordSetup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 rounded-t-xl">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-white">Set Up Password</h3>
+                <button
+                  onClick={() => setShowPasswordSetup(false)}
+                  className="text-white hover:text-blue-100 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6">
+              {passwordSuccess ? (
+                <div className="text-center">
+                  <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
+                  <p className="text-green-800 font-medium">{passwordSuccess}</p>
+                </div>
+              ) : (
+                <form onSubmit={handlePasswordSetup} className="space-y-4">
+                  <div>
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                      New Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={passwordSetupData.showPassword ? 'text' : 'password'}
+                        id="password"
+                        value={passwordSetupData.password}
+                        onChange={(e) => setPasswordSetupData(prev => ({ ...prev, password: e.target.value }))}
+                        className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Enter your new password"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setPasswordSetupData(prev => ({ ...prev, showPassword: !prev.showPassword }))}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      >
+                        {passwordSetupData.showPassword ? (
+                          <EyeOff className="w-4 h-4 text-gray-400" />
+                        ) : (
+                          <Eye className="w-4 h-4 text-gray-400" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                      Confirm Password
+                    </label>
+                    <input
+                      type="password"
+                      id="confirmPassword"
+                      value={passwordSetupData.confirmPassword}
+                      onChange={(e) => setPasswordSetupData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Confirm your new password"
+                      required
+                    />
+                  </div>
+
+                  {passwordError && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                      <p className="text-sm text-red-600">{passwordError}</p>
+                    </div>
+                  )}
+
+                  <div className="text-xs text-gray-500">
+                    Password must be at least 8 characters with uppercase, lowercase, and number
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowPasswordSetup(false)}
+                      className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={passwordLoading}
+                      className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                    >
+                      {passwordLoading ? 'Setting...' : 'Set Password'}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
