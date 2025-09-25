@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Heart, Cross, Calendar, ShieldCheck, Clock, BarChart3, Menu, X, CheckCircle, MessageCircle, QrCode, Mail, Award, Group, ArrowDown, Shield, Server, Code, Mic } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import bloodDonationImage from '../assets/images/Blood Donation.jpg';
+import firstImage from '../assets/images/First.jpg';
+import secondImage from '../assets/images/Second.jpg';
+import thirdImage from '../assets/images/Third.jpg';
 import VoiceAgent from './VoiceAgent';
 
 const stats = [
@@ -265,14 +267,30 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
 
              </div>
              
-                                         {/* Blood Donation Image */}
+                                         {/* Blood Donation Images */}
                <div className="relative">
-                 <div className="rounded-2xl shadow-2xl overflow-hidden">
-                   <img 
-                     src={bloodDonationImage} 
-                     alt="Blood donation process" 
-                     className="w-full h-auto object-cover"
-                   />
+                 <div className="grid grid-cols-3 gap-2 rounded-2xl shadow-2xl overflow-hidden">
+                   <div className="relative">
+                     <img 
+                       src={firstImage} 
+                       alt="Blood donation process - Step 1" 
+                       className="w-full h-auto object-cover"
+                     />
+                   </div>
+                   <div className="relative">
+                     <img 
+                       src={secondImage} 
+                       alt="Blood donation process - Step 2" 
+                       className="w-full h-auto object-cover"
+                     />
+                   </div>
+                   <div className="relative">
+                     <img 
+                       src={thirdImage} 
+                       alt="Blood donation process - Step 3" 
+                       className="w-full h-auto object-cover"
+                     />
+                   </div>
                  </div>
                  
                  {/* Decorative elements */}
