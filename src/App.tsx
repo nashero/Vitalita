@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AuthProvider from './components/AuthProvider';
 import StaffAuthProvider from './components/StaffAuthProvider';
 import LoginForm from './components/LoginForm';
@@ -15,6 +16,9 @@ import { CHAT_CONFIG } from './config/chat';
 import { useAuth } from './hooks/useAuth';
 import { useStaffAuth } from './hooks/useStaffAuth';
 import { Users, Shield, ArrowLeft, UserPlus } from 'lucide-react';
+
+// Import i18n configuration
+import './i18n';
 
 type LoginMode = 'donor' | 'staff';
 type DonorMode = 'login' | 'register';
@@ -179,12 +183,14 @@ function StaffAppContent({ onBackToLanding }: { onBackToLanding?: () => void }) 
 }
 
 function LoginModeSelector({ onSelectMode }: { onSelectMode: (mode: LoginMode) => void }) {
+  const { t } = useTranslation();
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Vitalita Portal</h1>
-          <p className="text-gray-600">Choose your login type to continue</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('loginMode.title')}</h1>
+          <p className="text-gray-600">{t('loginMode.subtitle')}</p>
         </div>
 
         <div className="space-y-4">
@@ -198,8 +204,8 @@ function LoginModeSelector({ onSelectMode }: { onSelectMode: (mode: LoginMode) =
                 <Users className="w-8 h-8 text-blue-600" />
               </div>
               <div className="ml-4 text-left">
-                <h3 className="text-lg font-semibold text-gray-900">Donor Portal</h3>
-                <p className="text-sm text-gray-600">Schedule appointments and manage donations</p>
+                <h3 className="text-lg font-semibold text-gray-900">{t('loginMode.donorPortal')}</h3>
+                <p className="text-sm text-gray-600">{t('loginMode.donorPortalDesc')}</p>
               </div>
             </div>
           </button>
@@ -214,8 +220,8 @@ function LoginModeSelector({ onSelectMode }: { onSelectMode: (mode: LoginMode) =
                 <Shield className="w-8 h-8 text-slate-600" />
               </div>
               <div className="ml-4 text-left">
-                <h3 className="text-lg font-semibold text-gray-900">Staff Portal</h3>
-                <p className="text-sm text-gray-600">Administrative dashboard and management</p>
+                <h3 className="text-lg font-semibold text-gray-900">{t('loginMode.staffPortal')}</h3>
+                <p className="text-sm text-gray-600">{t('loginMode.staffPortalDesc')}</p>
               </div>
             </div>
           </button>
@@ -223,7 +229,7 @@ function LoginModeSelector({ onSelectMode }: { onSelectMode: (mode: LoginMode) =
 
         <div className="text-center mt-8">
           <p className="text-sm text-gray-500">
-            Need help? Contact your administrator
+            {t('landing.needHelp')}
           </p>
         </div>
       </div>
