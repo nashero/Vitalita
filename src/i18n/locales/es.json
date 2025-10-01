@@ -1,0 +1,139 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "close": "Cerrar",
+    "submit": "Enviar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "clear": "Limpiar",
+    "refresh": "Actualizar"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "donorPortal": "Portal de Donantes",
+    "staffPortal": "Portal del Personal",
+    "faq": "Preguntas Frecuentes",
+    "more": "Más",
+    "analytics": "Análisis",
+    "staffArea": "Área del Personal"
+  },
+  "landing": {
+    "title": "Programa Tu Donación, Salva Vidas",
+    "subtitle": "Reserva tu donación de sangre o plasma en línea en minutos. Únete a miles de donantes que marcan la diferencia cada día.",
+    "donorRegistration": "Registro y Acceso de Donantes",
+    "donorRegistrationDesc": "¿Nuevo en Vitalita? Regístrate como donante o inicia sesión en tu cuenta existente para gestionar citas.",
+    "accessDonorPortal": "Acceder al Portal de Donantes",
+    "bookDonation": "Reserva Tu Donación",
+    "bookDonationDesc": "Nuestro sistema de reservas avanzado te guiará paso a paso a través del proceso. Verificación de elegibilidad completa, programación inteligente y confirmación instantánea.",
+    "processSteps": {
+      "step1": "Inicia la Conversación - Usa nuestro asistente de reservas avanzado o chatea con el asistente virtual",
+      "step2": "Verificación de Identidad - Identificación segura con tu nombre, centro AWS e ID de donante con generación de nacimiento",
+      "step3": "Elegibilidad y Programación - Verificación de elegibilidad avanzada y programación inteligente con disponibilidad en tiempo real",
+      "step4": "Confirmación Instantánea - Múltiples opciones de entrega, códigos QR, integración de calendario y recordatorios automatizados"
+    },
+    "featureHighlights": "Características Destacadas",
+    "whyChooseVitalita": "¿Por Qué Elegir Vitalita?",
+    "analytics": "Análisis y Estadísticas",
+    "transformManagement": "Transforma la Gestión de Donaciones de Sangre — Ve Cómo Vitalita Puede Ayudar",
+    "showMeHow": "Muéstrame Cómo",
+    "companyInfo": "Información de la Empresa",
+    "support": "Soporte",
+    "privacyPolicy": "Política de Privacidad",
+    "termsOfService": "Términos de Servicio",
+    "allRightsReserved": "Todos los derechos reservados.",
+    "needHelp": "¿Necesitas ayuda? Contacta a tu administrador"
+  },
+  "stats": {
+    "donationsPerYear": "Donaciones por año",
+    "awsCenters": "Centros AWS",
+    "livesSaved": "Vidas salvadas",
+    "onlineSupport": "Soporte en línea",
+    "donations": "Donaciones",
+    "centers": "Centros",
+    "livesSavedShort": "Vidas Salvadas",
+    "support": "Soporte"
+  },
+  "features": {
+    "easyBooking": {
+      "title": "Reserva Fácil",
+      "desc": "Reserva tu donación en pocos clics con nuestro asistente virtual."
+    },
+    "guaranteedSafety": {
+      "title": "Seguridad Garantizada",
+      "desc": "Todos los centros AWS cumplen con los más altos estándares de seguridad."
+    },
+    "awsCommunity": {
+      "title": "Comunidad AWS",
+      "desc": "Únete a miles de donantes en todo el país."
+    },
+    "flexibleHours": {
+      "title": "Horarios Flexibles",
+      "desc": "Muchos horarios disponibles para adaptarse a tu agenda."
+    },
+    "voiceAssistant": {
+      "title": "Asistente de Voz",
+      "desc": "Reserva sin manos con nuestro agente de voz inteligente."
+    }
+  },
+  "highlights": {
+    "smartScheduling": {
+      "title": "Programación Inteligente",
+      "desc": "Disponibilidad en tiempo real, Verificación de espacios en vivo, Gestión de capacidad, Detección de conflictos"
+    },
+    "eligibilityChecking": {
+      "title": "Verificación de Elegibilidad",
+      "desc": "Revisión de historial médico, Suspensiones anuales, Evaluación de salud"
+    },
+    "multiChannelDelivery": {
+      "title": "Entrega Multi-Canal",
+      "desc": "Email, SMS, Calendario, Recordatorios automatizados"
+    },
+    "advancedFeatures": {
+      "title": "Características Avanzadas",
+      "desc": "Guardado de borradores, Reprogramación, Códigos QR"
+    }
+  },
+  "benefits": {
+    "easyBooking": {
+      "title": "Reserva Fácil",
+      "desc": "Reserva en pocos clics."
+    },
+    "maximumSafety": {
+      "title": "Máxima Seguridad",
+      "desc": "Todos los centros certificados."
+    },
+    "saveLives": {
+      "title": "Salva Vidas",
+      "desc": "Una donación salva hasta 3 personas."
+    },
+    "flexibleHours": {
+      "title": "Horarios Flexibles",
+      "desc": "Horarios que se adaptan a tu agenda."
+    }
+  },
+  "loginMode": {
+    "title": "Portal Vitalita",
+    "subtitle": "Elige tu tipo de acceso para continuar",
+    "donorPortal": "Portal de Donantes",
+    "donorPortalDesc": "Programa citas y gestiona donaciones",
+    "staffPortal": "Portal del Personal",
+    "staffPortalDesc": "Panel administrativo y gestión"
+  },
+  "language": {
+    "selectLanguage": "Seleccionar Idioma",
+    "english": "English",
+    "italian": "Italiano",
+    "hindi": "हिन्दी",
+    "spanish": "Español"
+  }
+}

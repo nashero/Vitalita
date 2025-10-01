@@ -1,0 +1,139 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "refresh": "Refresh"
+  },
+  "navigation": {
+    "home": "Home",
+    "donorPortal": "Donor Portal",
+    "staffPortal": "Staff Portal",
+    "faq": "FAQ",
+    "more": "More",
+    "analytics": "Analytics",
+    "staffArea": "Staff Area"
+  },
+  "landing": {
+    "title": "Schedule Your Donation, Save Lives",
+    "subtitle": "Book your blood or plasma donation online in minutes. Join thousands of donors making a difference every day.",
+    "donorRegistration": "Donor Registration & Login",
+    "donorRegistrationDesc": "New to Vitalita? Register as a donor or login to your existing account to manage appointments.",
+    "accessDonorPortal": "Access Donor Portal",
+    "bookDonation": "Book Your Donation",
+    "bookDonationDesc": "Our advanced booking system will guide you step by step through the process. Complete eligibility checking, smart scheduling, and instant confirmation.",
+    "processSteps": {
+      "step1": "Start the Conversation - Use our advanced booking wizard or chat with the virtual assistant",
+      "step2": "Identity Verification - Secure identification with your name, AWS center, and donor ID with birth generation",
+      "step3": "Eligibility & Scheduling - Advanced eligibility checking and smart scheduling with real-time availability",
+      "step4": "Instant Confirmation - Multiple delivery options, QR codes, calendar integration and automated reminders"
+    },
+    "featureHighlights": "Feature Highlights",
+    "whyChooseVitalita": "Why Choose Vitalita?",
+    "analytics": "Analytics & Statistics",
+    "transformManagement": "Transform Blood Donation Management — See How Vitalita Can Help",
+    "showMeHow": "Show Me How",
+    "companyInfo": "Company Info",
+    "support": "Support",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "allRightsReserved": "All rights reserved.",
+    "needHelp": "Need help? Contact your administrator"
+  },
+  "stats": {
+    "donationsPerYear": "Donations per year",
+    "awsCenters": "AWS Centers",
+    "livesSaved": "Lives saved",
+    "onlineSupport": "Online support",
+    "donations": "Donations",
+    "centers": "Centers",
+    "livesSavedShort": "Lives Saved",
+    "support": "Support"
+  },
+  "features": {
+    "easyBooking": {
+      "title": "Easy Booking",
+      "desc": "Book your donation in just a few clicks with our virtual assistant."
+    },
+    "guaranteedSafety": {
+      "title": "Guaranteed Safety",
+      "desc": "All AWS centers meet the highest safety standards."
+    },
+    "awsCommunity": {
+      "title": "AWS Community",
+      "desc": "Join thousands of donors across the country."
+    },
+    "flexibleHours": {
+      "title": "Flexible Hours",
+      "desc": "Many available times to fit your schedule."
+    },
+    "voiceAssistant": {
+      "title": "Voice Assistant",
+      "desc": "Hands-free booking with our intelligent voice agent."
+    }
+  },
+  "highlights": {
+    "smartScheduling": {
+      "title": "Smart Scheduling",
+      "desc": "Real-time availability, Live slot checking, Capacity management, Conflict detection"
+    },
+    "eligibilityChecking": {
+      "title": "Eligibility Checking",
+      "desc": "Medical history review, Annual holds, Health screening"
+    },
+    "multiChannelDelivery": {
+      "title": "Multi-Channel Delivery",
+      "desc": "Email, SMS, Calendar, Automated reminders"
+    },
+    "advancedFeatures": {
+      "title": "Advanced Features",
+      "desc": "Draft saving, Rescheduling, QR codes"
+    }
+  },
+  "benefits": {
+    "easyBooking": {
+      "title": "Easy Booking",
+      "desc": "Reserve in a few clicks."
+    },
+    "maximumSafety": {
+      "title": "Maximum Safety",
+      "desc": "All centers certified."
+    },
+    "saveLives": {
+      "title": "Save Lives",
+      "desc": "One donation saves up to 3 people."
+    },
+    "flexibleHours": {
+      "title": "Flexible Hours",
+      "desc": "Times that fit your schedule."
+    }
+  },
+  "loginMode": {
+    "title": "Vitalita Portal",
+    "subtitle": "Choose your login type to continue",
+    "donorPortal": "Donor Portal",
+    "donorPortalDesc": "Schedule appointments and manage donations",
+    "staffPortal": "Staff Portal",
+    "staffPortalDesc": "Administrative dashboard and management"
+  },
+  "language": {
+    "selectLanguage": "Select Language",
+    "english": "English",
+    "italian": "Italiano",
+    "hindi": "हिन्दी",
+    "spanish": "Español"
+  }
+}

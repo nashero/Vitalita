@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Heart, Cross, Calendar, ShieldCheck, Clock, BarChart3, Menu, X, CheckCircle, MessageCircle, QrCode, Mail, Award, Group, ArrowDown, Shield, Server, Code, Mic } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import firstImage from '../assets/images/First.jpg';
 import secondImage from '../assets/images/Second.jpg';
 import thirdImage from '../assets/images/Third.jpg';
 import VoiceAgent from './VoiceAgent';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const stats = [
   { label: 'Donations per year', value: 500000, icon: <Heart className="w-7 h-7 text-red-600" /> },
@@ -71,6 +73,7 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal, onDeployProject }) => {
+  const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [secondaryMenuOpen, setSecondaryMenuOpen] = useState(false);
   
@@ -120,15 +123,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
 
   // Move navLinks here so it can use props
   const navLinks = [
-    { label: 'Home', to: 'hero', onClick: undefined },
-    { label: 'Donor Portal', to: 'registration', onClick: onDonorPortal },
-    { label: 'FAQ', to: 'footer', onClick: undefined },
+    { label: t('navigation.home'), to: 'hero', onClick: undefined },
+    { label: t('navigation.donorPortal'), to: 'registration', onClick: onDonorPortal },
+    { label: t('navigation.faq'), to: 'footer', onClick: undefined },
   ];
 
   // Secondary menu items
   const secondaryNavItems = [
-    { label: 'Analytics', to: 'statistics', onClick: undefined },
-    { label: 'Staff Area', to: 'features', onClick: onStaffPortal },
+    { label: t('navigation.analytics'), to: 'statistics', onClick: undefined },
+    { label: t('navigation.staffArea'), to: 'features', onClick: onStaffPortal },
   ];
 
   return (
@@ -142,7 +145,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
               Vitalita
             </span>
           </div>
-          <div className="flex items-center space-x-8 text-base font-medium">
+          <div className="flex items-center space-x-4 text-base font-medium">
                          {navLinks.map(link => (
                <button
                  key={link.label}
@@ -157,13 +160,16 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
                </button>
              ))}
             
+            {/* Language Switcher */}
+            <LanguageSwitcher variant="minimal" />
+            
             {/* Secondary Menu Dropdown */}
             <div className="relative secondary-menu">
               <button
                 onClick={() => setSecondaryMenuOpen(!secondaryMenuOpen)}
                 className="flex items-center space-x-1 hover:text-red-600 transition-colors focus:outline-none"
               >
-                <span>More</span>
+                <span>{t('navigation.more')}</span>
                 <ArrowDown className={`w-4 h-4 transition-transform ${secondaryMenuOpen ? 'rotate-180' : ''}`} />
               </button>
               
@@ -210,6 +216,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
                    {link.label}
                  </button>
                ))}
+              
+              {/* Language Switcher in mobile */}
+              <div className="border-t border-gray-200 pt-2 mt-2">
+                <div className="text-xs font-medium text-gray-500 mb-2 px-2">{t('language.selectLanguage')}</div>
+                <div className="px-2">
+                  <LanguageSwitcher variant="compact" className="w-full" />
+                </div>
+              </div>
               
               {/* Secondary menu items in mobile */}
               <div className="border-t border-gray-200 pt-2 mt-2">
@@ -259,12 +273,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
              {/* Text Content */}
              <div className="text-left">
                <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
-                 Schedule Your Donation, <span className="text-red-600">Save Lives</span>
+                 {t('landing.title').split(', ')[0]}, <span className="text-red-600">{t('landing.title').split(', ')[1]}</span>
                </h1>
-                               <p className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed">
-                  Book your blood or plasma donation online in minutes. Join thousands of donors making a difference every day.
-                </p>
-
+               <p className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed">
+                 {t('landing.subtitle')}
+               </p>
              </div>
              
                                          {/* Blood Donation Images */}
@@ -317,13 +330,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
 
        {/* Registration Section */}
        <section ref={sectionRefs.registration} className="max-w-4xl mx-auto px-4 py-4 text-center">
-        <h2 className="text-2xl md:text-3xl font-bold mb-3">Donor Registration &amp; Login</h2>
-        <p className="text-gray-700 mb-6">New to Vitalita? Register as a donor or login to your existing account to manage appointments.</p>
+        <h2 className="text-2xl md:text-3xl font-bold mb-3">{t('landing.donorRegistration')}</h2>
+        <p className="text-gray-700 mb-6">{t('landing.donorRegistrationDesc')}</p>
         <button
           className="bg-red-600 text-white px-8 py-3 rounded-lg font-semibold shadow-md hover:bg-red-700 transition-all focus:outline-none focus:ring-2 focus:ring-red-400"
           onClick={onDonorPortal}
         >
-          Access Donor Portal
+          {t('landing.accessDonorPortal')}
         </button>
       </section>
 
@@ -333,12 +346,17 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
       <section ref={sectionRefs.process} className="max-w-5xl mx-auto px-4 py-8">
         <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col md:flex-row items-center gap-8">
           <div className="flex-1">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3">Book Your Donation</h2>
-            <p className="text-gray-700 mb-6">Our advanced booking system will guide you step by step through the process. Complete eligibility checking, smart scheduling, and instant confirmation.</p>
+            <h2 className="text-2xl md:text-3xl font-bold mb-3">{t('landing.bookDonation')}</h2>
+            <p className="text-gray-700 mb-6">{t('landing.bookDonationDesc')}</p>
           </div>
           <div className="flex-1">
             <ol className="space-y-4">
-              {processSteps.map((step, i) => (
+              {[
+                t('landing.processSteps.step1'),
+                t('landing.processSteps.step2'),
+                t('landing.processSteps.step3'),
+                t('landing.processSteps.step4')
+              ].map((step, i) => (
                 <li key={i} className="flex items-start">
                   <span className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold mr-4 shadow">
                     {i + 1}
@@ -354,10 +372,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
              {/* Feature Highlights Section */}
        <section className="max-w-7xl mx-auto px-4 py-12 bg-gray-50">
          <div className="px-4">
-           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Feature Highlights</h2>
+           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">{t('landing.featureHighlights')}</h2>
            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-             {highlights.map(h => (
-               <div key={h.title} className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center hover:shadow-lg transition-shadow">
+             {[
+               { icon: <BarChart3 className="w-6 h-6 text-red-600" />, title: t('highlights.smartScheduling.title'), desc: t('highlights.smartScheduling.desc') },
+               { icon: <ShieldCheck className="w-6 h-6 text-red-600" />, title: t('highlights.eligibilityChecking.title'), desc: t('highlights.eligibilityChecking.desc') },
+               { icon: <Mail className="w-6 h-6 text-red-600" />, title: t('highlights.multiChannelDelivery.title'), desc: t('highlights.multiChannelDelivery.desc') },
+               { icon: <QrCode className="w-6 h-6 text-red-600" />, title: t('highlights.advancedFeatures.title'), desc: t('highlights.advancedFeatures.desc') }
+             ].map((h, index) => (
+               <div key={index} className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center hover:shadow-lg transition-shadow">
                  <div className="mb-2">{h.icon}</div>
                  <h3 className="text-lg font-semibold mb-1 text-center">{h.title}</h3>
                  <p className="text-gray-600 text-center text-sm">{h.desc}</p>
@@ -370,10 +393,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
        {/* Why Choose Vitalita Section */}
        <section className="max-w-7xl mx-auto px-4 py-12 bg-white">
          <div className="px-4">
-           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Why Choose Vitalita?</h2>
+           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">{t('landing.whyChooseVitalita')}</h2>
            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-             {benefits.map(b => (
-               <div key={b.title} className="bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition-shadow border border-gray-100">
+             {[
+               { icon: <Calendar className="w-8 h-8 text-red-600" />, title: t('benefits.easyBooking.title'), desc: t('benefits.easyBooking.desc') },
+               { icon: <ShieldCheck className="w-8 h-8 text-red-600" />, title: t('benefits.maximumSafety.title'), desc: t('benefits.maximumSafety.desc') },
+               { icon: <Heart className="w-8 h-8 text-red-600" />, title: t('benefits.saveLives.title'), desc: t('benefits.saveLives.desc') },
+               { icon: <Clock className="w-8 h-8 text-red-600" />, title: t('benefits.flexibleHours.title'), desc: t('benefits.flexibleHours.desc') }
+             ].map((b, index) => (
+               <div key={index} className="bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition-shadow border border-gray-100">
                  <div className="mb-3">{b.icon}</div>
                  <h3 className="text-lg font-semibold mb-2 text-gray-900">{b.title}</h3>
                  <p className="text-gray-600 text-sm">{b.desc}</p>
@@ -385,7 +413,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
 
        {/* Analytics Section */}
        <section ref={sectionRefs.statistics} className="max-w-7xl mx-auto px-4 py-8">
-         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Analytics & Statistics</h2>
+         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">{t('landing.analytics')}</h2>
          <div className="bg-white rounded-2xl shadow-lg p-6">
            <div className="flex flex-wrap justify-center items-center gap-8 text-center">
              <div className="flex items-center space-x-2">
@@ -393,28 +421,28 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
                <span className="text-2xl md:text-3xl font-bold text-gray-900">
                  {statCounts[0].toLocaleString()}+
                </span>
-               <span className="text-gray-600 font-medium">Donations</span>
+               <span className="text-gray-600 font-medium">{t('stats.donations')}</span>
              </div>
              <div className="flex items-center space-x-2">
                <Cross className="w-6 h-6 text-red-600" />
                <span className="text-2xl md:text-3xl font-bold text-gray-900">
                  {statCounts[1]}+
                </span>
-               <span className="text-gray-600 font-medium">Centers</span>
+               <span className="text-gray-600 font-medium">{t('stats.centers')}</span>
              </div>
              <div className="flex items-center space-x-2">
                <CheckCircle className="w-6 h-6 text-red-600" />
                <span className="text-2xl md:text-3xl font-bold text-gray-900">
                  {statCounts[2].toLocaleString()}+
                </span>
-               <span className="text-gray-600 font-medium">Lives Saved</span>
+               <span className="text-gray-600 font-medium">{t('stats.livesSavedShort')}</span>
              </div>
              <div className="flex items-center space-x-2">
                <MessageCircle className="w-6 h-6 text-red-600" />
                <span className="text-2xl md:text-3xl font-bold text-gray-900">
                  {statCounts[3]}/7
                </span>
-               <span className="text-gray-600 font-medium">Support</span>
+               <span className="text-gray-600 font-medium">{t('stats.support')}</span>
              </div>
            </div>
          </div>
@@ -423,12 +451,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
                                                                                                {/* Blood Donation Centers Section */}
            <section className="bg-gradient-to-r from-green-50 to-emerald-50 py-16">
              <div className="max-w-4xl mx-auto px-4 text-center">
-               <h2 className="text-2xl md:text-3xl font-bold mb-6">Transform Blood Donation Management — <span className="text-red-600">See How Vitalita Can Help</span></h2>
+               <h2 className="text-2xl md:text-3xl font-bold mb-6">{t('landing.transformManagement').split(' — ')[0]} — <span className="text-red-600">{t('landing.transformManagement').split(' — ')[1]}</span></h2>
                <button
                  onClick={onDeployProject}
                  className="bg-red-600 text-white px-8 py-4 rounded-lg font-semibold shadow-lg hover:bg-red-700 transition-all focus:outline-none focus:ring-2 focus:ring-red-400 text-lg"
                >
-                 Show Me How
+                 {t('landing.showMeHow')}
                </button>
              </div>
            </section>
@@ -441,10 +469,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
             <span className="font-bold text-lg text-red-600">Vitalita</span>
           </div>
           <div className="flex flex-wrap gap-4 text-gray-600 text-sm">
-            <a href="#" className="hover:text-red-600 transition-colors">Company Info</a>
-            <a href="#" className="hover:text-red-600 transition-colors">Support</a>
-            <a href="#" className="hover:text-red-600 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-red-600 transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-red-600 transition-colors">{t('landing.companyInfo')}</a>
+            <a href="#" className="hover:text-red-600 transition-colors">{t('landing.support')}</a>
+            <a href="#" className="hover:text-red-600 transition-colors">{t('landing.privacyPolicy')}</a>
+            <a href="#" className="hover:text-red-600 transition-colors">{t('landing.termsOfService')}</a>
           </div>
           <div className="flex space-x-4">
             <a href="#" aria-label="Twitter" className="hover:text-red-600 transition-colors"><svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53A4.48 4.48 0 0022.4.36a9.09 9.09 0 01-2.88 1.1A4.52 4.52 0 0016.11 0c-2.5 0-4.52 2.02-4.52 4.52 0 .35.04.7.11 1.03C7.69 5.4 4.07 3.67 1.64.9c-.38.65-.6 1.4-.6 2.2 0 1.52.77 2.86 1.94 3.65A4.48 4.48 0 01.96 6v.06c0 2.13 1.52 3.9 3.54 4.3-.37.1-.76.16-1.16.16-.28 0-.55-.03-.81-.08.55 1.7 2.16 2.94 4.07 2.97A9.05 9.05 0 010 21.54a12.8 12.8 0 006.95 2.04c8.34 0 12.9-6.91 12.9-12.9 0-.2 0-.39-.01-.58A9.22 9.22 0 0023 3z" /></svg></a>
@@ -452,7 +480,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
             <a href="#" aria-label="Instagram" className="hover:text-red-600 transition-colors"><svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" /><line x1="17.5" y1="6.5" x2="17.5" y2="6.5" /></svg></a>
           </div>
         </div>
-        <div className="text-center text-gray-400 text-xs pb-2">&copy; {new Date().getFullYear()} Vitalita. All rights reserved.</div>
+        <div className="text-center text-gray-400 text-xs pb-2">&copy; {new Date().getFullYear()} Vitalita. {t('landing.allRightsReserved')}</div>
       </footer>
       
       {/* Voice Agent */}
