@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { User, Calendar, LogIn, UserPlus, MapPin, CalendarDays, ArrowLeft, Lock, Shield } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
+import LanguageSwitcher from './LanguageSwitcher';
 
 interface LoginFormProps {
   onShowRegistration?: () => void;
@@ -19,6 +21,7 @@ const AVIS_CENTERS = [
 ];
 
 export default function LoginForm({ onShowRegistration, onBackToLanding, onPasswordLogin }: LoginFormProps) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -40,7 +43,7 @@ export default function LoginForm({ onShowRegistration, onBackToLanding, onPassw
     // Validate all fields are filled
     if (!formData.firstName.trim() || !formData.lastName.trim() || 
         !formData.dateOfBirth || !formData.avisDonorCenter) {
-      setError('Please fill in all fields');
+      setError(t('auth.fillAllFields'));
       return;
     }
 
@@ -64,14 +67,15 @@ export default function LoginForm({ onShowRegistration, onBackToLanding, onPassw
       <div className="w-full max-w-md">
         {/* Back to Home Button - Positioned above the card */}
         {onBackToLanding && (
-          <div className="mb-4 flex justify-start">
+          <div className="mb-4 flex justify-between items-center">
             <button
               onClick={onBackToLanding}
               className="flex items-center text-gray-600 hover:text-gray-800 transition-colors px-3 py-2 rounded-lg hover:bg-white/50"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
+              {t('dashboard.backToLanding')}
             </button>
+            <LanguageSwitcher variant="minimal" />
           </div>
         )}
         
@@ -84,9 +88,9 @@ export default function LoginForm({ onShowRegistration, onBackToLanding, onPassw
                   <LogIn className="w-8 h-8 text-white" />
                 </div>
               </div>
-              <h1 className="text-2xl font-bold text-white">Donor Portal</h1>
+              <h1 className="text-2xl font-bold text-white">{t('loginMode.donorPortal')}</h1>
               <p className="text-red-100 text-sm mt-1">
-                Sign in to access your AVIS account
+                {t('loginMode.donorPortalDesc')}
               </p>
             </div>
           </div>
@@ -97,7 +101,7 @@ export default function LoginForm({ onShowRegistration, onBackToLanding, onPassw
               {/* First Name */}
               <div>
                 <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700 mb-2">
-                  First Name
+                  {t('auth.firstName')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -109,7 +113,7 @@ export default function LoginForm({ onShowRegistration, onBackToLanding, onPassw
                     value={formData.firstName}
                     onChange={(e) => handleInputChange('firstName', e.target.value)}
                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
-                    placeholder="Enter your first name"
+                    placeholder={t('auth.firstName')}
                     disabled={loading}
                     autoComplete="given-name"
                   />
@@ -119,7 +123,7 @@ export default function LoginForm({ onShowRegistration, onBackToLanding, onPassw
               {/* Last Name */}
               <div>
                 <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Last Name
+                  {t('auth.lastName')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -131,7 +135,7 @@ export default function LoginForm({ onShowRegistration, onBackToLanding, onPassw
                     value={formData.lastName}
                     onChange={(e) => handleInputChange('lastName', e.target.value)}
                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200 text-gray-900 placeholder-gray-500"
-                    placeholder="Enter your last name"
+                    placeholder={t('auth.lastName')}
                     disabled={loading}
                     autoComplete="family-name"
                   />
@@ -141,7 +145,7 @@ export default function LoginForm({ onShowRegistration, onBackToLanding, onPassw
               {/* Date of Birth */}
               <div>
                 <label htmlFor="dateOfBirth" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Date of Birth
+                  {t('auth.dateOfBirth')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -162,7 +166,7 @@ export default function LoginForm({ onShowRegistration, onBackToLanding, onPassw
               {/* AVIS Donor Center */}
               <div>
                 <label htmlFor="avisDonorCenter" className="block text-sm font-semibold text-gray-700 mb-2">
-                  AVIS Donor Center
+                  {t('auth.donorCenter')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -201,12 +205,12 @@ export default function LoginForm({ onShowRegistration, onBackToLanding, onPassw
                 {loading ? (
                   <div className="flex items-center justify-center">
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Authenticating...
+                    {t('common.loading')}
                   </div>
                 ) : (
                   <div className="flex items-center justify-center">
                     <LogIn className="w-5 h-5 mr-2" />
-                    Sign In
+                    {t('auth.signIn')}
                   </div>
                 )}
               </button>
@@ -224,7 +228,7 @@ export default function LoginForm({ onShowRegistration, onBackToLanding, onPassw
                     className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors duration-200"
                   >
                     <UserPlus className="w-4 h-4 mr-2" />
-                    Register as New Donor
+                    {t('auth.register')}
                   </button>
                 </div>
               </div>
@@ -252,7 +256,7 @@ export default function LoginForm({ onShowRegistration, onBackToLanding, onPassw
             <div className="mt-6 pt-6 border-t border-gray-100">
               <div className="flex items-center justify-center text-xs text-gray-500">
                 <Shield className="w-3 h-3 mr-1" />
-                Secure authentication using your personal information
+                {t('auth.secureConnection')}
               </div>
             </div>
           </div>

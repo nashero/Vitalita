@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { LogOut, Calendar, User, Globe, MessageCircle, CheckCircle, XCircle, Plus, MapPin, Heart, ArrowLeft, Clock, AlertCircle, Lock, Shield, Smartphone, Key, X, Eye, EyeOff, Info } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import AppointmentBooking from './AppointmentBooking';
 import DonorHistory from './DonorHistory';
 import SessionManager from './SessionManager';
+import LanguageSwitcher from './LanguageSwitcher';
 
 interface Appointment {
   appointment_id: string;
@@ -19,6 +21,7 @@ interface Appointment {
 }
 
 export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () => void }) {
+  const { t } = useTranslation();
   const { donor, logout, isPasswordSet, setPassword } = useAuth();
   const [showBooking, setShowBooking] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
@@ -54,17 +57,17 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
     e.preventDefault();
     
     if (passwordSetupData.password !== passwordSetupData.confirmPassword) {
-      setPasswordError('Passwords do not match');
+      setPasswordError(t('dashboard.passwordsDoNotMatch'));
       return;
     }
 
     if (passwordSetupData.password.length < 8) {
-      setPasswordError('Password must be at least 8 characters long');
+      setPasswordError(t('dashboard.passwordRequirements'));
       return;
     }
 
     if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(passwordSetupData.password)) {
-      setPasswordError('Password must contain at least one lowercase letter, one uppercase letter, and one number');
+      setPasswordError(t('dashboard.passwordRequirements'));
       return;
     }
 
@@ -75,7 +78,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
       const result = await setPassword(donor!.donor_hash_id, passwordSetupData.password);
 
       if (result.success) {
-        setPasswordSuccess('Password set successfully! You can now use password authentication.');
+        setPasswordSuccess(t('dashboard.passwordSetSuccess'));
         setHasPassword(true);
         setTimeout(() => {
           setShowPasswordSetup(false);
@@ -83,11 +86,11 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
           setPasswordSuccess('');
         }, 3000);
       } else {
-        setPasswordError(result.error || 'Failed to set password');
+        setPasswordError(result.error || t('dashboard.passwordSetError'));
       }
     } catch (err) {
       console.error('Set password error:', err);
-      setPasswordError('An error occurred while setting password');
+      setPasswordError(t('dashboard.passwordError'));
     } finally {
       setPasswordLoading(false);
     }
@@ -210,18 +213,19 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
             <div className="flex items-center">
               <Heart className="w-8 h-8 text-red-600 mr-3" />
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Vitalita Donor Portal</h1>
+                <h1 className="text-xl font-bold text-gray-900">{t('dashboard.title')}</h1>
                 <p className="text-xs text-gray-500">Saving lives through donation</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <LanguageSwitcher variant="minimal" />
               {onBackToLanding && (
                 <button
                   onClick={onBackToLanding}
                   className="flex items-center px-4 py-2 text-sm font-medium text-red-600 border border-red-200 bg-white hover:bg-red-50 rounded-lg transition-colors duration-200"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Home
+                  {t('dashboard.backToLanding')}
                 </button>
               )}
               <button
@@ -229,7 +233,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
                 className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200"
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                Sign Out
+                {t('dashboard.logout')}
               </button>
             </div>
           </div>
@@ -246,7 +250,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
             </div>
             <div>
               <h2 className="text-2xl font-bold text-gray-900">
-                Welcome back, Donor!
+                {t('dashboard.welcome')}, {donor.first_name}!
               </h2>
               <p className="text-gray-600">
                 {donor.avis_donor_center} • ID: {donor.donor_hash_id.substring(0, 8)}...
@@ -254,7 +258,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
               {!hasPassword && (
                 <div className="mt-2 flex items-center text-sm text-blue-600">
                   <Key className="w-4 h-4 mr-2" />
-                  <span>Consider setting up a password for easier login</span>
+                  <span>{t('dashboard.passwordSetupDesc')}</span>
                 </div>
               )}
             </div>
@@ -337,7 +341,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
           {/* Quick Actions */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('dashboard.appointments')}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <button 
                   onClick={() => setShowBooking(true)}
@@ -349,7 +353,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
                     </div>
                     <Calendar className="w-6 h-6 text-red-600 ml-2" />
                   </div>
-                  <h4 className="font-semibold text-gray-900 mb-1">Schedule Appointment</h4>
+                  <h4 className="font-semibold text-gray-900 mb-1">{t('dashboard.bookAppointment')}</h4>
                   <p className="text-sm text-gray-600">Book your next donation appointment</p>
                 </button>
                 <button 
@@ -361,7 +365,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
                       <User className="w-5 h-5 text-green-600" />
                     </div>
                   </div>
-                  <h4 className="font-semibold text-gray-900 mb-1">View History</h4>
+                  <h4 className="font-semibold text-gray-900 mb-1">{t('dashboard.viewHistory')}</h4>
                   <p className="text-sm text-gray-600">See past appointments and donations</p>
                 </button>
               </div>
@@ -369,11 +373,11 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
 
             {/* Recent Appointments */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Appointments</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('dashboard.upcomingAppointments')}</h3>
               {loading ? (
                 <div className="flex items-center justify-center py-8">
                   <Clock className="w-6 h-6 animate-spin text-red-600 mr-2" />
-                  <span className="text-gray-600">Loading appointments...</span>
+                  <span className="text-gray-600">{t('common.loading')}</span>
                 </div>
               ) : error ? (
                 <div className="flex items-center justify-center py-8">
@@ -383,7 +387,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
               ) : appointments.length === 0 ? (
                 <div className="text-center py-8">
                   <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-600">No appointments found</p>
+                  <p className="text-gray-600">{t('dashboard.noAppointments')}</p>
                   <p className="text-sm text-gray-500">Schedule your first donation appointment</p>
                 </div>
               ) : (
@@ -578,7 +582,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
           <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 rounded-t-xl">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-white">Set Up Password</h3>
+                <h3 className="text-lg font-semibold text-white">{t('dashboard.passwordSetupTitle')}</h3>
                 <button
                   onClick={() => setShowPasswordSetup(false)}
                   className="text-white hover:text-blue-100 transition-colors"
@@ -598,7 +602,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
                 <form onSubmit={handlePasswordSetup} className="space-y-4">
                   <div>
                     <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                      New Password
+                      {t('dashboard.newPassword')}
                     </label>
                     <div className="relative">
                       <input
@@ -607,7 +611,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
                         value={passwordSetupData.password}
                         onChange={(e) => setPasswordSetupData(prev => ({ ...prev, password: e.target.value }))}
                         className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Enter your new password"
+                        placeholder={t('dashboard.newPassword')}
                         required
                       />
                       <button
@@ -626,7 +630,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
 
                   <div>
                     <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                      Confirm Password
+                      {t('dashboard.confirmPassword')}
                     </label>
                     <input
                       type="password"
@@ -634,7 +638,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
                       value={passwordSetupData.confirmPassword}
                       onChange={(e) => setPasswordSetupData(prev => ({ ...prev, confirmPassword: e.target.value }))}
                       className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Confirm your new password"
+                      placeholder={t('dashboard.confirmPassword')}
                       required
                     />
                   </div>
@@ -646,7 +650,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
                   )}
 
                   <div className="text-xs text-gray-500">
-                    Password must be at least 8 characters with uppercase, lowercase, and number
+                    {t('dashboard.passwordRequirements')}
                   </div>
 
                   <div className="flex gap-3">
@@ -655,14 +659,14 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
                       onClick={() => setShowPasswordSetup(false)}
                       className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
                     >
-                      Cancel
+                      {t('common.cancel')}
                     </button>
                     <button
                       type="submit"
                       disabled={passwordLoading}
                       className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                     >
-                      {passwordLoading ? 'Setting...' : 'Set Password'}
+                      {passwordLoading ? t('common.loading') : t('dashboard.passwordSetup')}
                     </button>
                   </div>
                 </form>

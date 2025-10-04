@@ -16,10 +16,12 @@ import {
   Loader,
   RefreshCw
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { getAppointmentError, AppointmentError } from '../utils/appointmentErrors';
 import AppointmentErrorDisplay from './AppointmentErrorDisplay';
+import LanguageSwitcher from './LanguageSwitcher';
 
 /**
  * AppointmentBooking Component
@@ -67,6 +69,7 @@ interface AppointmentBookingProps {
 }
 
 export default function AppointmentBooking({ onBack }: AppointmentBookingProps) {
+  const { t } = useTranslation();
   const { donor } = useAuth();
   const [currentStep, setCurrentStep] = useState<BookingStep>('type');
   const [selectedType, setSelectedType] = useState<DonationType | null>(null);
@@ -85,7 +88,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
     {
       type: 'Blood' as DonationType,
       icon: Droplets,
-      title: 'Blood Donation',
+      title: t('appointment.bloodDonation'),
       description: 'Whole blood donation to help save lives',
       duration: '45-60 minutes',
       color: 'from-red-500 to-red-600',
@@ -96,7 +99,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
     {
       type: 'Plasma' as DonationType,
       icon: Heart,
-      title: 'Plasma Donation',
+      title: t('appointment.plasmaDonation'),
       description: 'Plasma donation for medical treatments',
       duration: '90-120 minutes',
       color: 'from-blue-500 to-blue-600',
@@ -604,9 +607,9 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
 
   const renderStepIndicator = () => {
     const steps = [
-      { id: 'type', label: 'Type', completed: currentStep !== 'type' },
-      { id: 'booking', label: 'Date & Time', completed: currentStep === 'confirmation' || currentStep === 'success' },
-      { id: 'confirmation', label: 'Confirm', completed: currentStep === 'success' },
+      { id: 'type', label: t('appointment.selectType'), completed: currentStep !== 'type' },
+      { id: 'booking', label: t('appointment.selectDate'), completed: currentStep === 'confirmation' || currentStep === 'success' },
+      { id: 'confirmation', label: t('appointment.confirm'), completed: currentStep === 'success' },
     ];
 
     return (
@@ -647,7 +650,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
   const renderTypeSelection = () => (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Choose Donation Type</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('appointment.selectType')}</h2>
         <p className="text-gray-600">Select the type of donation you'd like to make</p>
       </div>
 
@@ -1021,28 +1024,28 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
     return (
       <div className="space-y-6 max-w-2xl mx-auto">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Confirm Your Appointment</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('appointment.confirmBooking')}</h2>
           <p className="text-gray-600">Please review your appointment details</p>
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Appointment Summary</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{t('appointment.bookingSummary')}</h3>
           </div>
           
           <div className="p-6 space-y-4">
             <div className="flex items-center justify-between py-3 border-b border-gray-100">
-              <span className="text-gray-600">Donation Type</span>
+              <span className="text-gray-600">{t('appointment.donationType')}</span>
               <span className="font-semibold text-gray-900">{selectedType}</span>
             </div>
             
             <div className="flex items-center justify-between py-3 border-b border-gray-100">
-              <span className="text-gray-600">Date</span>
+              <span className="text-gray-600">{t('appointment.date')}</span>
               <span className="font-semibold text-gray-900">{dateTime.date}</span>
             </div>
             
             <div className="flex items-center justify-between py-3 border-b border-gray-100">
-              <span className="text-gray-600">Time</span>
+              <span className="text-gray-600">{t('appointment.time')}</span>
               <span className="font-semibold text-gray-900">{dateTime.time}</span>
             </div>
             
@@ -1085,7 +1088,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
             className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-200 transition-colors duration-200"
           >
             <ArrowLeft className="w-4 h-4 inline mr-2" />
-            Back to Selection
+            {t('common.back')}
           </button>
           <button
             onClick={confirmBooking}
@@ -1095,12 +1098,12 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
             {loading ? (
               <div className="flex items-center justify-center">
                 <Loader className="w-4 h-4 animate-spin mr-2" />
-                Booking...
+                {t('common.loading')}
               </div>
             ) : (
               <>
                 <Check className="w-4 h-4 inline mr-2" />
-                Confirm Booking
+                {t('appointment.confirmBooking')}
               </>
             )}
           </button>
@@ -1121,23 +1124,23 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         </div>
         
         <div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Appointment Confirmed!</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">{t('appointment.bookingSuccess')}</h2>
           <p className="text-gray-600 text-lg">Your {selectedType === 'Blood' ? 'blood' : 'plasma'} donation is scheduled</p>
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Appointment Details</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('appointment.appointmentDetails')}</h3>
           <div className="space-y-3 text-left">
             <div className="flex justify-between">
-              <span className="text-gray-600">Date:</span>
+              <span className="text-gray-600">{t('appointment.date')}:</span>
               <span className="font-semibold">{dateTime.date}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Time:</span>
+              <span className="text-gray-600">{t('appointment.time')}:</span>
               <span className="font-semibold">{dateTime.time}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Location:</span>
+              <span className="text-gray-600">{t('appointment.center')}:</span>
               <span className="font-semibold">{selectedSlot.center?.name}</span>
             </div>
           </div>
@@ -1154,7 +1157,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           onClick={onBack}
           className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-8 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200"
         >
-          Return to Dashboard
+          {t('dashboard.backToLanding')}
         </button>
       </div>
     );
@@ -1223,11 +1226,12 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
                 className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200 mr-4"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Dashboard
+                {t('dashboard.backToLanding')}
               </button>
               <Calendar className="w-8 h-8 text-blue-600 mr-3" />
-              <h1 className="text-xl font-bold text-gray-900">Book Appointment</h1>
+              <h1 className="text-xl font-bold text-gray-900">{t('appointment.title')}</h1>
             </div>
+            <LanguageSwitcher variant="minimal" />
           </div>
         </div>
       </header>
