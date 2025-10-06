@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Heart, ArrowLeft, Mail, Building, CheckCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const BloodCenterForm: React.FC<{ onBackToLanding?: () => void }> = ({ onBackToLanding }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     centerName: '',
     email: ''
@@ -35,16 +38,15 @@ const BloodCenterForm: React.FC<{ onBackToLanding?: () => void }> = ({ onBackToL
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-8 h-8 text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Thank You!</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('contactForm.thankYou')}</h2>
           <p className="text-gray-600 mb-6">
-            We've received your information. Our team will contact you within 24-48 hours 
-            with deployment details and next steps.
+            {t('contactForm.thankYouMessage')}
           </p>
           <button
             onClick={onBackToLanding}
             className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
           >
-            Return to Home
+            {t('contactForm.returnToHome')}
           </button>
         </div>
       </div>
@@ -66,8 +68,11 @@ const BloodCenterForm: React.FC<{ onBackToLanding?: () => void }> = ({ onBackToL
               </button>
               <div className="flex items-center space-x-2">
                 <Heart className="w-8 h-8 text-red-600" fill="#DC2626" />
-                <h1 className="text-2xl font-bold text-gray-900">Blood Donation Center Registration</h1>
+                <h1 className="text-2xl font-bold text-gray-900">{t('contactForm.header')}</h1>
               </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <LanguageSwitcher variant="compact" />
             </div>
           </div>
         </div>
@@ -81,7 +86,7 @@ const BloodCenterForm: React.FC<{ onBackToLanding?: () => void }> = ({ onBackToL
               <Building className="w-8 h-8 text-green-600" />
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Get Started with Vitalita
+              {t('contactForm.title')}
             </h2>
             
           </div>
@@ -89,7 +94,7 @@ const BloodCenterForm: React.FC<{ onBackToLanding?: () => void }> = ({ onBackToL
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="centerName" className="block text-sm font-medium text-gray-700 mb-2">
-                Your Name *
+                {t('contactForm.yourName')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -103,14 +108,14 @@ const BloodCenterForm: React.FC<{ onBackToLanding?: () => void }> = ({ onBackToL
                   onChange={handleInputChange}
                   required
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  placeholder="Enter your name"
+                  placeholder={t('contactForm.yourNamePlaceholder')}
                 />
               </div>
             </div>
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Contact Email *
+                {t('contactForm.contactEmail')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -124,15 +129,15 @@ const BloodCenterForm: React.FC<{ onBackToLanding?: () => void }> = ({ onBackToL
                   onChange={handleInputChange}
                   required
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  placeholder="Enter your email address"
+                  placeholder={t('contactForm.contactEmailPlaceholder')}
                 />
               </div>
             </div>
 
             <div className="bg-blue-50 rounded-lg p-4">
-              <h4 className="font-semibold text-blue-900 mb-2">What happens next?</h4>
+              <h4 className="font-semibold text-blue-900 mb-2">{t('contactForm.whatHappensNext')}</h4>
               <ul className="text-sm text-blue-800 space-y-1">
-                <li>• We'll review your information within 24 hours</li>
+                <li>• {t('contactForm.reviewInfo')}</li>
                
               </ul>
             </div>
@@ -145,19 +150,17 @@ const BloodCenterForm: React.FC<{ onBackToLanding?: () => void }> = ({ onBackToL
               {isLoading ? (
                 <div className="flex items-center justify-center">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Submitting...
+                  {t('contactForm.submitting')}
                 </div>
               ) : (
-                'Contact Me Now'
+                t('contactForm.contactMeNow')
               )}
             </button>
           </form>
 
           <div className="mt-8 pt-6 border-t border-gray-200">
             <p className="text-sm text-gray-500 text-center">
-              By submitting this form, you agree to receive communications from Vitalita 
-              regarding your deployment request. We respect your privacy and will never 
-              share your information with third parties.
+              {t('contactForm.privacyNotice')}
             </p>
           </div>
         </div>

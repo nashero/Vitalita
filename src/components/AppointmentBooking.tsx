@@ -89,7 +89,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       type: 'Blood' as DonationType,
       icon: Droplets,
       title: t('appointment.bloodDonation'),
-      description: 'Whole blood donation to help save lives',
+      description: t('appointment.wholeBloodDonation'),
       duration: '45-60 minutes',
       color: 'from-red-500 to-red-600',
       bgColor: 'bg-red-50',
@@ -100,7 +100,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       type: 'Plasma' as DonationType,
       icon: Heart,
       title: t('appointment.plasmaDonation'),
-      description: 'Plasma donation for medical treatments',
+      description: t('appointment.plasmaDonationMedical'),
       duration: '90-120 minutes',
       color: 'from-blue-500 to-blue-600',
       bgColor: 'bg-blue-50',
@@ -320,7 +320,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
     const supportInfo = {
       phone: '+39 0123 456 789',
       email: 'support@vitalita.org',
-      hours: 'Monday - Friday, 9:00 AM - 6:00 PM'
+      hours: t('appointment.mondayToFriday')
     };
     
     // For now, just show an alert with contact information
@@ -338,7 +338,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
     try {
       // Add timeout to prevent hanging requests
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Validation timeout')), 10000)
+        setTimeout(() => reject(new Error(t('appointment.validationTimeout'))), 10000)
       );
 
       // Fetch the latest slot information from the database
@@ -359,7 +359,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
             isValid: false,
             error: getAppointmentError({ 
               code: 'SLOT_NOT_FOUND', 
-              message: 'Slot no longer exists',
+              message: t('appointment.slotNoLongerExists'),
               userMessage: 'The selected time slot no longer exists.',
               suggestion: 'Please refresh and select from available time slots.',
               severity: 'warning'
@@ -371,7 +371,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           isValid: false,
           error: getAppointmentError({ 
             code: 'SLOT_FETCH_ERROR', 
-            message: 'Failed to fetch current slot information',
+            message: t('appointment.failedToFetchSlotInfo'),
             userMessage: 'Unable to verify slot availability.',
             suggestion: 'Please try again or select a different time slot.',
             severity: 'error'
@@ -398,7 +398,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           isValid: false,
           error: getAppointmentError({ 
             code: 'SLOT_UNAVAILABLE', 
-            message: 'Slot is no longer available',
+            message: t('appointment.slotNotAvailable'),
             userMessage: 'This time slot is no longer available for booking.',
             suggestion: 'Please select a different time or date.',
             severity: 'warning'
@@ -412,7 +412,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           isValid: false,
           error: getAppointmentError({ 
             code: 'SLOT_FULL', 
-            message: 'Slot is at full capacity',
+            message: t('appointment.slotAtFullCapacity'),
             userMessage: 'This time slot has reached its maximum capacity.',
             suggestion: 'Please select a different time or check back later for cancellations.',
             severity: 'warning'
@@ -427,7 +427,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           isValid: false,
           error: getAppointmentError({ 
             code: 'PAST_DATE', 
-            message: 'Attempted to book appointment in the past',
+            message: t('appointment.bookingInPast'),
             userMessage: 'You cannot book appointments for past dates.',
             suggestion: 'Please select a current or future date.',
             severity: 'warning'
@@ -441,7 +441,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           isValid: false,
           error: getAppointmentError({ 
             code: 'SLOT_CHANGED', 
-            message: 'Slot availability has changed since selection',
+            message: t('appointment.slotAvailabilityChanged'),
             userMessage: 'This time slot\'s availability has changed since you selected it.',
             suggestion: 'Please refresh and select from the updated available times.',
             severity: 'warning'
@@ -461,7 +461,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           isValid: false,
           error: getAppointmentError({ 
             code: 'SLOT_TOO_SOON', 
-            message: 'Slot is too close to book',
+            message: t('appointment.slotTooCloseToBook'),
             userMessage: 'This time slot is too close to book now.',
             suggestion: 'Please select a time slot at least 1 hour in the future.',
             severity: 'warning'
@@ -476,7 +476,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         isValid: false,
         error: getAppointmentError({ 
           code: 'VALIDATION_ERROR', 
-          message: 'Error during slot validation',
+          message: t('appointment.errorDuringValidation'),
           userMessage: 'Unable to verify slot availability.',
           suggestion: 'Please try again or contact support if the problem persists.',
           severity: 'error'
@@ -553,7 +553,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         // Set error and return to prevent inconsistent state
         setError(getAppointmentError({ 
           code: 'SLOT_UPDATE_FAILED', 
-          message: 'Failed to update slot availability',
+          message: t('appointment.failedToUpdateSlot'),
           userMessage: 'Unable to secure your time slot.',
           suggestion: 'Please try again or select a different time slot.',
           severity: 'error'
@@ -566,7 +566,10 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         p_user_id: donor.donor_hash_id,
         p_user_type: 'donor',
         p_action: 'appointment_booking',
-        p_details: `Appointment booked for ${selectedType === 'Blood' ? 'blood' : 'plasma'} donation on ${new Date(selectedSlot.slot_datetime).toLocaleDateString()}`,
+        p_details: t('appointment.appointmentBookedFor', { 
+          type: selectedType === 'Blood' ? t('appointment.bloodDonation').toLowerCase() : t('appointment.plasmaDonation').toLowerCase(),
+          date: new Date(selectedSlot.slot_datetime).toLocaleDateString()
+        }),
         p_resource_type: 'appointments',
         p_resource_id: appointment.appointment_id,
         p_status: 'success'
@@ -726,7 +729,12 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
     };
 
     const getMonthName = (date: Date) => {
-      return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      const monthNames = [
+        t('appointment.january'), t('appointment.february'), t('appointment.march'), t('appointment.april'),
+        t('appointment.may'), t('appointment.june'), t('appointment.july'), t('appointment.august'),
+        t('appointment.september'), t('appointment.october'), t('appointment.november'), t('appointment.december')
+      ];
+      return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
     };
 
     return (
@@ -750,7 +758,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         </div>
 
         <div className="grid grid-cols-7 gap-1 mb-4">
-          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+          {[t('appointment.sunday'), t('appointment.monday'), t('appointment.tuesday'), t('appointment.wednesday'), t('appointment.thursday'), t('appointment.friday'), t('appointment.saturday')].map(day => (
             <div key={day} className="text-sm font-medium text-gray-500 text-center py-2">
               {day}
             </div>
@@ -775,7 +783,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
                 key={index}
                 onClick={() => available && handleDateSelection(date)}
                 disabled={!available}
-                title={available ? `${slotsForDate.length} slots available on ${date.toLocaleDateString()}` : 'No slots available'}
+                title={available ? `${slotsForDate.length} ${t('appointment.availableSlots').toLowerCase()} ${t('appointment.availableSlotsFrom')} ${date.toLocaleDateString()}` : t('appointment.noSlotsAvailable')}
                 className={`
                   h-12 w-full rounded-lg text-sm font-medium transition-all duration-200 relative
                   ${today 
@@ -806,8 +814,8 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
   const renderBookingInterface = () => (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Select Appointment Date</h2>
-        <p className="text-gray-600">Choose a convenient date for your {selectedType?.toLowerCase()} donation</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('appointment.selectAppointmentDate')}</h2>
+        <p className="text-gray-600">{t('appointment.chooseConvenientDate', { type: selectedType?.toLowerCase() })}</p>
         
         {/* Refresh button */}
         <button
@@ -816,7 +824,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           className="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-          {loading ? 'Refreshing...' : 'Refresh Availability'}
+          {loading ? t('appointment.refreshing') : t('appointment.refresh')}
         </button>
         
         {/* Jump to latest available month button */}
@@ -826,7 +834,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
             className="mt-2 ml-2 inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
           >
             <Calendar className="w-4 h-4 mr-2" />
-            Jump to Latest Available Month
+            {t('appointment.jumpToLatest')}
           </button>
         )}
         
@@ -840,7 +848,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
             className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
           />
           <label htmlFor="showWeekends" className="ml-2 text-sm text-gray-600">
-            Show weekend slots
+            {t('appointment.showWeekendSlots')}
           </label>
         </div>
         
@@ -848,7 +856,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         {availableSlots.length > 0 && (
           <div className="mt-4 text-sm text-gray-600">
             <p>
-              <span className="font-medium">{availableSlots.length}</span> available slots from{' '}
+              <span className="font-medium">{availableSlots.length}</span> {t('appointment.availableSlotsFrom')}{' '}
               <span className="font-medium">
                 {new Date(availableSlots[0].slot_datetime).toLocaleDateString('en-US', {
                   month: 'long',
@@ -869,13 +877,13 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
               const coverage = checkSlotCoverage();
               return coverage ? (
                 <p className="mt-1 text-xs text-gray-500">
-                  Coverage: {coverage.coverage}% ({coverage.daysWithSlots} out of {coverage.totalDays} days)
+                  {t('appointment.coverage')}: {coverage.coverage}% ({coverage.daysWithSlots} {t('appointment.outOf')} {coverage.totalDays} {t('appointment.days')})
                 </p>
               ) : null;
             })()}
             {checkIfLimitReached() && (
               <p className="mt-1 text-xs text-orange-600 font-medium">
-                ⚠️ Warning: May have hit slot limit. Some slots might not be displayed.
+                ⚠️ {t('appointment.warningSlotLimit')}
               </p>
             )}
           </div>
@@ -1007,8 +1015,8 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           ) : (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center">
               <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Select a Date</h3>
-              <p className="text-gray-600">Choose a date from the calendar to see available time slots</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('appointment.selectADate')}</h3>
+              <p className="text-gray-600">{t('appointment.chooseDateFromCalendar')}</p>
             </div>
           )}
         </div>
@@ -1125,7 +1133,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         
         <div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">{t('appointment.bookingSuccess')}</h2>
-          <p className="text-gray-600 text-lg">Your {selectedType === 'Blood' ? 'blood' : 'plasma'} donation is scheduled</p>
+          <p className="text-gray-600 text-lg">{t('appointment.bookingSuccessDesc')}</p>
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">

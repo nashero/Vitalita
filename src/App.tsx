@@ -10,7 +10,6 @@ import StaffDashboard from './components/StaffDashboard';
 import LandingPage from './components/LandingPage';
 import DeployProject from './components/DeployProject';
 import BloodCenterForm from './components/BloodCenterForm';
-import DonorPasswordLogin from './components/DonorPasswordLogin';
 
 import { CHAT_CONFIG } from './config/chat';
 import { useAuth } from './hooks/useAuth';
@@ -145,20 +144,10 @@ function DonorAppContent({ onBackToLanding }: { onBackToLanding?: () => void }) 
     );
   }
 
-  if (donorMode === 'password-login') {
-    return (
-      <DonorPasswordLogin 
-        onBack={() => setDonorMode('login')}
-        onSuccess={() => setDonorMode('login')}
-        onBackToLanding={onBackToLanding}
-      />
-    );
-  }
 
   return <LoginForm 
     onShowRegistration={() => setDonorMode('register')} 
     onBackToLanding={onBackToLanding}
-    onPasswordLogin={() => setDonorMode('password-login')}
   />;
 }
 
