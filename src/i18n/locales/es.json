@@ -305,5 +305,21 @@
     "slotAdded": "Horario agregado con éxito",
     "slotUpdated": "Horario actualizado con éxito",
     "slotDeleted": "Horario eliminado con éxito"
+  },
+  "contactForm": {
+    "title": "Comienza con Vitalita",
+    "header": "Registro de Centro de Donación de Sangre",
+    "yourName": "Tu Nombre *",
+    "yourNamePlaceholder": "Ingresa tu nombre",
+    "contactEmail": "Email de Contacto *",
+    "contactEmailPlaceholder": "Ingresa tu dirección de email",
+    "whatHappensNext": "¿Qué sucede después?",
+    "reviewInfo": "Revisaremos tu información dentro de 24 horas",
+    "contactMeNow": "Contáctame Ahora",
+    "submitting": "Enviando...",
+    "thankYou": "¡Gracias!",
+    "thankYouMessage": "Hemos recibido tu información. Nuestro equipo te contactará dentro de 24-48 horas con detalles de implementación y próximos pasos.",
+    "returnToHome": "Volver al Inicio",
+    "privacyNotice": "Al enviar este formulario, aceptas recibir comunicaciones de Vitalita sobre tu solicitud de implementación. Respetamos tu privacidad y nunca compartiremos tu información con terceros."
   }
 }

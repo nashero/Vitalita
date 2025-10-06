@@ -305,5 +305,21 @@
     "slotAdded": "Time slot added successfully",
     "slotUpdated": "Time slot updated successfully",
     "slotDeleted": "Time slot deleted successfully"
+  },
+  "contactForm": {
+    "title": "Get Started with Vitalita",
+    "header": "Blood Donation Center Registration",
+    "yourName": "Your Name *",
+    "yourNamePlaceholder": "Enter your name",
+    "contactEmail": "Contact Email *",
+    "contactEmailPlaceholder": "Enter your email address",
+    "whatHappensNext": "What happens next?",
+    "reviewInfo": "We'll review your information within 24 hours",
+    "contactMeNow": "Contact Me Now",
+    "submitting": "Submitting...",
+    "thankYou": "Thank You!",
+    "thankYouMessage": "We've received your information. Our team will contact you within 24-48 hours with deployment details and next steps.",
+    "returnToHome": "Return to Home",
+    "privacyNotice": "By submitting this form, you agree to receive communications from Vitalita regarding your deployment request. We respect your privacy and will never share your information with third parties."
   }
 }

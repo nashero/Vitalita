@@ -305,5 +305,21 @@
     "slotAdded": "Fascia oraria aggiunta con successo",
     "slotUpdated": "Fascia oraria aggiornata con successo",
     "slotDeleted": "Fascia oraria eliminata con successo"
+  },
+  "contactForm": {
+    "title": "Inizia con Vitalita",
+    "header": "Registrazione Centro Donazioni Sangue",
+    "yourName": "Il Tuo Nome *",
+    "yourNamePlaceholder": "Inserisci il tuo nome",
+    "contactEmail": "Email di Contatto *",
+    "contactEmailPlaceholder": "Inserisci il tuo indirizzo email",
+    "whatHappensNext": "Cosa succede dopo?",
+    "reviewInfo": "Esamineremo le tue informazioni entro 24 ore",
+    "contactMeNow": "Contattami Ora",
+    "submitting": "Invio in corso...",
+    "thankYou": "Grazie!",
+    "thankYouMessage": "Abbiamo ricevuto le tue informazioni. Il nostro team ti contatterà entro 24-48 ore con i dettagli di implementazione e i prossimi passi.",
+    "returnToHome": "Torna alla Home",
+    "privacyNotice": "Inviando questo modulo, accetti di ricevere comunicazioni da Vitalita riguardo alla tua richiesta di implementazione. Rispettiamo la tua privacy e non condivideremo mai le tue informazioni con terze parti."
   }
 }
