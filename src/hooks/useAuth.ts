@@ -33,9 +33,8 @@ export interface Donor {
 interface AuthData {
   firstName: string;
   lastName: string;
-  donorId: string; // Keep for compatibility but not used
+  donorId: string;
   dateOfBirth: string;
-  avisDonorCenter: string;
 }
 
 interface PasswordAuthData {
@@ -126,7 +125,7 @@ export function useAuthProvider() {
       setLoading(true);
 
       // Create a hash from the provided authentication data
-      const authString = `${authData.firstName}${authData.lastName}${authData.dateOfBirth}${authData.avisDonorCenter}`;
+      const authString = `${authData.firstName}${authData.lastName}${authData.dateOfBirth}${authData.donorId}`;
       const authHash = await generateSHA256Hash(authString);
 
       // Try to find a donor with matching hash
@@ -166,7 +165,7 @@ export function useAuthProvider() {
         total_donations_this_year: donorData.total_donations_this_year || 0,
         last_donation_date: donorData.last_donation_date,
         is_active: donorData.is_active,
-        avis_donor_center: donorData.avis_donor_center || authData.avisDonorCenter,
+        avis_donor_center: donorData.avis_donor_center,
         email: donorData.email,
         email_verified: donorData.email_verified,
         account_activated: donorData.account_activated,
