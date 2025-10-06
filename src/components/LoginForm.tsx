@@ -9,15 +9,6 @@ interface LoginFormProps {
   onBackToLanding?: () => void;
 }
 
-const AVIS_CENTERS = [
-  { value: 'AVIS Casalmaggiore', label: 'AVIS Casalmaggiore' },
-  { value: 'AVIS Gussola', label: 'AVIS Gussola' },
-  { value: 'AVIS Viadana', label: 'AVIS Viadana' },
-   { value: 'AVIS Piadena', label: 'AVIS Piadena' },
-  { value: 'AVIS Rivarolo del Re', label: 'AVIS Rivarolo del Re' },
-  { value: 'AVIS Scandolara-Ravara', label: 'AVIS Scandolara-Ravara' },
-  { value: 'AVIS Calvatone', label: 'AVIS Calvatone' },
-];
 
 export default function LoginForm({ onShowRegistration, onBackToLanding }: LoginFormProps) {
   const { t } = useTranslation();
@@ -25,7 +16,7 @@ export default function LoginForm({ onShowRegistration, onBackToLanding }: Login
     firstName: '',
     lastName: '',
     dateOfBirth: '',
-    avisDonorCenter: '',
+    donorId: '',
   });
   const [error, setError] = useState('');
   const { login, loading } = useAuth();
@@ -41,7 +32,7 @@ export default function LoginForm({ onShowRegistration, onBackToLanding }: Login
 
     // Validate all fields are filled
     if (!formData.firstName.trim() || !formData.lastName.trim() || 
-        !formData.dateOfBirth || !formData.avisDonorCenter) {
+        !formData.dateOfBirth || !formData.donorId.trim()) {
       setError(t('auth.fillAllFields'));
       return;
     }
@@ -162,30 +153,31 @@ export default function LoginForm({ onShowRegistration, onBackToLanding }: Login
                 </div>
               </div>
 
-              {/* AVIS Donor Center */}
+              {/* Donor ID */}
               <div>
-                <label htmlFor="avisDonorCenter" className="block text-sm font-semibold text-gray-700 mb-2">
-                  {t('auth.donorCenter')}
+                <label htmlFor="donorId" className="block text-sm font-semibold text-gray-700 mb-2">
+                  {t('auth.donorIdInput')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <MapPin className="h-5 w-5 text-gray-400" />
+                    <User className="h-5 w-5 text-gray-400" />
                   </div>
-                  <select
-                    id="avisDonorCenter"
-                    value={formData.avisDonorCenter}
-                    onChange={(e) => handleInputChange('avisDonorCenter', e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200 appearance-none bg-white text-gray-900"
+                  <input
+                    type="text"
+                    id="donorId"
+                    value={formData.donorId}
+                    onChange={(e) => handleInputChange('donorId', e.target.value.toUpperCase())}
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200"
+                    placeholder={t('auth.donorIdPlaceholder')}
                     disabled={loading}
-                  >
-                    <option value="">Select your AVIS center</option>
-                    {AVIS_CENTERS.map(center => (
-                      <option key={center.value} value={center.value}>
-                        {center.label}
-                      </option>
-                    ))}
-                  </select>
+                    required
+                    maxLength={5}
+                    pattern="[A-Za-z0-9]{5}"
+                  />
                 </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {t('auth.donorIdHelp')}
+                </p>
               </div>
 
               {/* Error Message */}

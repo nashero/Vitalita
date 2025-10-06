@@ -11,6 +11,7 @@ import {
   CalendarDays,
   Shield
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { generateSHA256Hash } from '../utils/crypto';
 import { supabase } from '../lib/supabase';
 
@@ -24,26 +25,18 @@ interface RegistrationFormData {
   firstName: string;
   lastName: string;
   dateOfBirth: string;
-  avisDonorCenter: string;
+  donorId: string;
   email: string;
 }
 
-const AVIS_CENTERS = [
-  { value: 'AVIS Casalmaggiore', label: 'AVIS Casalmaggiore' },
-  { value: 'AVIS Gussola', label: 'AVIS Gussola' },
-  { value: 'AVIS Viadana', label: 'AVIS Viadana' },
-  { value: 'AVIS Piadena', label: 'AVIS Piadena' },
-  { value: 'AVIS Rivarolo del Re', label: 'AVIS Rivarolo del Re' },
-  { value: 'AVIS Scandolara-Ravara', label: 'AVIS Scandolara-Ravara' },
-  { value: 'AVIS Calvatone', label: 'AVIS Calvatone' },
-];
 
 export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }: DonorRegistrationProps) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<RegistrationFormData>({
     firstName: '',
     lastName: '',
     dateOfBirth: '',
-    avisDonorCenter: '',
+    donorId: '',
     email: '',
   });
 
@@ -60,8 +53,14 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
     if (!formData.firstName.trim()) return 'First name is required';
     if (!formData.lastName.trim()) return 'Last name is required';
     if (!formData.dateOfBirth) return 'Date of birth is required';
-    if (!formData.avisDonorCenter) return 'AVIS Donor Center is required';
+    if (!formData.donorId.trim()) return 'Donor ID is required';
     if (!formData.email.trim()) return 'Email address is required';
+
+    // Validate Donor ID format (5-digit alphanumeric)
+    const donorIdRegex = /^[A-Za-z0-9]{5}$/;
+    if (!donorIdRegex.test(formData.donorId)) {
+      return 'Donor ID must be exactly 5 alphanumeric characters';
+    }
 
     // Validate email format
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
@@ -97,7 +96,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
       setError('');
 
       // Generate donor_hash_id from personal information
-      const authString = `${formData.firstName}${formData.lastName}${formData.dateOfBirth}${formData.avisDonorCenter}`;
+      const authString = `${formData.firstName}${formData.lastName}${formData.dateOfBirth}${formData.donorId}`;
       console.log('Auth string for hash:', authString);
       const donorHashId = await generateSHA256Hash(authString);
 
@@ -145,7 +144,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
         p_donor_hash_id: donorHashId,
         p_salt: salt,
         p_email: formData.email,
-        p_avis_donor_center: formData.avisDonorCenter
+        p_donor_id: formData.donorId
       };
       
       console.log('Attempting registration with:', registrationParams);
@@ -231,7 +230,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
         firstName: '',
         lastName: '',
         dateOfBirth: '',
-        avisDonorCenter: '',
+        donorId: '',
         email: '',
       });
 
@@ -279,9 +278,12 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
               </p>
               <div className="flex items-center justify-center mt-2">
                 <div className="bg-white/20 px-3 py-1 rounded-full">
-                  <span className="text-white text-xs font-medium">Auto-generated Donor ID</span>
+                  <span className="text-white text-xs font-medium">{t('auth.existingDonorId')}</span>
                 </div>
               </div>
+              <p className="text-red-100 text-xs mt-2 text-center">
+                {t('auth.donorIdDescription')}
+              </p>
             </div>
           </div>
 
@@ -341,7 +343,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                             firstName: '',
                             lastName: '',
                             dateOfBirth: '',
-                            avisDonorCenter: '',
+                            donorId: '',
                             email: '',
                           });
                         }}
@@ -448,31 +450,31 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                 </p>
               </div>
 
-              {/* AVIS Donor Center */}
+              {/* Donor ID */}
               <div>
-                <label htmlFor="avisDonorCenter" className="block text-sm font-semibold text-gray-700 mb-2">
-                  AVIS Donor Center *
+                <label htmlFor="donorId" className="block text-sm font-semibold text-gray-700 mb-2">
+                  {t('auth.donorIdInput')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <MapPin className="h-5 w-5 text-gray-400" />
+                    <User className="h-5 w-5 text-gray-400" />
                   </div>
-                  <select
-                    id="avisDonorCenter"
-                    value={formData.avisDonorCenter}
-                    onChange={(e) => handleInputChange('avisDonorCenter', e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200 appearance-none bg-white"
+                  <input
+                    type="text"
+                    id="donorId"
+                    value={formData.donorId}
+                    onChange={(e) => handleInputChange('donorId', e.target.value.toUpperCase())}
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200"
+                    placeholder={t('auth.donorIdPlaceholder')}
                     disabled={loading}
                     required
-                  >
-                    <option value="">Select your AVIS center</option>
-                    {AVIS_CENTERS.map(center => (
-                      <option key={center.value} value={center.value}>
-                        {center.label}
-                      </option>
-                    ))}
-                  </select>
+                    maxLength={5}
+                    pattern="[A-Za-z0-9]{5}"
+                  />
                 </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {t('auth.donorIdHelp')}
+                </p>
               </div>
 
               {/* Email Address */}
@@ -502,29 +504,21 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                 </p>
               </div>
 
-              {/* Donor ID Information */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-start">
-                  <div className="bg-blue-600 p-2 rounded-full mr-3">
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V4a2 2 0 114 0v2m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
-                    </svg>
-                  </div>
-                  <div className="text-sm text-blue-800">
-                    <p className="font-medium mb-1">Your Donor ID:</p>
-                    <p>A unique donor identifier will be automatically generated and displayed after successful registration. This ID will be in the format: <strong>XXX-2025-XXXX</strong> (e.g., CAS-2025-1001 for AVIS Casalmaggiore).</p>
-                    <p className="mt-2 text-xs text-blue-600">This ID will be your permanent reference number for all future interactions with AVIS.</p>
-                  </div>
-                </div>
-              </div>
 
               {/* Important Notice */}
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                 <div className="flex items-start">
                   <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5 mr-3" />
                   <div className="text-sm text-amber-800">
-                    <p className="font-medium mb-1">Important:</p>
-                    <p>After registration and AVIS staff verification, you will log in using these exact details (First Name, Last Name, Date of Birth, and AVIS Center). Please ensure all information is accurate as it cannot be changed later. You will receive a verification email to confirm your email address.</p>
+                    <p className="font-medium mb-2">{t('auth.beforeYouContinue')}</p>
+                    <p className="mb-2">{t('auth.doubleCheckDetails')}</p>
+                    <ul className="list-disc list-inside mb-2 space-y-1">
+                      <li>{t('auth.firstName')}</li>
+                      <li>{t('auth.lastName')}</li>
+                      <li>{t('auth.dateOfBirth')}</li>
+                      <li>{t('auth.donorId')}</li>
+                    </ul>
+                    <p>{t('auth.checkEmailAfterRegistration')}</p>
                   </div>
                 </div>
               </div>
