@@ -200,7 +200,7 @@ export default function DonorHistory({ onBack, onBookAppointment }: { onBack: ()
           donation_date: item.donation_date,
           donation_type: item.donation_type,
           donation_volume: item.donation_volume,
-          donation_center_name: item.donation_centers?.name || 'Unknown Center',
+          donation_center_name: item.donation_centers?.name || t('dashboard.unknownCenter'),
           donation_center_address: item.donation_centers?.address || '',
           donation_center_city: item.donation_centers?.city || '',
           staff_name: item.staff ? `${item.staff.first_name} ${item.staff.last_name}` : null,
@@ -246,7 +246,7 @@ export default function DonorHistory({ onBack, onBookAppointment }: { onBack: ()
           appointment_datetime: item.appointment_datetime,
           donation_type: item.donation_type,
           status: item.status,
-          donation_center_name: item.donation_centers?.name || 'Unknown Center',
+          donation_center_name: item.donation_centers?.name || t('dashboard.unknownCenter'),
           donation_center_address: item.donation_centers?.address || '',
           donation_center_city: item.donation_centers?.city || '',
           staff_name: item.staff ? `${item.staff.first_name} ${item.staff.last_name}` : null,
@@ -266,7 +266,7 @@ export default function DonorHistory({ onBack, onBookAppointment }: { onBack: ()
       if (err instanceof Error && err.message.includes('fetch')) {
         setError('Network error. Please check your connection and try again.');
       } else {
-        setError('Failed to load history');
+        setError(t('donorHistory.failedToLoadHistory'));
       }
     } finally {
       setLoading(false);

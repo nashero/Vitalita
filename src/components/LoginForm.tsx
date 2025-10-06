@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Calendar, LogIn, UserPlus, MapPin, CalendarDays, ArrowLeft, Lock, Shield } from 'lucide-react';
+import { User, Calendar, LogIn, UserPlus, MapPin, CalendarDays, ArrowLeft, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -7,7 +7,6 @@ import LanguageSwitcher from './LanguageSwitcher';
 interface LoginFormProps {
   onShowRegistration?: () => void;
   onBackToLanding?: () => void;
-  onPasswordLogin?: () => void;
 }
 
 const AVIS_CENTERS = [
@@ -20,7 +19,7 @@ const AVIS_CENTERS = [
   { value: 'AVIS Calvatone', label: 'AVIS Calvatone' },
 ];
 
-export default function LoginForm({ onShowRegistration, onBackToLanding, onPasswordLogin }: LoginFormProps) {
+export default function LoginForm({ onShowRegistration, onBackToLanding }: LoginFormProps) {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
     firstName: '',
@@ -58,7 +57,7 @@ export default function LoginForm({ onShowRegistration, onBackToLanding, onPassw
 
     const result = await login(authData);
     if (!result.success) {
-      setError(result.error || 'Authentication failed');
+      setError(result.error || t('auth.authenticationFailed'));
     }
   };
 
@@ -234,23 +233,6 @@ export default function LoginForm({ onShowRegistration, onBackToLanding, onPassw
               </div>
             )}
 
-            {/* Password Login Option */}
-            {onPasswordLogin && (
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <div className="text-center">
-                  <p className="text-sm text-gray-600 mb-3">
-                    Have a password set up?
-                  </p>
-                  <button
-                    onClick={onPasswordLogin}
-                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors duration-200"
-                  >
-                    <Lock className="w-4 h-4 mr-2" />
-                    Login with Password
-                  </button>
-                </div>
-              </div>
-            )}
 
             {/* Security Notice */}
             <div className="mt-6 pt-6 border-t border-gray-100">
