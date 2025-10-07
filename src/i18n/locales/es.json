@@ -25,7 +25,9 @@
     "faq": "Preguntas Frecuentes",
     "more": "Más",
     "analytics": "Análisis",
-    "staffArea": "Área del Personal"
+    "staffArea": "Área del Personal",
+    "pinAuthDemo": "Demo de Autenticación PIN",
+    "moreOptions": "Más Opciones"
   },
   "landing": {
     "title": "Programa Tu Donación, Salva Vidas",
@@ -51,7 +53,9 @@
     "privacyPolicy": "Política de Privacidad",
     "termsOfService": "Términos de Servicio",
     "allRightsReserved": "Todos los derechos reservados.",
-    "needHelp": "¿Necesitas ayuda? Contacta a tu administrador"
+    "needHelp": "¿Necesitas ayuda? Contacta a tu administrador",
+    "quickPinLogin": "Inicio de Sesión Rápido PIN",
+    "pinLoginHelp": "¿Ya tienes un PIN? Usa el Inicio de Sesión Rápido PIN para un acceso más rápido."
   },
   "stats": {
     "donationsPerYear": "Donaciones por año",
@@ -138,6 +142,7 @@
   },
   "dashboard": {
     "title": "Panel de Donante",
+    "subtitle": "Salvando vidas a través de la donación",
     "welcome": "Bienvenido",
     "appointments": "Mis Citas",
     "history": "Historial de Donaciones",
@@ -265,7 +270,16 @@
     "september": "Septiembre",
     "october": "Octubre",
     "november": "Noviembre",
-    "december": "Diciembre"
+    "december": "Diciembre",
+    "bloodDonationAppointment": "Cita de Donación de Sangre",
+    "plasmaDonationAppointment": "Cita de Donación de Plasma",
+    "spotsLeft": "lugares disponibles",
+    "appointmentSummary": "Resumen de Cita",
+    "type": "Tipo",
+    "time": "Hora",
+    "duration": "Duración",
+    "minutes": "minutos",
+    "to": "a"
   },
   "auth": {
     "login": "Iniciar Sesión",
@@ -297,7 +311,7 @@
     "registrationFailed": "Registro fallido. Por favor intenta de nuevo.",
     "registrationFailedWithMessage": "Registro fallido: {message}",
     "registrationFunctionError": "Registro fallido. La función de registro devolvió un error. Por favor intenta de nuevo o contacta soporte.",
-    "registrationSuccessful": "¡Registro exitoso! Tu cuenta de donante ha sido creada con ID: {donorId}",
+    "registrationSuccessful": "¡Registro exitoso! Tu cuenta de donante ha sido creada usando tu ID de Donante: {donorId}",
     "registrationSteps": "Próximos pasos:\n1. Revisa tu email ({email}) para un enlace de verificación\n2. Haz clic en el enlace de verificación para confirmar tu dirección de email\n3. El personal de AVIS revisará y activará tu cuenta\n4. Recibirás una notificación cuando estés listo para donar\n\nAhora puedes iniciar sesión usando tus detalles de registro una vez que tu cuenta esté activada.",
     "backToHome": "Volver al Inicio",
     "createSecureAccount": "Crea tu cuenta segura de donante AVIS",
@@ -372,7 +386,9 @@
     "slotAdded": "Horario agregado con éxito",
     "slotUpdated": "Horario actualizado con éxito",
     "slotDeleted": "Horario eliminado con éxito",
-    "slotError": "Error al gestionar el horario"
+    "slotError": "Error al gestionar el horario",
+    "centers": "Centros",
+    "settings": "Configuración"
   },
   "donorHistory": {
     "title": "Historial de Donaciones",
@@ -444,5 +460,37 @@
     "thankYouMessage": "Hemos recibido tu información. Nuestro equipo te contactará dentro de 24-48 horas con detalles de implementación y próximos pasos.",
     "returnToHome": "Volver al Inicio",
     "privacyNotice": "Al enviar este formulario, aceptas recibir comunicaciones de Vitalita sobre tu solicitud de implementación. Respetamos tu privacidad y nunca compartiremos tu información con terceros."
+  },
+  "pin": {
+    "login": "Inicio de Sesión PIN",
+    "loginSubtitle": "Acceso rápido y seguro con tu PIN",
+    "enterPin": "Ingresa Tu PIN",
+    "enterPinDescription": "Ingresa tu PIN de 5 dígitos para acceder a tu cuenta",
+    "accountLockedDescription": "Tu cuenta está temporalmente bloqueada debido a múltiples intentos fallidos",
+    "pinLabel": "PIN",
+    "enterPinPlaceholder": "Ingresa PIN",
+    "showPin": "Mostrar PIN",
+    "hidePin": "Ocultar PIN",
+    "accountLocked": "Cuenta Bloqueada",
+    "tooManyAttempts": "Demasiados intentos fallidos. Intenta de nuevo en {time}.",
+    "attemptsRemaining": "{count} intento{plural} restante{plural}",
+    "loginFailed": "Inicio de Sesión Fallido",
+    "authenticating": "Autenticando...",
+    "loginButton": "Iniciar Sesión",
+    "forgotPin": "¿Olvidaste tu PIN?",
+    "securityFeatures": "Características de Seguridad",
+    "lockoutProtection": "Protección de bloqueo de 3 intentos",
+    "encryptedStorage": "Almacenamiento PIN encriptado",
+    "deviceAuth": "Autenticación específica del dispositivo",
+    "sessionTimeout": "Tiempo de espera de sesión automático",
+    "needHelp": "¿Necesitas ayuda? Contacta soporte o usa la verificación de identidad para restablecer tu PIN.",
+    "noPinSetUp": "PIN No Configurado",
+    "noPinDescription": "Aún no has configurado un PIN. Usa tu información personal para iniciar sesión.",
+    "preferPersonalInfo": "¿Prefieres usar tu información personal?",
+    "useTraditionalLogin": "Usar Inicio de Sesión Tradicional",
+    "backToPinLogin": "Volver al Inicio de Sesión PIN",
+    "securePinAuth": "Autenticación PIN segura",
+    "checkingAuthStatus": "Verificando estado de autenticación...",
+    "contactAvisAdmin": "¿Necesitas ayuda? Contacta al administrador de tu centro AVIS"
   }
 }

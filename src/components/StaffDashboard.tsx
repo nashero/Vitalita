@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
+import { getCurrentLocale } from '../utils/languageUtils';
 import { 
   LogOut, 
   Calendar, 
@@ -36,6 +39,7 @@ interface DashboardStats {
 }
 
 export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: () => void }) {
+  const { t } = useTranslation();
   const { staff, logout } = useStaffAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState<DashboardStats>({
@@ -102,8 +106,8 @@ export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: 
   if (!staff) return null;
 
   const formatDate = (dateString: string | null) => {
-    if (!dateString) return 'Never';
-    return new Date(dateString).toLocaleDateString('en-US', {
+    if (!dateString) return t('dashboard.never');
+    return new Date(dateString).toLocaleDateString(getCurrentLocale(i18n.language), {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -124,13 +128,13 @@ export default function StaffDashboard({ onBackToLanding }: { onBackToLanding?: 
   };
 
   const navigationItems = [
-    { id: 'overview', label: 'Overview', icon: BarChart3 },
-    { id: 'appointments', label: 'Appointments', icon: ClipboardList },
-    { id: 'availability', label: 'Availability', icon: CalendarDays },
-    { id: 'logs', label: 'System Logs', icon: History },
-    { id: 'donors', label: 'Donors', icon: Users },
-    { id: 'centers', label: 'Centers', icon: Building2 },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'overview', label: t('staff.dashboard'), icon: BarChart3 },
+    { id: 'appointments', label: t('staff.appointments'), icon: ClipboardList },
+    { id: 'availability', label: t('staff.availability'), icon: CalendarDays },
+    { id: 'logs', label: t('staff.logs'), icon: History },
+    { id: 'donors', label: t('staff.donors'), icon: Users },
+    { id: 'centers', label: t('staff.centers'), icon: Building2 },
+    { id: 'settings', label: t('staff.settings'), icon: Settings },
   ];
 
   return (

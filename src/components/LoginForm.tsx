@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
-import { User, Calendar, LogIn, UserPlus, MapPin, CalendarDays, ArrowLeft, Shield } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { User, Calendar, LogIn, UserPlus, MapPin, CalendarDays, ArrowLeft, Shield, CheckCircle, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import LanguageSwitcher from './LanguageSwitcher';
+import { getDonorCredentials, hasValidDonorCredentials } from '../utils/cookieStorage';
+import { shouldRedirectToPinSetup, checkVerificationStatus } from '../utils/verificationUtils';
 
 interface LoginFormProps {
   onShowRegistration?: () => void;
   onBackToLanding?: () => void;
+  onPinSetup?: () => void;
 }
 
 
-export default function LoginForm({ onShowRegistration, onBackToLanding }: LoginFormProps) {
+export default function LoginForm({ onShowRegistration, onBackToLanding, onPinSetup }: LoginFormProps) {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
     firstName: '',
@@ -19,7 +22,70 @@ export default function LoginForm({ onShowRegistration, onBackToLanding }: Login
     donorId: '',
   });
   const [error, setError] = useState('');
+  const [verificationStatus, setVerificationStatus] = useState<any>(null);
+  const [showVerificationMessage, setShowVerificationMessage] = useState(false);
   const { login, loading } = useAuth();
+
+  // Check for stored credentials and verification status on mount
+  useEffect(() => {
+    checkStoredCredentials();
+  }, []);
+
+  const checkStoredCredentials = async () => {
+    try {
+      console.log('Checking stored credentials...');
+      
+      if (hasValidDonorCredentials()) {
+        console.log('Valid donor credentials found');
+        const credentials = getDonorCredentials();
+        if (credentials) {
+          console.log('Credentials retrieved:', { 
+            firstName: credentials.firstName, 
+            lastName: credentials.lastName,
+            donorId: credentials.donorId 
+          });
+          
+          // Pre-fill form with stored credentials
+          setFormData({
+            firstName: credentials.firstName,
+            lastName: credentials.lastName,
+            dateOfBirth: credentials.dateOfBirth,
+            donorId: credentials.donorId,
+          });
+
+          // Check verification status
+          console.log('Checking verification status...');
+          const status = await checkVerificationStatus();
+          console.log('Verification status:', status);
+          console.log('Status details:', {
+            isVerified: status.isVerified,
+            needsPinSetup: status.needsPinSetup,
+            isFullyActivated: status.isFullyActivated,
+            error: status.error
+          });
+          setVerificationStatus(status);
+          
+          if (status.isVerified && status.needsPinSetup) {
+            console.log('User is verified and needs PIN setup - showing message');
+            setShowVerificationMessage(true);
+          } else if (status.isVerified) {
+            console.log('User is verified but may not need PIN setup - showing debug info');
+            // Still show the debug info so user can manually set up PIN
+          } else {
+            console.log('User verification status:', { 
+              isVerified: status.isVerified, 
+              needsPinSetup: status.needsPinSetup,
+              error: status.error 
+            });
+          }
+        }
+      } else {
+        console.log('No valid donor credentials found');
+      }
+    } catch (error) {
+      console.error('Error checking stored credentials:', error);
+    }
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -37,13 +103,12 @@ export default function LoginForm({ onShowRegistration, onBackToLanding }: Login
       return;
     }
 
-    // Create authentication data object (without donorId)
+    // Create authentication data object
     const authData = {
       firstName: formData.firstName.trim(),
       lastName: formData.lastName.trim(),
-      donorId: '', // Not used anymore, but keeping for compatibility
+      donorId: formData.donorId.trim(),
       dateOfBirth: formData.dateOfBirth,
-      avisDonorCenter: formData.avisDonorCenter,
     };
 
     const result = await login(authData);
@@ -87,6 +152,54 @@ export default function LoginForm({ onShowRegistration, onBackToLanding }: Login
 
           {/* Form */}
           <div className="px-8 py-8">
+            {/* Verification Status Message */}
+            {showVerificationMessage && verificationStatus && (
+              <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-0.5" />
+                  <div className="flex-1">
+                    <h3 className="text-sm font-medium text-green-800 mb-1">
+                      Account Verified!
+                    </h3>
+                    <p className="text-sm text-green-700 mb-3">
+                      Your account has been verified. You can now set up a PIN for secure access.
+                    </p>
+                    <button
+                      onClick={onPinSetup}
+                      className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                    >
+                      Set Up PIN
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Verification Status - Clean User-Friendly Display */}
+            {verificationStatus && verificationStatus.isVerified && !showVerificationMessage && (
+              <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-blue-600 mr-3 mt-0.5" />
+                  <div className="flex-1">
+                    <h3 className="text-sm font-medium text-blue-800 mb-1">
+                      Account Status
+                    </h3>
+                    <p className="text-sm text-blue-700 mb-3">
+                      Your account is verified and ready to use. You can set up a PIN for faster access.
+                    </p>
+                    {onPinSetup && (
+                      <button
+                        onClick={onPinSetup}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                      >
+                        Set Up PIN
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* First Name */}
               <div>

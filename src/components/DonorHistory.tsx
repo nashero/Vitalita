@@ -16,8 +16,11 @@ import {
   Search,
   RefreshCw
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
+import { getCurrentLocale, formatDate, formatDateTime } from '../utils/languageUtils';
 
 interface DonationHistoryItem {
   history_id: string;
@@ -62,6 +65,7 @@ interface DonorStatistics {
 }
 
 export default function DonorHistory({ onBack, onBookAppointment }: { onBack: () => void; onBookAppointment: () => void }) {
+  const { t } = useTranslation();
   const { donor } = useAuth();
   const [activeTab, setActiveTab] = useState<'donations' | 'appointments'>('donations');
   const [donationHistory, setDonationHistory] = useState<DonationHistoryItem[]>([]);
@@ -273,16 +277,16 @@ export default function DonorHistory({ onBack, onBookAppointment }: { onBack: ()
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+  const formatDateStringString = (dateString: string) => {
+    return formatDateString(new Date(dateString), i18n.language, {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
   };
 
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString('en-US', {
+  const formatDateStringTimeString = (dateString: string) => {
+    return formatDateStringTime(new Date(dateString), i18n.language, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -418,7 +422,7 @@ export default function DonorHistory({ onBack, onBookAppointment }: { onBack: ()
                   <Clock className="w-5 h-5 text-pink-600" />
                 </div>
                 <p className="text-sm font-bold text-gray-900">
-                  {statistics.first_donation_date ? formatDate(statistics.first_donation_date) : 'N/A'}
+                  {statistics.first_donation_date ? formatDateString(statistics.first_donation_date) : 'N/A'}
                 </p>
                 <p className="text-xs text-gray-600">First Donation</p>
               </div>
@@ -427,7 +431,7 @@ export default function DonorHistory({ onBack, onBookAppointment }: { onBack: ()
                   <User className="w-5 h-5 text-orange-600" />
                 </div>
                 <p className="text-sm font-bold text-gray-900">
-                  {statistics.last_donation_date ? formatDate(statistics.last_donation_date) : 'N/A'}
+                  {statistics.last_donation_date ? formatDateString(statistics.last_donation_date) : 'N/A'}
                 </p>
                 <p className="text-xs text-gray-600">Last Donation</p>
               </div>
@@ -560,7 +564,7 @@ export default function DonorHistory({ onBack, onBookAppointment }: { onBack: ()
                               </span>
                             </div>
                             <p className="text-sm text-gray-600 mb-1">
-                              {formatDateTime(item.donation_date)} • {item.donation_volume}ml
+                              {formatDateStringTime(item.donation_date)} • {item.donation_volume}ml
                             </p>
                             <div className="flex items-center text-sm text-gray-500 mb-2">
                               <MapPin className="w-4 h-4 mr-1" />
@@ -630,7 +634,7 @@ export default function DonorHistory({ onBack, onBookAppointment }: { onBack: ()
                               </span>
                             </div>
                             <p className="text-sm text-gray-600 mb-1">
-                              {formatDateTime(item.appointment_datetime)} • Booked via {item.booking_channel}
+                              {formatDateStringTime(item.appointment_datetime)} • Booked via {item.booking_channel}
                             </p>
                             <div className="flex items-center text-sm text-gray-500 mb-2">
                               <MapPin className="w-4 h-4 mr-1" />
@@ -644,7 +648,7 @@ export default function DonorHistory({ onBack, onBookAppointment }: { onBack: ()
                                 </span>
                               )}
                               <span>
-                                Created: {formatDate(item.creation_timestamp)}
+                                Created: {formatDateString(item.creation_timestamp)}
                               </span>
                               {item.confirmation_sent && (
                                 <span className="text-green-600">✓ Confirmed</span>

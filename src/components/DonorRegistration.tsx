@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { generateSHA256Hash } from '../utils/crypto';
 import { supabase } from '../lib/supabase';
 import LanguageSwitcher from './LanguageSwitcher';
+import { setDonorCredentials } from '../utils/cookieStorage';
 
 interface DonorRegistrationProps {
   onBack: () => void;
@@ -175,8 +176,8 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
         return;
       }
 
-      const generatedDonorId = result.donor_id;
-      console.log('Generated donor ID:', generatedDonorId);
+      const userDonorId = result.donor_id;
+      console.log('User donor ID:', userDonorId);
 
       // Add a small delay to ensure the transaction is committed
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -218,11 +219,20 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
         // Don't fail the registration for audit log issues
       }
 
+      // Store credentials in cookies for PIN setup flow
+      setDonorCredentials({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        dateOfBirth: formData.dateOfBirth,
+        donorId: formData.donorId,
+        email: formData.email
+      });
+
       // Determine success message based on verification status
       const verificationStatus = verifyDonor ? 'verified' : 'pending_verification';
       const successMessage = verificationStatus === 'verified' 
-        ? `${t('auth.registrationSuccessful', { donorId: generatedDonorId })}\n\n${t('auth.registrationSteps', { email: formData.email })}`
-        : `${t('auth.registrationSuccessful', { donorId: generatedDonorId })}\n\n${t('auth.registrationSteps', { email: formData.email })}\n\nNote: Your account is being processed. You can now log in using your registration details once your account is activated.`;
+        ? `${t('auth.registrationSuccessful', { donorId: userDonorId })}\n\n${t('auth.registrationSteps', { email: formData.email })}\n\nAfter verification, you'll be prompted to set up a PIN for secure access.`
+        : `${t('auth.registrationSuccessful', { donorId: userDonorId })}\n\n${t('auth.registrationSteps', { email: formData.email })}\n\nAfter verification, you'll be prompted to set up a PIN for secure access.`;
 
       setSuccess(successMessage);
       
@@ -300,37 +310,6 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                   <div className="flex-1">
                     <p className="text-green-800 font-medium mb-2">Registration Successful!</p>
                     
-                    {/* Donor ID Display */}
-                    {success.includes('Your donor account has been created with ID:') && (
-                      <div className="mb-4 p-3 bg-white border border-green-300 rounded-lg">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-green-800">Your Donor ID:</span>
-                          <div className="flex items-center space-x-2">
-                            <div className="bg-green-100 px-3 py-1 rounded-md">
-                              <span className="font-mono font-bold text-green-800 text-lg">
-                                {success.match(/ID: ([A-Z]{3}-\d{4}-\d{4})/)?.[1] || 'Generated'}
-                              </span>
-                            </div>
-                            <button
-                              onClick={() => {
-                                const donorId = success.match(/ID: ([A-Z]{3}-\d{4}-\d{4})/)?.[1];
-                                if (donorId) {
-                                  navigator.clipboard.writeText(donorId);
-                                  // You could add a toast notification here
-                                }
-                              }}
-                              className="text-green-600 hover:text-green-800 transition-colors"
-                              title={t('auth.copyDonorId')}
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                              </svg>
-                            </button>
-                          </div>
-                        </div>
-                        <p className="text-xs text-green-600 mt-1">Save this ID for future reference</p>
-                      </div>
-                    )}
                     
                     <div className="text-green-700 text-sm mb-4 whitespace-pre-line">{success}</div>
                     <div className="flex flex-col sm:flex-row gap-3">

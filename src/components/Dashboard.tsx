@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { LogOut, Calendar, User, Globe, MessageCircle, CheckCircle, XCircle, Plus, MapPin, Heart, ArrowLeft, Clock, AlertCircle, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import AppointmentBooking from './AppointmentBooking';
 import DonorHistory from './DonorHistory';
 import SessionManager from './SessionManager';
 import LanguageSwitcher from './LanguageSwitcher';
+import { formatDate, formatTime, getCurrentLocale } from '../utils/languageUtils';
 
 interface Appointment {
   appointment_id: string;
@@ -115,14 +117,15 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return t('dashboard.never');
-    return new Date(dateString).toLocaleDateString();
+    return new Date(dateString).toLocaleDateString(getCurrentLocale(i18n.language));
   };
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
+    const locale = getCurrentLocale(i18n.language);
     return {
-      date: date.toLocaleDateString(),
-      time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      date: date.toLocaleDateString(locale),
+      time: date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
     };
   };
 
@@ -166,7 +169,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
               <Heart className="w-8 h-8 text-red-600 mr-3" />
               <div>
                 <h1 className="text-xl font-bold text-gray-900">{t('dashboard.title')}</h1>
-                <p className="text-xs text-gray-500">Saving lives through donation</p>
+                <p className="text-xs text-gray-500">{t('dashboard.subtitle')}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">

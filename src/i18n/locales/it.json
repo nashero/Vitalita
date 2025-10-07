@@ -25,7 +25,9 @@
     "faq": "FAQ",
     "more": "Altro",
     "analytics": "Analisi",
-    "staffArea": "Area Staff"
+    "staffArea": "Area Staff",
+    "pinAuthDemo": "Demo Autenticazione PIN",
+    "moreOptions": "Altre Opzioni"
   },
   "landing": {
     "title": "Prenota la Tua Donazione, Salva Vite",
@@ -51,7 +53,9 @@
     "privacyPolicy": "Politica sulla Privacy",
     "termsOfService": "Termini di Servizio",
     "allRightsReserved": "Tutti i diritti riservati.",
-    "needHelp": "Hai bisogno di aiuto? Contatta il tuo amministratore"
+    "needHelp": "Hai bisogno di aiuto? Contatta il tuo amministratore",
+    "quickPinLogin": "Accesso Rapido PIN",
+    "pinLoginHelp": "Hai già un PIN? Usa l'Accesso Rapido PIN per un accesso più veloce."
   },
   "stats": {
     "donationsPerYear": "Donazioni all'anno",
@@ -138,6 +142,7 @@
   },
   "dashboard": {
     "title": "Dashboard Donatore",
+    "subtitle": "Salvare vite attraverso la donazione",
     "welcome": "Benvenuto",
     "appointments": "I Miei Appuntamenti",
     "history": "Storia Donazioni",
@@ -265,7 +270,16 @@
     "september": "Settembre",
     "october": "Ottobre",
     "november": "Novembre",
-    "december": "Dicembre"
+    "december": "Dicembre",
+    "bloodDonationAppointment": "Appuntamento Donazione di Sangue",
+    "plasmaDonationAppointment": "Appuntamento Donazione di Plasma",
+    "spotsLeft": "posti rimasti",
+    "appointmentSummary": "Riepilogo Appuntamento",
+    "type": "Tipo",
+    "time": "Ora",
+    "duration": "Durata",
+    "minutes": "minuti",
+    "to": "a"
   },
   "auth": {
     "login": "Accedi",
@@ -297,7 +311,7 @@
     "registrationFailed": "Registrazione fallita. Riprova.",
     "registrationFailedWithMessage": "Registrazione fallita: {message}",
     "registrationFunctionError": "Registrazione fallita. La funzione di registrazione ha restituito un errore. Riprova o contatta il supporto.",
-    "registrationSuccessful": "Registrazione riuscita! Il tuo account donatore è stato creato con ID: {donorId}",
+    "registrationSuccessful": "Registrazione riuscita! Il tuo account donatore è stato creato usando il tuo ID Donatore: {donorId}",
     "registrationSteps": "Prossimi passi:\n1. Controlla la tua email ({email}) per un link di verifica\n2. Clicca sul link di verifica per confermare il tuo indirizzo email\n3. Il personale AVIS esaminerà e attiverà il tuo account\n4. Riceverai una notifica quando sarai pronto a donare\n\nOra puoi accedere usando i tuoi dettagli di registrazione una volta che il tuo account è attivato.",
     "backToHome": "Torna alla Home",
     "createSecureAccount": "Crea il tuo account donatore AVIS sicuro",
@@ -372,7 +386,9 @@
     "slotAdded": "Fascia aggiunta con successo",
     "slotUpdated": "Fascia aggiornata con successo",
     "slotDeleted": "Fascia eliminata con successo",
-    "slotError": "Errore nella gestione della fascia"
+    "slotError": "Errore nella gestione della fascia",
+    "centers": "Centri",
+    "settings": "Impostazioni"
   },
   "donorHistory": {
     "title": "Storia Donazioni",
@@ -444,5 +460,37 @@
     "thankYouMessage": "Abbiamo ricevuto le tue informazioni. Il nostro team ti contatterà entro 24-48 ore con i dettagli di implementazione e i prossimi passi.",
     "returnToHome": "Torna alla Home",
     "privacyNotice": "Inviando questo modulo, accetti di ricevere comunicazioni da Vitalita riguardo alla tua richiesta di implementazione. Rispettiamo la tua privacy e non condivideremo mai le tue informazioni con terze parti."
+  },
+  "pin": {
+    "login": "Accesso PIN",
+    "loginSubtitle": "Accesso rapido e sicuro con il tuo PIN",
+    "enterPin": "Inserisci il Tuo PIN",
+    "enterPinDescription": "Inserisci il tuo PIN a 5 cifre per accedere al tuo account",
+    "accountLockedDescription": "Il tuo account è temporaneamente bloccato a causa di troppi tentativi falliti",
+    "pinLabel": "PIN",
+    "enterPinPlaceholder": "Inserisci PIN",
+    "showPin": "Mostra PIN",
+    "hidePin": "Nascondi PIN",
+    "accountLocked": "Account Bloccato",
+    "tooManyAttempts": "Troppi tentativi falliti. Riprova tra {time}.",
+    "attemptsRemaining": "{count} tentativo{plural} rimanente{plural}",
+    "loginFailed": "Accesso Fallito",
+    "authenticating": "Autenticazione in corso...",
+    "loginButton": "Accedi",
+    "forgotPin": "Hai dimenticato il PIN?",
+    "securityFeatures": "Caratteristiche di Sicurezza",
+    "lockoutProtection": "Protezione blocco a 3 tentativi",
+    "encryptedStorage": "Memorizzazione PIN crittografata",
+    "deviceAuth": "Autenticazione specifica del dispositivo",
+    "sessionTimeout": "Timeout sessione automatico",
+    "needHelp": "Hai bisogno di aiuto? Contatta il supporto o usa la verifica dell'identità per reimpostare il tuo PIN.",
+    "noPinSetUp": "Nessun PIN Impostato",
+    "noPinDescription": "Non hai ancora impostato un PIN. Usa le tue informazioni personali per accedere.",
+    "preferPersonalInfo": "Preferisci usare le tue informazioni personali?",
+    "useTraditionalLogin": "Usa Accesso Tradizionale",
+    "backToPinLogin": "Torna all'Accesso PIN",
+    "securePinAuth": "Autenticazione PIN sicura",
+    "checkingAuthStatus": "Controllo stato autenticazione...",
+    "contactAvisAdmin": "Hai bisogno di aiuto? Contatta l'amministratore del tuo centro AVIS"
   }
 }

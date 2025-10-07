@@ -17,11 +17,13 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { getAppointmentError, AppointmentError } from '../utils/appointmentErrors';
 import AppointmentErrorDisplay from './AppointmentErrorDisplay';
 import LanguageSwitcher from './LanguageSwitcher';
+import { getCurrentLocale, formatDate, formatTime } from '../utils/languageUtils';
 
 /**
  * AppointmentBooking Component
@@ -587,14 +589,15 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
+    const currentLanguage = i18n.language;
     return {
-      date: date.toLocaleDateString('en-US', {
+      date: formatDate(date, currentLanguage, {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
         day: 'numeric'
       }),
-      time: date.toLocaleTimeString('en-US', {
+      time: formatTime(date, currentLanguage, {
         hour: '2-digit',
         minute: '2-digit'
       })
@@ -858,15 +861,15 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
             <p>
               <span className="font-medium">{availableSlots.length}</span> {t('appointment.availableSlotsFrom')}{' '}
               <span className="font-medium">
-                {new Date(availableSlots[0].slot_datetime).toLocaleDateString('en-US', {
+                {formatDate(new Date(availableSlots[0].slot_datetime), i18n.language, {
                   month: 'long',
                   day: 'numeric',
                   year: 'numeric'
                 })}
               </span>{' '}
-              to{' '}
+              {t('appointment.to')}{' '}
               <span className="font-medium">
-                {new Date(availableSlots[availableSlots.length - 1].slot_datetime).toLocaleDateString('en-US', {
+                {formatDate(new Date(availableSlots[availableSlots.length - 1].slot_datetime), i18n.language, {
                   month: 'long',
                   day: 'numeric',
                   year: 'numeric'
@@ -903,20 +906,22 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
               {/* Selected Date Header */}
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  {selectedDate.toLocaleDateString('en-US', {
+                  {formatDate(selectedDate, i18n.language, {
                     weekday: 'long',
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
                   })}
                 </h3>
-                <p className="text-gray-600">{selectedType} Donation Appointment</p>
+                <p className="text-gray-600">
+                  {selectedType === 'Blood' ? t('appointment.bloodDonationAppointment') : t('appointment.plasmaDonationAppointment')}
+                </p>
               </div>
 
               {/* Center Selection */}
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Select Donation Center:
+                  {t('appointment.selectCenter')}:
                 </label>
                 <select
                   value={selectedCenter || ''}
@@ -935,7 +940,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
               {/* Time Slots */}
               {selectedCenter && (
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Available Time Slots</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">{t('appointment.availableSlots')}</h4>
                   
                   {loading ? (
                     <div className="flex items-center justify-center py-8">
@@ -963,7 +968,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
                           
                           // Only process slots between 7 AM and 3 PM (15:00)
                           if (hours >= 7 && hours <= 15) {
-                            const timeString = slotTime.toLocaleTimeString('en-US', {
+                            const timeString = formatTime(slotTime, i18n.language, {
                               hour: '2-digit',
                               minute: '2-digit'
                             });
@@ -990,8 +995,8 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
                             <div className="col-span-2">
                               <div className="text-center py-8 text-gray-500">
                                 <Clock className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                                <h4 className="text-lg font-medium text-gray-700 mb-2">No Available Time Slots</h4>
-                                <p className="text-gray-500">No time slots available between 7:00 AM and 3:00 PM for this date.</p>
+                                <h4 className="text-lg font-medium text-gray-700 mb-2">{t('appointment.noSlotsAvailable')}</h4>
+                                <p className="text-gray-500">{t('appointment.noSlotsAvailable')}</p>
                               </div>
                             </div>
                           );
