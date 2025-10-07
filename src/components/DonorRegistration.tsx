@@ -14,6 +14,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import { generateSHA256Hash } from '../utils/crypto';
 import { supabase } from '../lib/supabase';
+import LanguageSwitcher from './LanguageSwitcher';
+import { setDonorCredentials } from '../utils/cookieStorage';
 
 interface DonorRegistrationProps {
   onBack: () => void;
@@ -50,22 +52,22 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
   };
 
   const validateForm = (): string | null => {
-    if (!formData.firstName.trim()) return 'First name is required';
-    if (!formData.lastName.trim()) return 'Last name is required';
-    if (!formData.dateOfBirth) return 'Date of birth is required';
-    if (!formData.donorId.trim()) return 'Donor ID is required';
-    if (!formData.email.trim()) return 'Email address is required';
+    if (!formData.firstName.trim()) return t('auth.firstNameRequired');
+    if (!formData.lastName.trim()) return t('auth.lastNameRequired');
+    if (!formData.dateOfBirth) return t('auth.dateOfBirthRequired');
+    if (!formData.donorId.trim()) return t('auth.donorIdRequired');
+    if (!formData.email.trim()) return t('auth.emailRequired');
 
     // Validate Donor ID format (5-digit alphanumeric)
     const donorIdRegex = /^[A-Za-z0-9]{5}$/;
     if (!donorIdRegex.test(formData.donorId)) {
-      return 'Donor ID must be exactly 5 alphanumeric characters';
+      return t('auth.donorIdFormatError');
     }
 
     // Validate email format
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     if (!emailRegex.test(formData.email)) {
-      return 'Please enter a valid email address';
+      return t('auth.emailFormatError');
     }
 
     // Validate date of birth (must be at least 18 years old)
@@ -76,7 +78,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
     
     if (age < 18 || (age === 18 && monthDiff < 0) || 
         (age === 18 && monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      return 'You must be at least 18 years old to register';
+      return t('auth.ageRequirementError');
     }
 
     return null;
@@ -109,7 +111,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
 
       if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "not found" error
         console.error('Error checking existing donor:', checkError);
-        setError('Registration failed. Please try again.');
+        setError(t('auth.registrationFailed'));
         return;
       }
 
@@ -127,7 +129,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
 
       if (emailCheckError && emailCheckError.code !== 'PGRST116') {
         console.error('Error checking existing email:', emailCheckError);
-        setError('Registration failed. Please try again.');
+        setError(t('auth.registrationFailed'));
         return;
       }
 
@@ -154,7 +156,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
 
       if (insertError) {
         console.error('Error creating donor record:', insertError);
-        setError(`Registration failed: ${insertError.message || 'Please try again.'}`);
+        setError(t('auth.registrationFailedWithMessage', { message: insertError.message || 'Please try again.' }));
         return;
       }
 
@@ -163,19 +165,19 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
       // Check if registration actually succeeded
       if (!registrationResult || !Array.isArray(registrationResult) || registrationResult.length === 0) {
         console.error('Registration function returned invalid result - registration failed');
-        setError('Registration failed. The registration function returned an error. Please try again or contact support.');
+        setError(t('auth.registrationFunctionError'));
         return;
       }
 
       const result = registrationResult[0];
       if (!result || !result.success) {
         console.error('Registration function returned failure:', result?.message || 'Unknown error');
-        setError(`Registration failed: ${result?.message || 'Please try again or contact support.'}`);
+        setError(t('auth.registrationFailedWithMessage', { message: result?.message || 'Please try again or contact support.' }));
         return;
       }
 
-      const generatedDonorId = result.donor_id;
-      console.log('Generated donor ID:', generatedDonorId);
+      const userDonorId = result.donor_id;
+      console.log('User donor ID:', userDonorId);
 
       // Add a small delay to ensure the transaction is committed
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -217,11 +219,20 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
         // Don't fail the registration for audit log issues
       }
 
+      // Store credentials in cookies for PIN setup flow
+      setDonorCredentials({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        dateOfBirth: formData.dateOfBirth,
+        donorId: formData.donorId,
+        email: formData.email
+      });
+
       // Determine success message based on verification status
       const verificationStatus = verifyDonor ? 'verified' : 'pending_verification';
       const successMessage = verificationStatus === 'verified' 
-        ? `Registration successful! Your donor account has been created with ID: ${generatedDonorId}\n\nNext steps:\n1. Check your email (${formData.email}) for a verification link\n2. Click the verification link to confirm your email address\n3. AVIS staff will review and activate your account\n4. You'll receive a notification when ready to donate\n\nYou can now log in using your registration details once your account is activated.`
-        : `Registration submitted successfully! Your donor account has been created with ID: ${generatedDonorId}\n\nNext steps:\n1. Check your email (${formData.email}) for a verification link\n2. Click the verification link to confirm your email address\n3. AVIS staff will review and activate your account\n4. You'll receive a notification when ready to donate\n\nNote: Your account is being processed. You can now log in using your registration details once your account is activated.`;
+        ? `${t('auth.registrationSuccessful', { donorId: userDonorId })}\n\n${t('auth.registrationSteps', { email: formData.email })}\n\nAfter verification, you'll be prompted to set up a PIN for secure access.`
+        : `${t('auth.registrationSuccessful', { donorId: userDonorId })}\n\n${t('auth.registrationSteps', { email: formData.email })}\n\nAfter verification, you'll be prompted to set up a PIN for secure access.`;
 
       setSuccess(successMessage);
       
@@ -241,7 +252,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
 
     } catch (err) {
       console.error('Registration error:', err);
-      setError('Registration failed. Please try again.');
+      setError(t('auth.registrationFailed'));
     } finally {
       setLoading(false);
     }
@@ -249,18 +260,21 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-pink-50 p-4">
-      {/* Back to Home Button - Outside the main card */}
-      {onBackToLanding && (
-        <div className="max-w-2xl mx-auto mb-4">
-          <button
-            onClick={onBackToLanding}
-            className="flex items-center text-gray-600 hover:text-gray-800 transition-colors text-sm font-medium"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
-          </button>
+      {/* Header with Back to Home and Language Switcher */}
+      <div className="max-w-2xl mx-auto mb-4">
+        <div className="flex items-center justify-between">
+          {onBackToLanding && (
+            <button
+              onClick={onBackToLanding}
+              className="flex items-center text-gray-600 hover:text-gray-800 transition-colors text-sm font-medium"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              {t('auth.backToHome')}
+            </button>
+          )}
+          <LanguageSwitcher variant="minimal" />
         </div>
-      )}
+      </div>
       
       <div className="w-full max-w-2xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
@@ -272,9 +286,9 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                   <UserPlus className="w-8 h-8 text-white" />
                 </div>
               </div>
-              <h1 className="text-2xl font-bold text-white">Donor Registration</h1>
+              <h1 className="text-2xl font-bold text-white">{t('auth.donorRegistration')}</h1>
               <p className="text-red-100 text-sm mt-1">
-                Create your secure AVIS donor account
+                {t('auth.createSecureAccount')}
               </p>
               <div className="flex items-center justify-center mt-2">
                 <div className="bg-white/20 px-3 py-1 rounded-full">
@@ -296,37 +310,6 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                   <div className="flex-1">
                     <p className="text-green-800 font-medium mb-2">Registration Successful!</p>
                     
-                    {/* Donor ID Display */}
-                    {success.includes('Your donor account has been created with ID:') && (
-                      <div className="mb-4 p-3 bg-white border border-green-300 rounded-lg">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-green-800">Your Donor ID:</span>
-                          <div className="flex items-center space-x-2">
-                            <div className="bg-green-100 px-3 py-1 rounded-md">
-                              <span className="font-mono font-bold text-green-800 text-lg">
-                                {success.match(/ID: ([A-Z]{3}-\d{4}-\d{4})/)?.[1] || 'Generated'}
-                              </span>
-                            </div>
-                            <button
-                              onClick={() => {
-                                const donorId = success.match(/ID: ([A-Z]{3}-\d{4}-\d{4})/)?.[1];
-                                if (donorId) {
-                                  navigator.clipboard.writeText(donorId);
-                                  // You could add a toast notification here
-                                }
-                              }}
-                              className="text-green-600 hover:text-green-800 transition-colors"
-                              title="Copy Donor ID"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                              </svg>
-                            </button>
-                          </div>
-                        </div>
-                        <p className="text-xs text-green-600 mt-1">Save this ID for future reference</p>
-                      </div>
-                    )}
                     
                     <div className="text-green-700 text-sm mb-4 whitespace-pre-line">{success}</div>
                     <div className="flex flex-col sm:flex-row gap-3">
@@ -334,7 +317,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                         onClick={onSuccess}
                         className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
                       >
-                        Continue to Login
+                        {t('auth.continueToLogin')}
                       </button>
                       <button
                         onClick={() => {
@@ -349,7 +332,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                         }}
                         className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium"
                       >
-                        Register Another Donor
+                        {t('auth.registerAnotherDonor')}
                       </button>
                     </div>
                   </div>
@@ -373,8 +356,8 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                   <div className="flex items-start">
                     <Shield className="w-5 h-5 text-red-600 mt-0.5 mr-3" />
                     <div className="text-sm text-red-800">
-                      <p className="font-medium mb-1">Privacy & Security:</p>
-                      <p>Your personal information will be securely hashed and the original data will not be stored. This ensures GDPR compliance while maintaining secure authentication.</p>
+                      <p className="font-medium mb-1">{t('auth.privacySecurity')}</p>
+                      <p>{t('auth.privacySecurityDescription')}</p>
                     </div>
                   </div>
                 </div>
@@ -384,7 +367,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700 mb-2">
-                    First Name *
+                    {t('auth.firstName')} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -396,7 +379,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                       value={formData.firstName}
                       onChange={(e) => handleInputChange('firstName', e.target.value)}
                       className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200"
-                      placeholder="Enter your first name"
+                      placeholder={t('auth.enterFirstName')}
                       disabled={loading}
                       required
                     />
@@ -405,7 +388,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
 
                 <div>
                   <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Last Name *
+                    {t('auth.lastName')} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -417,7 +400,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                       value={formData.lastName}
                       onChange={(e) => handleInputChange('lastName', e.target.value)}
                       className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200"
-                      placeholder="Enter your last name"
+                      placeholder={t('auth.enterLastName')}
                       disabled={loading}
                       required
                     />
@@ -428,7 +411,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
               {/* Date of Birth */}
               <div>
                 <label htmlFor="dateOfBirth" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Date of Birth *
+                  {t('auth.dateOfBirth')} *
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -446,7 +429,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                   />
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  You must be at least 18 years old to donate
+                  {t('auth.ageRequirement')}
                 </p>
               </div>
 
@@ -480,7 +463,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
               {/* Email Address */}
               <div>
                 <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Email Address *
+                  {t('auth.email')} *
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -494,13 +477,13 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200"
-                    placeholder="Enter your email address"
+                    placeholder={t('auth.enterEmailAddress')}
                     disabled={loading}
                     required
                   />
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  We'll send a verification email to this address
+                  {t('auth.verificationEmailNote')}
                 </p>
               </div>
 
@@ -528,11 +511,11 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                 <div className="flex items-start">
                   <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 mr-3" />
                   <div className="text-sm text-blue-800">
-                    <p className="font-medium mb-1">Verification Process:</p>
-                    <p>1. Submit registration form<br/>
-                    2. Check your email and click the verification link<br/>
-                    3. AVIS staff will review and activate your account<br/>
-                    4. You'll receive a notification when ready to donate</p>
+                    <p className="font-medium mb-1">{t('auth.verificationProcess')}</p>
+                    <p>1. {t('auth.verificationStep1')}<br/>
+                    2. {t('auth.verificationStep2')}<br/>
+                    3. {t('auth.verificationStep3')}<br/>
+                    4. {t('auth.verificationStep4')}</p>
                   </div>
                 </div>
               </div>
@@ -546,12 +529,12 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                   {loading ? (
                     <div className="flex items-center justify-center">
                       <Loader className="w-5 h-5 animate-spin mr-2" />
-                      Submitting for Verification...
+                      {t('auth.submittingForVerification')}
                     </div>
                   ) : (
                     <div className="flex items-center justify-center">
                       <Save className="w-5 h-5 mr-2" />
-                      Submit Registration
+                      {t('auth.submitRegistration')}
                     </div>
                   )}
                 </button>
@@ -561,7 +544,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
               <div className="mt-6 pt-6 border-t border-gray-100">
                 <div className="flex items-center justify-center text-xs text-gray-500">
                   <Shield className="w-3 h-3 mr-1" />
-                  GDPR compliant • Hash-based authentication • No PII stored
+                  {t('auth.securityNotice')}
                 </div>
               </div>
               </>

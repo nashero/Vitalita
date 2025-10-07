@@ -36,9 +36,6 @@ interface AuthContextType {
   loading: boolean;
   login: (authData: AuthData) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
-  getSessionInfo: () => { deviceInfo: string; lastLogin: string | null; sessionExpires: string | null };
-  refreshSession: () => Promise<boolean>;
-  isPasswordSet: (donorHashId: string) => Promise<boolean>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -177,62 +174,10 @@ export function useAuthProvider() {
     clearSessionData();
   };
 
-  const refreshSession = async (): Promise<boolean> => {
-    try {
-      const sessionData = getSessionData();
-      if (!sessionData) {
-        return false;
-      }
-
-      // Check if session is expired
-      if (new Date(sessionData.expiresAt) <= new Date()) {
-        clearSessionData();
-        setDonor(null);
-        return false;
-      }
-
-      // For hash-based authentication, just validate that we still have the donor in localStorage
-      const savedDonor = localStorage.getItem('donor');
-      if (!savedDonor) {
-        clearSessionData();
-        setDonor(null);
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Refresh session error:', error);
-      return false;
-    }
-  };
-
-  const getSessionInfo = () => {
-    const sessionData = getSessionData();
-    return {
-      deviceInfo: sessionData ? getDeviceDisplayInfo() : 'Not logged in',
-      lastLogin: sessionData?.lastLoginAt || null,
-      sessionExpires: sessionData?.expiresAt || null
-    };
-  };
-
-  const isPasswordSet = async (donorHashId: string): Promise<boolean> => {
-    try {
-      // Since password system was removed, always return false
-      // This function is kept for compatibility with SessionManager
-      return false;
-    } catch (error) {
-      console.error('Check password set error:', error);
-      return false;
-    }
-  };
-
   return {
     donor,
     loading,
     login,
-    logout,
-    getSessionInfo,
-    refreshSession,
-    isPasswordSet
+    logout
   };
 }

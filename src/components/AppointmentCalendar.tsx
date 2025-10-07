@@ -20,10 +20,13 @@ import {
   X,
   Info
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { getAppointmentError, AppointmentError } from '../utils/appointmentErrors';
 import AppointmentErrorDisplay from './AppointmentErrorDisplay';
+import { getCurrentLocale, formatDate, formatTime, formatDateTime } from '../utils/languageUtils';
 
 interface DonationCenter {
   center_id: string;
@@ -72,6 +75,7 @@ interface AppointmentCalendarProps {
 }
 
 export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps) {
+  const { t } = useTranslation();
   const { donor } = useAuth();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -353,7 +357,7 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
       totalPlasmaSlots,
       earliestDate,
       latestDate,
-      dateRange: `${earliestDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} to ${latestDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`
+      dateRange: `${formatDate(earliestDate, i18n.language, { month: 'long', day: 'numeric', year: 'numeric' })} to ${formatDate(latestDate, i18n.language, { month: 'long', day: 'numeric', year: 'numeric' })}`
     };
   };
 
@@ -489,7 +493,10 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
         p_user_id: donor.donor_hash_id,
         p_user_type: 'donor',
         p_action: 'appointment_booking',
-        p_details: `Appointment booked for ${selectedType.toLowerCase()} donation on ${selectedDate?.toLocaleDateString()}`,
+        p_details: t('appointment.appointmentBookedFor', { 
+          type: selectedType?.toLowerCase() === 'blood' ? t('appointment.bloodDonation').toLowerCase() : t('appointment.plasmaDonation').toLowerCase(),
+          date: selectedDate ? formatDate(selectedDate, i18n.language) : ''
+        }),
         p_resource_type: 'appointments',
         p_resource_id: appointment.appointment_id,
         p_status: 'success'
@@ -587,10 +594,9 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
           <div className="bg-green-100 p-6 rounded-full w-24 h-24 mx-auto flex items-center justify-center mb-6">
             <CheckCircle className="w-12 h-12 text-green-600" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Appointment Confirmed!</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('appointment.bookingSuccess')}</h2>
           <p className="text-gray-600 mb-6">
-            Your {selectedType?.toLowerCase()} donation is scheduled for{' '}
-            {selectedDate?.toLocaleDateString()} at {selectedCenter?.name}
+            {t('appointment.bookingSuccessDesc')} {selectedDate ? formatDate(selectedDate, i18n.language) : ''} presso {selectedCenter?.name}
           </p>
           <button
             onClick={() => {
@@ -1072,7 +1078,7 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
               <div className="p-6 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-bold text-gray-900">
-                    Book Appointment for {selectedDate.toLocaleDateString()}
+                    {t('appointment.title')} per {formatDate(selectedDate, i18n.language)}
                   </h3>
                   <button
                     onClick={() => setShowSlotSelection(false)}
@@ -1127,7 +1133,7 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
                 {/* Center Selection */}
                 {selectedType && (
                   <div className="mb-6">
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Select Donation Center</h4>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">{t('appointment.selectCenter')}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {donationCenters.map(center => (
                         <button
@@ -1194,13 +1200,13 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
                               >
                                 <div className="text-center">
                                   <div className="text-lg font-semibold text-gray-900">
-                                    {slotTime.toLocaleTimeString('en-US', {
+                                    {formatTime(slotTime, i18n.language, {
                                       hour: '2-digit',
                                       minute: '2-digit'
                                     })}
                                   </div>
                                   <div className="text-sm text-gray-600">
-                                    {slot.capacity - slot.current_bookings} spots left
+                                    {slot.capacity - slot.current_bookings} {t('appointment.spotsLeft')}
                                   </div>
                                 </div>
                               </button>
@@ -1217,13 +1223,13 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
                     <div className="flex items-start">
                       <Info className="w-5 h-5 text-blue-600 mt-0.5 mr-3" />
                       <div className="text-sm text-blue-800">
-                        <p className="font-medium mb-2">Appointment Summary:</p>
+                        <p className="font-medium mb-2">{t('appointment.appointmentSummary')}:</p>
                         <ul className="space-y-1 text-blue-700">
-                          <li>• <strong>Type:</strong> {selectedType} Donation</li>
-                          <li>• <strong>Date:</strong> {selectedDate.toLocaleDateString()}</li>
-                          <li>• <strong>Time:</strong> {new Date(selectedSlot.slot_datetime).toLocaleTimeString()}</li>
-                          <li>• <strong>Center:</strong> {selectedCenter.name}</li>
-                          <li>• <strong>Duration:</strong> 60 minutes</li>
+                          <li>• <strong>{t('appointment.type')}:</strong> {selectedType} {t('appointment.donationType')}</li>
+                          <li>• <strong>{t('appointment.date')}:</strong> {selectedDate ? formatDate(selectedDate, i18n.language) : ''}</li>
+                          <li>• <strong>{t('appointment.time')}:</strong> {formatTime(new Date(selectedSlot.slot_datetime), i18n.language)}</li>
+                          <li>• <strong>{t('appointment.center')}:</strong> {selectedCenter.name}</li>
+                          <li>• <strong>{t('appointment.duration')}:</strong> 60 {t('appointment.minutes')}</li>
                         </ul>
                       </div>
                     </div>
@@ -1246,10 +1252,10 @@ export default function AppointmentCalendar({ onBack }: AppointmentCalendarProps
                     {loading ? (
                       <div className="flex items-center justify-center">
                         <Loader className="w-4 h-4 animate-spin mr-2" />
-                        Booking...
+                        {t('appointment.loading')}
                       </div>
                     ) : (
-                      'Confirm Booking'
+                      {t('appointment.confirmBooking')}
                     )}
                   </button>
                 </div>

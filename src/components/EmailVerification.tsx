@@ -6,9 +6,10 @@ interface EmailVerificationProps {
   token?: string;
   onBack?: () => void;
   onSuccess?: () => void;
+  onPinSetup?: () => void;
 }
 
-export default function EmailVerification({ token, onBack, onSuccess }: EmailVerificationProps) {
+export default function EmailVerification({ token, onBack, onSuccess, onPinSetup }: EmailVerificationProps) {
   const [verificationStatus, setVerificationStatus] = useState<'verifying' | 'success' | 'error' | 'invalid'>('verifying');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -38,12 +39,14 @@ export default function EmailVerification({ token, onBack, onSuccess }: EmailVer
 
       if (data) {
         setVerificationStatus('success');
-        // Auto-redirect after 5 seconds
+        // Auto-redirect to PIN setup after 3 seconds
         setTimeout(() => {
-          if (onSuccess) {
+          if (onPinSetup) {
+            onPinSetup();
+          } else if (onSuccess) {
             onSuccess();
           }
-        }, 5000);
+        }, 3000);
       } else {
         setVerificationStatus('error');
         setErrorMessage('Invalid or expired verification token. Please contact AVIS staff for assistance.');
@@ -113,24 +116,34 @@ export default function EmailVerification({ token, onBack, onSuccess }: EmailVer
                 </div>
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">Email Verified Successfully!</h2>
                 <p className="text-gray-600 mb-4">
-                  Your email address has been verified. AVIS staff will now review your application and activate your account.
+                  Your email address has been verified. You'll now be redirected to set up your PIN for secure access.
                 </p>
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                   <p className="text-green-800 text-sm">
                     <strong>Next Steps:</strong><br/>
-                    1. AVIS staff will review your application<br/>
-                    2. You'll receive a notification when your account is activated<br/>
+                    1. Set up your 5-digit PIN for secure access<br/>
+                    2. Your account will be ready for donations<br/>
                     3. You can then log in and schedule your first donation
                   </p>
                 </div>
-                {onSuccess && (
-                  <button
-                    onClick={onSuccess}
-                    className="mt-6 w-full bg-red-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-red-700 transition-colors"
-                  >
-                    Continue to Login
-                  </button>
-                )}
+                <div className="mt-6 space-y-3">
+                  {onPinSetup && (
+                    <button
+                      onClick={onPinSetup}
+                      className="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                    >
+                      Set Up PIN Now
+                    </button>
+                  )}
+                  {onSuccess && (
+                    <button
+                      onClick={onSuccess}
+                      className="w-full bg-gray-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-700 transition-colors"
+                    >
+                      Continue Later
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 
