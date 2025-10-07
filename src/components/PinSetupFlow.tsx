@@ -17,7 +17,9 @@ import {
   ArrowLeft,
   User,
   Calendar,
-  Hash
+  Hash,
+  Info,
+  Clock
 } from 'lucide-react';
 import { 
   getDonorCredentials, 
@@ -37,7 +39,7 @@ interface PinSetupFlowProps {
   className?: string;
 }
 
-type FlowStep = 'loading' | 'verification' | 'credentials' | 'pin-setup' | 'success' | 'error';
+type FlowStep = 'loading' | 'verification' | 'credentials' | 'pin-setup' | 'success' | 'error' | 'unverified';
 
 export default function PinSetupFlow({ 
   onComplete, 
@@ -107,6 +109,11 @@ export default function PinSetupFlow({
       // Verify donor identity
       const identityResult = await verifyDonorIdentity(creds);
       if (!identityResult.isValid) {
+        // Check if this is specifically an unverified email case
+        if (identityResult.isUnverified) {
+          setCurrentStep('unverified');
+          return;
+        }
         setError(identityResult.error || 'Identity verification failed');
         setCurrentStep('error');
         return;
@@ -123,8 +130,7 @@ export default function PinSetupFlow({
       }
 
       if (!status.isVerified) {
-        setError('Your account is not yet verified. Please check your email and click the verification link.');
-        setCurrentStep('error');
+        setCurrentStep('unverified');
         return;
       }
 
@@ -202,7 +208,7 @@ export default function PinSetupFlow({
                   onClick={handleBackToLanding}
                   className="text-sm text-gray-600 hover:text-gray-800 transition-colors"
                 >
-                  ← Back to Home
+                  ← {t('pin.backToHome')}
                 </button>
               </div>
             </div>
@@ -351,37 +357,70 @@ export default function PinSetupFlow({
     );
   }
 
+  // Unverified email step
+  if (currentStep === 'unverified') {
+    return (
+      <div className={`pin-setup-flow ${className}`}>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md">
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <div className="text-center mb-6">
+                <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                  <Info className="w-8 h-8 text-blue-600" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  {t('pin.emailVerificationPending')}
+                </h2>
+                <p className="text-gray-600">
+                  {t('pin.emailVerificationMessage')}
+                </p>
+              </div>
+
+              <div className="flex justify-center">
+                <button
+                  onClick={handleBackToLanding}
+                  className="px-8 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                >
+                  {t('pin.backToHome')}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Error step
   if (currentStep === 'error') {
     return (
       <div className={`pin-setup-flow ${className}`}>
-        <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-pink-50 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
           <div className="w-full max-w-md">
             <div className="bg-white rounded-2xl shadow-xl p-8">
               <div className="text-center mb-6">
-                <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                  <AlertCircle className="w-8 h-8 text-red-600" />
+                <div className="mx-auto w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                  <Shield className="w-8 h-8 text-orange-600" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Setup Error
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  {t('pin.accountVerificationPending')}
                 </h2>
-                <p className="text-gray-600">
-                  {error || 'An error occurred during PIN setup'}
-                </p>
+                <div className="text-gray-600 space-y-3 text-left">
+                  <p>{t('pin.thankYouForSetup')}</p>
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <p className="font-medium text-gray-700 mb-2">{t('pin.questionsContactUs')}</p>
+                    <p className="text-sm">📧 {t('pin.supportEmail')}</p>
+                    <p className="text-sm">📞 {t('pin.supportPhone')}</p>
+                  </div>
+                </div>
               </div>
 
-              <div className="flex space-x-3">
-                <button
-                  onClick={handleRetry}
-                  className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                >
-                  Try Again
-                </button>
+              <div className="flex justify-center">
                 <button
                   onClick={handleBackToLanding}
-                  className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                  className="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 >
-                  Back to Home
+                  {t('pin.backToHomePage')}
                 </button>
               </div>
             </div>

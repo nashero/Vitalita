@@ -127,6 +127,7 @@ export async function verifyDonorIdentity(credentials: DonorCredentials): Promis
   isValid: boolean;
   donorId?: string;
   error?: string;
+  isUnverified?: boolean;
 }> {
   try {
     // Generate hash from credentials
@@ -159,7 +160,8 @@ export async function verifyDonorIdentity(credentials: DonorCredentials): Promis
     if (!donorData.email_verified) {
       return {
         isValid: false,
-        error: 'Email not verified yet'
+        error: 'Email not verified yet',
+        isUnverified: true
       };
     }
 
@@ -214,7 +216,7 @@ export function getVerificationStatusMessage(status: VerificationStatus): string
   }
 
   if (!status.isVerified) {
-    return 'Your account is not yet verified. Please check your email and click the verification link.';
+    return 'Staff will notify you by email after 45 days regarding your verification status. Once you are verified you will be able to setup your PIN.';
   }
 
   if (status.needsPinSetup) {

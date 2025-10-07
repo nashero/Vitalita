@@ -20,7 +20,7 @@
   },
   "navigation": {
     "home": "Inicio",
-    "donorPortal": "Portal de Donantes",
+    "donorPortal": "Registrarse como Donante",
     "staffPortal": "Portal del Personal",
     "faq": "Preguntas Frecuentes",
     "more": "Más",
@@ -34,14 +34,29 @@
     "subtitle": "Reserva tu donación de sangre o plasma en línea en minutos. Únete a miles de donantes que marcan la diferencia cada día.",
     "donorRegistration": "Registro y Acceso de Donantes",
     "donorRegistrationDesc": "¿Nuevo en Vitalita? Regístrate como donante o inicia sesión en tu cuenta existente para gestionar citas.",
-    "accessDonorPortal": "Acceder al Portal de Donantes",
+    "accessDonorPortal": "¿Primera Vez Donando?",
+    "registerAsDonor": "Registrarse como Donante",
+    "quickPinLogin": "Inicio de Sesión de Donante Recurrente",
+    "pinLoginHelp": "¿Ya tienes un PIN? Usa el Inicio de Sesión Rápido PIN para un acceso más rápido.",
     "bookDonation": "Reserva Tu Donación",
     "bookDonationDesc": "Nuestro sistema de reservas avanzado te guiará paso a paso a través del proceso. Verificación de elegibilidad completa, programación inteligente y confirmación instantánea.",
     "processSteps": {
-      "step1": "Inicia la Conversación - Usa nuestro asistente de reservas avanzado o chatea con el asistente virtual",
-      "step2": "Verificación de Identidad - Identificación segura con tu nombre, centro AWS e ID de donante con generación de nacimiento",
-      "step3": "Elegibilidad y Programación - Verificación de elegibilidad avanzada y programación inteligente con disponibilidad en tiempo real",
-      "step4": "Confirmación Instantánea - Múltiples opciones de entrega, códigos QR, integración de calendario y recordatorios automatizados"
+      "step1": {
+        "header": "Inicia la Conversación",
+        "description": "Usa nuestro asistente de reservas avanzado o chatea con el asistente virtual"
+      },
+      "step2": {
+        "header": "Verificación de Identidad",
+        "description": "Identificación segura con tu nombre, centro AWS e ID de donante con generación de nacimiento"
+      },
+      "step3": {
+        "header": "Elegibilidad y Programación",
+        "description": "Verificación de elegibilidad avanzada y programación inteligente con disponibilidad en tiempo real"
+      },
+      "step4": {
+        "header": "Confirmación Instantánea",
+        "description": "Múltiples opciones de entrega, códigos QR, integración de calendario y recordatorios automatizados"
+      }
     },
     "featureHighlights": "Características Destacadas",
     "whyChooseVitalita": "¿Por Qué Elegir Vitalita?",
@@ -54,8 +69,11 @@
     "termsOfService": "Términos de Servicio",
     "allRightsReserved": "Todos los derechos reservados.",
     "needHelp": "¿Necesitas ayuda? Contacta a tu administrador",
-    "quickPinLogin": "Inicio de Sesión Rápido PIN",
-    "pinLoginHelp": "¿Ya tienes un PIN? Usa el Inicio de Sesión Rápido PIN para un acceso más rápido."
+    "pinLoginHelp": "¿Ya tienes un PIN? Usa el Inicio de Sesión Rápido PIN para un acceso más rápido.",
+    "howItWorks": "Cómo funciona",
+    "howItWorksDesc": "Nuestro sistema de reservas avanzado te guiará paso a paso a través del proceso. Verificación de elegibilidad completa, programación inteligente y confirmación instantánea.",
+    "showSteps": "Mostrar Pasos",
+    "hideSteps": "Ocultar Pasos"
   },
   "stats": {
     "donationsPerYear": "Donaciones por año",
@@ -128,7 +146,7 @@
   "loginMode": {
     "title": "Portal Vitalita",
     "subtitle": "Elige tu tipo de acceso para continuar",
-    "donorPortal": "Portal de Donantes",
+    "donorPortal": "Registrarse como Donante",
     "donorPortalDesc": "Programa citas y gestiona donaciones",
     "staffPortal": "Portal del Personal",
     "staffPortalDesc": "Panel administrativo y gestión"
@@ -299,7 +317,12 @@
     "donorIdDescription": "Ingresa el ID proporcionado por AVIS después de la aprobación",
     "beforeYouContinue": "Antes de Continuar:",
     "doubleCheckDetails": "Verifica estos detalles antes de enviar — no se podrán cambiar una vez guardados:",
-    "checkEmailAfterRegistration": "Revisa tu email después de registrarte. Recibirás un email de verificación. Una vez que verifiques tu email, podrás crear un PIN de 5 dígitos para iniciar sesión en el sistema.",
+    "verificationProcess": "Proceso de Verificación:",
+    "verificationStep1": "Enviar formulario de registro",
+    "verificationStep2": "El personal de AVIS revisará y activará tu cuenta",
+    "verificationStep3": "El proceso toma aproximadamente 45 días",
+    "verificationStep4": "Una vez que seas verificado como donante, recibirás una notificación por email",
+    "verificationStep5": "Una vez que verifiques tu email, podrás crear un PIN de 5 dígitos para iniciar sesión en el sistema",
     "firstNameRequired": "El nombre es obligatorio",
     "lastNameRequired": "El apellido es obligatorio",
     "dateOfBirthRequired": "La fecha de nacimiento es obligatoria",
@@ -311,11 +334,11 @@
     "registrationFailed": "Registro fallido. Por favor intenta de nuevo.",
     "registrationFailedWithMessage": "Registro fallido: {message}",
     "registrationFunctionError": "Registro fallido. La función de registro devolvió un error. Por favor intenta de nuevo o contacta soporte.",
-    "registrationSuccessful": "¡Registro exitoso! Tu cuenta de donante ha sido creada usando tu ID de Donante: {donorId}",
-    "registrationSteps": "Próximos pasos:\n1. Revisa tu email ({email}) para un enlace de verificación\n2. Haz clic en el enlace de verificación para confirmar tu dirección de email\n3. El personal de AVIS revisará y activará tu cuenta\n4. Recibirás una notificación cuando estés listo para donar\n\nAhora puedes iniciar sesión usando tus detalles de registro una vez que tu cuenta esté activada.",
+    "registrationSuccessful": "Tu cuenta de donante ha sido creada usando tu ID de Donante",
+    "registrationSteps": "Próximos pasos:\n1. El personal de AVIS revisará y activará tu cuenta\n2. El proceso toma aproximadamente 45 días\n3. Una vez que seas verificado como donante, recibirás una notificación por email\n4. Una vez que verifiques tu email, podrás crear un PIN de 5 dígitos para iniciar sesión en el sistema",
     "backToHome": "Volver al Inicio",
     "createSecureAccount": "Crea tu cuenta segura de donante AVIS",
-    "continueToLogin": "Continuar al Login",
+    "continueToLogin": "Configurar PIN",
     "registerAnotherDonor": "Registrar Otro Donante",
     "ageRequirement": "Debes tener al menos 18 años para donar",
     "verificationEmailNote": "Enviaremos un email de verificación a esta dirección",
@@ -491,6 +514,23 @@
     "backToPinLogin": "Volver al Inicio de Sesión PIN",
     "securePinAuth": "Autenticación PIN segura",
     "checkingAuthStatus": "Verificando estado de autenticación...",
-    "contactAvisAdmin": "¿Necesitas ayuda? Contacta al administrador de tu centro AVIS"
+    "contactAvisAdmin": "¿Necesitas ayuda? Contacta al administrador de tu centro AVIS",
+    "emailVerificationPending": "Verificación de Email Pendiente",
+    "emailVerificationMessage": "El personal te notificará por email después de 45 días sobre el estado de tu verificación. Una vez que estés verificado, podrás configurar tu PIN.",
+    "tryAgain": "Intentar de Nuevo",
+    "backToHome": "Volver al Inicio",
+    "setupError": "Error de Configuración",
+    "failedToVerifyDonorIdentity": "Error al verificar la identidad del donante",
+    "errorDuringPinSetup": "Ocurrió un error durante la configuración del PIN",
+    "accountVerificationPending": "Acceso Solo para Donantes Verificados",
+    "thankYouForSetup": "Solo puedes usar esta pantalla si has sido aprobado para donación de sangre por el personal de AVIS.",
+    "teamReviewingInfo": "",
+    "loginAfterVerification": "",
+    "verificationTimeline": "",
+    "emailNotification": "",
+    "questionsContactUs": "¿Preguntas? Contáctanos:",
+    "supportEmail": "support@example.com",
+    "supportPhone": "1-800-XXX-XXXX",
+    "backToHomePage": "Volver a la Página de Inicio"
   }
 }

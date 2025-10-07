@@ -4,12 +4,12 @@ import {
   MapPin, 
   Save, 
   ArrowLeft, 
-  CheckCircle, 
   AlertCircle,
   Loader,
   UserPlus,
   CalendarDays,
-  Shield
+  Shield,
+  CheckCircle
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { generateSHA256Hash } from '../utils/crypto';
@@ -228,11 +228,8 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
         email: formData.email
       });
 
-      // Determine success message based on verification status
-      const verificationStatus = verifyDonor ? 'verified' : 'pending_verification';
-      const successMessage = verificationStatus === 'verified' 
-        ? `${t('auth.registrationSuccessful', { donorId: userDonorId })}\n\n${t('auth.registrationSteps', { email: formData.email })}\n\nAfter verification, you'll be prompted to set up a PIN for secure access.`
-        : `${t('auth.registrationSuccessful', { donorId: userDonorId })}\n\n${t('auth.registrationSteps', { email: formData.email })}\n\nAfter verification, you'll be prompted to set up a PIN for secure access.`;
+      // Compose success message using updated copy
+      const successMessage = `${t('auth.registrationSuccessful')}\n\n${t('auth.registrationSteps')}`;
 
       setSuccess(successMessage);
       
@@ -279,46 +276,26 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
       <div className="w-full max-w-2xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-6">
+          <div className="bg-gradient-to-r from-red-600 to-red-700 px-6 py-4">
             <div className="text-center">
-              <div className="flex items-center justify-center mb-2">
-                <div className="bg-white/20 p-3 rounded-full">
-                  <UserPlus className="w-8 h-8 text-white" />
+              <div className="flex items-center justify-center mb-1">
+                <div className="bg-white/20 p-2.5 rounded-full">
+                  <UserPlus className="w-7 h-7 text-white" />
                 </div>
               </div>
-              <h1 className="text-2xl font-bold text-white">{t('auth.donorRegistration')}</h1>
-              <p className="text-red-100 text-sm mt-1">
-                {t('auth.createSecureAccount')}
-              </p>
-              <div className="flex items-center justify-center mt-2">
-                <div className="bg-white/20 px-3 py-1 rounded-full">
-                  <span className="text-white text-xs font-medium">{t('auth.existingDonorId')}</span>
-                </div>
-              </div>
-              <p className="text-red-100 text-xs mt-2 text-center">
-                {t('auth.donorIdDescription')}
-              </p>
+              <h1 className="text-xl font-bold text-white">{t('auth.donorRegistration')}</h1>
             </div>
           </div>
 
           {/* Form */}
           <div className="px-8 py-8">
             {success && (
-              <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="mb-4 bg-green-50 border border-green-200 rounded-lg p-3">
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-0.5" />
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-2 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-green-800 font-medium mb-2">Registration Successful!</p>
-                    
-                    
-                    <div className="text-green-700 text-sm mb-4 whitespace-pre-line">{success}</div>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <button
-                        onClick={onSuccess}
-                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
-                      >
-                        {t('auth.continueToLogin')}
-                      </button>
+                    <div className="text-green-700 text-sm whitespace-pre-line">{success}</div>
+                    <div className="mt-3 flex flex-col sm:flex-row gap-2">
                       <button
                         onClick={() => {
                           setSuccess('');
@@ -330,7 +307,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                             email: '',
                           });
                         }}
-                        className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium"
+                        className="bg-gray-600 text-white px-3 py-1.5 rounded-md hover:bg-gray-700 transition-colors text-sm font-medium"
                       >
                         {t('auth.registerAnotherDonor')}
                       </button>
@@ -488,34 +465,28 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
               </div>
 
 
-              {/* Important Notice */}
+              {/* Combined Notice */}
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                 <div className="flex items-start">
                   <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5 mr-3" />
                   <div className="text-sm text-amber-800">
                     <p className="font-medium mb-2">{t('auth.beforeYouContinue')}</p>
                     <p className="mb-2">{t('auth.doubleCheckDetails')}</p>
-                    <ul className="list-disc list-inside mb-2 space-y-1">
+                    <ul className="list-disc list-inside mb-4 space-y-1">
                       <li>{t('auth.firstName')}</li>
                       <li>{t('auth.lastName')}</li>
                       <li>{t('auth.dateOfBirth')}</li>
                       <li>{t('auth.donorId')}</li>
                     </ul>
-                    <p>{t('auth.checkEmailAfterRegistration')}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Verification Process Notice */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 mr-3" />
-                  <div className="text-sm text-blue-800">
-                    <p className="font-medium mb-1">{t('auth.verificationProcess')}</p>
-                    <p>1. {t('auth.verificationStep1')}<br/>
-                    2. {t('auth.verificationStep2')}<br/>
-                    3. {t('auth.verificationStep3')}<br/>
-                    4. {t('auth.verificationStep4')}</p>
+                    
+                    <p className="font-medium mb-2">{t('auth.verificationProcess')}</p>
+                    <ol className="list-decimal list-inside space-y-1">
+                      <li>{t('auth.verificationStep1')}</li>
+                      <li>{t('auth.verificationStep2')}</li>
+                      <li>{t('auth.verificationStep3')}</li>
+                      <li>{t('auth.verificationStep4')}</li>
+                      <li>{t('auth.verificationStep5')}</li>
+                    </ol>
                   </div>
                 </div>
               </div>

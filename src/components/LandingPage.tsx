@@ -1,48 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Heart, Cross, Calendar, ShieldCheck, Clock, BarChart3, Menu, X, CheckCircle, MessageCircle, QrCode, Mail, Award, Group, ArrowDown, Shield, Server, Code, Mic, Key, User } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { Heart, Cross, Calendar, ShieldCheck, Clock, BarChart3, Menu, X, CheckCircle, MessageCircle, QrCode, Mail, ArrowDown, Key, User } from 'lucide-react';
 import firstImage from '../assets/images/First.jpg';
 import secondImage from '../assets/images/Second.jpg';
 import thirdImage from '../assets/images/Third.jpg';
 import VoiceAgent from './VoiceAgent';
 import LanguageSwitcher from './LanguageSwitcher';
+import HowItWorksSection from './HowItWorksSection';
 
-const stats = [
-  { label: 'Donations per year', value: 500000, icon: <Heart className="w-7 h-7 text-red-600" /> },
-  { label: 'AWS Centers', value: 150, icon: <Cross className="w-7 h-7 text-red-600" /> },
-  { label: 'Lives saved', value: 1000000, icon: <CheckCircle className="w-7 h-7 text-red-600" /> },
-  { label: 'Online support', value: 24, icon: <MessageCircle className="w-7 h-7 text-red-600" /> },
-];
-
-const features = [
-  { icon: <Calendar className="w-8 h-8 text-red-600" />, title: 'Easy Booking', desc: 'Book your donation in just a few clicks with our virtual assistant.' },
-  { icon: <ShieldCheck className="w-8 h-8 text-red-600" />, title: 'Guaranteed Safety', desc: 'All AWS centers meet the highest safety standards.' },
-  { icon: <Group className="w-8 h-8 text-red-600" />, title: 'AWS Community', desc: 'Join thousands of donors across the country.' },
-  { icon: <Clock className="w-8 h-8 text-red-600" />, title: 'Flexible Hours', desc: 'Many available times to fit your schedule.' },
-  { icon: <Mic className="w-8 h-8 text-red-600" />, title: 'Voice Assistant', desc: 'Hands-free booking with our intelligent voice agent.' },
-];
-
-const processSteps = [
-  'Start the Conversation - Use our advanced booking wizard or chat with the virtual assistant',
-  'Identity Verification - Secure identification with your name, AWS center, and donor ID with birth generation',
-  'Eligibility & Scheduling - Advanced eligibility checking and smart scheduling with real-time availability',
-  'Instant Confirmation - Multiple delivery options, QR codes, calendar integration and automated reminders',
-];
-
-const highlights = [
-  { icon: <BarChart3 className="w-6 h-6 text-red-600" />, title: 'Smart Scheduling', desc: 'Real-time availability, Live slot checking, Capacity management, Conflict detection' },
-  { icon: <ShieldCheck className="w-6 h-6 text-red-600" />, title: 'Eligibility Checking', desc: 'Medical history review, Annual holds, Health screening' },
-  { icon: <Mail className="w-6 h-6 text-red-600" />, title: 'Multi-Channel Delivery', desc: 'Email, SMS, Calendar, Automated reminders' },
-  { icon: <QrCode className="w-6 h-6 text-red-600" />, title: 'Advanced Features', desc: 'Draft saving, Rescheduling, QR codes' },
-];
-
-const benefits = [
-  { icon: <Calendar className="w-8 h-8 text-red-600" />, title: 'Easy Booking', desc: 'Reserve in a few clicks.' },
-  { icon: <ShieldCheck className="w-8 h-8 text-red-600" />, title: 'Maximum Safety', desc: 'All centers certified.' },
-  { icon: <Heart className="w-8 h-8 text-red-600" />, title: 'Save Lives', desc: 'One donation saves up to 3 people.' },
-  { icon: <Clock className="w-8 h-8 text-red-600" />, title: 'Flexible Hours', desc: 'Times that fit your schedule.' },
-];
 
 function useAnimatedCounter(target: number, duration = 1200) {
   const [count, setCount] = useState(0);
@@ -67,15 +32,15 @@ function useAnimatedCounter(target: number, duration = 1200) {
 
 // Add prop types for navigation
 interface LandingPageProps {
-  onDonorPortal?: () => void;
   onStaffPortal?: () => void;
   onDeployProject?: () => void;
   onPinAuthDemo?: () => void;
   onPinLogin?: () => void;
   onPinDebug?: () => void;
+  onDonorRegistration?: () => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal, onDeployProject, onPinAuthDemo, onPinLogin, onPinDebug }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onStaffPortal, onDeployProject, onPinAuthDemo, onPinLogin, onPinDebug, onDonorRegistration }) => {
   const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [secondaryMenuOpen, setSecondaryMenuOpen] = useState(false);
@@ -127,7 +92,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
   // Move navLinks here so it can use props
   const navLinks = [
     { label: t('navigation.home'), to: 'hero', onClick: undefined },
-    { label: t('navigation.donorPortal'), to: 'registration', onClick: onDonorPortal },
+    { label: t('navigation.donorPortal'), to: 'registration', onClick: onDonorRegistration },
     { label: t('navigation.faq'), to: 'footer', onClick: undefined },
   ];
 
@@ -274,56 +239,56 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
          
          {/* Content */}
          <div className="relative z-10 max-w-6xl mx-auto">
-           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-             {/* Text Content */}
-             <div className="text-left">
-               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
+           <div className="flex flex-col items-center text-center space-y-8">
+             {/* Text Content - Centered at top */}
+             <div className="max-w-4xl">
+               <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
                  {t('landing.title').split(', ')[0]}, <span className="text-red-600">{t('landing.title').split(', ')[1]}</span>
                </h1>
-               <p className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed">
+               <p className="text-base md:text-lg text-gray-700 mb-6 leading-relaxed">
                  {t('landing.subtitle')}
                </p>
              </div>
              
-                                         {/* Blood Donation Images */}
-               <div className="relative">
-                 <div className="grid grid-cols-3 gap-2 rounded-2xl shadow-2xl overflow-hidden">
-                   <div className="relative">
-                     <img 
-                       src={firstImage} 
-                       alt="Blood donation process - Step 1" 
-                       className="w-full h-auto object-cover"
-                     />
-                   </div>
-                   <div className="relative">
-                     <img 
-                       src={secondImage} 
-                       alt="Blood donation process - Step 2" 
-                       className="w-full h-auto object-cover"
-                     />
-                   </div>
-                   <div className="relative">
-                     <img 
-                       src={thirdImage} 
-                       alt="Blood donation process - Step 3" 
-                       className="w-full h-auto object-cover"
-                     />
-                   </div>
+             {/* Blood Donation Images - 3 images in a row */}
+             <div className="relative w-full max-w-4xl">
+               <div className="grid grid-cols-3 gap-4 rounded-2xl shadow-2xl overflow-hidden">
+                 <div className="relative">
+                   <img 
+                     src={firstImage} 
+                     alt="Blood donation process - Step 1" 
+                     className="w-full h-48 md:h-56 lg:h-64 object-cover"
+                   />
                  </div>
-                 
-                 {/* Decorative elements */}
-                 <div className="absolute -top-4 -right-4 w-8 h-8 bg-red-400 rounded-full opacity-60"></div>
-                 <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-red-300 rounded-full opacity-60"></div>
-                 
-                 {/* Medical Icons */}
-                 <div className="absolute -top-2 left-4">
-                   <div className="w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center">
-                     <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 24 24">
-                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                     </svg>
-                   </div>
+                 <div className="relative">
+                   <img 
+                     src={secondImage} 
+                     alt="Blood donation process - Step 2" 
+                     className="w-full h-48 md:h-56 lg:h-64 object-cover"
+                   />
+                 </div>
+                 <div className="relative">
+                   <img 
+                     src={thirdImage} 
+                     alt="Blood donation process - Step 3" 
+                     className="w-full h-48 md:h-56 lg:h-64 object-cover"
+                   />
                  </div>
                </div>
+               
+               {/* Decorative elements */}
+               <div className="absolute -top-4 -right-4 w-8 h-8 bg-red-400 rounded-full opacity-60"></div>
+               <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-red-300 rounded-full opacity-60"></div>
+               
+               {/* Medical Icons */}
+               <div className="absolute -top-2 left-4">
+                 <div className="w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center">
+                   <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                   </svg>
+                 </div>
+               </div>
+             </div>
            </div>
          </div>
          
@@ -343,7 +308,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
           {/* Traditional Login */}
           <button
             className="bg-red-600 text-white px-8 py-3 rounded-lg font-semibold shadow-md hover:bg-red-700 transition-all focus:outline-none focus:ring-2 focus:ring-red-400 flex items-center justify-center min-w-[200px]"
-            onClick={onDonorPortal}
+            onClick={onDonorRegistration}
           >
             <User className="w-5 h-5 mr-2" />
             {t('landing.accessDonorPortal')}
@@ -361,42 +326,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onDonorPortal, onStaffPortal,
           )}
         </div>
         
-        {/* Help Text */}
-        {onPinLogin && (
-          <div className="mt-4 text-sm text-gray-600">
-            <p>{t('landing.pinLoginHelp')}</p>
-          </div>
-        )}
       </section>
 
 
 
-      {/* Process Section */}
-      <section ref={sectionRefs.process} className="max-w-5xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col md:flex-row items-center gap-8">
-          <div className="flex-1">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3">{t('landing.bookDonation')}</h2>
-            <p className="text-gray-700 mb-6">{t('landing.bookDonationDesc')}</p>
-          </div>
-          <div className="flex-1">
-            <ol className="space-y-4">
-              {[
-                t('landing.processSteps.step1'),
-                t('landing.processSteps.step2'),
-                t('landing.processSteps.step3'),
-                t('landing.processSteps.step4')
-              ].map((step, i) => (
-                <li key={i} className="flex items-start">
-                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold mr-4 shadow">
-                    {i + 1}
-                  </span>
-                  <span className="text-gray-800 text-base font-medium">{step}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
-      </section>
+      {/* How It Works Section */}
+      <HowItWorksSection ref={sectionRefs.process} />
 
              {/* Feature Highlights Section */}
        <section className="max-w-7xl mx-auto px-4 py-12 bg-gray-50">
