@@ -28,7 +28,7 @@ import './i18n';
 
 type LoginMode = 'donor' | 'staff';
 type DonorMode = 'login' | 'register';
-type Route = 'landing' | 'donor' | 'staff' | 'deploy' | 'bloodCenterForm' | 'pinAuth' | 'pinSetup' | 'pinLogin' | 'emailVerification' | 'pinDebug';
+type Route = 'landing' | 'donor' | 'staff' | 'deploy' | 'bloodCenterForm' | 'pinAuth' | 'pinSetup' | 'pinLogin' | 'emailVerification' | 'pinDebug' | 'donorRegister';
 
 // Add error boundary component
 class ErrorBoundary extends React.Component<
@@ -123,9 +123,9 @@ function TestComponent() {
   );
 }
 
-function DonorAppContent({ onBackToLanding, onRouteChange }: { onBackToLanding?: () => void; onRouteChange?: (route: Route) => void }) {
+function DonorAppContent({ onBackToLanding, onRouteChange, initialMode = 'login' }: { onBackToLanding?: () => void; onRouteChange?: (route: Route) => void; initialMode?: DonorMode }) {
   const { donor, loading } = useAuth();
-  const [donorMode, setDonorMode] = useState<DonorMode>('login');
+  const [donorMode, setDonorMode] = useState<DonorMode>(initialMode);
 
   console.log('DonorAppContent render:', { donor, loading, donorMode });
 
@@ -171,7 +171,14 @@ function DonorAppContent({ onBackToLanding, onRouteChange }: { onBackToLanding?:
     return (
       <DonorRegistration 
         onBack={() => setDonorMode('login')}
-        onSuccess={() => setDonorMode('login')}
+        onSuccess={() => {
+          // Navigate to PIN setup instead of login
+          if (onRouteChange) {
+            onRouteChange('pinSetup');
+          } else {
+            setDonorMode('login');
+          }
+        }}
         onBackToLanding={onBackToLanding}
       />
     );
@@ -287,6 +294,20 @@ function App() {
           <DonorAppContent 
             onBackToLanding={() => handleRouteChange('landing')} 
             onRouteChange={handleRouteChange}
+          />
+        </AuthProvider>
+      </ErrorBoundary>
+    );
+  }
+  
+  if (route === 'donorRegister') {
+    return (
+      <ErrorBoundary>
+        <AuthProvider>
+          <DonorAppContent 
+            onBackToLanding={() => handleRouteChange('landing')} 
+            onRouteChange={handleRouteChange}
+            initialMode="register"
           />
         </AuthProvider>
       </ErrorBoundary>
@@ -431,12 +452,12 @@ function App() {
   return (
     <ErrorBoundary>
       <LandingPage 
-        onDonorPortal={() => handleRouteChange('donor')} 
         onStaffPortal={() => handleRouteChange('staff')}
         onDeployProject={() => handleRouteChange('bloodCenterForm')}
         onPinAuthDemo={() => handleRouteChange('pinAuth')}
         onPinLogin={handleQuickPinLogin}
         onPinDebug={() => handleRouteChange('pinDebug')}
+        onDonorRegistration={() => handleRouteChange('donorRegister')}
       />
     </ErrorBoundary>
   );
