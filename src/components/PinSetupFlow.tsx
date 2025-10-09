@@ -189,17 +189,17 @@ export default function PinSetupFlow({
                   <Shield className="w-8 h-8 text-blue-600" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Verifying Your Account
+                  {t('pin.setup.verifyingAccount')}
                 </h2>
                 <p className="text-gray-600">
-                  Please wait while we verify your account status...
+                  {t('pin.setup.verifyingDescription')}
                 </p>
               </div>
 
               {isVerifying && (
                 <div className="flex items-center justify-center mb-6">
                   <Loader className="w-6 h-6 animate-spin text-blue-600 mr-2" />
-                  <span className="text-gray-600">Checking verification status...</span>
+                  <span className="text-gray-600">{t('pin.setup.checkingStatus')}</span>
                 </div>
               )}
 
@@ -230,15 +230,15 @@ export default function PinSetupFlow({
                   <CheckCircle className="w-8 h-8 text-green-600" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Account Verified!
+                  {t('pin.setup.accountVerified')}
                 </h2>
                 <p className="text-gray-600">
-                  Your account has been verified. Please confirm your details and set up your PIN.
+                  {t('pin.setup.accountVerifiedDescription')}
                 </p>
               </div>
 
               <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <h3 className="text-sm font-medium text-gray-700 mb-3">Your Registration Details:</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-3">{t('pin.setup.registrationDetails')}</h3>
                 <div className="space-y-2">
                   <div className="flex items-center">
                     <User className="w-4 h-4 text-gray-400 mr-2" />
@@ -266,13 +266,13 @@ export default function PinSetupFlow({
                   onClick={handleBackToLanding}
                   className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   onClick={() => setCurrentStep('pin-setup')}
                   className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 >
-                  Continue to PIN Setup
+                  {t('pin.setup.continueToPinSetup')}
                 </button>
               </div>
             </div>
@@ -294,10 +294,10 @@ export default function PinSetupFlow({
                   <CheckCircle className="w-8 h-8 text-green-600" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Set Up Your PIN
+                  {t('pin.setup.title')}
                 </h2>
                 <p className="text-gray-600">
-                  Create a secure 5-digit PIN for quick access to your account.
+                  {t('pin.setup.description')}
                 </p>
               </div>
 
@@ -311,7 +311,7 @@ export default function PinSetupFlow({
                   <div className="flex items-start">
                     <AlertCircle className="w-5 h-5 text-red-600 mr-2 mt-0.5" />
                     <div>
-                      <h4 className="text-sm font-medium text-red-800">Setup Error</h4>
+                      <h4 className="text-sm font-medium text-red-800">{t('pin.setupError')}</h4>
                       <p className="text-sm text-red-700 mt-1">{error}</p>
                     </div>
                   </div>
@@ -335,20 +335,20 @@ export default function PinSetupFlow({
                 <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                PIN Setup Complete!
+                {t('pin.setup.setupComplete')}
               </h2>
               <p className="text-gray-600 mb-6">
-                Your PIN has been set up successfully. You can now use it to log in securely.
+                {t('pin.setup.setupCompleteDescription')}
               </p>
               <div className="flex items-center justify-center space-x-2 text-sm text-gray-500 mb-6">
                 <Shield className="w-4 h-4" />
-                <span>Your PIN is encrypted and stored securely</span>
+                <span>{t('pin.setup.encryptedNotice')}</span>
               </div>
               <button
                 onClick={onComplete}
                 className="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
               >
-                Continue to Dashboard
+                {t('pin.setup.continueToDashboard')}
               </button>
             </div>
           </div>
@@ -400,7 +400,7 @@ export default function PinSetupFlow({
             <div className="bg-white rounded-2xl shadow-xl p-8">
               <div className="text-center mb-6">
                 <div className="mx-auto w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-                  <Shield className="w-8 h-8 text-orange-600" />
+                  <Clock className="w-8 h-8 text-orange-600" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">
                   {t('pin.accountVerificationPending')}

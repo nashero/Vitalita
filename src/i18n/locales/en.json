@@ -18,6 +18,19 @@
     "clear": "Clear",
     "refresh": "Refresh"
   },
+  "sessionTimeout": {
+    "warning": {
+      "title": "Session Timeout Warning",
+      "message": "Your session will expire in {{time}} due to inactivity. Click \"Extend Session\" to continue."
+    },
+    "expired": {
+      "title": "Session Expired",
+      "message": "Your session has expired due to inactivity. Please log in again."
+    },
+    "extendSession": "Extend Session",
+    "logout": "Logout",
+    "securityNote": "For security, sessions expire after 15 minutes of inactivity."
+  },
   "navigation": {
     "home": "Home",
     "donorPortal": "Register as Donor",
@@ -517,6 +530,39 @@
     "questionsContactUs": "Questions? Contact us:",
     "supportEmail": "support@example.com",
     "supportPhone": "1-800-XXX-XXXX",
-    "backToHomePage": "Back to Home Page"
+    "backToHomePage": "Back to Home Page",
+    "setup": {
+      "title": "Set Up Your PIN",
+      "description": "Create a secure 5-digit PIN for quick access to your account",
+      "confirmDescription": "Confirm your PIN to complete the setup",
+      "enterPinLabel": "Enter your 5-digit PIN",
+      "confirmPinLabel": "Confirm your PIN",
+      "enterPinPlaceholder": "Enter PIN",
+      "confirmPinPlaceholder": "Confirm PIN",
+      "securityNotice": "Important Security Notice",
+      "securityNoticeText": "Do not use your ATM card PIN or any banking PIN. Create a unique PIN that is different from any financial account PINs for your security.",
+      "requirements": "PIN Requirements:",
+      "requirement1": "Exactly 5 digits",
+      "requirement2": "Not sequential (e.g., 12345, 54321)",
+      "requirement3": "Not repeated digits (e.g., 11111, 22222)",
+      "securityWarning": "Security Warning",
+      "pinsMatch": "PINs match",
+      "pinsDoNotMatch": "PINs do not match",
+      "completeSetup": "Complete Setup",
+      "settingUp": "Setting up...",
+      "setupComplete": "PIN Setup Complete!",
+      "setupCompleteDescription": "Your PIN has been set up successfully. You can now use it to log in securely.",
+      "encryptedNotice": "Your PIN is encrypted and stored securely",
+      "securityNoticeFooter": "Security Notice",
+      "securityNoticeFooterText": "Your PIN is encrypted using industry-standard security measures and stored securely on your device. It will be required for all future logins.",
+      "continueToDashboard": "Continue to Dashboard",
+      "verifyingAccount": "Verifying Your Account",
+      "verifyingDescription": "Please wait while we verify your account status...",
+      "checkingStatus": "Checking verification status...",
+      "accountVerified": "Account Verified!",
+      "accountVerifiedDescription": "Your account has been verified. Please confirm your details and set up your PIN.",
+      "registrationDetails": "Your Registration Details:",
+      "continueToPinSetup": "Continue to PIN Setup"
+    }
   }
 }

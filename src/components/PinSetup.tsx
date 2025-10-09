@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { usePinAuth } from '../hooks/usePinAuth';
 import PinInput from './PinInput';
 import { validatePin, PIN_PATTERNS } from '../utils/pinUtils';
@@ -27,6 +28,7 @@ export default function PinSetup({
   onCancel, 
   className = '' 
 }: PinSetupProps) {
+  const { t } = useTranslation();
   const { setupPin, isLoading, error, clearError } = usePinAuth();
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
@@ -157,7 +159,7 @@ export default function PinSetup({
     
     if (currentPin !== currentConfirmPin) {
       console.log('❌ PINs do not match');
-      setValidationErrors(['PINs do not match']);
+      setValidationErrors([t('pin.setup.pinsDoNotMatch')]);
       return;
     }
 
@@ -181,11 +183,11 @@ export default function PinSetup({
         }, 2000);
       } else {
         console.log('PIN setup failed:', result.error);
-        setValidationErrors([result.error || 'Failed to set up PIN']);
+        setValidationErrors([result.error || t('pin.setupError')]);
       }
     } catch (error) {
       console.error('Error setting up PIN:', error);
-      setError('An unexpected error occurred');
+      setError(t('pin.errorDuringPinSetup'));
     }
   };
 
@@ -215,14 +217,14 @@ export default function PinSetup({
             <CheckCircle className="w-8 h-8 text-green-600" />
           </div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            PIN Setup Complete!
+            {t('pin.setup.setupComplete')}
           </h3>
           <p className="text-gray-600 mb-6">
-            Your PIN has been set up successfully. You can now use it to log in securely.
+            {t('pin.setup.setupCompleteDescription')}
           </p>
           <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
             <Shield className="w-4 h-4" />
-            <span>Your PIN is encrypted and stored securely</span>
+            <span>{t('pin.setup.encryptedNotice')}</span>
           </div>
         </div>
       </div>
@@ -231,26 +233,12 @@ export default function PinSetup({
 
   return (
     <div className={`pin-setup ${className}`}>
-      <div className="text-center mb-6">
-        <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-          <Lock className="w-8 h-8 text-blue-600" />
-        </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Set Up Your PIN
-        </h2>
-        <p className="text-gray-600">
-          {step === 'pin' 
-            ? 'Create a secure 5-digit PIN for quick access to your account'
-            : 'Confirm your PIN to complete the setup'
-          }
-        </p>
-      </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {step === 'pin' && (
           <div>
             <label htmlFor="pin" className="block text-sm font-medium text-gray-700 mb-2">
-              Enter your 5-digit PIN
+              {t('pin.setup.enterPinLabel')}
             </label>
             <PinInput
               value={pin}
@@ -261,7 +249,7 @@ export default function PinSetup({
               showStrength={true}
               maskInput={!showPin}
               autoFocus={true}
-              placeholder="Enter PIN"
+              placeholder={t('pin.setup.enterPinPlaceholder')}
               className="mb-4"
               data-testid="pin-input"
             />
@@ -271,9 +259,9 @@ export default function PinSetup({
               <div className="flex items-start">
                 <AlertCircle className="w-5 h-5 text-red-600 mr-2 mt-0.5" />
                 <div>
-                  <h4 className="text-sm font-medium text-red-800">Important Security Notice</h4>
+                  <h4 className="text-sm font-medium text-red-800">{t('pin.setup.securityNotice')}</h4>
                   <p className="text-sm text-red-700 mt-1">
-                    <strong>Do not use your ATM card PIN or any banking PIN.</strong> Create a unique PIN that is different from any financial account PINs for your security.
+                    <strong>{t('pin.setup.securityNoticeText')}</strong>
                   </p>
                 </div>
               </div>
@@ -281,19 +269,19 @@ export default function PinSetup({
 
             {/* PIN Requirements */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-              <h4 className="text-sm font-medium text-blue-900 mb-2">PIN Requirements:</h4>
+              <h4 className="text-sm font-medium text-blue-900 mb-2">{t('pin.setup.requirements')}</h4>
               <ul className="text-sm text-blue-800 space-y-1">
                 <li className="flex items-center">
                   <CheckCircle className={`w-4 h-4 mr-2 ${pin.length === 5 ? 'text-green-500' : 'text-gray-400'}`} />
-                  Exactly 5 digits
+                  {t('pin.setup.requirement1')}
                 </li>
                 <li className="flex items-center">
                   <CheckCircle className={`w-4 h-4 mr-2 ${!PIN_PATTERNS.SEQUENTIAL.test(pin) ? 'text-green-500' : 'text-gray-400'}`} />
-                  Not sequential (e.g., 12345, 54321)
+                  {t('pin.setup.requirement2')}
                 </li>
                 <li className="flex items-center">
                   <CheckCircle className={`w-4 h-4 mr-2 ${!PIN_PATTERNS.REPEATED.test(pin) ? 'text-green-500' : 'text-gray-400'}`} />
-                  Not repeated digits (e.g., 11111, 22222)
+                  {t('pin.setup.requirement3')}
                 </li>
               </ul>
             </div>
@@ -304,7 +292,7 @@ export default function PinSetup({
                 <div className="flex items-start">
                   <AlertCircle className="w-5 h-5 text-yellow-600 mr-2 mt-0.5" />
                   <div>
-                    <h4 className="text-sm font-medium text-yellow-800">Security Warning</h4>
+                    <h4 className="text-sm font-medium text-yellow-800">{t('pin.setup.securityWarning')}</h4>
                     <ul className="text-sm text-yellow-700 mt-1">
                       {warnings.map((warning, index) => (
                         <li key={index}>• {warning}</li>
@@ -323,7 +311,7 @@ export default function PinSetup({
                 className="flex items-center text-sm text-gray-600 hover:text-gray-800 transition-colors"
               >
                 {showPin ? <EyeOff className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
-                {showPin ? 'Hide PIN' : 'Show PIN'}
+                {showPin ? t('pin.hidePin') : t('pin.showPin')}
               </button>
             </div>
           </div>
@@ -332,17 +320,17 @@ export default function PinSetup({
         {step === 'confirm' && (
           <div>
             <label htmlFor="confirmPin" className="block text-sm font-medium text-gray-700 mb-2">
-              Confirm your PIN
+              {t('pin.setup.confirmPinLabel')}
             </label>
             <PinInput
               value={confirmPin}
               onChange={handleConfirmPinChange}
               onComplete={handleConfirmPinComplete}
               length={5}
-              error={pin !== confirmPin && confirmPin.length === 5 ? 'PINs do not match' : undefined}
+              error={pin !== confirmPin && confirmPin.length === 5 ? t('pin.setup.pinsDoNotMatch') : undefined}
               maskInput={!showConfirmPin}
               autoFocus={true}
-              placeholder="Confirm PIN"
+              placeholder={t('pin.setup.confirmPinPlaceholder')}
               className="mb-4"
               data-testid="confirm-pin-input"
             />
@@ -355,12 +343,12 @@ export default function PinSetup({
                 {pin === confirmPin ? (
                   <>
                     <CheckCircle className="w-4 h-4 mr-1" />
-                    PINs match
+                    {t('pin.setup.pinsMatch')}
                   </>
                 ) : (
                   <>
                     <AlertCircle className="w-4 h-4 mr-1" />
-                    PINs do not match
+                    {t('pin.setup.pinsDoNotMatch')}
                   </>
                 )}
               </div>
@@ -374,7 +362,7 @@ export default function PinSetup({
                 className="flex items-center text-sm text-gray-600 hover:text-gray-800 transition-colors"
               >
                 {showConfirmPin ? <EyeOff className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
-                {showConfirmPin ? 'Hide PIN' : 'Show PIN'}
+                {showConfirmPin ? t('pin.hidePin') : t('pin.showPin')}
               </button>
             </div>
           </div>
@@ -386,7 +374,7 @@ export default function PinSetup({
             <div className="flex items-start">
               <AlertCircle className="w-5 h-5 text-red-600 mr-2 mt-0.5" />
               <div>
-                <h4 className="text-sm font-medium text-red-800">Setup Error</h4>
+                <h4 className="text-sm font-medium text-red-800">{t('pin.setupError')}</h4>
                 <p className="text-sm text-red-700 mt-1">{error}</p>
               </div>
             </div>
@@ -400,7 +388,7 @@ export default function PinSetup({
             onClick={handleBack}
             className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
           >
-            {step === 'pin' ? 'Cancel' : 'Back'}
+            {step === 'pin' ? t('common.cancel') : t('common.back')}
           </button>
           
         <button
@@ -457,26 +445,7 @@ export default function PinSetup({
               : 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
           }`}
         >
-          {isLoading ? 'Setting up...' : 'Complete Setup'}
-        </button>
-        
-        {/* Debug button - remove this after testing */}
-        <button
-          type="button"
-          onClick={() => {
-            console.log('=== DEBUG BUTTON CLICKED ===');
-            console.log('Current state:', {
-              pin: pin.substring(0, 2) + '***',
-              confirmPin: confirmPin.substring(0, 2) + '***',
-              isFormValid,
-              validationErrors,
-              step
-            });
-            alert('Debug button clicked! Check console.');
-          }}
-          className="mt-2 w-full px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-        >
-          DEBUG: Test Button
+          {isLoading ? t('pin.setup.settingUp') : t('pin.setup.completeSetup')}
         </button>
         </div>
       </form>
@@ -486,8 +455,8 @@ export default function PinSetup({
         <div className="flex items-start">
           <Shield className="w-5 h-5 text-gray-600 mr-2 mt-0.5" />
           <div className="text-sm text-gray-600">
-            <p className="font-medium mb-1">Security Notice</p>
-            <p>Your PIN is encrypted using industry-standard security measures and stored securely on your device. It will be required for all future logins.</p>
+            <p className="font-medium mb-1">{t('pin.setup.securityNoticeFooter')}</p>
+            <p>{t('pin.setup.securityNoticeFooterText')}</p>
           </div>
         </div>
       </div>

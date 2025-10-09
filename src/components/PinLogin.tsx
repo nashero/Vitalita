@@ -57,11 +57,14 @@ export default function PinLogin({
     if (isSubmitting || isLoading) return;
     
     setIsSubmitting(true);
+    console.log('PIN authentication starting...');
     const result = await authenticateWithPin(value);
     
     if (result.success) {
+      console.log('PIN authentication successful, calling onSuccess');
       onSuccess?.();
     } else {
+      console.log('PIN authentication failed:', result.error);
       setPin(''); // Clear PIN on failure
     }
     

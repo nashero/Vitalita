@@ -311,6 +311,14 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                       >
                         {t('auth.registerAnotherDonor')}
                       </button>
+                      {onBackToLanding && (
+                        <button
+                          onClick={onBackToLanding}
+                          className="bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                        >
+                          {t('auth.backToHome')}
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -354,7 +362,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                       type="text"
                       id="firstName"
                       value={formData.firstName}
-                      onChange={(e) => handleInputChange('firstName', e.target.value)}
+                      onChange={(e) => handleInputChange('firstName', e.target.value.toUpperCase())}
                       className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200"
                       placeholder={t('auth.enterFirstName')}
                       disabled={loading}
@@ -375,7 +383,7 @@ export default function DonorRegistration({ onBack, onSuccess, onBackToLanding }
                       type="text"
                       id="lastName"
                       value={formData.lastName}
-                      onChange={(e) => handleInputChange('lastName', e.target.value)}
+                      onChange={(e) => handleInputChange('lastName', e.target.value.toUpperCase())}
                       className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200"
                       placeholder={t('auth.enterLastName')}
                       disabled={loading}

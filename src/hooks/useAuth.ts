@@ -8,6 +8,16 @@ import {
   generateDeviceFingerprint,
   getDeviceDisplayInfo
 } from '../utils/deviceUtils';
+import { 
+  createPinSession, 
+  getPinSession, 
+  validatePinSession, 
+  hasActivePinSession, 
+  clearPinSession,
+  extendPinSession,
+  getSessionInfo as getPinSessionInfo
+} from '../utils/sessionManager';
+import { useSessionTimeout } from './useSessionTimeout';
 
 export interface Donor {
   donor_hash_id: string;
@@ -39,6 +49,29 @@ interface AuthContextType {
   getSessionInfo: () => { deviceInfo: string; lastLogin: string | null; sessionExpires: string | null };
   refreshSession: () => Promise<boolean>;
   isPasswordSet: (donorHashId: string) => Promise<boolean>;
+  // PIN Session methods
+  hasActivePinSession: () => boolean;
+  createPinSession: (donorId: string, donorHashId: string) => void;
+  clearPinSession: () => void;
+  extendPinSession: () => boolean;
+  getPinSessionInfo: () => {
+    isActive: boolean;
+    donorId: string | null;
+    sessionId: string | null;
+    expiresAt: Date | null;
+    timeRemaining: number;
+  };
+  // Session timeout methods
+  resetSessionTimeout: () => void;
+  extendSession: () => void;
+  pauseSessionTimeout: () => void;
+  resumeSessionTimeout: () => void;
+  getSessionTimeoutState: () => {
+    isActive: boolean;
+    timeRemaining: number;
+    isWarning: boolean;
+    isExpired: boolean;
+  };
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -54,26 +87,126 @@ export function useAuth() {
 export function useAuthProvider() {
   const [donor, setDonor] = useState<Donor | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showTimeoutWarning, setShowTimeoutWarning] = useState(false);
+
+  // Session timeout handlers
+  const handleSessionTimeout = () => {
+    console.log('Session timeout - logging out user');
+    logout();
+  };
+
+  const handleSessionWarning = () => {
+    console.log('Session warning - showing timeout warning');
+    setShowTimeoutWarning(true);
+  };
+
+  // Initialize session timeout
+  const sessionTimeout = useSessionTimeout(
+    handleSessionTimeout,
+    handleSessionWarning,
+    {
+      timeoutMinutes: 15,
+      warningMinutes: 2,
+      checkIntervalMs: 1000,
+    }
+  );
+
+  // Start session timeout when user is authenticated
+  useEffect(() => {
+    if (donor) {
+      sessionTimeout.actions.resetTimeout();
+      setShowTimeoutWarning(false);
+    } else {
+      // Reset timeout state when user logs out
+      setShowTimeoutWarning(false);
+    }
+  }, [donor]);
 
   useEffect(() => {
-    // Check if donor is already logged in (from session storage)
-    const sessionData = getSessionData();
-    if (sessionData) {
-      // Validate session with backend
-      validateSession(sessionData.sessionToken);
+    // Check for active PIN session first
+    const pinSessionValidation = validatePinSession();
+    if (pinSessionValidation.isValid && pinSessionValidation.sessionData) {
+      // User has an active PIN session, authenticate them automatically
+      console.log('Active PIN session found, authenticating user automatically');
+      authenticateFromPinSession(pinSessionValidation.sessionData);
     } else {
-      // Fall back to old localStorage method for backward compatibility
-      const savedDonor = localStorage.getItem('donor');
-      if (savedDonor) {
-        try {
-          setDonor(JSON.parse(savedDonor));
-        } catch (error) {
-          localStorage.removeItem('donor');
+      // Check if donor is already logged in (from session storage)
+      const sessionData = getSessionData();
+      if (sessionData) {
+        // Validate session with backend
+        validateSession(sessionData.sessionToken);
+      } else {
+        // Fall back to old localStorage method for backward compatibility
+        const savedDonor = localStorage.getItem('donor');
+        if (savedDonor) {
+          try {
+            setDonor(JSON.parse(savedDonor));
+          } catch (error) {
+            localStorage.removeItem('donor');
+          }
         }
       }
     }
     setLoading(false);
   }, []);
+
+  const authenticateFromPinSession = async (sessionData: any) => {
+    try {
+      // Get donor data from database using the donor hash ID from session
+      const { data: donorData, error } = await supabase
+        .from('donors')
+        .select('*')
+        .eq('donor_hash_id', sessionData.donorHashId)
+        .eq('is_active', true)
+        .single();
+
+      if (error || !donorData) {
+        console.error('Failed to authenticate from PIN session:', error);
+        clearPinSession();
+        return;
+      }
+
+      // Check if account is activated
+      if (!donorData.account_activated) {
+        console.error('Account not activated');
+        clearPinSession();
+        return;
+      }
+
+      // Check if email is verified
+      if (!donorData.email_verified) {
+        console.error('Email not verified');
+        clearPinSession();
+        return;
+      }
+
+      // Create donor object with all required fields
+      const authenticatedDonor: Donor = {
+        donor_hash_id: donorData.donor_hash_id,
+        donor_id: donorData.donor_id,
+        preferred_language: donorData.preferred_language || 'en',
+        preferred_communication_channel: donorData.preferred_communication_channel || 'email',
+        initial_vetting_status: donorData.initial_vetting_status || false,
+        total_donations_this_year: donorData.total_donations_this_year || 0,
+        last_donation_date: donorData.last_donation_date,
+        is_active: donorData.is_active,
+        avis_donor_center: donorData.avis_donor_center,
+        email: donorData.email,
+        email_verified: donorData.email_verified,
+        account_activated: donorData.account_activated,
+      };
+
+      setDonor(authenticatedDonor);
+      
+      // Store in localStorage for backward compatibility
+      localStorage.setItem('donor', JSON.stringify(authenticatedDonor));
+
+      console.log('Successfully authenticated from PIN session');
+    } catch (error) {
+      console.error('Error authenticating from PIN session:', error);
+      clearPinSession();
+    }
+  };
 
   const validateSession = async (sessionToken: string) => {
     try {
@@ -175,6 +308,8 @@ export function useAuthProvider() {
     setDonor(null);
     localStorage.removeItem('donor');
     clearSessionData();
+    clearPinSession(); // Clear PIN session as well
+    setShowTimeoutWarning(false);
   };
 
   const refreshSession = async (): Promise<boolean> => {
@@ -226,6 +361,34 @@ export function useAuthProvider() {
     }
   };
 
+  // Session timeout methods
+  const resetSessionTimeout = () => {
+    sessionTimeout.actions.resetTimeout();
+    setShowTimeoutWarning(false);
+  };
+
+  const extendSession = () => {
+    sessionTimeout.actions.extendSession();
+    setShowTimeoutWarning(false);
+  };
+
+  const pauseSessionTimeout = () => {
+    sessionTimeout.actions.pauseTimeout();
+  };
+
+  const resumeSessionTimeout = () => {
+    sessionTimeout.actions.resumeTimeout();
+  };
+
+  const getSessionTimeoutState = () => {
+    return {
+      isActive: sessionTimeout.state.isActive,
+      timeRemaining: sessionTimeout.state.timeRemaining,
+      isWarning: sessionTimeout.state.isWarning,
+      isExpired: sessionTimeout.state.isExpired,
+    };
+  };
+
   return {
     donor,
     loading,
@@ -233,6 +396,20 @@ export function useAuthProvider() {
     logout,
     getSessionInfo,
     refreshSession,
-    isPasswordSet
+    isPasswordSet,
+    // PIN Session methods
+    hasActivePinSession,
+    createPinSession: (donorId: string, donorHashId: string) => {
+      createPinSession(donorId, donorHashId);
+    },
+    clearPinSession,
+    extendPinSession,
+    getPinSessionInfo,
+    // Session timeout methods
+    resetSessionTimeout,
+    extendSession,
+    pauseSessionTimeout,
+    resumeSessionTimeout,
+    getSessionTimeoutState,
   };
 }

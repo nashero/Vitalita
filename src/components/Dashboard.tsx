@@ -6,9 +6,10 @@ import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import AppointmentBooking from './AppointmentBooking';
 import DonorHistory from './DonorHistory';
-import SessionManager from './SessionManager';
 import LanguageSwitcher from './LanguageSwitcher';
+import SessionTimeoutTest from './SessionTimeoutTest';
 import { formatDate, formatTime, getCurrentLocale } from '../utils/languageUtils';
+import { validatePinSession, getSessionInfo } from '../utils/sessionManager';
 
 interface Appointment {
   appointment_id: string;
@@ -27,15 +28,31 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
   const { donor, logout } = useAuth();
   const [showBooking, setShowBooking] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [showTimeoutTest, setShowTimeoutTest] = useState(false);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [sessionInfo, setSessionInfo] = useState<any>(null);
 
   useEffect(() => {
     if (donor) {
       fetchAppointments();
+      // Check PIN session validity
+      checkSessionValidity();
     }
   }, [donor]);
+
+  const checkSessionValidity = () => {
+    const validation = validatePinSession();
+    if (validation.isValid && validation.sessionData) {
+      const info = getSessionInfo();
+      setSessionInfo(info);
+      console.log('Dashboard: Valid PIN session found', info);
+    } else {
+      console.log('Dashboard: No valid PIN session found');
+      setSessionInfo(null);
+    }
+  };
 
   const fetchAppointments = async () => {
     try {
@@ -115,6 +132,25 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
     />;
   }
 
+  if (showTimeoutTest) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="mb-6">
+            <button
+              onClick={() => setShowTimeoutTest(false)}
+              className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              Back to Dashboard
+            </button>
+          </div>
+          <SessionTimeoutTest />
+        </div>
+      </div>
+    );
+  }
+
   const formatDate = (dateString: string | null) => {
     if (!dateString) return t('dashboard.never');
     return new Date(dateString).toLocaleDateString(getCurrentLocale(i18n.language));
@@ -174,6 +210,12 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
             </div>
             <div className="flex items-center gap-2">
               <LanguageSwitcher variant="minimal" />
+              {sessionInfo && sessionInfo.isActive && (
+                <div className="flex items-center px-3 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                  <Shield className="w-3 h-3 mr-1" />
+                  PIN Session Active
+                </div>
+              )}
               {onBackToLanding && (
                 <button
                   onClick={onBackToLanding}
@@ -283,7 +325,7 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('dashboard.appointments')}</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <button 
                   onClick={() => setShowBooking(true)}
                   className="p-6 border border-gray-200 rounded-lg hover:bg-red-50 hover:border-red-300 transition-all duration-200 text-left group"
@@ -308,6 +350,18 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
                   </div>
                   <h4 className="font-semibold text-gray-900 mb-1">{t('dashboard.viewHistory')}</h4>
                   <p className="text-sm text-gray-600">{t('dashboard.viewHistoryDesc')}</p>
+                </button>
+                <button 
+                  onClick={() => setShowTimeoutTest(true)}
+                  className="p-6 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 text-left group"
+                >
+                  <div className="flex items-center mb-3">
+                    <div className="bg-blue-100 p-2 rounded-lg group-hover:bg-blue-200 transition-colors">
+                      <Shield className="w-5 h-5 text-blue-600" />
+                    </div>
+                  </div>
+                  <h4 className="font-semibold text-gray-900 mb-1">Session Timeout Test</h4>
+                  <p className="text-sm text-gray-600">Test session timeout functionality</p>
                 </button>
               </div>
             </div>
@@ -365,9 +419,6 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
 
           {/* Right Sidebar */}
           <div className="space-y-6">
-            {/* Session Manager */}
-            <SessionManager onLogout={logout} />
-
             {/* Donation Summary */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('dashboard.donationSummary')}</h3>

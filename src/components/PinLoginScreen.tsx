@@ -42,6 +42,8 @@ export default function PinLoginScreen({
     const checkPinStatus = async () => {
       try {
         setCheckingPin(true);
+        
+        // Check if PIN is set up
         const pinExists = await hasValidPinData();
         setHasPin(pinExists);
         console.log('PIN status check:', { pinExists, isPinSetup });
@@ -57,7 +59,7 @@ export default function PinLoginScreen({
   }, [isPinSetup]);
 
   const handlePinLoginSuccess = () => {
-    console.log('PIN login successful');
+    console.log('PIN login successful - redirecting to dashboard');
     onSuccess?.();
   };
 
@@ -130,7 +132,7 @@ export default function PinLoginScreen({
           )}
           
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-            <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-6">
+            <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-4">
               <div className="text-center">
                 <div className="flex items-center justify-center mb-2">
                   <div className="bg-white/20 p-3 rounded-full">
@@ -242,7 +244,7 @@ export default function PinLoginScreen({
       <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-pink-50 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-            <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-6">
+            <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-4">
               <div className="text-center">
                 <div className="flex items-center justify-center mb-2">
                   <div className="bg-white/20 p-3 rounded-full">
@@ -293,7 +295,7 @@ export default function PinLoginScreen({
         
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-6">
+          <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-4">
             <div className="text-center">
               <div className="flex items-center justify-center mb-2">
                 <div className="bg-white/20 p-3 rounded-full">
@@ -314,21 +316,6 @@ export default function PinLoginScreen({
               onForgotPin={handleForgotPin}
             />
 
-            {/* Alternative Login Option */}
-            <div className="mt-6 pt-6 border-t border-gray-100">
-              <div className="text-center">
-                <p className="text-sm text-gray-600 mb-3">
-                  {t('pin.preferPersonalInfo')}
-                </p>
-                <button
-                  onClick={() => setShowTraditionalLogin(true)}
-                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors duration-200"
-                >
-                  <User className="w-4 h-4 mr-2" />
-                  {t('pin.useTraditionalLogin')}
-                </button>
-              </div>
-            </div>
 
             {/* Security Notice */}
             <div className="mt-6 pt-6 border-t border-gray-100">
