@@ -7,6 +7,7 @@ import thirdImage from '../assets/images/Third.jpg';
 import VoiceAgent from './VoiceAgent';
 import LanguageSwitcher from './LanguageSwitcher';
 import HowItWorksSection from './HowItWorksSection';
+import QuickSessionTest from './QuickSessionTest';
 
 
 function useAnimatedCounter(target: number, duration = 1200) {
@@ -38,9 +39,11 @@ interface LandingPageProps {
   onPinLogin?: () => void;
   onPinDebug?: () => void;
   onDonorRegistration?: () => void;
+  onSessionTest?: () => void;
+  onSessionDebug?: () => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onStaffPortal, onDeployProject, onPinAuthDemo, onPinLogin, onPinDebug, onDonorRegistration }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onStaffPortal, onDeployProject, onPinAuthDemo, onPinLogin, onPinDebug, onDonorRegistration, onSessionTest, onSessionDebug }) => {
   const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [secondaryMenuOpen, setSecondaryMenuOpen] = useState(false);
@@ -102,6 +105,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStaffPortal, onDeployProjec
     { label: t('navigation.staffArea'), to: 'features', onClick: onStaffPortal },
     { label: t('navigation.pinAuthDemo'), to: 'pinAuth', onClick: onPinAuthDemo },
     { label: 'PIN Debug Tool', to: 'pinDebug', onClick: onPinDebug },
+    { label: 'Session Auth Test', to: 'sessionTest', onClick: onSessionTest },
+    { label: 'Session Debug Test', to: 'sessionDebug', onClick: onSessionDebug },
   ];
 
   return (
@@ -324,6 +329,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStaffPortal, onDeployProjec
               {t('landing.quickPinLogin')}
             </button>
           )}
+        </div>
+        
+        {/* Quick Session Test - for debugging */}
+        <div className="mt-8 max-w-md mx-auto">
+          <QuickSessionTest />
         </div>
         
       </section>

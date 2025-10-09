@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import AuthProvider from './components/AuthProvider';
 import StaffAuthProvider from './components/StaffAuthProvider';
 import PinAuthProvider from './components/PinAuthProvider';
+import SessionTimeoutWrapper from './components/SessionTimeoutWrapper';
 import LoginForm from './components/LoginForm';
 import DonorRegistration from './components/DonorRegistration';
 import StaffLogin from './components/StaffLogin';
@@ -16,11 +17,14 @@ import PinSetupFlow from './components/PinSetupFlow';
 import PinLoginScreen from './components/PinLoginScreen';
 import EmailVerification from './components/EmailVerification';
 import PinDebugTool from './components/PinDebugTool';
+import SessionAuthTest from './components/SessionAuthTest';
+import SessionDebugTest from './components/SessionDebugTest';
 
 import { CHAT_CONFIG } from './config/chat';
 import { useAuth } from './hooks/useAuth';
 import { useStaffAuth } from './hooks/useStaffAuth';
 import { hasValidPinData } from './utils/pinStorage';
+import { hasActivePinSession, hasAnyActiveSession } from './utils/sessionManager';
 import { Users, Shield, ArrowLeft, UserPlus, Key } from 'lucide-react';
 
 // Import i18n configuration
@@ -28,7 +32,7 @@ import './i18n';
 
 type LoginMode = 'donor' | 'staff';
 type DonorMode = 'login' | 'register';
-type Route = 'landing' | 'donor' | 'staff' | 'deploy' | 'bloodCenterForm' | 'pinAuth' | 'pinSetup' | 'pinLogin' | 'emailVerification' | 'pinDebug' | 'donorRegister';
+type Route = 'landing' | 'donor' | 'staff' | 'deploy' | 'bloodCenterForm' | 'pinAuth' | 'pinSetup' | 'pinLogin' | 'emailVerification' | 'pinDebug' | 'donorRegister' | 'sessionTest' | 'sessionDebug';
 
 // Add error boundary component
 class ErrorBoundary extends React.Component<
@@ -164,7 +168,11 @@ function DonorAppContent({ onBackToLanding, onRouteChange, initialMode = 'login'
   }
 
   if (donor) {
-    return <Dashboard onBackToLanding={onBackToLanding} />;
+    return (
+      <SessionTimeoutWrapper onLogout={() => onBackToLanding?.()}>
+        <Dashboard onBackToLanding={onBackToLanding} />
+      </SessionTimeoutWrapper>
+    );
   }
 
   if (donorMode === 'register') {
@@ -210,7 +218,11 @@ function StaffAppContent({ onBackToLanding }: { onBackToLanding?: () => void }) 
   }
 
   if (staff) {
-    return <StaffDashboard onBackToLanding={onBackToLanding} />;
+    return (
+      <SessionTimeoutWrapper onLogout={() => onBackToLanding?.()}>
+        <StaffDashboard onBackToLanding={onBackToLanding} />
+      </SessionTimeoutWrapper>
+    );
   }
 
   return staff ? <StaffDashboard /> : <StaffLogin onBackToLanding={onBackToLanding} />;
@@ -273,6 +285,7 @@ function LoginModeSelector({ onSelectMode }: { onSelectMode: (mode: LoginMode) =
 
 function App() {
   const [route, setRoute] = useState<Route>('landing');
+  const [isCheckingSession, setIsCheckingSession] = useState(false);
 
   console.log('App render:', { route });
   
@@ -285,6 +298,18 @@ function App() {
   // Add a simple loading state
   if (typeof window === 'undefined') {
     return <div>Loading...</div>;
+  }
+
+  // Show loading state when checking for active sessions
+  if (isCheckingSession) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-pink-50 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Checking for active session...</p>
+        </div>
+      </div>
+    );
   }
 
   if (route === 'donor') {
@@ -372,12 +397,14 @@ function App() {
       <ErrorBoundary>
         <AuthProvider>
           <PinAuthProvider>
-            <PinLoginScreen 
-              onSuccess={() => handleRouteChange('donor')}
-              onBackToLanding={() => handleRouteChange('landing')}
-              onTraditionalLogin={() => handleRouteChange('donor')}
-              onPinSetup={() => handleRouteChange('pinSetup')}
-            />
+            <SessionTimeoutWrapper onLogout={() => handleRouteChange('landing')}>
+              <PinLoginScreen 
+                onSuccess={() => handleRouteChange('donor')}
+                onBackToLanding={() => handleRouteChange('landing')}
+                onTraditionalLogin={() => handleRouteChange('donor')}
+                onPinSetup={() => handleRouteChange('pinSetup')}
+              />
+            </SessionTimeoutWrapper>
           </PinAuthProvider>
         </AuthProvider>
       </ErrorBoundary>
@@ -425,12 +452,50 @@ function App() {
     );
   }
   
+  if (route === 'sessionTest') {
+    return (
+      <ErrorBoundary>
+        <AuthProvider>
+          <PinAuthProvider>
+            <SessionAuthTest onBack={() => handleRouteChange('landing')} />
+          </PinAuthProvider>
+        </AuthProvider>
+      </ErrorBoundary>
+    );
+  }
+  
+  if (route === 'sessionDebug') {
+    return (
+      <ErrorBoundary>
+        <SessionDebugTest />
+      </ErrorBoundary>
+    );
+  }
+  
   // Handler for Quick PIN Login button - checks PIN status and routes accordingly
   const handleQuickPinLogin = async () => {
     try {
       console.log('Quick PIN Login clicked - checking PIN status...');
+      setIsCheckingSession(true);
+      
+      // Small delay to ensure any pending session operations complete
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Check for any active session (PIN or traditional)
+      const hasActiveSession = hasAnyActiveSession();
+      console.log('Session check result:', { hasActiveSession });
+      
+      if (hasActiveSession) {
+        console.log('Active session found - routing directly to donor dashboard');
+        setIsCheckingSession(false);
+        handleRouteChange('donor');
+        return;
+      }
+      
       const hasPinSetup = await hasValidPinData();
-      console.log('PIN status check result:', { hasPinSetup });
+      console.log('PIN status check result:', { hasPinSetup, hasActiveSession });
+      
+      setIsCheckingSession(false);
       
       if (hasPinSetup) {
         // User has PIN set up, route to PIN login
@@ -443,6 +508,7 @@ function App() {
       }
     } catch (error) {
       console.error('Error checking PIN status:', error);
+      setIsCheckingSession(false);
       // On error, default to PIN login which will handle the flow
       handleRouteChange('pinLogin');
     }
@@ -458,6 +524,8 @@ function App() {
         onPinLogin={handleQuickPinLogin}
         onPinDebug={() => handleRouteChange('pinDebug')}
         onDonorRegistration={() => handleRouteChange('donorRegister')}
+        onSessionTest={() => handleRouteChange('sessionTest')}
+        onSessionDebug={() => handleRouteChange('sessionDebug')}
       />
     </ErrorBoundary>
   );

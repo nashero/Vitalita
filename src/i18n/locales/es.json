@@ -18,6 +18,19 @@
     "clear": "Limpiar",
     "refresh": "Actualizar"
   },
+  "sessionTimeout": {
+    "warning": {
+      "title": "Advertencia de Tiempo de Sesión",
+      "message": "Su sesión expirará en {{time}} debido a inactividad. Haga clic en \"Extender Sesión\" para continuar."
+    },
+    "expired": {
+      "title": "Sesión Expirada",
+      "message": "Su sesión ha expirado debido a inactividad. Por favor, inicie sesión nuevamente."
+    },
+    "extendSession": "Extender Sesión",
+    "logout": "Cerrar Sesión",
+    "securityNote": "Por seguridad, las sesiones expiran después de 15 minutos de inactividad."
+  },
   "navigation": {
     "home": "Inicio",
     "donorPortal": "Registrarse como Donante",
@@ -531,6 +544,39 @@
     "questionsContactUs": "¿Preguntas? Contáctanos:",
     "supportEmail": "support@example.com",
     "supportPhone": "1-800-XXX-XXXX",
-    "backToHomePage": "Volver a la Página de Inicio"
+    "backToHomePage": "Volver a la Página de Inicio",
+    "setup": {
+      "title": "Configura tu PIN",
+      "description": "Crea un PIN seguro de 5 dígitos para acceso rápido a tu cuenta",
+      "confirmDescription": "Confirma tu PIN para completar la configuración",
+      "enterPinLabel": "Ingresa tu PIN de 5 dígitos",
+      "confirmPinLabel": "Confirma tu PIN",
+      "enterPinPlaceholder": "Ingresa PIN",
+      "confirmPinPlaceholder": "Confirma PIN",
+      "securityNotice": "Aviso de Seguridad Importante",
+      "securityNoticeText": "No uses el PIN de tu tarjeta ATM o cualquier PIN bancario. Crea un PIN único que sea diferente de cualquier PIN de cuenta financiera para tu seguridad.",
+      "requirements": "Requisitos del PIN:",
+      "requirement1": "Exactamente 5 dígitos",
+      "requirement2": "No secuencial (ej., 12345, 54321)",
+      "requirement3": "No dígitos repetidos (ej., 11111, 22222)",
+      "securityWarning": "Advertencia de Seguridad",
+      "pinsMatch": "Los PINs coinciden",
+      "pinsDoNotMatch": "Los PINs no coinciden",
+      "completeSetup": "Completar Configuración",
+      "settingUp": "Configurando...",
+      "setupComplete": "¡Configuración de PIN Completada!",
+      "setupCompleteDescription": "Tu PIN ha sido configurado exitosamente. Ahora puedes usarlo para iniciar sesión de forma segura.",
+      "encryptedNotice": "Tu PIN está encriptado y almacenado de forma segura",
+      "securityNoticeFooter": "Aviso de Seguridad",
+      "securityNoticeFooterText": "Tu PIN está encriptado usando medidas de seguridad estándar de la industria y almacenado de forma segura en tu dispositivo. Será requerido para todos los futuros inicios de sesión.",
+      "continueToDashboard": "Continuar al Panel",
+      "verifyingAccount": "Verificando tu Cuenta",
+      "verifyingDescription": "Por favor espera mientras verificamos el estado de tu cuenta...",
+      "checkingStatus": "Verificando estado de verificación...",
+      "accountVerified": "¡Cuenta Verificada!",
+      "accountVerifiedDescription": "Tu cuenta ha sido verificada. Por favor confirma tus detalles y configura tu PIN.",
+      "registrationDetails": "Tus Detalles de Registro:",
+      "continueToPinSetup": "Continuar a Configuración de PIN"
+    }
   }
 }

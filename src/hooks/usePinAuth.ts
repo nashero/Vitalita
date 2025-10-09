@@ -29,6 +29,13 @@ import {
   PinData
 } from '../utils/pinStorage';
 import { getDonorCredentials } from '../utils/cookieStorage';
+import { 
+  hasActivePinSession, 
+  createPinSession, 
+  clearPinSession,
+  validatePinSession
+} from '../utils/sessionManager';
+import { useSessionTimeout } from './useSessionTimeout';
 
 export interface PinAuthContextType {
   // State
@@ -55,6 +62,23 @@ export interface PinAuthContextType {
   logout: () => void;
   clearError: () => void;
   
+  // PIN Session Management
+  hasActivePinSession: () => boolean;
+  createPinSession: (donorId: string, donorHashId: string) => void;
+  clearPinSession: () => void;
+  
+  // Session Timeout Management
+  resetSessionTimeout: () => void;
+  extendSession: () => void;
+  pauseSessionTimeout: () => void;
+  resumeSessionTimeout: () => void;
+  getSessionTimeoutState: () => {
+    isActive: boolean;
+    timeRemaining: number;
+    isWarning: boolean;
+    isExpired: boolean;
+  };
+  
   // Utility
   checkPinStatus: () => Promise<void>;
 }
@@ -77,7 +101,19 @@ export function usePinAuth() {
 }
 
 export function usePinAuthProvider() {
-  const { donor, login: authLogin, logout: authLogout } = useAuth();
+  const { 
+    donor, 
+    login: authLogin, 
+    logout: authLogout,
+    hasActivePinSession: authHasActivePinSession,
+    createPinSession: authCreatePinSession,
+    clearPinSession: authClearPinSession,
+    resetSessionTimeout: authResetSessionTimeout,
+    extendSession: authExtendSession,
+    pauseSessionTimeout: authPauseSessionTimeout,
+    resumeSessionTimeout: authResumeSessionTimeout,
+    getSessionTimeoutState: authGetSessionTimeoutState
+  } = useAuth();
   
   // State
   const [isPinSetup, setIsPinSetup] = useState(false);
@@ -257,6 +293,9 @@ export function usePinAuthProvider() {
     try {
       setIsLoading(true);
       setError(null);
+      
+      // Pause session timeout during PIN authentication
+      pauseSessionTimeout();
 
       // Check if user is locked out - if locked, PIN authentication is completely disabled
       if (lockoutInfo.isLocked) {
@@ -318,6 +357,9 @@ export function usePinAuthProvider() {
         await resetPinAttempts();
         setIsPinAuthenticated(true);
         
+        // Resume session timeout after successful PIN authentication
+        resumeSessionTimeout();
+        
         // For demo mode, try to authenticate with stored credentials if available
         const credentials = getDonorCredentials();
         if (credentials) {
@@ -366,6 +408,9 @@ export function usePinAuthProvider() {
       await resetPinAttempts();
       setIsPinAuthenticated(true);
       
+      // Resume session timeout after successful PIN authentication
+      resumeSessionTimeout();
+      
       // If no donor is authenticated, try to authenticate using stored credentials
       if (!donor) {
         console.log('PIN verified successfully, but no donor authenticated. Attempting to authenticate with stored credentials...');
@@ -400,9 +445,32 @@ export function usePinAuthProvider() {
         }
       }
       
+      // Create PIN session for successful authentication
+      if (donor) {
+        console.log('Creating PIN session for authenticated donor');
+        authCreatePinSession(donor.donor_id, donor.donor_hash_id);
+      } else {
+        // For demo mode or cases where donor is not yet set, create a temporary session
+        console.log('Creating PIN session for demo mode');
+        const credentials = getDonorCredentials();
+        if (credentials) {
+          // Generate hash from credentials to get donor ID
+          const authString = `${credentials.firstName}${credentials.lastName}${credentials.dateOfBirth}${credentials.donorId}`;
+          const donorHashId = await generateSHA256Hash(authString);
+          authCreatePinSession(credentials.donorId, donorHashId);
+        } else {
+          // Create a demo session
+          const demoDonorId = 'demo-user-' + Date.now();
+          const demoHashId = 'demo-hash-' + Date.now();
+          authCreatePinSession(demoDonorId, demoHashId);
+        }
+      }
+      
       return { success: true };
     } catch (error) {
       console.error('PIN authentication failed:', error);
+      // Resume session timeout even on error
+      resumeSessionTimeout();
       return { 
         success: false, 
         error: 'Authentication failed. Please try again.' 
@@ -572,8 +640,30 @@ export function usePinAuthProvider() {
 
   const logout = useCallback(() => {
     setIsPinAuthenticated(false);
+    authClearPinSession(); // Clear PIN session
     authLogout();
-  }, [authLogout]);
+  }, [authLogout, authClearPinSession]);
+
+  // Session timeout management methods
+  const resetSessionTimeout = useCallback(() => {
+    authResetSessionTimeout();
+  }, [authResetSessionTimeout]);
+
+  const extendSession = useCallback(() => {
+    authExtendSession();
+  }, [authExtendSession]);
+
+  const pauseSessionTimeout = useCallback(() => {
+    authPauseSessionTimeout();
+  }, [authPauseSessionTimeout]);
+
+  const resumeSessionTimeout = useCallback(() => {
+    authResumeSessionTimeout();
+  }, [authResumeSessionTimeout]);
+
+  const getSessionTimeoutState = useCallback(() => {
+    return authGetSessionTimeoutState();
+  }, [authGetSessionTimeoutState]);
 
   const clearError = useCallback(() => {
     setError(null);
@@ -611,6 +701,18 @@ export function usePinAuthProvider() {
     // Session Management
     logout,
     clearError,
+    
+    // PIN Session Management
+    hasActivePinSession: authHasActivePinSession,
+    createPinSession: authCreatePinSession,
+    clearPinSession: authClearPinSession,
+    
+    // Session Timeout Management
+    resetSessionTimeout,
+    extendSession,
+    pauseSessionTimeout,
+    resumeSessionTimeout,
+    getSessionTimeoutState,
     
     // Utility
     checkPinStatus,

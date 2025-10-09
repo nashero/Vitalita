@@ -18,6 +18,19 @@
     "clear": "Cancella",
     "refresh": "Aggiorna"
   },
+  "sessionTimeout": {
+    "warning": {
+      "title": "Avviso di Timeout della Sessione",
+      "message": "La tua sessione scadrà tra {{time}} a causa di inattività. Clicca \"Estendi Sessione\" per continuare."
+    },
+    "expired": {
+      "title": "Sessione Scaduta",
+      "message": "La tua sessione è scaduta a causa di inattività. Effettua nuovamente l'accesso."
+    },
+    "extendSession": "Estendi Sessione",
+    "logout": "Disconnetti",
+    "securityNote": "Per sicurezza, le sessioni scadono dopo 15 minuti di inattività."
+  },
   "navigation": {
     "home": "Home",
     "donorPortal": "Registrati come Donatore",
@@ -530,6 +543,39 @@
     "questionsContactUs": "Domande? Contattaci:",
     "supportEmail": "support@example.com",
     "supportPhone": "1-800-XXX-XXXX",
-    "backToHomePage": "Torna alla Pagina Home"
+    "backToHomePage": "Torna alla Pagina Home",
+    "setup": {
+      "title": "Configura il tuo PIN",
+      "description": "Crea un PIN sicuro di 5 cifre per accesso rapido al tuo account",
+      "confirmDescription": "Conferma il tuo PIN per completare la configurazione",
+      "enterPinLabel": "Inserisci il tuo PIN di 5 cifre",
+      "confirmPinLabel": "Conferma il tuo PIN",
+      "enterPinPlaceholder": "Inserisci PIN",
+      "confirmPinPlaceholder": "Conferma PIN",
+      "securityNotice": "Avviso di Sicurezza Importante",
+      "securityNoticeText": "Non usare il PIN della tua carta ATM o qualsiasi PIN bancario. Crea un PIN unico che sia diverso da qualsiasi PIN di account finanziario per la tua sicurezza.",
+      "requirements": "Requisiti del PIN:",
+      "requirement1": "Esattamente 5 cifre",
+      "requirement2": "Non sequenziale (es., 12345, 54321)",
+      "requirement3": "Nessuna cifra ripetuta (es., 11111, 22222)",
+      "securityWarning": "Avviso di Sicurezza",
+      "pinsMatch": "I PIN corrispondono",
+      "pinsDoNotMatch": "I PIN non corrispondono",
+      "completeSetup": "Completa Configurazione",
+      "settingUp": "Configurando...",
+      "setupComplete": "Configurazione PIN Completata!",
+      "setupCompleteDescription": "Il tuo PIN è stato configurato con successo. Ora puoi usarlo per accedere in modo sicuro.",
+      "encryptedNotice": "Il tuo PIN è crittografato e memorizzato in modo sicuro",
+      "securityNoticeFooter": "Avviso di Sicurezza",
+      "securityNoticeFooterText": "Il tuo PIN è crittografato usando misure di sicurezza standard del settore e memorizzato in modo sicuro sul tuo dispositivo. Sarà richiesto per tutti i futuri accessi.",
+      "continueToDashboard": "Continua alla Dashboard",
+      "verifyingAccount": "Verifica del tuo Account",
+      "verifyingDescription": "Attendere mentre verifichiamo lo stato del tuo account...",
+      "checkingStatus": "Verifica dello stato di verifica...",
+      "accountVerified": "Account Verificato!",
+      "accountVerifiedDescription": "Il tuo account è stato verificato. Conferma i tuoi dettagli e configura il tuo PIN.",
+      "registrationDetails": "I tuoi Dettagli di Registrazione:",
+      "continueToPinSetup": "Continua alla Configurazione PIN"
+    }
   }
 }
