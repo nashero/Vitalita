@@ -7,7 +7,7 @@ import thirdImage from '../assets/images/Third.jpg';
 import VoiceAgent from './VoiceAgent';
 import LanguageSwitcher from './LanguageSwitcher';
 import HowItWorksSection from './HowItWorksSection';
-import QuickSessionTest from './QuickSessionTest';
+// QuickSessionTest removed from landing page
 
 
 function useAnimatedCounter(target: number, duration = 1200) {
@@ -331,10 +331,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStaffPortal, onDeployProjec
           )}
         </div>
         
-        {/* Quick Session Test - for debugging */}
-        <div className="mt-8 max-w-md mx-auto">
-          <QuickSessionTest />
-        </div>
+        {/* Quick Session Test removed from landing page */}
         
       </section>
 
