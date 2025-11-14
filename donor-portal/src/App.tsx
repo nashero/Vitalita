@@ -11,6 +11,8 @@ const HomePage = lazy(() => import('./pages/Home'));
 const BookingFlow = lazy(() => import('./pages/BookingFlow'));
 const MyAppointments = lazy(() => import('./pages/MyAppointments'));
 const HelpPage = lazy(() => import('./pages/Help'));
+const DonorRegistration = lazy(() => import('./pages/DonorRegistration'));
+const DonorLogin = lazy(() => import('./pages/DonorLogin'));
 
 function App() {
   return (
@@ -35,6 +37,8 @@ function App() {
                   <Route path="/book" element={<BookingFlow />} />
                   <Route path="/appointments" element={<MyAppointments />} />
                   <Route path="/help" element={<HelpPage />} />
+                  <Route path="/register" element={<DonorRegistration />} />
+                  <Route path="/login" element={<DonorLogin />} />
                 </Routes>
               </ErrorBoundary>
             </Suspense>

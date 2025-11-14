@@ -67,8 +67,8 @@ main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 3rem;
-  padding: 1.5rem;
+  gap: 2rem;
+  padding: 1rem;
 }
 
 img {
@@ -238,28 +238,83 @@ button:focus-visible {
 }
 
 .hero {
-  display: grid;
-  gap: 1.5rem;
-  padding: 2rem;
+  padding: 2rem 1.5rem;
   border-radius: 1.5rem;
-  background: linear-gradient(135deg, #ffe1e5 0%, #ffffff 100%);
+  background-color: #f5f5f5;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .hero-content h1 {
-  font-size: clamp(2.25rem, 6vw, 3rem);
+  font-size: clamp(2.25rem, 6vw, 3.5rem);
   margin: 0 0 1rem;
+  font-weight: 700;
 }
 
-.hero-content p {
+.highlight-red {
+  color: var(--brand-red);
+}
+
+.hero-content > p {
   font-size: 1.25rem;
   margin: 0 0 2rem;
-  max-width: 28rem;
+  max-width: 600px;
+  color: var(--text-main);
+}
+
+.hero-images {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0 0 2rem;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.hero-image {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  border-radius: 0.75rem;
+  object-fit: cover;
+  aspect-ratio: 4 / 3;
+}
+
+.donor-registration-section {
+  width: 100%;
+  max-width: 800px;
+  margin-top: 1.5rem;
+}
+
+.donor-registration-section h2 {
+  font-size: 2rem;
+  margin: 0 0 1rem;
+  font-weight: 700;
+}
+
+.registration-description {
+  font-size: 1.125rem;
+  margin: 0 0 1.5rem;
+  color: var(--text-muted);
 }
 
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 1rem;
+}
+
+.button-icon {
+  margin-right: 0.5rem;
+  font-size: 1.125rem;
 }
 
 .hero-illustration {
@@ -308,13 +363,19 @@ button:focus-visible {
   border: 2px solid var(--brand-red);
 }
 
+.button.secondary.login-button {
+  background-color: #0a67ff;
+  color: #ffffff;
+  border: 2px solid #0a67ff;
+}
+
 .steps {
   background-color: #ffffff;
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .steps h2 {
@@ -448,12 +509,12 @@ button:focus-visible {
 .appointments-card {
   background-color: #ffffff;
   border-radius: 1.5rem;
-  padding: 2rem;
+  padding: 1.5rem;
   max-width: 720px;
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .appointments-card p {
@@ -469,12 +530,12 @@ button:focus-visible {
 .help-card {
   background-color: #ffffff;
   border-radius: 1.5rem;
-  padding: 2rem;
+  padding: 1.5rem;
   max-width: 720px;
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .help-card p {
@@ -2028,8 +2089,8 @@ button:focus-visible {
   }
 
   main {
-    padding: 1rem;
-    gap: 2rem;
+    padding: 0.75rem;
+    gap: 1.5rem;
   }
 
   .header-container {
@@ -2037,21 +2098,41 @@ button:focus-visible {
   }
 
   .hero {
-    padding: 1.5rem;
-    grid-template-columns: 1fr;
+    padding: 1.5rem 1rem;
   }
 
   .hero-content h1 {
     font-size: 1.75rem;
   }
 
-  .hero-content p {
+  .hero-content > p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero-images {
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero-image {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .donor-registration-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .registration-description {
     font-size: 1rem;
   }
 
   .hero-actions {
     flex-direction: column;
     width: 100%;
+    gap: 1rem;
   }
 
   .hero-actions .button {
@@ -2111,12 +2192,20 @@ button:focus-visible {
 /* Responsive Breakpoints - Tablet (641px - 1024px) */
 @media (min-width: 641px) and (max-width: 1024px) {
   main {
-    padding: 2rem;
-    gap: 2.5rem;
+    padding: 1.5rem;
+    gap: 2rem;
   }
 
-  .hero {
-    grid-template-columns: 2fr 1fr;
+  .hero-images {
+    flex-direction: row;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero-image {
+    max-width: 250px;
+    flex: 0 1 auto;
   }
 
   .steps-list {
@@ -2143,12 +2232,19 @@ button:focus-visible {
 /* Responsive Breakpoints - Desktop (1025px+) */
 @media (min-width: 1025px) {
   main {
-    padding: 3rem clamp(3rem, 8vw, 8rem);
-    gap: 3rem;
+    padding: 2rem clamp(2rem, 6vw, 6rem);
+    gap: 2rem;
   }
 
-  .hero {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  .hero-images {
+    flex-direction: row;
+    gap: 1.5rem;
+    flex-wrap: nowrap;
+  }
+
+  .hero-image {
+    max-width: 320px;
+    flex: 1 1 0;
   }
 
   .steps-list {
@@ -2283,6 +2379,317 @@ textarea:focus-visible {
   .spinner {
     animation: none;
     border-top-color: transparent;
+  }
+}
+
+/* Donor Registration Page Styles */
+.donor-registration-page {
+  padding: 2rem 1.5rem;
+  background-color: var(--neutral);
+  min-height: calc(100vh - 200px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.registration-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.registration-card {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(28, 27, 31, 0.1);
+  position: relative;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  font-size: 1rem;
+  padding: 1rem 2rem 0.5rem;
+  margin: 0;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.back-button:hover,
+.back-button:focus-visible {
+  color: var(--brand-red);
+  outline: none;
+}
+
+.back-button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+.registration-header {
+  background-color: var(--brand-red);
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+  border-radius: 1rem 1rem 0 0;
+}
+
+.registration-header-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.registration-header-icon > span:first-child {
+  font-size: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+}
+
+.registration-header-icon .icon-plus {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.registration-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.registration-content {
+  padding: 1.5rem;
+}
+
+.registration-notice {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.registration-notice-privacy {
+  background-color: rgba(199, 37, 62, 0.1);
+  border: 1px solid rgba(199, 37, 62, 0.2);
+}
+
+.registration-notice-warning {
+  background-color: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.registration-notice .notice-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 0.125rem;
+}
+
+.registration-notice .notice-content {
+  flex: 1;
+}
+
+.registration-notice .notice-content p {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-main);
+}
+
+.registration-notice .notice-content p:last-child {
+  margin-bottom: 0;
+}
+
+.registration-notice .notice-content p strong {
+  font-weight: 600;
+  color: var(--brand-dark);
+}
+
+.registration-notice .notice-subheading {
+  font-weight: 600;
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.5rem !important;
+  color: var(--brand-dark);
+}
+
+.registration-notice .notice-content ul,
+.registration-notice .notice-content ol {
+  margin: 0.5rem 0 0.75rem 1.25rem;
+  padding: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-main);
+}
+
+.registration-notice .notice-content ul li,
+.registration-notice .notice-content ol li {
+  margin-bottom: 0.25rem;
+}
+
+.registration-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.registration-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+.registration-form .form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.registration-form .form-field label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.registration-form .form-field label span[aria-label='required'] {
+  color: var(--brand-red);
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper .input-icon {
+  position: absolute;
+  left: 0.75rem;
+  font-size: 1.125rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.input-wrapper .input-icon-right {
+  left: auto;
+  right: 0.75rem;
+}
+
+.input-wrapper .input-decoration {
+  position: absolute;
+  right: 0.75rem;
+  font-size: 1rem;
+  color: var(--brand-red);
+  pointer-events: none;
+  z-index: 1;
+  font-weight: 700;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 0.75rem 0.75rem 0.75rem 2.75rem;
+  border: 1px solid #d8dae5;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  min-height: 48px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-wrapper input:focus {
+  outline: none;
+  border-color: var(--brand-red);
+  box-shadow: 0 0 0 3px rgba(199, 37, 62, 0.1);
+}
+
+.input-wrapper input:disabled {
+  background-color: var(--neutral);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.input-wrapper input[type='date'],
+.input-wrapper input.date-input {
+  padding-left: 2.75rem;
+  padding-right: 1rem;
+}
+
+.input-wrapper input.has-decoration {
+  padding-right: 2.5rem;
+}
+
+.registration-form .field-hint {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-style: normal;
+}
+
+.registration-submit {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  margin-top: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  min-height: 56px;
+}
+
+.registration-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.registration-submit span[aria-hidden='true']:first-of-type {
+  font-size: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .donor-registration-page {
+    padding: 3rem 2rem;
+  }
+
+  .registration-content {
+    padding: 2.5rem;
+  }
+
+  .registration-form .form-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 768px) {
+  .donor-registration-page {
+    padding: 4rem 2rem;
+  }
+
+  .registration-header {
+    padding: 2rem;
+  }
+
+  .registration-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .registration-content {
+    padding: 3rem;
   }
 }
 

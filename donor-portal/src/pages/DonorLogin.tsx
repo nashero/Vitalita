@@ -1,0 +1,339 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
+import { generateDonorHashId } from '../utils/hash';
+
+interface LoginFormData {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  donorId: string;
+}
+
+const DonorLogin = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState<LoginFormData>({
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    donorId: '',
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleInputChange = (field: keyof LoginFormData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    setError('');
+  };
+
+  const validateForm = (): string | null => {
+    if (!formData.firstName.trim()) return 'First name is required';
+    if (!formData.lastName.trim()) return 'Last name is required';
+    if (!formData.dateOfBirth) return 'Date of birth is required';
+    if (!formData.donorId.trim()) return 'Donor ID is required';
+
+    // Validate Donor ID format (5-digit alphanumeric)
+    const donorIdRegex = /^[A-Za-z0-9]{5}$/;
+    if (!donorIdRegex.test(formData.donorId)) {
+      return 'Donor ID must be exactly 5 alphanumeric characters';
+    }
+
+    // Validate date of birth format
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(formData.dateOfBirth)) {
+      return 'Please enter a valid date of birth';
+    }
+
+    return null;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError('');
+
+      // Generate donor_hash_id from personal information (same as registration)
+      const donorHashId = await generateDonorHashId(
+        formData.firstName.toUpperCase(),
+        formData.lastName.toUpperCase(),
+        formData.dateOfBirth,
+        formData.donorId.toUpperCase()
+      );
+
+      // Check if donor exists and is active
+      const { data: donorData, error: donorError } = await supabase
+        .from('donors')
+        .select('donor_hash_id, donor_id, email_verified, account_activated, is_active, email')
+        .eq('donor_hash_id', donorHashId)
+        .single();
+
+      if (donorError) {
+        if (donorError.code === 'PGRST116') {
+          setError('No account found with these details. Please check your information or register as a new donor.');
+        } else {
+          console.error('Error checking donor:', donorError);
+          setError('Login failed. Please try again or contact AVIS staff for assistance.');
+        }
+        return;
+      }
+
+      if (!donorData) {
+        setError('No account found with these details. Please check your information or register as a new donor.');
+        return;
+      }
+
+      // Check if account is active
+      if (!donorData.is_active) {
+        setError('Your account is not active. Please contact AVIS staff for assistance.');
+        return;
+      }
+
+      // Check if account is activated
+      if (!donorData.account_activated) {
+        setError('Your account is not yet activated. Please wait for AVIS staff approval. The process takes about 45 days.');
+        return;
+      }
+
+      // Check if email is verified
+      if (!donorData.email_verified) {
+        setError('Please verify your email address before logging in. Check your email for the verification link.');
+        return;
+      }
+
+      // Store donor information in session storage for authentication
+      sessionStorage.setItem('donor_hash_id', donorData.donor_hash_id);
+      sessionStorage.setItem('donor_id', donorData.donor_id || formData.donorId.toUpperCase());
+      sessionStorage.setItem('donor_email', donorData.email || '');
+
+      // Redirect to appointments page
+      navigate('/appointments');
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Login failed. Please try again or contact AVIS staff for assistance.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Format date for display (convert YYYY-MM-DD to MM/DD/YYYY)
+  const formatDateForDisplay = (dateString: string): string => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
+
+  // Parse MM/DD/YYYY to YYYY-MM-DD
+  const parseDateInput = (dateString: string): string => {
+    if (!dateString) return '';
+    const parts = dateString.split('/');
+    if (parts.length !== 3) return dateString;
+    const month = parts[0].padStart(2, '0');
+    const day = parts[1].padStart(2, '0');
+    const year = parts[2];
+    return `${year}-${month}-${day}`;
+  };
+
+  const maxDate = new Date();
+  maxDate.setFullYear(maxDate.getFullYear() - 18);
+  const maxDateString = maxDate.toISOString().split('T')[0];
+
+  const handleBack = () => {
+    // Navigate back to previous page, or home if no history
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
+
+  return (
+    <div className="donor-registration-page">
+      <div className="registration-container">
+        <div className="registration-card">
+          {/* Back Button */}
+          <button
+            type="button"
+            onClick={handleBack}
+            className="back-button"
+            aria-label="Go back to previous page"
+          >
+            <span aria-hidden="true">←</span>
+            <span>Back</span>
+          </button>
+
+          {/* Header */}
+          <div className="registration-header">
+            <div className="registration-header-icon">
+              <span aria-hidden="true">🔑</span>
+            </div>
+            <h1>Donor Login</h1>
+          </div>
+
+          {/* Form Content */}
+          <div className="registration-content">
+            {error && (
+              <div className="inline-alert error">
+                <p>{error}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="registration-form">
+              {/* Name Fields */}
+              <div className="form-row">
+                <div className="form-field">
+                  <label htmlFor="loginFirstName">
+                    First Name <span aria-label="required">*</span>
+                  </label>
+                  <div className="input-wrapper">
+                    <span className="input-icon" aria-hidden="true">
+                      👤
+                    </span>
+                    <input
+                      type="text"
+                      id="loginFirstName"
+                      value={formData.firstName}
+                      onChange={(e) =>
+                        handleInputChange('firstName', e.target.value.toUpperCase())
+                      }
+                      placeholder="Enter your first name"
+                      disabled={loading}
+                      required
+                    />
+                    <span className="input-decoration" aria-hidden="true">
+                      ⋮
+                    </span>
+                  </div>
+                </div>
+
+                <div className="form-field">
+                  <label htmlFor="loginLastName">
+                    Last Name <span aria-label="required">*</span>
+                  </label>
+                  <div className="input-wrapper">
+                    <span className="input-icon" aria-hidden="true">
+                      👤
+                    </span>
+                    <input
+                      type="text"
+                      id="loginLastName"
+                      value={formData.lastName}
+                      onChange={(e) =>
+                        handleInputChange('lastName', e.target.value.toUpperCase())
+                      }
+                      placeholder="Enter your last name"
+                      disabled={loading}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Date of Birth */}
+              <div className="form-field">
+                <label htmlFor="loginDateOfBirth">
+                  Date of Birth <span aria-label="required">*</span>
+                </label>
+                <div className="input-wrapper">
+                  <span className="input-icon" aria-hidden="true">
+                    📅
+                  </span>
+                  <input
+                    type="date"
+                    id="loginDateOfBirth"
+                    value={formData.dateOfBirth}
+                    onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+                    max={maxDateString}
+                    disabled={loading}
+                    required
+                    className="date-input"
+                  />
+                  <span className="input-decoration" aria-hidden="true">
+                    📅
+                  </span>
+                </div>
+                <p className="field-hint">You must be at least 18 years old to donate</p>
+              </div>
+
+              {/* Donor ID */}
+              <div className="form-field">
+                <label htmlFor="loginDonorId">
+                  Donor ID <span aria-label="required">*</span>
+                </label>
+                <div className="input-wrapper">
+                  <span className="input-icon" aria-hidden="true">
+                    👤
+                  </span>
+                  <input
+                    type="text"
+                    id="loginDonorId"
+                    value={formData.donorId}
+                    onChange={(e) =>
+                      handleInputChange('donorId', e.target.value.toUpperCase())
+                    }
+                    placeholder="Enter your 5-digit alphanumeric donor ID"
+                    maxLength={5}
+                    pattern="[A-Za-z0-9]{5}"
+                    disabled={loading}
+                    required
+                  />
+                </div>
+                <p className="field-hint">
+                  Enter the 5-digit alphanumeric ID provided by AVIS
+                </p>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="button primary registration-submit"
+              >
+                {loading ? (
+                  <>
+                    <span className="spinner spinner-small" aria-hidden="true"></span>
+                    <span>Logging in...</span>
+                  </>
+                ) : (
+                  <>
+                    <span aria-hidden="true">🔑</span>
+                    <span>Log In</span>
+                  </>
+                )}
+              </button>
+
+              {/* Link to Registration */}
+              <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
+                  New to Vitalita?
+                </p>
+                <a
+                  href="/register"
+                  className="text-link"
+                  style={{ color: 'var(--brand-red)', fontWeight: 600 }}
+                >
+                  Register as a donor
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DonorLogin;
+
