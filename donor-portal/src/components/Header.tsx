@@ -103,7 +103,7 @@ function Header() {
           </ul>
           <Link
             className="login-button"
-            to="/appointments"
+            to="/login"
             onClick={closeMenu}
             aria-label="Log in to view appointments"
           >

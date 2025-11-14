@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addWeeks, differenceInCalendarDays, format, isBefore } from 'date-fns';
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
@@ -94,11 +94,39 @@ const MyAppointments = () => {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [otpSent, setOtpSent] = useState(false);
   const [profile, setProfile] = useState<DonorProfile | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    // Check if user is authenticated via sessionStorage
+    return !!sessionStorage.getItem('donor_hash_id');
+  });
   const [cancelConfirmationId, setCancelConfirmationId] = useState<string | null>(
     null,
   );
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+
+  // Check authentication on mount
+  useEffect(() => {
+    const donorHashId = sessionStorage.getItem('donor_hash_id');
+    if (donorHashId) {
+      setIsAuthenticated(true);
+      // Load profile data if needed
+      const donorEmail = sessionStorage.getItem('donor_email');
+      const donorId = sessionStorage.getItem('donor_id');
+      if (donorEmail || donorId) {
+        // Set a basic profile for authenticated user
+        setProfile({
+          id: donorHashId,
+          name: donorId || 'Donor',
+          email: donorEmail || '',
+          phone: '',
+          upcoming: [],
+          history: [],
+        });
+      }
+    } else {
+      // Redirect to login if not authenticated
+      navigate('/login');
+    }
+  }, [navigate]);
 
   const formattedUpcoming = useMemo(() => {
     if (!profile) {
@@ -168,8 +196,12 @@ const MyAppointments = () => {
   };
 
   const requireAuth = (render: () => JSX.Element) => {
-    if (!profile || !isAuthenticated) {
-      return renderLogin();
+    // Check sessionStorage for authentication
+    const donorHashId = sessionStorage.getItem('donor_hash_id');
+    if (!donorHashId || !isAuthenticated) {
+      // Redirect to login page instead of showing login form
+      navigate('/login');
+      return null;
     }
     return render();
   };

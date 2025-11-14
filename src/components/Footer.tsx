@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 const Footer = () => {
   return (
     <footer className="border-t border-slate-100 bg-white">
-      <div className="section-container flex flex-col gap-10 py-12 md:flex-row md:justify-between">
-        <div className="max-w-sm space-y-4">
+      <div className="section-container flex flex-col gap-6 py-8 md:flex-row md:justify-between">
+        <div className="max-w-sm space-y-3">
           <div className="flex items-center space-x-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-600 text-white shadow-lg shadow-red-600/30">
               VT
@@ -19,7 +19,7 @@ const Footer = () => {
             scheduling, and give every coordinator a unified command center.
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-8 text-sm text-slate-500 md:grid-cols-3">
+        <div className="grid grid-cols-2 gap-6 text-sm text-slate-500 md:grid-cols-3">
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Product</p>
             <Link to="/features" className="block transition hover:text-red-600">
@@ -64,10 +64,10 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="border-t border-slate-100 bg-slate-50 py-6">
-        <div className="section-container flex flex-col items-center justify-between gap-4 text-sm text-slate-500 md:flex-row">
+      <div className="border-t border-slate-100 bg-slate-50 py-4">
+        <div className="section-container flex flex-col items-center justify-between gap-3 text-sm text-slate-500 md:flex-row">
           <p>&copy; {new Date().getFullYear()} Vitalita. All rights reserved.</p>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             <a href="#privacy" className="transition hover:text-red-600">
               Privacy Policy
             </a>
