@@ -274,12 +274,12 @@ const FeaturesPage = () => {
   return (
     <div className="bg-slate-50">
       <section className="relative overflow-hidden bg-white">
-        <div className="section-container relative z-10 flex flex-col items-start gap-10 py-24 sm:py-32">
+        <div className="section-container relative z-10 flex flex-col items-start gap-4 py-12 sm:py-16">
           <span className="flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-red-600">
             <Layers className="h-3.5 w-3.5 text-red-500" />
             Platform
           </span>
-          <div className="max-w-3xl space-y-6">
+          <div className="max-w-3xl space-y-3">
             <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
               Everything You Need to Manage Blood Donations Efficiently
             </h1>
@@ -300,7 +300,7 @@ const FeaturesPage = () => {
         <div className="absolute bottom-10 left-20 -z-10 h-40 w-40 rounded-full bg-red-300/30 blur-3xl" />
       </section>
 
-      <section className="section-container space-y-24 py-24 sm:py-32">
+      <section className="section-container space-y-12 py-12 sm:py-16">
         {features.map((feature, index) => {
           const Icon = feature.icon;
           const isOdd = index % 2 !== 0;
@@ -308,17 +308,17 @@ const FeaturesPage = () => {
           return (
             <div
               key={feature.id}
-              className="rounded-[32px] border border-slate-200 bg-white/80 p-10 shadow-sm shadow-red-200/20 backdrop-blur-sm transition duration-300 hover:shadow-xl"
+              className="rounded-[32px] border border-slate-200 bg-white/80 p-6 sm:p-8 shadow-sm shadow-red-200/20 backdrop-blur-sm transition duration-300 hover:shadow-xl"
             >
-              <div className="grid items-center gap-12 lg:grid-cols-2">
-                <div className={`space-y-6 ${isOdd ? 'lg:order-2' : ''}`}>
+              <div className="grid items-center gap-8 lg:grid-cols-2">
+                <div className={`space-y-4 ${isOdd ? 'lg:order-2' : ''}`}>
                   <div className="flex items-center gap-3 rounded-full bg-red-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-red-600">
                     <Icon className="h-4 w-4 text-red-500" />
                     {feature.title}
                   </div>
                   <p className="text-2xl font-semibold tracking-tight text-slate-900">{feature.title}</p>
                   <p className="text-base leading-relaxed text-slate-600">{feature.description}</p>
-                  <ul className="space-y-3 text-sm text-slate-600">
+                  <ul className="space-y-2 text-sm text-slate-600">
                     {feature.bullets.map((bullet) => (
                       <li key={bullet} className="flex items-start gap-3">
                         <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-500" />
@@ -341,10 +341,10 @@ const FeaturesPage = () => {
         })}
       </section>
 
-      <section className="section-container pb-24 sm:pb-32">
-        <div className="relative overflow-hidden rounded-[40px] border border-slate-200 bg-slate-900 px-10 py-16 text-white shadow-2xl shadow-red-500/30">
-          <div className="grid items-center gap-10 lg:grid-cols-[2fr_1fr]">
-            <div className="space-y-6">
+      <section className="section-container pb-12 sm:pb-16">
+        <div className="relative overflow-hidden rounded-[40px] border border-slate-200 bg-slate-900 px-6 py-10 sm:px-10 sm:py-12 text-white shadow-2xl shadow-red-500/30">
+          <div className="grid items-center gap-8 lg:grid-cols-[2fr_1fr]">
+            <div className="space-y-4">
               <p className="text-xs font-semibold uppercase tracking-[0.35em] text-red-300">Take the next step</p>
               <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">See It in Action - Request a Demo</h2>
               <p className="text-sm leading-relaxed text-white/80">

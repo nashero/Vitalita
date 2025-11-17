@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import logo from '../assets/images/vitalita_logo_heart.svg';
 
 const navItems = [
   { label: 'Home', path: '/' },
@@ -23,13 +24,11 @@ const Header = () => {
     <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/80 backdrop-blur">
       <div className="section-container flex items-center justify-between py-4">
         <Link to="/" className="flex items-center space-x-2 text-lg font-semibold tracking-tight text-slate-900">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-600 text-white shadow-lg shadow-red-600/30">
-            VT
-          </div>
-          <div className="flex flex-col leading-tight">
-            <span>Vitalita</span>
-            <span className="text-xs font-medium text-slate-500">Blood Donation OS</span>
-          </div>
+          <img
+            src={logo}
+            alt="Vitalita logo"
+            className="h-12 object-contain"
+          />
         </Link>
 
         <nav className="hidden items-center space-x-8 text-sm font-medium text-slate-600 lg:flex">
