@@ -5,7 +5,7 @@ const benefits = [
     icon: <Building2 className="h-6 w-6" />,
     title: 'One operating system',
     description:
-      'Configurable for regional structures, supporting AVIS provincial chapters, Croce Rossa hubs, FIDAS associations, and FRATRES federations.',
+      'Configurable for regional structures, supporting AVIS provincial chapters.',
   },
   {
     icon: <BrainCircuit className="h-6 w-6" />,

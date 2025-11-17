@@ -8,14 +8,13 @@ const Hero = () => {
       <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
         <div className="space-y-8">
           <div className="inline-flex items-center space-x-2 rounded-full border border-red-100 bg-red-50/80 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-red-600 shadow-sm shadow-red-100">
-            <span>Purpose-built for Italian blood networks</span>
+            <span>Purpose-built for blood donation organizations</span>
           </div>
           <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
             Streamline Your Blood Donation Management
           </h1>
           <p className="max-w-xl text-lg leading-relaxed text-slate-600">
-            Vitalita replaces spreadsheets and siloed tools with a unified platform designed for AVIS, Croce Rossa
-            Italiana, FIDAS, and FRATRES. Coordinate donor outreach, manage capacity, and prove impact with confidence.
+            Vitalita replaces spreadsheets and siloed tools with a unified platform designed for AVIS. Coordinate donor outreach, manage capacity, and prove impact with confidence.
           </p>
           <div className="flex flex-col gap-4 sm:flex-row">
             <Link

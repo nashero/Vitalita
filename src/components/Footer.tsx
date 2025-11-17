@@ -15,7 +15,7 @@ const Footer = () => {
             </div>
           </div>
           <p className="text-sm leading-relaxed text-slate-500">
-            Purpose-built for AVIS, Croce Rossa Italiana, FIDAS, and FRATRES to orchestrate donor engagement, streamline
+            Purpose-built for AVIS to orchestrate donor engagement, streamline
             scheduling, and give every coordinator a unified command center.
           </p>
         </div>

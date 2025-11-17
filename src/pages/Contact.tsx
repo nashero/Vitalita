@@ -20,24 +20,6 @@ const testimonials = [
     author: "Marco Rossi",
     position: "Operations Manager",
     organization: "AVIS Milano"
-  },
-  {
-    quote: "The automated scheduling system has been a game-changer. Our coordinators can now focus on donor relationships instead of manual scheduling.",
-    author: "Laura Bianchi",
-    position: "Regional Director",
-    organization: "Croce Rossa Italiana"
-  },
-  {
-    quote: "Vitalita's analytics dashboard gives us insights we never had before. We can now make data-driven decisions that directly impact our mission.",
-    author: "Giuseppe Verdi",
-    position: "IT Administrator",
-    organization: "FIDAS"
-  },
-  {
-    quote: "The donor portal is intuitive and user-friendly. Our donors love the ease of booking appointments and tracking their donation history.",
-    author: "Sofia Conti",
-    position: "Director",
-    organization: "FRATRES"
   }
 ];
 

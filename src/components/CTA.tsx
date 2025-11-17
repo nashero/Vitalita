@@ -6,7 +6,7 @@ const CTA = () => {
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-red-600 via-red-500 to-slate-900" />
       <div className="relative mx-auto max-w-3xl text-center text-white">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/70">Next Steps</p>
-        <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+        <h2 className="mt-3 text-3xl font-semibold tracking-tight text-black sm:text-4xl">
           Ready to elevate every donation experience?
         </h2>
         <p className="mt-3 text-base leading-relaxed text-slate-700">
