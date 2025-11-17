@@ -58,6 +58,14 @@ const Footer = () => {
             <a href="#coordinator-login" className="block transition hover:text-red-600">
               Coordinator Console
             </a>
+            <a 
+              href={import.meta.env.VITE_STAFF_PORTAL_URL || "http://localhost:5175"} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block transition hover:text-red-600"
+            >
+              Staff Portal
+            </a>
             <a href="#api" className="block transition hover:text-red-600">
               Developer API
             </a>
