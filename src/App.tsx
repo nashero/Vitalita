@@ -6,7 +6,6 @@ import Header from './components/Header';
 import Home from './pages/Home';
 import FeaturesPage from './pages/Features';
 import HowItWorks from './pages/HowItWorks';
-import PricingPage from './pages/Pricing';
 import Contact from './pages/Contact';
 import CaseStudies from './pages/CaseStudies';
 
@@ -30,7 +29,6 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/features" element={<FeaturesPage />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
-          <Route path="/pricing" element={<PricingPage />} />
           <Route path="/case-studies" element={<CaseStudies />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<Home />} />
