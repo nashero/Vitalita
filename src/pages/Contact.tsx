@@ -6,11 +6,7 @@ interface FormData {
   name: string;
   role: string;
   email: string;
-  phone: string;
-  donationCenters: string;
-  monthlyDonations: string;
   challenges: string;
-  preferredDate: string;
   referralSource: string;
 }
 
@@ -29,11 +25,7 @@ const Contact = () => {
     name: '',
     role: '',
     email: '',
-    phone: '',
-    donationCenters: '',
-    monthlyDonations: '',
     challenges: '',
-    preferredDate: '',
     referralSource: ''
   });
   const [submitted, setSubmitted] = useState(false);
@@ -68,36 +60,36 @@ const Contact = () => {
   return (
     <div className="bg-white">
       {/* Header Section */}
-      <section className="section-container py-16">
+      <section className="section-container py-8">
         <div className="text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">Contact Us</p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
+          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
             Request Your Personalized Demo
           </h1>
-          <p className="mt-4 text-lg text-slate-600">
+          <p className="mt-3 text-lg text-slate-600">
             See how Vitalita can transform your donation management
           </p>
         </div>
       </section>
 
       {/* Main Content - Two Column Layout */}
-      <section className="section-container pb-16">
-        <div className="grid gap-12 lg:grid-cols-2">
+      <section className="section-container pb-8">
+        <div className="grid gap-8 lg:grid-cols-2">
           {/* Left Column - Contact Form */}
           <div className="order-2 lg:order-1">
-            <div className="rounded-[32px] border border-slate-100 bg-white/90 p-8 shadow-2xl shadow-slate-200/50 lg:p-10">
+            <div className="rounded-[32px] border border-slate-100 bg-white/90 p-6 shadow-2xl shadow-slate-200/50 lg:p-8">
               {submitted ? (
-                <div className="text-center py-8">
+                <div className="text-center py-6">
                   <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-600">
                     <CheckCircle2 className="h-8 w-8" />
                   </div>
-                  <h2 className="mt-6 text-2xl font-semibold text-slate-900">Thank you!</h2>
+                  <h2 className="mt-4 text-2xl font-semibold text-slate-900">Thank you!</h2>
                   <p className="mt-2 text-sm text-slate-600">
                     A Vitalita expert will reach out within the next business day to coordinate a tailored demo.
                   </p>
                 </div>
               ) : (
-                <form className="space-y-6" onSubmit={handleSubmit}>
+                <form className="space-y-4" onSubmit={handleSubmit}>
                   <div>
                     <label htmlFor="organizationName" className="block text-sm font-semibold text-slate-700 mb-2">
                       Organization Name <span className="text-red-500">*</span>
@@ -167,59 +159,6 @@ const Contact = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Phone Number <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      required
-                      value={formData.phone}
-                      onChange={handleChange}
-                      placeholder="+39 02 1234 5678"
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="donationCenters" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Number of Donation Centers <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      id="donationCenters"
-                      name="donationCenters"
-                      type="number"
-                      min="1"
-                      required
-                      value={formData.donationCenters}
-                      onChange={handleChange}
-                      placeholder="e.g. 5"
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="monthlyDonations" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Average Monthly Donations <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      id="monthlyDonations"
-                      name="monthlyDonations"
-                      required
-                      value={formData.monthlyDonations}
-                      onChange={handleChange}
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100"
-                    >
-                      <option value="">Select range</option>
-                      <option value="0-500">0-500</option>
-                      <option value="500-2000">500-2000</option>
-                      <option value="2000-5000">2000-5000</option>
-                      <option value="5000+">5000+</option>
-                    </select>
-                  </div>
-
-                  <div>
                     <label htmlFor="challenges" className="block text-sm font-semibold text-slate-700 mb-2">
                       Current Challenges
                     </label>
@@ -231,21 +170,6 @@ const Contact = () => {
                       onChange={handleChange}
                       placeholder="Tell us about your biggest operational challenges"
                       className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100 resize-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="preferredDate" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Preferred Demo Date
-                    </label>
-                    <input
-                      id="preferredDate"
-                      name="preferredDate"
-                      type="date"
-                      value={formData.preferredDate}
-                      onChange={handleChange}
-                      min={new Date().toISOString().split('T')[0]}
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100"
                     />
                   </div>
 
@@ -284,11 +208,11 @@ const Contact = () => {
           </div>
 
           {/* Right Column - Information Cards */}
-          <div className="order-1 space-y-6 lg:order-2">
+          <div className="order-1 space-y-4 lg:order-2">
             {/* What to Expect Card */}
-            <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">What to Expect</h3>
-              <ul className="space-y-3 text-sm text-slate-600">
+            <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-5 shadow-sm">
+              <h3 className="text-lg font-semibold text-slate-900 mb-3">What to Expect</h3>
+              <ul className="space-y-2.5 text-sm text-slate-600">
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
                   <span>30-minute personalized demo</span>
@@ -309,9 +233,9 @@ const Contact = () => {
             </div>
 
             {/* Contact Information Card */}
-            <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">Contact Information</h3>
-              <div className="space-y-4 text-sm text-slate-600">
+            <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-5 shadow-sm">
+              <h3 className="text-lg font-semibold text-slate-900 mb-3">Contact Information</h3>
+              <div className="space-y-3 text-sm text-slate-600">
                 <div className="flex items-center gap-3">
                   <Mail className="h-5 w-5 text-red-500 flex-shrink-0" />
                   <a href="mailto:info@vitalita.com" className="transition hover:text-red-600">
@@ -336,9 +260,9 @@ const Contact = () => {
             </div>
 
             {/* Quick Stats Card */}
-            <div className="rounded-2xl border border-slate-100 bg-gradient-to-br from-red-50 to-slate-50 p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">Quick Stats</h3>
-              <div className="grid grid-cols-2 gap-4">
+            <div className="rounded-2xl border border-slate-100 bg-gradient-to-br from-red-50 to-slate-50 p-5 shadow-sm">
+              <h3 className="text-lg font-semibold text-slate-900 mb-3">Quick Stats</h3>
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <p className="text-2xl font-bold text-red-600">150+</p>
                   <p className="text-xs text-slate-600 mt-1">Organizations Trust Vitalita</p>
@@ -362,7 +286,7 @@ const Contact = () => {
       </section>
 
       {/* Trust Badges */}
-      <section className="section-container py-8 border-t border-slate-100">
+      <section className="section-container py-6 border-t border-slate-100">
         <div className="flex flex-wrap items-center justify-center gap-8">
           <div className="flex items-center gap-2 text-sm text-slate-600">
             <Shield className="h-5 w-5 text-red-500" />
@@ -380,17 +304,17 @@ const Contact = () => {
       </section>
 
       {/* Testimonial Carousel */}
-      <section className="section-container py-16 bg-slate-50/50">
-        <div className="text-center mb-10">
+      <section className="section-container py-8 bg-slate-50/50">
+        <div className="text-center mb-6">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">Testimonials</p>
-          <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900">
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900">
             What Our Partners Say
           </h2>
         </div>
 
         <div className="relative max-w-4xl mx-auto">
-          <div className="rounded-[32px] border border-slate-100 bg-white p-8 md:p-12 shadow-xl">
-            <div className="relative min-h-[200px]">
+          <div className="rounded-[32px] border border-slate-100 bg-white p-6 md:p-8 shadow-xl">
+            <div className="relative min-h-[150px]">
               {testimonials.map((testimonial, index) => (
                 <div
                   key={index}
@@ -399,8 +323,8 @@ const Contact = () => {
                   }`}
                 >
                   <div className="text-center">
-                    <Quote className="h-8 w-8 text-red-500 mx-auto mb-4 opacity-50" />
-                    <p className="text-lg text-slate-700 mb-6 leading-relaxed">
+                    <Quote className="h-6 w-6 text-red-500 mx-auto mb-3 opacity-50" />
+                    <p className="text-lg text-slate-700 mb-4 leading-relaxed">
                       "{testimonial.quote}"
                     </p>
                     <div>
@@ -414,7 +338,7 @@ const Contact = () => {
             </div>
 
             {/* Carousel Controls */}
-            <div className="flex items-center justify-center gap-4 mt-8">
+            <div className="flex items-center justify-center gap-4 mt-6">
               <button
                 onClick={prevTestimonial}
                 className="p-2 rounded-full border border-slate-200 text-slate-600 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition"

@@ -10,12 +10,12 @@ const Footer = () => {
               VT
             </div>
             <div>
-              <p className="text-lg font-semibold text-slate-900">Vitalita</p>
-              <p className="text-sm text-slate-500">Italian Blood Donation Management Platform</p>
+              <p className="text-lg font-semibold text-slate-900">Powered by Vitalita</p>
+              <p className="text-sm text-slate-500">Blood Donation Management Platform</p>
             </div>
           </div>
           <p className="text-sm leading-relaxed text-slate-500">
-            Purpose-built for AVIS to orchestrate donor engagement, streamline
+            Purpose-built for organizations to orchestrate donor engagement, streamline
             scheduling, and give every coordinator a unified command center.
           </p>
         </div>
@@ -27,9 +27,6 @@ const Footer = () => {
             </Link>
             <Link to="/how-it-works" className="block transition hover:text-red-600">
               How It Works
-            </Link>
-            <Link to="/pricing" className="block transition hover:text-red-600">
-              Pricing
             </Link>
             <Link to="/case-studies" className="block transition hover:text-red-600">
               Case Studies

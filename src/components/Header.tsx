@@ -7,9 +7,7 @@ const navItems = [
   { label: 'Home', path: '/' },
   { label: 'Features', path: '/features' },
   { label: 'How It Works', path: '/how-it-works' },
-  { label: 'Pricing', path: '/pricing' },
   { label: 'Case Studies', path: '/case-studies' },
-  { label: 'Contact', path: '/contact' },
 ];
 
 const Header = () => {
@@ -53,7 +51,7 @@ const Header = () => {
             to="/contact"
             className="rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-red-600/40 transition hover:bg-red-700 hover:shadow-red-600/50"
           >
-            Request a Demo
+            Talk to us!
           </Link>
         </div>
 
@@ -88,7 +86,7 @@ const Header = () => {
               to="/contact"
               className="rounded-lg bg-red-600 px-4 py-2 text-center text-white shadow-md shadow-red-600/30 transition hover:bg-red-700"
             >
-              Request a Demo
+              Talk to us!
             </Link>
           </nav>
         </div>
