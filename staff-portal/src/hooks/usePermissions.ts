@@ -1,72 +1,34 @@
-import { useMemo } from 'react';
-import { useStaffAuth } from './useStaffAuth';
-
 /**
- * Hook to check if staff has specific permissions
+ * Hook for checking user permissions
+ * Updated to work with new AuthContext
  */
+
+import { useMemo } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+
 export function usePermissions() {
-  const { staff } = useStaffAuth();
+  const { user, hasPermission, hasRole, hasAnyPermission, hasAllPermissions } = useAuth();
 
-  const hasPermission = useMemo(() => {
-    return (permissionName: string): boolean => {
-      if (!staff || !staff.permissions) return false;
-      
-      // Administrator role has all permissions
-      if (staff.roles?.role_name === 'Administrator') {
-        return true;
-      }
+  const permissions = useMemo(() => {
+    return user?.permissions.map((p) => p.permission_name) || [];
+  }, [user]);
 
-      return staff.permissions.some(
-        (perm) => perm.permission_name === permissionName
-      );
-    };
-  }, [staff]);
+  const roles = useMemo(() => {
+    return user?.roles.map((r) => r.role_code) || [];
+  }, [user]);
 
-  const hasAnyPermission = useMemo(() => {
-    return (permissionNames: string[]): boolean => {
-      if (!staff || !staff.permissions) return false;
-      
-      // Administrator role has all permissions
-      if (staff.roles?.role_name === 'Administrator') {
-        return true;
-      }
-
-      return permissionNames.some((permName) =>
-        staff.permissions?.some((perm) => perm.permission_name === permName)
-      );
-    };
-  }, [staff]);
-
-  const hasAllPermissions = useMemo(() => {
-    return (permissionNames: string[]): boolean => {
-      if (!staff || !staff.permissions) return false;
-      
-      // Administrator role has all permissions
-      if (staff.roles?.role_name === 'Administrator') {
-        return true;
-      }
-
-      return permissionNames.every((permName) =>
-        staff.permissions?.some((perm) => perm.permission_name === permName)
-      );
-    };
-  }, [staff]);
-
-  const hasRole = useMemo(() => {
-    return (roleName: string): boolean => {
-      if (!staff || !staff.roles) return false;
-      return staff.roles.role_name.toLowerCase() === roleName.toLowerCase();
-    };
-  }, [staff]);
+  const isSystemAdmin = useMemo(() => {
+    return hasPermission('system:admin');
+  }, [hasPermission]);
 
   return {
     hasPermission,
+    hasRole,
     hasAnyPermission,
     hasAllPermissions,
-    hasRole,
-    permissions: staff?.permissions || [],
-    role: staff?.roles?.role_name || null,
-    isAdmin: staff?.roles?.role_name === 'Administrator'
+    permissions,
+    roles,
+    isSystemAdmin,
+    user,
   };
 }
-
