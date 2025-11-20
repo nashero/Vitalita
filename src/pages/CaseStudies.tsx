@@ -6,6 +6,20 @@ const studies = [
     highlight: '22% fewer no-shows',
     detail: 'Automated reminders via Telegram and SMS replaced manual phone trees, freeing coordinators for outreach.',
   },
+  {
+    organization: 'Croce Rossa Toscana',
+    summary:
+      'Streamlined mobile blood drive coordination with real-time inventory tracking, increasing collection efficiency by 35% across regional campaigns.',
+    highlight: '35% efficiency increase',
+    detail: 'Integrated scheduling system enabled better resource allocation and reduced wait times, resulting in higher donor satisfaction and retention rates.',
+  },
+  {
+    organization: 'FIDAS Veneto',
+    summary:
+      'Digital transformation of donor registration and eligibility management, cutting administrative overhead by 40% while improving data accuracy.',
+    highlight: '40% less admin time',
+    detail: 'Automated eligibility checks and digital forms eliminated paper-based processes, allowing staff to focus on donor engagement and community outreach.',
+  },
 ];
 
 const CaseStudies = () => {

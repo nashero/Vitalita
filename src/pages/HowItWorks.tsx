@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   ChevronDown,
   ChevronUp,
@@ -317,7 +316,7 @@ const HowItWorks = () => {
         <div className="mx-auto max-w-4xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">Implementation Process</p>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-            Streamline Your Blood Donation Management
+          Streamline Your Blood Donation Management
           </h1>
           <p className="mt-5 text-lg leading-relaxed text-slate-600">
             Our streamlined implementation process gets your organization live quickly and efficiently. With dedicated
@@ -379,7 +378,7 @@ const HowItWorks = () => {
             <div className="relative">
               <div className="absolute left-1/2 top-0 h-full w-0.5 -translate-x-1/2 bg-gradient-to-b from-red-200 via-red-300 to-red-200"></div>
               <div className="relative flex justify-around">
-                {implementationSteps.map((step, index) => (
+                {implementationSteps.map((step) => (
                   <div
                     key={step.step}
                     className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full border-4 border-white bg-red-500 shadow-lg"
@@ -411,29 +410,6 @@ const HowItWorks = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="section-container relative overflow-hidden py-20">
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-red-600 via-red-500 to-slate-900" />
-        <div className="relative mx-auto max-w-3xl text-center text-white">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/70">Ready to Get Started?</p>
-          <h2 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-            Ready to Get Started? Schedule Your Demo
-          </h2>
-          <p className="mt-4 text-base leading-relaxed text-white/80">
-            See how Vitalita can transform your blood donation management. Schedule a personalized demo with our team
-            and discover how easy implementation can be.
-          </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link
-              to="/contact"
-              className="inline-flex items-center justify-center rounded-full bg-white px-8 py-3 text-sm font-semibold text-red-600 shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:bg-slate-100 hover:text-red-700"
-            >
-              Schedule Your Demo
-            </Link>
-          </div>
-        </div>
-        <div className="pointer-events-none absolute left-1/2 top-1/2 -z-20 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/10 blur-3xl" />
-      </section>
     </div>
   );
 };
