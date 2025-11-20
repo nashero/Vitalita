@@ -4,7 +4,7 @@ const studies = [
     summary:
       'Unified donor CRM and dynamic scheduling across 12 provinces, reducing no-shows by 22% and improving staff utilization.',
     highlight: '22% fewer no-shows',
-    detail: 'Automated reminders via WhatsApp and SMS replaced manual phone trees, freeing coordinators for outreach.',
+    detail: 'Automated reminders via Telegram and SMS replaced manual phone trees, freeing coordinators for outreach.',
   },
 ];
 

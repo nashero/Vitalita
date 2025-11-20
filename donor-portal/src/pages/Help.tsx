@@ -267,13 +267,13 @@ const HelpPage = () => {
               <span className="contact-value">+39 1800 123 456</span>
             </a>
             <a
-              href="https://wa.me/393331234567"
+              href="https://t.me/vitalita_support"
               target="_blank"
               rel="noreferrer"
-              className="contact-option whatsapp"
+              className="contact-option telegram"
             >
               <span className="contact-icon">💬</span>
-              <span className="contact-label">WhatsApp</span>
+              <span className="contact-label">Telegram</span>
               <span className="contact-value">Chat with us</span>
             </a>
             <a href="mailto:donations@vitalita.com" className="contact-option email">

@@ -1152,13 +1152,13 @@ const BookingFlow = () => {
             {shareMenuOpen && (
               <div className="share-menu">
                 <a
-                  href={`https://wa.me/?text=${encodeURIComponent(
+                  href={`https://t.me/share/url?url=&text=${encodeURIComponent(
                     `Come donate with me at ${formattedDate} ${selectedSlot.time} — ${selectedCenter.name}`,
                   )}`}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Share on WhatsApp
+                  Share on Telegram
                 </a>
                 <a
                   href={`mailto:?subject=Join me at Vitalita&body=${encodeURIComponent(

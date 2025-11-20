@@ -5,8 +5,9 @@ import logo from '../assets/images/vitalita_logo_heart.svg';
 
 const navItems = [
   { label: 'Home', path: '/' },
-  { label: 'Features', path: '/features' },
   { label: 'How It Works', path: '/how-it-works' },
+  { label: 'How We Simplify', path: '/how-we-simplify' },
+  { label: 'Features', path: '/features' },
   { label: 'Case Studies', path: '/case-studies' },
 ];
 

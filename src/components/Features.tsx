@@ -17,7 +17,7 @@ const featureList = [
     icon: <MessageCircle className="h-6 w-6" />,
     title: 'Multi-Channel Communication',
     description:
-      'Trigger campaigns across SMS, WhatsApp, email, and voice with localized messaging templates aligned to Italian privacy requirements.',
+      'Trigger campaigns across SMS, Telegram, email, and voice with localized messaging templates aligned to Italian privacy requirements.',
   },
   {
     icon: <Mail className="h-6 w-6" />,

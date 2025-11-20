@@ -40,7 +40,7 @@ const Hero = () => {
               {
                 icon: <Calendar className="h-5 w-5 text-red-600" />,
                 title: 'Smart Scheduling',
-                description: 'Automated capacity with SMS, email, WhatsApp',
+                description: 'Automated capacity with SMS, email, Telegram',
               },
               {
                 icon: <LineChart className="h-5 w-5 text-red-600" />,

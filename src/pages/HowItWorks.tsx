@@ -317,7 +317,7 @@ const HowItWorks = () => {
         <div className="mx-auto max-w-4xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">Implementation Process</p>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-            Get Up and Running in Days, Not Months
+            Streamline Your Blood Donation Management
           </h1>
           <p className="mt-5 text-lg leading-relaxed text-slate-600">
             Our streamlined implementation process gets your organization live quickly and efficiently. With dedicated
