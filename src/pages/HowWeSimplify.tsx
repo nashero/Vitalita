@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import {
   CheckCircle2,
   Clock,
@@ -373,6 +374,38 @@ const HowWeSimplify = () => {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="section-container pb-12 sm:pb-16">
+        <div className="relative overflow-hidden rounded-[40px] border border-slate-200 bg-slate-900 px-6 py-10 sm:px-10 sm:py-12 text-white shadow-2xl shadow-red-500/30">
+          <div className="grid items-center gap-8 lg:grid-cols-[2fr_1fr]">
+            <div className="space-y-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-red-300">Take the next step</p>
+              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">See It in Action - Request a Demo</h2>
+              <p className="text-sm leading-relaxed text-white/80">
+                Ready to simplify your blood donation management? Partner with Vitalita to transform your complex
+                processes into streamlined operations. Our team will tailor a walkthrough to show you exactly how
+                we simplify scheduling, donor management, and compliance for your organization.
+              </p>
+              <div className="flex flex-wrap gap-3 text-xs text-white/70">
+                <span className="rounded-full border border-white/20 px-3 py-1">Live product tour</span>
+                <span className="rounded-full border border-white/20 px-3 py-1">Simplification walkthrough</span>
+                <span className="rounded-full border border-white/20 px-3 py-1">Implementation roadmap</span>
+              </div>
+            </div>
+            <div className="flex justify-center lg:justify-end">
+              <Link
+                to="/contact"
+                className="inline-flex items-center justify-center rounded-[12px] bg-gradient-to-r from-red-500 via-orange-500 to-red-600 px-10 py-5 text-base font-semibold text-white shadow-xl shadow-red-500/50 transition hover:from-red-600 hover:via-orange-600 hover:to-red-700 hover:shadow-2xl hover:shadow-red-500/60 hover:-translate-y-0.5"
+              >
+                Request a Demo
+              </Link>
+            </div>
+          </div>
+          <div className="pointer-events-none absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-red-500/40 blur-3xl" />
+          <div className="pointer-events-none absolute left-0 top-0 h-40 w-40 rounded-full bg-red-400/40 blur-3xl" />
         </div>
       </section>
 

@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, Clock, Heart, TrendingDown, Users, XCircle } from 'lucide-react';
+import { AlertTriangle, ChevronDown, ChevronUp, Clock, Heart, TrendingDown, Users, XCircle } from 'lucide-react';
 
 const Hero = () => {
+  const [isStoryExpanded, setIsStoryExpanded] = useState(false);
+
   return (
     <section className="section-container relative overflow-hidden py-20">
       <div className="absolute left-1/2 top-0 -z-10 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-red-500/10 blur-[120px]" />
@@ -24,39 +27,55 @@ const Hero = () => {
       {/* The Story Section */}
       <div className="mb-16">
         <div className="mx-auto max-w-5xl">
-          <div className="rounded-3xl border-2 border-red-100 bg-gradient-to-br from-red-50/50 via-white to-slate-50 p-8 md:p-12 shadow-xl">
+          <div 
+            className="rounded-3xl border-2 border-red-100 bg-gradient-to-br from-red-50/50 via-white to-slate-50 p-8 md:p-12 shadow-xl cursor-pointer transition-all duration-300 hover:border-red-200 hover:shadow-2xl"
+            onClick={() => setIsStoryExpanded(!isStoryExpanded)}
+          >
             <div className="flex items-start gap-4 mb-6">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600 flex-shrink-0">
                 <Heart className="h-6 w-6" />
               </div>
-              <div>
-                <h2 className="text-2xl font-semibold text-slate-900 mb-2">A Story That Should Never Happen</h2>
-                <p className="text-sm text-slate-600">Real impact of disconnected systems</p>
+              <div className="flex-1">
+                <h2 className="text-2xl font-semibold text-slate-900 mb-2">Our Mission, Our Story</h2>
+                <p className="text-sm text-slate-600">Click to read the story that inspired our mission</p>
+              </div>
+              <div className="flex-shrink-0">
+                {isStoryExpanded ? (
+                  <ChevronUp className="h-6 w-6 text-slate-600" />
+                ) : (
+                  <ChevronDown className="h-6 w-6 text-slate-600" />
+                )}
               </div>
             </div>
             
-            <div className="space-y-6 text-slate-700">
-              <p className="text-lg leading-relaxed">
-                <span className="font-semibold text-slate-900">Maria, a 34-year-old mother of two,</span> was rushed to the emergency room after a severe accident. Her blood type—O negative—was critical and in urgent demand.
-              </p>
-              <p className="text-lg leading-relaxed">
-                The hospital contacted the regional blood bank. A coordinator manually checked three separate spreadsheets, made six phone calls, and spent <span className="font-semibold text-red-600">47 minutes</span> trying to locate available O-negative units.
-              </p>
-              <p className="text-lg leading-relaxed">
-                Meanwhile, three O-negative donors had been scheduled for donation that same day—but due to double-booking in a paper-based system, two never showed up. The third was at a mobile unit across town, but the coordinator couldn't verify availability in real-time.
-              </p>
-              <div className="rounded-2xl bg-red-100/50 border border-red-200 p-6 my-8">
-                <p className="text-xl font-semibold text-red-900 text-center">
-                  Maria didn't receive the blood transfusion in time.
+            {isStoryExpanded && (
+              <div className="space-y-6 text-slate-700 transition-all duration-300 ease-in-out">
+                <div className="pt-4 border-t border-red-100">
+                  <h3 className="text-xl font-semibold text-slate-900 mb-4">A Story That Should Never Happen</h3>
+                  <p className="text-sm text-slate-600 mb-6">Real impact of disconnected systems</p>
+                </div>
+                <p className="text-lg leading-relaxed">
+                  <span className="font-semibold text-slate-900">Maria, a 34-year-old mother of two,</span> was rushed to the emergency room after a severe accident. Her blood type—O negative—was critical and in urgent demand.
                 </p>
-                <p className="text-center text-red-700 mt-2">
-                  Her family later learned that compatible blood was available—just 12 kilometers away.
+                <p className="text-lg leading-relaxed">
+                  The hospital contacted the regional blood bank. A coordinator manually checked three separate spreadsheets, made six phone calls, and spent <span className="font-semibold text-red-600">47 minutes</span> trying to locate available O-negative units.
+                </p>
+                <p className="text-lg leading-relaxed">
+                  Meanwhile, three O-negative donors had been scheduled for donation that same day—but due to double-booking in a paper-based system, two never showed up. The third was at a mobile unit across town, but the coordinator couldn't verify availability in real-time.
+                </p>
+                <div className="rounded-2xl bg-red-100/50 border border-red-200 p-6 my-8">
+                  <p className="text-xl font-semibold text-red-900 text-center">
+                    Maria didn't receive the blood transfusion in time.
+                  </p>
+                  <p className="text-center text-red-700 mt-2">
+                    Her family later learned that compatible blood was available—just 12 kilometers away.
+                  </p>
+                </div>
+                <p className="text-lg leading-relaxed font-medium text-slate-900">
+                  This tragedy wasn't caused by a shortage of blood or willing donors. It was caused by <span className="text-red-600">inefficient systems, manual coordination, and disconnected data.</span>
                 </p>
               </div>
-              <p className="text-lg leading-relaxed font-medium text-slate-900">
-                This tragedy wasn't caused by a shortage of blood or willing donors. It was caused by <span className="text-red-600">inefficient systems, manual coordination, and disconnected data.</span>
-              </p>
-            </div>
+            )}
           </div>
         </div>
       </div>
