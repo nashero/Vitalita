@@ -193,15 +193,15 @@ const AnalyticsDashboardMockup = () => {
 const implementationSteps = [
   {
     step: 1,
-    title: 'Setup Your Organization',
+    title: 'Hassle Free Onboarding',
     timeframe: 'Week 1',
     icon: Settings,
-    description: 'Get your organization configured and ready to go',
+    description: 'Use an already configured org for your application',
     details: [
-      'Configure donation centers and locations',
-      'Set capacity limits per location',
-      'Define operating hours and schedules',
-      'Import existing donor database (CSV/Excel support)',
+      'Vitalita configures your donation centers and locations',
+      'We set capacity limits per location for you',
+      'We define operating hours and schedules',
+      'We import your existing donor database (CSV/Excel support)',
     ],
     visual: <ConfigurationDashboardMockup />,
   },
@@ -210,12 +210,13 @@ const implementationSteps = [
     title: 'Customize Your Workflows',
     timeframe: 'Week 1-2',
     icon: Workflow,
-    description: 'Tailor the platform to your organization\'s needs',
+    description: 'The platform works out of the box. Our open workflow definitions enable you to tailor it to your needs if you need it',
     details: [
-      'Establish eligibility criteria',
-      'Configure health screening questions',
-      'Set up notification templates',
-      'Define user roles and permissions',
+      'Works out of the box with pre-configured workflows',
+      'Open workflow definitions allow customization if needed',
+      'We establish eligibility criteria for you',
+      'We set up notification templates',
+      
     ],
     visual: <WorkflowBuilderMockup />,
   },
@@ -224,12 +225,12 @@ const implementationSteps = [
     title: 'Launch & Invite Donors',
     timeframe: 'Week 2',
     icon: Send,
-    description: 'Go live and start engaging your donor community',
+    description: 'If you can use a phone, you can use Vitalita - it\'s that intuitive. No technical expertise needed.',
     details: [
-      'Send enrollment invitations via email/SMS',
-      'Provide donors with portal access link',
-      'Train staff on platform usage (we provide training)',
-      'Go live with first appointments',
+      'We send enrollment invitations via email/SMS',
+      'We provide donors with portal access links',
+      'We train your staff on platform usage',
+      'We help you go live with first appointments',
     ],
     visual: <CommunicationDashboardMockup />,
   },
@@ -238,12 +239,12 @@ const implementationSteps = [
     title: 'Manage, Optimize ( Key Performance Indicators)',
     timeframe: 'Ongoing',
     icon: BarChart3,
-    description: 'Continuously improve your operations with data-driven insights',
+    description: 'Vitalita manages your donors and ensures your organization meets all health requirements and certification criteria',
     details: [
-      'Monitor appointments in real-time',
-      'Track center capacity and utilization',
-      'Analyze performance metrics',
-      'Continuously improve based on data',
+      'We manage your donors throughout the entire lifecycle',
+      'We generate KPIs as the output of our management and monitoring',
+      'We conduct quality audits to maintain compliance and standards',
+      'We continuously monitor and optimize operations for peak performance',
     ],
     visual: <AnalyticsDashboardMockup />,
   },
@@ -253,22 +254,36 @@ const faqs = [
   {
     question: 'How long does setup take?',
     answer:
-      'Most organizations can complete the initial setup in 1-2 weeks. The timeline depends on the complexity of your organization structure and the number of donation centers you need to configure. Our team works closely with you to ensure a smooth and efficient setup process.',
+      'Vitalita completes the initial setup for you in 1-2 weeks. The timeline depends on the complexity of your organization structure and the number of donation centers we need to configure. Our team handles everything to ensure a smooth and efficient setup process with minimal effort required from you.',
   },
   {
     question: 'Do we need technical expertise?',
     answer:
-      'No technical expertise is required. Vitalita is designed to be user-friendly and intuitive. Our implementation team provides comprehensive training for all staff members, and we offer ongoing support to ensure your team feels confident using the platform. However, if you have IT staff who want to be involved, we\'re happy to work with them.',
+      'No technical expertise is required. Vitalita handles all the technical setup for you. Our implementation team does all the heavy lifting, provides comprehensive training for all staff members, and offers ongoing support to ensure your team feels confident using the platform. Very little effort is needed from your organization - we give you everything ready to go.',
   },
   {
     question: 'What support do you provide?',
     answer:
-      'We provide comprehensive support throughout your implementation and beyond. This includes dedicated implementation specialists, Italian-speaking success managers, bi-weekly adoption pulse checks, quarterly optimization reviews, and 24/7 technical support. We also offer training materials, documentation, and on-site or remote training sessions for your staff.',
+      'We provide a seamless onboarding process for new customers. Our dedicated implementation team handles all technical setup, while our success managers guide you through every step. We offer comprehensive staff training, ongoing support, and optimization assistance. We handle the complexity so you can focus on what matters most.',
+  },
+  {
+    question: 'How many people are needed to manage Vitalita at your end?',
+    answer: (
+      <div className="space-y-2">
+        <p className="text-sm leading-relaxed text-slate-600">
+          Once existing donor information is available, we will need:
+        </p>
+        <ul className="ml-4 list-disc space-y-2 text-sm leading-relaxed text-slate-600">
+          <li>The number of slots available on an hourly basis for specific dates</li>
+          <li>2 people on site - one person to fill things and one person to approve changes</li>
+        </ul>
+      </div>
+    ),
   },
   {
     question: 'Can we migrate existing donor data?',
     answer:
-      'Yes! Vitalita supports importing existing donor databases in CSV and Excel formats. Our team will help you map your existing data fields to our system and ensure a smooth migration. We can handle donor information, donation history, contact preferences, and more. Data migration is typically completed during the setup phase.',
+      'Yes! Vitalita handles importing your existing donor databases in CSV and Excel formats. Our team maps your existing data fields to our system and ensures a smooth migration. We handle donor information, donation history, contact preferences, and more. Data migration is typically completed during the setup phase - all done by us.',
   },
 ];
 
@@ -299,7 +314,11 @@ const FAQAccordion = () => {
           </button>
           {openIndex === index && (
             <div className="px-6 pb-6">
-              <p className="text-sm leading-relaxed text-slate-600">{faq.answer}</p>
+              {typeof faq.answer === 'string' ? (
+                <p className="text-sm leading-relaxed text-slate-600">{faq.answer}</p>
+              ) : (
+                faq.answer
+              )}
             </div>
           )}
         </div>
@@ -317,11 +336,10 @@ const HowItWorks = () => {
         <div className="mx-auto max-w-4xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">Implementation Process</p>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-          Streamline Your Blood Donation Management
+          4 Simple Steps to Streamline Your Blood Donation Management
           </h1>
           <p className="mt-5 text-lg leading-relaxed text-slate-600">
-            Our streamlined implementation process gets your organization live quickly and efficiently. With dedicated
-            support and intuitive setup tools, you'll be managing donations in no time.
+            Vitalita sets everything up for you - ready to go with minimal effort from your organization. We handle all the heavy lifting and take the hassle out of setup, so you can focus on what matters most.
           </p>
         </div>
       </section>
@@ -419,9 +437,9 @@ const HowItWorks = () => {
               <p className="text-xs font-semibold uppercase tracking-[0.35em] text-red-300">Take the next step</p>
               <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">See It in Action - Request a Demo</h2>
               <p className="text-sm leading-relaxed text-white/80">
-                Ready to streamline your blood donation management? Partner with Vitalita to simplify your operations
-                with our intelligent platform. Our team will tailor a walkthrough to your organization&apos;s
-                implementation timeline, workflow requirements, and operational needs.
+                Ready to streamline your blood donation management? Partner with Vitalita and we'll set everything up for you. 
+                Our team handles all the heavy lifting - we'll tailor a walkthrough to your organization&apos;s
+                implementation timeline, workflow requirements, and operational needs. Very little effort needed from you.
               </p>
               <div className="flex flex-wrap gap-3 text-xs text-white/70">
                 <span className="rounded-full border border-white/20 px-3 py-1">Implementation roadmap</span>

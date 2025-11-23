@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle, ChevronDown, ChevronUp, Clock, Heart, TrendingDown, Users, XCircle } from 'lucide-react';
+import circularInfographic from '../assets/images/Circular Infographic.jpg';
 
 const Hero = () => {
   const [isStoryExpanded, setIsStoryExpanded] = useState(false);
@@ -22,6 +23,19 @@ const Hero = () => {
         <p className="max-w-3xl mx-auto text-xl leading-relaxed text-slate-700 font-medium">
           Without Vitalita, your organization is losing more than efficiency—you're losing lives, donors, and trust.
         </p>
+      </div>
+
+      {/* Circular Infographic */}
+      <div className="mb-16">
+        <div className="mx-auto max-w-4xl">
+          <div className="flex justify-center">
+            <img 
+              src={circularInfographic} 
+              alt="Vitalita Revolutionizing Blood Donation - Circular Infographic" 
+              className="max-w-2xl w-full h-auto rounded-2xl shadow-xl"
+            />
+          </div>
+        </div>
       </div>
 
       {/* The Story Section */}
