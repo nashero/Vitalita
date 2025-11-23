@@ -9,7 +9,6 @@ import {
   BarChart3,
   Zap,
   Smartphone,
-  Mail,
   MapPin,
   Shield,
   Heart,
@@ -24,12 +23,12 @@ const HowWeSimplify = () => {
       <section className="section-container relative overflow-hidden py-12">
         <div className="absolute left-1/2 top-0 -z-10 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-red-500/10 blur-[120px]" />
         <div className="mx-auto max-w-4xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">Simplification</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">Innovation</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-            How We Simplify Blood Donation
+            How We Transform Blood Donation
           </h1>
           <p className="mt-4 text-lg leading-relaxed text-slate-600">
-            Vitalita transforms the complex world of blood donation into a streamlined, intuitive experience for
+            Vitalita reimagines the complex world of blood donation into a streamlined, intuitive experience for
             organizations and donors alike. Discover how we've simplified every step of the process.
           </p>
         </div>
@@ -44,7 +43,7 @@ const HowWeSimplify = () => {
               <span>For Organizations</span>
             </div>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-              Simplified Blood Donation Management
+              Streamlined Blood Donation Management
             </h2>
             <p className="mt-3 text-lg leading-relaxed text-slate-600">
               Vitalita eliminates complexity, reduces manual work, and automates processes that used to take hours.
@@ -98,7 +97,7 @@ const HowWeSimplify = () => {
             </div>
           </div>
 
-          {/* Key Simplifications for Organizations */}
+          {/* Key Innovations for Organizations */}
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {[
               {
@@ -175,7 +174,7 @@ const HowWeSimplify = () => {
               <span>For Individual Donors</span>
             </div>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-              A Simple, Stress-Free Donation Experience
+              Stress-Free Donation Experience
             </h2>
             <p className="mt-3 text-lg leading-relaxed text-slate-600">
               We've removed all the friction from blood donation. Book, donate, and track your impact in minutes.
@@ -301,16 +300,16 @@ const HowWeSimplify = () => {
         </div>
       </section>
 
-      {/* Overall Simplification Benefits */}
+      {/* Overall Benefits */}
       <section className="section-container py-12">
         <div className="mx-auto max-w-4xl">
           <div className="text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">The Result</p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-              A Completely Simplified Process
+              Summary Process
             </h2>
             <p className="mt-3 text-lg leading-relaxed text-slate-600">
-              Vitalita has transformed blood donation from a complex, time-consuming process into a streamlined
+              Vitalita has revolutionized blood donation from a complex, time-consuming process into a streamlined
               experience that works for everyone.
             </p>
           </div>
@@ -320,11 +319,11 @@ const HowWeSimplify = () => {
               {
                 title: 'For Organizations',
                 benefits: [
+                  'Donor retention',
                   'Reduce administrative time by 80%',
                   'Eliminate scheduling conflicts',
                   'Automate compliance and reporting',
                   'Improve donor engagement',
-                  'Make data-driven decisions easily',
                 ],
               },
               {
@@ -358,7 +357,7 @@ const HowWeSimplify = () => {
           {/* Key Metrics */}
           <div className="mt-8 rounded-3xl border border-red-200 bg-gradient-to-br from-red-600 to-red-700 p-6 text-white shadow-xl">
             <div className="text-center">
-              <h3 className="text-2xl font-semibold">The Impact of Simplification</h3>
+              <h3 className="text-2xl font-semibold">The Impact of Innovation</h3>
               <p className="mt-2 text-red-100">Real results from organizations using Vitalita</p>
             </div>
             <div className="mt-6 grid gap-5 md:grid-cols-3">
@@ -385,13 +384,13 @@ const HowWeSimplify = () => {
               <p className="text-xs font-semibold uppercase tracking-[0.35em] text-red-300">Take the next step</p>
               <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">See It in Action - Request a Demo</h2>
               <p className="text-sm leading-relaxed text-white/80">
-                Ready to simplify your blood donation management? Partner with Vitalita to transform your complex
+                Ready to revolutionize your blood donation management? Partner with Vitalita to elevate your complex
                 processes into streamlined operations. Our team will tailor a walkthrough to show you exactly how
-                we simplify scheduling, donor management, and compliance for your organization.
+                we optimize scheduling, donor management, and compliance for your organization.
               </p>
               <div className="flex flex-wrap gap-3 text-xs text-white/70">
                 <span className="rounded-full border border-white/20 px-3 py-1">Live product tour</span>
-                <span className="rounded-full border border-white/20 px-3 py-1">Simplification walkthrough</span>
+                <span className="rounded-full border border-white/20 px-3 py-1">Innovation walkthrough</span>
                 <span className="rounded-full border border-white/20 px-3 py-1">Implementation roadmap</span>
               </div>
             </div>
