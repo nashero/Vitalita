@@ -17,11 +17,11 @@ const Hero = () => {
           <span>The Cost of Inefficiency</span>
         </div>
         <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl mb-6">
-          Every Second Counts. 
-          <span className="text-red-600"> Every Life Matters.</span>
+          <span className="text-red-600"> Every Life Matters. </span>
+           <span className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl mb-6">Every Second Counts. </span>
         </h1>
         <p className="max-w-3xl mx-auto text-xl leading-relaxed text-slate-700 font-medium">
-          Without Vitalita, your organization is losing more than efficiency—you're losing lives, donors, and trust.
+          Without Vitalita, you lose time—and time is life.
         </p>
       </div>
 
