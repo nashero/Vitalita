@@ -14,7 +14,8 @@ import {
   AlertCircle,
   CheckCircle,
   Loader,
-  RefreshCw
+  RefreshCw,
+  Share2
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n';
@@ -68,9 +69,11 @@ type BookingStep = 'type' | 'booking' | 'confirmation' | 'success';
 
 interface AppointmentBookingProps {
   onBack: () => void;
+  onBookingSuccess?: () => void;
+  onBookingComplete?: () => void;
 }
 
-export default function AppointmentBooking({ onBack }: AppointmentBookingProps) {
+export default function AppointmentBooking({ onBack, onBookingSuccess, onBookingComplete }: AppointmentBookingProps) {
   const { t } = useTranslation();
   const { donor } = useAuth();
   const [currentStep, setCurrentStep] = useState<BookingStep>('type');
@@ -104,10 +107,10 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       title: t('appointment.plasmaDonation'),
       description: t('appointment.plasmaDonationMedical'),
       duration: '90-120 minutes',
-      color: 'from-blue-500 to-blue-600',
-      bgColor: 'bg-blue-50',
-      iconColor: 'text-blue-600',
-      borderColor: 'border-blue-200 hover:border-blue-300',
+      color: 'from-slate-700 to-slate-800',
+      bgColor: 'bg-slate-50',
+      iconColor: 'text-slate-700',
+      borderColor: 'border-slate-200 hover:border-slate-300',
     },
   ];
 
@@ -518,50 +521,122 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         .single();
 
       if (appointmentError) {
-        console.error('Error creating appointment:', appointmentError);
+        console.error('❌ ERROR creating appointment:', appointmentError);
         console.error('Error details:', {
           code: appointmentError.code,
           message: appointmentError.message,
           details: appointmentError.details,
           hint: appointmentError.hint
         });
+        console.error('Attempted appointment data:', {
+          donor_hash_id: donor.donor_hash_id,
+          donation_center_id: selectedSlot.center_id,
+          appointment_datetime: selectedSlot.slot_datetime,
+          donation_type: selectedType,
+          status: 'SCHEDULED'
+        });
         setError(getAppointmentError(appointmentError));
+        setLoading(false);
         return;
       }
 
+      console.log('✅ Appointment created successfully:', appointment.appointment_id);
+
       // Update the availability slot with optimistic locking
-      const { error: slotUpdateError } = await supabase
+      console.log('🔄 Updating slot:', {
+        slot_id: selectedSlot.slot_id,
+        current_bookings: selectedSlot.current_bookings,
+        new_bookings: selectedSlot.current_bookings + 1
+      });
+
+      const { data: updatedSlot, error: slotUpdateError } = await supabase
         .from('availability_slots')
         .update({ 
           current_bookings: selectedSlot.current_bookings + 1 
         })
         .eq('slot_id', selectedSlot.slot_id)
         .eq('current_bookings', selectedSlot.current_bookings) // Optimistic locking
-        .eq('is_available', true); // Double-check availability
+        .eq('is_available', true) // Double-check availability
+        .select();
 
       if (slotUpdateError) {
-        console.error('Error updating slot:', slotUpdateError);
+        console.error('❌ ERROR updating slot:', slotUpdateError);
+        console.error('Slot update failed. Details:', {
+          code: slotUpdateError.code,
+          message: slotUpdateError.message,
+          details: slotUpdateError.details,
+          hint: slotUpdateError.hint
+        });
+        console.error('Slot information at time of update:', {
+          slot_id: selectedSlot.slot_id,
+          current_bookings: selectedSlot.current_bookings,
+          capacity: (selectedSlot as any).capacity || 'unknown'
+        });
         
         // If slot update failed, we need to rollback the appointment
+        console.log('🔄 Rolling back appointment:', appointment.appointment_id);
         const { error: rollbackError } = await supabase
           .from('appointments')
           .delete()
           .eq('appointment_id', appointment.appointment_id);
         
         if (rollbackError) {
-          console.error('Error rolling back appointment:', rollbackError);
+          console.error('❌ ERROR rolling back appointment:', rollbackError);
+          console.error('⚠️ WARNING: Appointment was created but could not be rolled back!', {
+            appointment_id: appointment.appointment_id
+          });
+        } else {
+          console.log('✅ Appointment rolled back successfully');
         }
 
         // Set error and return to prevent inconsistent state
         setError(getAppointmentError({ 
           code: 'SLOT_UPDATE_FAILED', 
           message: t('appointment.failedToUpdateSlot'),
-          userMessage: 'Unable to secure your time slot.',
+          userMessage: 'Unable to secure your time slot. The slot may have been booked by someone else.',
           suggestion: 'Please try again or select a different time slot.',
           severity: 'error'
         }));
+        setLoading(false);
         return;
       }
+
+      // Check if update actually modified any rows (optimistic locking check)
+      if (!updatedSlot || updatedSlot.length === 0) {
+        console.error('❌ ERROR: Slot update returned no rows. This means:');
+        console.error('   - The slot was modified by another user between fetch and update');
+        console.error('   - The current_bookings value changed (optimistic locking prevented update)');
+        console.error('   - OR the slot is no longer available');
+        console.log('🔄 Rolling back appointment due to failed slot update');
+        
+        const { error: rollbackError } = await supabase
+          .from('appointments')
+          .delete()
+          .eq('appointment_id', appointment.appointment_id);
+        
+        if (rollbackError) {
+          console.error('❌ ERROR rolling back appointment:', rollbackError);
+          console.error('⚠️ CRITICAL: Appointment created but could not be rolled back!');
+          console.error('   Appointment ID:', appointment.appointment_id);
+          console.error('   This appointment will remain in the database but slot was not updated!');
+        } else {
+          console.log('✅ Appointment rolled back successfully');
+        }
+        
+        setError(getAppointmentError({ 
+          code: 'SLOT_UPDATE_FAILED', 
+          message: t('appointment.failedToUpdateSlot'),
+          userMessage: 'Unable to secure your time slot. The slot may have been booked by someone else.',
+          suggestion: 'Please refresh and try again or select a different time slot.',
+          severity: 'error'
+        }));
+        setLoading(false);
+        return;
+      }
+
+      console.log('✅ Slot updated successfully. Updated slot data:', updatedSlot);
+      console.log('✅ Appointment saved successfully. Appointment ID:', appointment.appointment_id);
+      console.log('📋 Full appointment details:', JSON.stringify(appointment, null, 2));
 
       // Create audit log for the booking
       await supabase.rpc('create_audit_log', {
@@ -577,6 +652,12 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         p_status: 'success'
       });
 
+      // Notify parent component that booking was successful (do this BEFORE changing step)
+      // This ensures the appointment is refreshed in the dashboard immediately
+      if (onBookingSuccess) {
+        onBookingSuccess();
+      }
+      
       setBookingSuccess(true);
       setCurrentStep('success');
     } catch (err) {
@@ -788,20 +869,23 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
                 disabled={!available}
                 title={available ? `${slotsForDate.length} ${t('appointment.availableSlots').toLowerCase()} ${t('appointment.availableSlotsFrom')} ${date.toLocaleDateString()}` : t('appointment.noSlotsAvailable')}
                 className={`
-                  h-12 w-full rounded-lg text-sm font-medium transition-all duration-200 relative
+                  h-12 w-full rounded-lg text-sm font-medium transition-all duration-200 relative flex flex-col items-center justify-center
                   ${today 
-                    ? 'bg-blue-600 text-white ring-2 ring-blue-300' 
+                    ? `ring-2 ring-blue-300 bg-white ${date.getDay() === 0 ? 'text-red-600' : 'text-gray-900'}` 
                     : selected
                     ? 'bg-blue-600 text-white'
                     : available
-                    ? 'text-gray-900 bg-white hover:bg-blue-50 hover:text-blue-700 hover:ring-2 hover:ring-blue-200 cursor-pointer'
+                    ? `bg-white hover:bg-blue-50 hover:ring-2 hover:ring-blue-200 cursor-pointer ${date.getDay() === 0 ? 'text-red-600 hover:text-red-700' : 'text-gray-900'}`
                     : 'text-gray-300 bg-gray-50 cursor-not-allowed'
                   }
                   ${!isCurrentMonth ? 'opacity-50' : ''}
                 `}
               >
-                {date.getDate()}
-                {available && (
+                <span>{date.getDate()}</span>
+                {today && (
+                  <span className="text-[10px] text-gray-600 mt-0.5">Today</span>
+                )}
+                {available && !today && (
                   <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   </div>
@@ -926,7 +1010,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
                 <select
                   value={selectedCenter || ''}
                   onChange={(e) => handleCenterSelection(e.target.value)}
-                  className="w-full px-3 py-2 border border-orange-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Choose a center...</option>
                   {allCenters.map((center) => (
@@ -1006,7 +1090,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
                           <button
                             key={timeSlot.slot.slot_id}
                             onClick={() => handleTimeSlotSelection(timeSlot.slot)}
-                            className="px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all duration-200 font-medium"
+                            className="px-4 py-3 bg-white border-2 border-blue-300 rounded-lg text-gray-900 hover:bg-blue-50 hover:border-blue-400 transition-all duration-200 font-medium"
                           >
                             {timeSlot.displayTime}
                           </button>
@@ -1029,6 +1113,68 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
     </div>
   );
 
+  const handleAddToCalendar = () => {
+    if (!selectedSlot || !selectedType) return;
+
+    const slotDate = new Date(selectedSlot.slot_datetime);
+    const endDate = new Date(slotDate.getTime() + 45 * 60 * 1000); // 45 minutes duration
+
+    const formatICS = (date: Date) => {
+      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    };
+
+    const icsContent = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Vitalita//Appointment Booking//EN',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      `UID:${selectedSlot.slot_id}@vitalita.com`,
+      `DTSTAMP:${formatICS(new Date())}`,
+      `DTSTART:${formatICS(slotDate)}`,
+      `DTEND:${formatICS(endDate)}`,
+      `SUMMARY:${selectedType} Donation Appointment - ${selectedSlot.center?.name || 'Donation Center'}`,
+      `LOCATION:${selectedSlot.center?.address || ''}, ${selectedSlot.center?.city || ''}`,
+      `DESCRIPTION:Thank you for booking with Vitalita. Please arrive 15 minutes early and bring a valid ID.`,
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\r\n');
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'vitalita-appointment.ics';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleShare = () => {
+    if (!selectedSlot || !selectedType || !selectedSlot.center) return;
+
+    const dateTime = formatDateTime(selectedSlot.slot_datetime);
+    const shareText = `I'm donating ${selectedType.toLowerCase()} on ${dateTime.date} at ${dateTime.time} at ${selectedSlot.center.name}. Join me!`;
+    const shareUrl = window.location.origin;
+
+    if (navigator.share) {
+      navigator.share({
+        title: 'Blood Donation Appointment',
+        text: shareText,
+        url: shareUrl,
+      }).catch(() => {
+        // Fallback if share is cancelled
+      });
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(`${shareText} ${shareUrl}`).then(() => {
+        alert('Appointment details copied to clipboard!');
+      });
+    }
+  };
+
   const renderConfirmation = () => {
     if (!selectedSlot || !selectedType) return null;
     
@@ -1042,7 +1188,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
+          <div className="bg-gradient-to-r from-red-50 to-red-100 px-6 py-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">{t('appointment.bookingSummary')}</h3>
           </div>
           
@@ -1080,12 +1226,12 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           </div>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <div className="flex items-start">
-            <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 mr-3" />
-            <div className="text-sm text-blue-800">
+            <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 mr-3" />
+            <div className="text-sm text-red-800">
               <p className="font-medium mb-1">Important Reminders:</p>
-              <ul className="space-y-1 text-blue-700">
+              <ul className="space-y-1 text-red-700">
                 <li>• Please arrive 15 minutes early</li>
                 <li>• Bring a valid ID</li>
                 <li>• Eat a healthy meal before donating</li>
@@ -1095,18 +1241,38 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           </div>
         </div>
 
-        <div className="flex space-x-4">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button
+            onClick={handleAddToCalendar}
+            className="flex-1 bg-red-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-red-700 transition-colors duration-200 flex items-center justify-center"
+            style={{ backgroundColor: '#dc2626' }}
+          >
+            <span className="mr-2" role="img" aria-label="calendar">📅</span>
+            <span className="text-white font-semibold">Add to Calendar</span>
+          </button>
+          <button
+            onClick={handleShare}
+            className="flex-1 border-2 border-red-600 text-red-600 bg-white py-3 px-4 rounded-lg font-semibold hover:bg-red-50 transition-colors duration-200 flex items-center justify-center"
+            style={{ borderColor: '#dc2626', color: '#dc2626' }}
+          >
+            <Share2 className="w-5 h-5 mr-2" />
+            <span>Share</span>
+          </button>
+        </div>
+        
+        <div className="flex space-x-4 pt-4">
           <button
             onClick={() => setCurrentStep('booking')}
-            className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-200 transition-colors duration-200"
+            className="flex-1 border-2 border-red-600 text-red-600 bg-white py-3 px-4 rounded-lg font-semibold hover:bg-red-50 transition-colors duration-200"
+            style={{ borderColor: '#dc2626', color: '#dc2626', backgroundColor: '#ffffff' }}
           >
-            <ArrowLeft className="w-4 h-4 inline mr-2" />
-            {t('common.back')}
+            Back
           </button>
           <button
             onClick={confirmBooking}
             disabled={loading}
-            className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="flex-1 border-2 border-red-600 text-red-600 bg-white py-3 px-4 rounded-lg font-semibold hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            style={{ borderColor: '#dc2626', color: '#dc2626', backgroundColor: '#ffffff' }}
           >
             {loading ? (
               <div className="flex items-center justify-center">
@@ -1114,10 +1280,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
                 {t('common.loading')}
               </div>
             ) : (
-              <>
-                <Check className="w-4 h-4 inline mr-2" />
-                {t('appointment.confirmBooking')}
-              </>
+              'Done'
             )}
           </button>
         </div>
@@ -1129,49 +1292,123 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
     if (!selectedSlot || !selectedType) return null;
     
     const dateTime = formatDateTime(selectedSlot.slot_datetime);
+    const center = selectedSlot.center;
     
     return (
-      <div className="space-y-6 max-w-2xl mx-auto text-center">
-        <div className="bg-green-100 p-6 rounded-full w-24 h-24 mx-auto flex items-center justify-center">
-          <CheckCircle className="w-12 h-12 text-green-600" />
-        </div>
-        
-        <div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">{t('appointment.bookingSuccess')}</h2>
-          <p className="text-gray-600 text-lg">{t('appointment.bookingSuccessDesc')}</p>
+      <div className="space-y-6 max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            Your appointment is confirmed! 🎉
+          </h2>
+          <p className="text-gray-600 text-lg">
+            You're all set. Here's everything you need to know.
+          </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('appointment.appointmentDetails')}</h3>
-          <div className="space-y-3 text-left">
-            <div className="flex justify-between">
-              <span className="text-gray-600">{t('appointment.date')}:</span>
-              <span className="font-semibold">{dateTime.date}</span>
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Column - Appointment Details */}
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Appointment details</h3>
+              <div className="space-y-3">
+                <div>
+                  <p className="font-semibold text-gray-900 text-lg">{dateTime.date}</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-900 text-lg">{dateTime.time}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="font-semibold text-gray-900">{center?.name}</p>
+                  <p className="text-gray-600">{center?.address}</p>
+                  {center?.city && center?.country && (
+                    <p className="text-gray-600">{center.city}, {center.country}</p>
+                  )}
+                </div>
+                {center?.address && (
+                  <a
+                    href={`https://maps.google.com/maps?q=${encodeURIComponent(center.address)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-red-600 hover:text-red-700 font-medium"
+                  >
+                    Get directions
+                  </a>
+                )}
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">{t('appointment.time')}:</span>
-              <span className="font-semibold">{dateTime.time}</span>
+
+            {/* What to bring */}
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">What to bring</h3>
+              <ul className="space-y-2 text-gray-700">
+                <li>• Valid photo ID</li>
+                <li>• Hydration (water bottle is perfect)</li>
+                <li>• Something to eat afterwards</li>
+              </ul>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">{t('appointment.center')}:</span>
-              <span className="font-semibold">{selectedSlot.center?.name}</span>
+          </div>
+
+          {/* Right Column - Actions */}
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <div className="space-y-4">
+                <button
+                  onClick={handleAddToCalendar}
+                  className="w-full bg-red-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-red-700 transition-colors duration-200 flex items-center justify-center"
+                >
+                  <Calendar className="w-5 h-5 mr-2" />
+                  Add to Calendar
+                </button>
+                
+                <button
+                  onClick={handleShare}
+                  className="w-full border-2 border-red-600 text-red-600 bg-white py-3 px-4 rounded-lg font-semibold hover:bg-red-50 transition-colors duration-200 flex items-center justify-center"
+                >
+                  <Share2 className="w-5 h-5 mr-2" />
+                  Share
+                </button>
+                
+                <p className="text-sm text-gray-600 text-center">
+                  We'll send you a reminder the day before your appointment.
+                </p>
+              </div>
+            </div>
+
+            {/* What to expect */}
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">What to expect</h3>
+              <p className="text-gray-700">
+                The entire visit usually takes about 45 minutes. Our team will guide you through each step and answer any questions. Wear comfortable clothing with sleeves that can be rolled up.
+              </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <div className="flex items-center justify-center text-green-800">
-            <CheckCircle className="w-5 h-5 mr-2" />
-            <span className="font-medium">Confirmation sent to your preferred communication channel</span>
-          </div>
+        {/* Bottom Buttons */}
+        <div className="flex space-x-4 pt-4">
+          <button
+            onClick={() => setCurrentStep('booking')}
+            className="flex-1 border-2 border-red-600 text-red-600 bg-white py-3 px-4 rounded-lg font-semibold hover:bg-red-50 transition-colors duration-200"
+          >
+            Back
+          </button>
+          <button
+            onClick={() => {
+              // If onBookingComplete is provided, use it to return to dashboard
+              // Otherwise fall back to onBack
+              if (onBookingComplete) {
+                onBookingComplete();
+              } else {
+                onBack();
+              }
+            }}
+            className="flex-1 border-2 border-red-600 text-red-600 bg-white py-3 px-4 rounded-lg font-semibold hover:bg-red-50 transition-colors duration-200"
+          >
+            Done
+          </button>
         </div>
-
-        <button
-          onClick={onBack}
-          className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-8 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200"
-        >
-          {t('dashboard.backToLanding')}
-        </button>
       </div>
     );
   };
@@ -1234,13 +1471,15 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <button
-                onClick={onBack}
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200 mr-4"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                {t('dashboard.backToLanding')}
-              </button>
+              {currentStep !== 'success' && (
+                <button
+                  onClick={onBack}
+                  className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200 mr-4"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  {t('dashboard.backToLanding')}
+                </button>
+              )}
               <Calendar className="w-8 h-8 text-blue-600 mr-3" />
               <h1 className="text-xl font-bold text-gray-900">{t('appointment.title')}</h1>
             </div>
