@@ -103,18 +103,6 @@ const Hero = () => {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
               {
-                icon: <XCircle className="h-6 w-6 text-red-600" />,
-                title: 'Lives at Risk',
-                description: 'Delayed responses cost precious minutes when every second counts',
-                stat: 'Avg. 2.3 hours to locate critical blood',
-              },
-              {
-                icon: <Users className="h-6 w-6 text-red-600" />,
-                title: 'Donor Attrition',
-                description: 'Poor coordination leads to no-shows and lost trust',
-                stat: '22% of donors never return',
-              },
-              {
                 icon: <Clock className="h-6 w-6 text-red-600" />,
                 title: 'Operational Waste',
                 description: 'Manual processes consume staff time and resources',
@@ -125,6 +113,18 @@ const Hero = () => {
                 title: 'Capacity Loss',
                 description: 'Double bookings and gaps reduce collection efficiency',
                 stat: '31% of slots underutilized',
+              },
+              {
+                icon: <XCircle className="h-6 w-6 text-red-600" />,
+                title: 'Lives at Risk',
+                description: 'Delayed responses cost precious minutes when every second counts',
+                stat: 'Avg. 2.3 hours to locate critical blood',
+              },
+              {
+                icon: <Users className="h-6 w-6 text-red-600" />,
+                title: 'Donor Attrition',
+                description: 'Poor coordination leads to no-shows and lost trust',
+                stat: '22% of donors never return',
               },
             ].map((loss) => (
               <div

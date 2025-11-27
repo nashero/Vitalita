@@ -49,7 +49,12 @@ const Footer = () => {
           </div>
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Portals</p>
-            <a href="#donor-portal" className="block transition hover:text-red-600">
+            <a 
+              href={import.meta.env.VITE_DONOR_PORTAL_URL || "http://localhost:5174"} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block transition hover:text-red-600"
+            >
               Donor Portal (Guest Access)
             </a>
             <a href="#coordinator-login" className="block transition hover:text-red-600">

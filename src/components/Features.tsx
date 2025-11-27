@@ -33,7 +33,7 @@ const Features = () => {
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">Platform Pillars</p>
         <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-          Built for complex donation networks
+          Built for complex donor organizations
         </h2>
         <p className="mt-4 text-base leading-relaxed text-slate-600">
           Vitalita connects every team—from recruitment to transfusion—with a modern operating system that keeps donors

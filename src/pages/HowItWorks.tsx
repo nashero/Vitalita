@@ -196,12 +196,12 @@ const implementationSteps = [
     title: 'Hassle Free Onboarding',
     timeframe: 'Week 1',
     icon: Settings,
-    description: 'Use an already configured org for your application',
+    description: 'Use an already configured org for your application, here is how Vitalita does it',
     details: [
-      'Vitalita configures your donation centers and locations',
-      'We set capacity limits per location for you',
-      'We define operating hours and schedules',
-      'We import your existing donor database (CSV/Excel support)',
+      'Configure your donation centers and locations',
+      'Set capacity limits per location for you',
+      'Define operating hours and schedules',
+      'Import your existing donor database (CSV/Excel support)',
     ],
     visual: <ConfigurationDashboardMockup />,
   },
@@ -214,8 +214,8 @@ const implementationSteps = [
     details: [
       'Works out of the box with pre-configured workflows',
       'Open workflow definitions allow customization if needed',
-      'We establish eligibility criteria for you',
-      'We set up notification templates',
+      'Establish eligibility criteria for you',
+      'Set up notification templates',
       
     ],
     visual: <WorkflowBuilderMockup />,
@@ -225,12 +225,12 @@ const implementationSteps = [
     title: 'Launch & Invite Donors',
     timeframe: 'Week 2',
     icon: Send,
-    description: 'If you can use a phone, you can use Vitalita - it\'s that intuitive. No technical expertise needed.',
+    description: 'If you can use a phone, you can use Vitalita - it\'s that intuitive. No technical expertise needed. This is how Vitalita can help',
     details: [
-      'We send enrollment invitations via email/SMS',
-      'We provide donors with portal access links',
-      'We train your staff on platform usage',
-      'We help you go live with first appointments',
+      'Send enrollment invitations via email/SMS',
+      'Provide donors with portal access links',
+      'Train your staff on platform usage',
+      'Help you go live with first appointments',
     ],
     visual: <CommunicationDashboardMockup />,
   },
@@ -239,12 +239,12 @@ const implementationSteps = [
     title: 'Manage, Optimize ( Key Performance Indicators)',
     timeframe: 'Ongoing',
     icon: BarChart3,
-    description: 'Vitalita manages your donors and ensures your organization meets all health requirements and certification criteria',
+    description: 'Vitalita manages your donors and ensures your organization meets all health requirements and certification criteria as follows',
     details: [
-      'We manage your donors throughout the entire lifecycle',
-      'We generate KPIs as the output of our management and monitoring',
-      'We conduct quality audits to maintain compliance and standards',
-      'We continuously monitor and optimize operations for peak performance',
+      'Manage your donors throughout the entire lifecycle',
+      'Generate KPIs as the output of our management and monitoring',
+      'Conduct quality audits to maintain compliance and standards',
+      'Continuously monitor and optimize operations for peak performance',
     ],
     visual: <AnalyticsDashboardMockup />,
   },
@@ -367,11 +367,10 @@ const HowItWorks = () => {
                     {step.title}
                   </h2>
                   <p className="mt-4 text-lg leading-relaxed text-slate-600">{step.description}</p>
-                  <ul className="mt-6 space-y-3">
+                  <ul className="mt-6 ml-6 list-disc space-y-3">
                     {step.details.map((detail, detailIndex) => (
-                      <li key={detailIndex} className="flex items-start gap-3">
-                        <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-500" />
-                        <span className="text-sm leading-relaxed text-slate-600">{detail}</span>
+                      <li key={detailIndex} className="text-sm leading-relaxed text-slate-600">
+                        {detail}
                       </li>
                     ))}
                   </ul>
