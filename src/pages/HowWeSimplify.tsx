@@ -46,7 +46,7 @@ const HowWeSimplify = () => {
               Streamlined Blood Donation Management
             </h2>
             <p className="mt-3 text-lg leading-relaxed text-slate-600">
-              Vitalita eliminates complexity, reduces manual work, and automates processes that used to take hours.
+              Eliminate complexity. Automate processes. Save time.
             </p>
           </div>
 
@@ -59,12 +59,10 @@ const HowWeSimplify = () => {
               </div>
               <ul className="space-y-2">
                 {[
-                  'Manual scheduling with spreadsheets and phone calls',
-                  'Time-consuming donor eligibility verification',
-                  'Disconnected systems requiring multiple logins',
-                  'Manual reminder calls and emails',
-                  'Paper-based health screening forms',
-                  'Complex reporting requiring IT support',
+                  'Manual scheduling & phone calls',
+                  'Time-consuming eligibility checks',
+                  'Multiple disconnected systems',
+                  'Paper forms & manual reminders',
                 ].map((item, index) => (
                   <li key={index} className="flex items-start gap-3 text-sm text-slate-600">
                     <span className="mt-1 text-red-300">✗</span>
@@ -82,11 +80,9 @@ const HowWeSimplify = () => {
               <ul className="space-y-2">
                 {[
                   'Automated scheduling with real-time availability',
-                  'Instant eligibility checks with automated rules',
-                  'Unified platform - one login for everything',
-                  'Automated SMS and email notifications',
-                  'Digital health screening with instant validation',
-                  'Real-time dashboards and automated reports',
+                  'Instant eligibility checks',
+                  'Unified platform - one login',
+                  'Automated notifications & digital screening',
                 ].map((item, index) => (
                   <li key={index} className="flex items-start gap-3 text-sm text-slate-700">
                     <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-500" />
@@ -103,44 +99,38 @@ const HowWeSimplify = () => {
               {
                 icon: Calendar,
                 title: 'One-Click Scheduling',
-                description:
-                  'Donors book appointments in seconds. Your team sees everything in real-time without manual coordination.',
-                benefit: 'Save 15+ hours per week',
+                description: 'Donors book in seconds. Your team sees everything in real-time.',
+                benefit: 'Save 15+ hours/week',
               },
               {
                 icon: Users,
                 title: 'Automated Donor Management',
-                description:
-                  'Complete donor profiles with automatic eligibility tracking. No more manual calculations or spreadsheets.',
-                benefit: 'Manage 10,000+ donors effortlessly',
+                description: 'Complete profiles with automatic eligibility tracking. No spreadsheets.',
+                benefit: 'Manage 10,000+ donors',
               },
               {
                 icon: Bell,
                 title: 'Smart Notifications',
-                description:
-                  'Automated reminders via SMS and email. Donors stay engaged without your team lifting a finger.',
-                benefit: '90% reduction in no-shows',
+                description: 'Automated SMS and email reminders keep donors engaged.',
+                benefit: '90% fewer no-shows',
               },
               {
                 icon: BarChart3,
                 title: 'Real-Time Analytics',
-                description:
-                  'Instant insights into capacity, utilization, and performance. Make data-driven decisions effortlessly.',
+                description: 'Instant insights into capacity and performance.',
                 benefit: 'No IT support needed',
               },
               {
                 icon: Shield,
                 title: 'Compliance Made Simple',
-                description:
-                  'Automated health screening and eligibility rules ensure compliance without complex manual processes.',
-                benefit: '100% compliance confidence',
+                description: 'Automated health screening ensures compliance effortlessly.',
+                benefit: '100% compliance',
               },
               {
                 icon: Clock,
                 title: 'Quick Setup',
-                description:
-                  'Get up and running in 1-2 weeks. Our team handles the heavy lifting so you can focus on saving lives.',
-                benefit: 'Minimal training required',
+                description: 'Up and running in 1-2 weeks. We handle everything.',
+                benefit: 'Minimal training',
               },
             ].map((feature, index) => {
               const IconComponent = feature.icon;
@@ -177,60 +167,48 @@ const HowWeSimplify = () => {
               Stress-Free Donation Experience
             </h2>
             <p className="mt-3 text-lg leading-relaxed text-slate-600">
-              We've removed all the friction from blood donation. Book, donate, and track your impact in minutes.
+              Book, donate, and track your impact—all in minutes.
             </p>
           </div>
 
           {/* Donor Journey */}
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[
               {
                 step: '1',
                 icon: Smartphone,
                 title: 'Easy Registration',
-                description:
-                  'Sign up in minutes with a simple form. Your profile is saved securely, so you never have to re-enter information.',
-                details: ['Quick online registration', 'Secure profile storage', 'One-time setup'],
+                description: 'Sign up in minutes. Your profile is saved securely.',
               },
               {
                 step: '2',
                 icon: Calendar,
                 title: 'Book in Seconds',
-                description:
-                  'See available slots in real-time. Choose your preferred location, date, and time with just a few taps.',
-                details: ['Real-time availability', 'Multiple locations', 'Instant confirmation'],
+                description: 'See available slots in real-time. Choose location, date, and time.',
               },
               {
                 step: '3',
                 icon: Bell,
                 title: 'Smart Reminders',
-                description:
-                  'Get automatic reminders before your appointment. Never miss a donation opportunity again.',
-                details: ['SMS and email reminders', '24-hour advance notice', 'Easy rescheduling'],
+                description: 'Automatic reminders before your appointment.',
               },
               {
                 step: '4',
                 icon: FileText,
-                title: 'Digital Health Screening',
-                description:
-                  'Complete your health questionnaire online before arriving. No more waiting in line with paper forms.',
-                details: ['Pre-appointment screening', 'Instant eligibility check', 'Paperless process'],
+                title: 'Digital Screening',
+                description: 'Complete health questionnaire online. No paper forms.',
               },
               {
                 step: '5',
                 icon: MapPin,
                 title: 'Easy Navigation',
-                description:
-                  'Get directions to your donation center. Know exactly where to go and what to expect.',
-                details: ['Clear directions', 'Parking information', 'What to bring guide'],
+                description: 'Get directions and know exactly what to expect.',
               },
               {
                 step: '6',
                 icon: Heart,
                 title: 'Track Your Impact',
-                description:
-                  'See your donation history, eligibility status, and the lives you\'ve helped save - all in one place.',
-                details: ['Donation history', 'Eligibility calendar', 'Impact tracking'],
+                description: 'See donation history and the lives you\'ve helped save.',
               },
             ].map((step, index) => {
               const IconComponent = step.icon;
@@ -247,14 +225,6 @@ const HowWeSimplify = () => {
                   </div>
                   <h3 className="text-lg font-semibold text-slate-900">{step.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-slate-600">{step.description}</p>
-                  <ul className="mt-3 space-y-1.5">
-                    {step.details.map((detail, detailIndex) => (
-                      <li key={detailIndex} className="flex items-start gap-2 text-xs text-slate-600">
-                        <CheckCircle2 className="mt-0.5 h-3 w-3 flex-shrink-0 text-red-500" />
-                        <span>{detail}</span>
-                      </li>
-                    ))}
-                  </ul>
                 </div>
               );
             })}
@@ -263,8 +233,7 @@ const HowWeSimplify = () => {
           {/* Donor Benefits Summary */}
           <div className="mt-10 rounded-3xl border border-red-200 bg-gradient-to-br from-red-50 via-white to-red-50 p-6 shadow-lg">
             <div className="text-center">
-              <h3 className="text-2xl font-semibold text-slate-900">What This Means for You</h3>
-              <p className="mt-2 text-slate-600">Donating blood has never been this simple</p>
+              <h3 className="text-2xl font-semibold text-slate-900">Simple by Design</h3>
             </div>
             <div className="mt-6 grid gap-5 md:grid-cols-3">
               {[
@@ -275,7 +244,7 @@ const HowWeSimplify = () => {
                 },
                 {
                   stat: 'Zero',
-                  label: 'Paper forms to fill',
+                  label: 'Paper forms',
                   icon: FileText,
                 },
                 {
@@ -306,59 +275,17 @@ const HowWeSimplify = () => {
           <div className="text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">The Result</p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-              Summary Process
+              Simple for Everyone
             </h2>
             <p className="mt-3 text-lg leading-relaxed text-slate-600">
-              Vitalita has revolutionized blood donation from a complex, time-consuming process into a streamlined
-              experience that works for everyone.
+              From complex processes to streamlined experiences that work for everyone.
             </p>
-          </div>
-
-          <div className="mt-8 grid gap-5 md:grid-cols-2">
-            {[
-              {
-                title: 'For Organizations',
-                benefits: [
-                  'Donor retention',
-                  'Reduce administrative time by 80%',
-                  'Eliminate scheduling conflicts',
-                  'Automate compliance and reporting',
-                  'Improve donor engagement',
-                ],
-              },
-              {
-                title: 'For Donors',
-                benefits: [
-                  'Book appointments in minutes',
-                  'No more waiting or paperwork',
-                  'Get reminders automatically',
-                  'Track your donation history',
-                  'See your impact in real-time',
-                ],
-              },
-            ].map((section, index) => (
-              <div
-                key={index}
-                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg"
-              >
-                <h3 className="text-xl font-semibold text-slate-900">{section.title}</h3>
-                <ul className="mt-4 space-y-2">
-                  {section.benefits.map((benefit, benefitIndex) => (
-                    <li key={benefitIndex} className="flex items-start gap-3">
-                      <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-500" />
-                      <span className="text-sm leading-relaxed text-slate-600">{benefit}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
           </div>
 
           {/* Key Metrics */}
           <div className="mt-8 rounded-3xl border border-red-200 bg-gradient-to-br from-red-600 to-red-700 p-6 text-white shadow-xl">
             <div className="text-center">
-              <h3 className="text-2xl font-semibold">The Impact of Innovation</h3>
-              <p className="mt-2 text-red-100">Real results from organizations using Vitalita</p>
+              <h3 className="text-2xl font-semibold">The Impact</h3>
             </div>
             <div className="mt-6 grid gap-5 md:grid-cols-3">
               {[
@@ -378,33 +305,26 @@ const HowWeSimplify = () => {
 
       {/* CTA Section */}
       <section className="section-container pb-12 sm:pb-16">
-        <div className="relative overflow-hidden rounded-[40px] border border-slate-200 bg-slate-900 px-6 py-10 sm:px-10 sm:py-12 text-white shadow-2xl shadow-red-500/30">
+        <div className="relative overflow-hidden rounded-[40px] border border-slate-200 bg-gradient-to-br from-red-50 via-white to-slate-50 px-6 py-10 sm:px-10 sm:py-12 shadow-xl shadow-red-100/50">
           <div className="grid items-center gap-8 lg:grid-cols-[2fr_1fr]">
             <div className="space-y-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-red-300">Take the next step</p>
-              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">See It in Action - Request a Demo</h2>
-              <p className="text-sm leading-relaxed text-white/80">
-                Ready to revolutionize your blood donation management? Partner with Vitalita to elevate your complex
-                processes into streamlined operations. Our team will tailor a walkthrough to show you exactly how
-                we optimize scheduling, donor management, and compliance for your organization.
+              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-red-600">See it in action</p>
+              <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Experience the Simplification</h2>
+              <p className="text-sm leading-relaxed text-slate-600">
+                See how we transform complex processes into simple, automated workflows. Watch hours of manual work become minutes of effortless automation.
               </p>
-              <div className="flex flex-wrap gap-3 text-xs text-white/70">
-                <span className="rounded-full border border-white/20 px-3 py-1">Live product tour</span>
-                <span className="rounded-full border border-white/20 px-3 py-1">Innovation walkthrough</span>
-                <span className="rounded-full border border-white/20 px-3 py-1">Implementation roadmap</span>
-              </div>
             </div>
             <div className="flex justify-center lg:justify-end">
               <Link
                 to="/contact"
-                className="inline-flex items-center justify-center rounded-[12px] bg-gradient-to-r from-red-500 via-orange-500 to-red-600 px-10 py-5 text-base font-semibold text-white shadow-xl shadow-red-500/50 transition hover:from-red-600 hover:via-orange-600 hover:to-red-700 hover:shadow-2xl hover:shadow-red-500/60 hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center rounded-[12px] bg-gradient-to-r from-red-500 via-orange-500 to-red-600 px-10 py-5 text-base font-semibold text-white shadow-lg shadow-red-500/30 transition hover:from-red-600 hover:via-orange-600 hover:to-red-700 hover:shadow-xl hover:shadow-red-500/40 hover:-translate-y-0.5"
               >
-                Request a Demo
+                See Demo
               </Link>
             </div>
           </div>
-          <div className="pointer-events-none absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-red-500/40 blur-3xl" />
-          <div className="pointer-events-none absolute left-0 top-0 h-40 w-40 rounded-full bg-red-400/40 blur-3xl" />
+          <div className="pointer-events-none absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-red-200/30 blur-3xl" />
+          <div className="pointer-events-none absolute left-0 top-0 h-40 w-40 rounded-full bg-red-100/40 blur-3xl" />
         </div>
       </section>
 

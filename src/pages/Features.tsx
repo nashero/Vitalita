@@ -342,30 +342,31 @@ const FeaturesPage = () => {
       </section>
 
       <section className="section-container pb-12 sm:pb-16">
-        <div className="relative overflow-hidden rounded-[40px] border border-slate-200 bg-slate-900 px-6 py-10 sm:px-10 sm:py-12 text-white shadow-2xl shadow-red-500/30">
+        <div className="relative overflow-hidden rounded-[40px] border border-slate-200 bg-gradient-to-br from-red-50 via-white to-slate-50 px-6 py-10 sm:px-10 sm:py-12 shadow-xl shadow-red-100/50">
           <div className="grid items-center gap-8 lg:grid-cols-[2fr_1fr]">
             <div className="space-y-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-red-300">Take the next step</p>
-              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">See It in Action - Request a Demo</h2>
-              <p className="text-sm leading-relaxed text-white/80">
-                Partner with Vitalita to equip every donation center with a connected, intelligent operating system. Our team
-                will tailor a walkthrough to your organization&apos;s workflows, data needs, and integration landscape.
+              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-red-600">Explore the platform</p>
+              <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Experience Every Feature Live</h2>
+              <p className="text-sm leading-relaxed text-slate-600">
+                See how all features work together in one unified platform with real scenarios from your donation centers.
               </p>
-              <div className="flex flex-wrap gap-3 text-xs text-white/70">
-                <span className="rounded-full border border-white/20 px-3 py-1">Live product tour</span>
-                <span className="rounded-full border border-white/20 px-3 py-1">Implementation roadmap</span>
-                <span className="rounded-full border border-white/20 px-3 py-1">Security deep dive</span>
+              <div className="flex flex-wrap gap-3 text-xs text-slate-600">
+                <span className="rounded-full border border-red-200 bg-white/80 px-3 py-1">Live walkthrough</span>
+                <span className="rounded-full border border-red-200 bg-white/80 px-3 py-1">Integration</span>
+                <span className="rounded-full border border-red-200 bg-white/80 px-3 py-1">Security</span>
               </div>
             </div>
-            <Link
-              to="/contact"
-              className="inline-flex items-center justify-center rounded-full bg-red-500 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-red-500/50 transition hover:bg-red-600"
-            >
-              Request a Demo
-            </Link>
+            <div className="flex justify-center lg:justify-end">
+              <Link
+                to="/contact"
+                className="inline-flex items-center justify-center rounded-[12px] bg-gradient-to-r from-red-500 via-orange-500 to-red-600 px-10 py-5 text-base font-semibold text-white shadow-lg shadow-red-500/30 transition hover:from-red-600 hover:via-orange-600 hover:to-red-700 hover:shadow-xl hover:shadow-red-500/40 hover:-translate-y-0.5"
+              >
+                Request Feature Demo
+              </Link>
+            </div>
           </div>
-          <div className="pointer-events-none absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-red-500/40 blur-3xl" />
-          <div className="pointer-events-none absolute left-0 top-0 h-40 w-40 rounded-full bg-red-400/40 blur-3xl" />
+          <div className="pointer-events-none absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-red-200/30 blur-3xl" />
+          <div className="pointer-events-none absolute left-0 top-0 h-40 w-40 rounded-full bg-red-100/40 blur-3xl" />
         </div>
       </section>
     </div>

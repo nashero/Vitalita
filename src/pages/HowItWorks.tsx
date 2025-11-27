@@ -196,7 +196,7 @@ const implementationSteps = [
     title: 'Hassle Free Onboarding',
     timeframe: 'Week 1',
     icon: Settings,
-    description: 'Use an already configured org for your application, here is how Vitalita does it',
+    description: 'We configure everything for you—ready to go from day one.',
     details: [
       'Configure your donation centers and locations',
       'Set capacity limits per location for you',
@@ -210,7 +210,7 @@ const implementationSteps = [
     title: 'Customize Your Workflows',
     timeframe: 'Week 1-2',
     icon: Workflow,
-    description: 'The platform works out of the box. Our open workflow definitions enable you to tailor it to your needs if you need it',
+    description: 'Works out of the box, customizable when needed.',
     details: [
       'Works out of the box with pre-configured workflows',
       'Open workflow definitions allow customization if needed',
@@ -225,7 +225,7 @@ const implementationSteps = [
     title: 'Launch & Invite Donors',
     timeframe: 'Week 2',
     icon: Send,
-    description: 'If you can use a phone, you can use Vitalita - it\'s that intuitive. No technical expertise needed. This is how Vitalita can help',
+    description: 'Intuitive and simple—no technical expertise needed.',
     details: [
       'Send enrollment invitations via email/SMS',
       'Provide donors with portal access links',
@@ -239,7 +239,7 @@ const implementationSteps = [
     title: 'Manage, Optimize ( Key Performance Indicators)',
     timeframe: 'Ongoing',
     icon: BarChart3,
-    description: 'Vitalita manages your donors and ensures your organization meets all health requirements and certification criteria as follows',
+    description: 'Manage donors, track KPIs, and maintain compliance—all in one place.',
     details: [
       'Manage your donors throughout the entire lifecycle',
       'Generate KPIs as the output of our management and monitoring',
@@ -339,7 +339,7 @@ const HowItWorks = () => {
           4 Simple Steps to Streamline Your Blood Donation Management
           </h1>
           <p className="mt-5 text-lg leading-relaxed text-slate-600">
-            Vitalita sets everything up for you - ready to go with minimal effort from your organization. We handle all the heavy lifting and take the hassle out of setup, so you can focus on what matters most.
+            We handle all the setup—you focus on saving lives.
           </p>
         </div>
       </section>
@@ -430,33 +430,31 @@ const HowItWorks = () => {
 
       {/* CTA Section */}
       <section className="section-container pb-12 sm:pb-16">
-        <div className="relative overflow-hidden rounded-[40px] border border-slate-200 bg-slate-900 px-6 py-10 sm:px-10 sm:py-12 text-white shadow-2xl shadow-red-500/30">
+        <div className="relative overflow-hidden rounded-[40px] border border-slate-200 bg-gradient-to-br from-red-50 via-white to-slate-50 px-6 py-10 sm:px-10 sm:py-12 shadow-xl shadow-red-100/50">
           <div className="grid items-center gap-8 lg:grid-cols-[2fr_1fr]">
             <div className="space-y-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-red-300">Take the next step</p>
-              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">See It in Action - Request a Demo</h2>
-              <p className="text-sm leading-relaxed text-white/80">
-                Ready to streamline your blood donation management? Partner with Vitalita and we'll set everything up for you. 
-                Our team handles all the heavy lifting - we'll tailor a walkthrough to your organization&apos;s
-                implementation timeline, workflow requirements, and operational needs. Very little effort needed from you.
+              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-red-600">Ready to get started?</p>
+              <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">See Your Implementation Plan</h2>
+              <p className="text-sm leading-relaxed text-slate-600">
+                See how we handle onboarding, workflows, and optimization—tailored to your needs. We do the heavy lifting, you focus on saving lives.
               </p>
-              <div className="flex flex-wrap gap-3 text-xs text-white/70">
-                <span className="rounded-full border border-white/20 px-3 py-1">Implementation roadmap</span>
-                <span className="rounded-full border border-white/20 px-3 py-1">Setup walkthrough</span>
-                <span className="rounded-full border border-white/20 px-3 py-1">Customization demo</span>
+              <div className="flex flex-wrap gap-3 text-xs text-slate-600">
+                <span className="rounded-full border border-red-200 bg-white/80 px-3 py-1">1-2 week setup timeline</span>
+                <span className="rounded-full border border-red-200 bg-white/80 px-3 py-1">Zero technical expertise needed</span>
+                <span className="rounded-full border border-red-200 bg-white/80 px-3 py-1">Full implementation support</span>
               </div>
             </div>
             <div className="flex justify-center lg:justify-end">
               <Link
                 to="/contact"
-                className="inline-flex items-center justify-center rounded-[12px] bg-gradient-to-r from-red-500 via-orange-500 to-red-600 px-10 py-5 text-base font-semibold text-white shadow-xl shadow-red-500/50 transition hover:from-red-600 hover:via-orange-600 hover:to-red-700 hover:shadow-2xl hover:shadow-red-500/60 hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center rounded-[12px] bg-gradient-to-r from-red-500 via-orange-500 to-red-600 px-10 py-5 text-base font-semibold text-white shadow-lg shadow-red-500/30 transition hover:from-red-600 hover:via-orange-600 hover:to-red-700 hover:shadow-xl hover:shadow-red-500/40 hover:-translate-y-0.5"
               >
-                Request a Demo
+                Request Implementation Demo
               </Link>
             </div>
           </div>
-          <div className="pointer-events-none absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-red-500/40 blur-3xl" />
-          <div className="pointer-events-none absolute left-0 top-0 h-40 w-40 rounded-full bg-red-400/40 blur-3xl" />
+          <div className="pointer-events-none absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-red-200/30 blur-3xl" />
+          <div className="pointer-events-none absolute left-0 top-0 h-40 w-40 rounded-full bg-red-100/40 blur-3xl" />
         </div>
       </section>
 
