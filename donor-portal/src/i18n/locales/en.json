@@ -3,8 +3,10 @@
     "home": "Home",
     "bookAppointment": "Book Appointment",
     "myAppointments": "My Appointments",
+    "myAccount": "My Account",
     "help": "Help",
     "logIn": "Log In",
+    "logOut": "Log Out",
     "toggleMenu": "Toggle navigation menu",
     "closeMenu": "Close menu",
     "openMenu": "Open menu"
@@ -39,7 +41,8 @@
     "donorRegistrationTitle": "Donor Registration & Login",
     "donorRegistrationDescription": "New to Vitalita? Register as a donor or login to your existing account to manage appointments.",
     "firstTimeDonating": "First Time Donating?",
-    "bookAppointmentNow": "Book your appointment Now",
+    "bookAppointmentNow": "Already a Donor?",
+    "viewDashboard": "View Dashboard",
     "imageAlt1": "Medical professionals transporting a patient",
     "imageAlt2": "Healthcare professional comforting a patient",
     "imageAlt3": "Medical team celebrating with a young patient"

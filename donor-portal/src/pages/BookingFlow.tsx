@@ -6,6 +6,7 @@ import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { ensureLeafletIcon } from '../utils/mapDefaults';
 import { supabase } from '../lib/supabase';
+import { isAuthenticated } from '../utils/auth';
 
 type RiskLevel = 'normal' | 'high';
 
@@ -286,6 +287,13 @@ const BookingFlow = () => {
     medications: '',
     travel: '',
   });
+
+  // Check authentication on mount
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      navigate('/login');
+    }
+  }, [navigate]);
 
   // Fetch donor's default center and all centers on mount
   useEffect(() => {
