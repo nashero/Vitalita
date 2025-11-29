@@ -45,7 +45,11 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
   // Refresh appointments when returning from booking
   useEffect(() => {
     if (!showBooking && donor) {
-      fetchAppointments();
+      // Add a small delay to ensure database transaction is committed
+      const timer = setTimeout(() => {
+        fetchAppointments();
+      }, 500);
+      return () => clearTimeout(timer);
     }
   }, [showBooking, donor]);
 
@@ -134,13 +138,19 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
         onBack={() => setShowBooking(false)} 
         onBookingSuccess={() => {
           // Refresh appointments when booking is successful
-          fetchAppointments();
+          // Add a small delay to ensure database transaction is committed
+          setTimeout(() => {
+            fetchAppointments();
+          }, 300);
         }}
         onBookingComplete={() => {
           // Return to dashboard after booking is complete
           setShowBooking(false);
           // Refresh appointments to show the new booking
-          fetchAppointments();
+          // Add a small delay to ensure database transaction is committed
+          setTimeout(() => {
+            fetchAppointments();
+          }, 500);
         }}
       />
     );
