@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addDays, format, setHours, setMinutes, parseISO } from 'date-fns';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
-import { X, Minimize2, Maximize2, Trash2, Bug } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import { ensureLeafletIcon } from '../utils/mapDefaults';
 import { supabase } from '../lib/supabase';
@@ -267,28 +266,6 @@ const BookingFlow = () => {
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const [currentMonthView, setCurrentMonthView] = useState(new Date());
   
-  // Debug panel state
-  const [debugLogs, setDebugLogs] = useState<Array<{ id: string; timestamp: Date; message: string; type: 'info' | 'success' | 'error' | 'warning' }>>([]);
-  const [showDebugPanel, setShowDebugPanel] = useState(true);
-  const [debugPanelMinimized, setDebugPanelMinimized] = useState(false);
-
-  // Debug logging function
-  const addDebugLog = (message: string, type: 'info' | 'success' | 'error' | 'warning' = 'info') => {
-    const logEntry = {
-      id: `${Date.now()}-${Math.random()}`,
-      timestamp: new Date(),
-      message,
-      type
-    };
-    setDebugLogs(prev => [...prev.slice(-99), logEntry]); // Keep last 100 logs
-    // Also log to console
-    const consoleMethod = type === 'error' ? console.error : type === 'warning' ? console.warn : console.log;
-    consoleMethod(message);
-  };
-
-  const clearDebugLogs = () => {
-    setDebugLogs([]);
-  };
 
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     fullName: '',
@@ -417,7 +394,6 @@ const BookingFlow = () => {
         }
 
         if (slotsData) {
-          console.log(`Fetched ${slotsData.length} slots from database for center ${selectedCenterId}, type ${selectedDonationType}`);
           
           // Group slots by date and filter by available capacity
           const slotsByDate = new Map<string, TimeSlot[]>();
@@ -466,7 +442,6 @@ const BookingFlow = () => {
             })
           );
 
-          console.log(`Processed ${availability.length} dates with available slots:`, 
             availability.map(a => `${a.isoDate} (${a.slots.length} slots)`).join(', '));
 
           // Update the selected center's availability
@@ -710,23 +685,16 @@ const BookingFlow = () => {
   };
 
   const handleSubmitAppointment = async (): Promise<boolean> => {
-    addDebugLog('🚀 [DEBUG] handleSubmitAppointment called', 'info');
-    
     if (!selectedSlot || !selectedCenter) {
-      addDebugLog('❌ [DEBUG] Missing selectedSlot or selectedCenter', 'error');
       setValidationMessage('Please select a date, time, and center.');
       return false;
     }
 
     try {
-      addDebugLog('🔄 [DEBUG] Setting isSubmitting to true', 'info');
       setIsSubmitting(true);
       const donorHashId = sessionStorage.getItem('donor_hash_id');
-      
-      addDebugLog(`🔍 [DEBUG] Donor hash ID from session: ${donorHashId ? 'found' : 'not found'}`, donorHashId ? 'success' : 'error');
 
       if (!donorHashId) {
-        addDebugLog('❌ [DEBUG] No donor hash ID found, redirecting to login', 'error');
         setValidationMessage('Please log in to book an appointment.');
         navigate('/login');
         return false;
@@ -744,45 +712,28 @@ const BookingFlow = () => {
         reminder_sent: false,
       };
       
-      addDebugLog(`📝 [DEBUG] Creating appointment with data: ${JSON.stringify(appointmentData, null, 2)}`, 'info');
-      
-      const insertStartTime = Date.now();
       const { data: appointment, error: appointmentError } = await supabase
         .from('appointments')
         .insert(appointmentData)
         .select()
         .single();
-      const insertEndTime = Date.now();
-      
-      addDebugLog(`📝 [DEBUG] Insert operation completed in ${insertEndTime - insertStartTime}ms`, 'info');
-      addDebugLog(`📝 [DEBUG] Insert result: ${appointment ? 'SUCCESS' : 'FAILED'}`, appointment ? 'success' : 'error');
       
       if (appointmentError) {
-        addDebugLog(`❌ [DEBUG] ERROR creating appointment: ${JSON.stringify(appointmentError)}`, 'error');
         console.error('Error creating appointment:', appointmentError);
         setValidationMessage('Failed to book appointment. Please try again.');
         setIsSubmitting(false);
         return false;
       }
-      
-      addDebugLog(`✅ [DEBUG] Appointment created successfully: ${appointment?.appointment_id}`, 'success');
 
       // Update slot bookings count
       // First get current bookings count
-      addDebugLog(`🔍 [DEBUG] Fetching current slot data for slot_id: ${selectedSlot.slot_id}`, 'info');
-      const fetchStartTime = Date.now();
       const { data: currentSlot, error: slotFetchError } = await supabase
         .from('availability_slots')
         .select('current_bookings, capacity')
         .eq('slot_id', selectedSlot.slot_id)
         .single();
-      const fetchEndTime = Date.now();
-      
-      addDebugLog(`🔍 [DEBUG] Slot fetch completed in ${fetchEndTime - fetchStartTime}ms`, 'info');
-      addDebugLog(`🔍 [DEBUG] Slot data: ${currentSlot ? JSON.stringify(currentSlot, null, 2) : 'null'}`, currentSlot ? 'success' : 'error');
 
       if (slotFetchError || !currentSlot) {
-        addDebugLog(`❌ [DEBUG] Error fetching slot: ${JSON.stringify(slotFetchError)}`, 'error');
         console.error('Error fetching slot:', slotFetchError);
         // Appointment was created, but slot update failed
         setValidationMessage('Appointment created, but there was an issue updating slot availability. Please contact support.');
@@ -792,31 +743,18 @@ const BookingFlow = () => {
 
       // Update with optimistic locking
       const newBookings = currentSlot.current_bookings + 1;
-      addDebugLog(`🔄 [DEBUG] Calculating new bookings: ${currentSlot.current_bookings} + 1 = ${newBookings}`, 'info');
-      addDebugLog(`🔄 [DEBUG] Slot capacity: ${currentSlot.capacity}`, 'info');
       
       if (newBookings > currentSlot.capacity) {
-        addDebugLog(`❌ [DEBUG] Slot is now full (${newBookings} > ${currentSlot.capacity}), rolling back appointment`, 'error');
         setValidationMessage('This slot is now full. Please select another time.');
         // Delete the appointment we just created
-        const deleteStartTime = Date.now();
         const { error: deleteError } = await supabase
           .from('appointments')
           .delete()
           .eq('appointment_id', appointment.appointment_id);
-        const deleteEndTime = Date.now();
-        addDebugLog(`🔄 [DEBUG] Appointment deletion completed in ${deleteEndTime - deleteStartTime}ms`, deleteError ? 'error' : 'success');
-        if (deleteError) {
-          addDebugLog(`❌ [DEBUG] Error deleting appointment: ${JSON.stringify(deleteError)}`, 'error');
-        }
         setIsSubmitting(false);
         return false;
       }
 
-      addDebugLog(`🔄 [DEBUG] Updating slot with optimistic locking...`, 'info');
-      addDebugLog(`🔄 [DEBUG] Update conditions: slot_id=${selectedSlot.slot_id}, current_bookings=${currentSlot.current_bookings}`, 'info');
-      
-      const updateStartTime = Date.now();
       const { error: slotUpdateError } = await supabase
         .from('availability_slots')
         .update({ 
@@ -825,39 +763,24 @@ const BookingFlow = () => {
         })
         .eq('slot_id', selectedSlot.slot_id)
         .eq('current_bookings', currentSlot.current_bookings); // Optimistic locking
-      const updateEndTime = Date.now();
-      
-      addDebugLog(`🔄 [DEBUG] Slot update operation completed in ${updateEndTime - updateStartTime}ms`, 'info');
-      addDebugLog(`🔄 [DEBUG] Slot update result: ${slotUpdateError ? 'FAILED' : 'SUCCESS'}`, slotUpdateError ? 'error' : 'success');
 
       if (slotUpdateError) {
-        addDebugLog(`❌ [DEBUG] Error updating slot: ${JSON.stringify(slotUpdateError)}`, 'error');
         console.error('Error updating slot:', slotUpdateError);
         // Appointment was created, but slot update failed - rollback appointment
-        addDebugLog(`🔄 [DEBUG] Rolling back appointment: ${appointment.appointment_id}`, 'warning');
-        const rollbackStartTime = Date.now();
         const { error: rollbackError } = await supabase
           .from('appointments')
           .delete()
           .eq('appointment_id', appointment.appointment_id);
-        const rollbackEndTime = Date.now();
-        addDebugLog(`🔄 [DEBUG] Rollback completed in ${rollbackEndTime - rollbackStartTime}ms`, rollbackError ? 'error' : 'success');
-        if (rollbackError) {
-          addDebugLog(`❌ [DEBUG] Error during rollback: ${JSON.stringify(rollbackError)}`, 'error');
-        }
         setValidationMessage('Slot was just booked by someone else. Please select another time.');
         setIsSubmitting(false);
         return false;
       }
 
       // Success - appointment saved and slot updated
-      addDebugLog('✅ [DEBUG] Appointment booking completed successfully!', 'success');
-      addDebugLog(`✅ [DEBUG] Final state: appointment_id=${appointment.appointment_id}, slot updated`, 'success');
       setValidationMessage(null);
       setIsSubmitting(false);
       return true;
     } catch (err) {
-      addDebugLog(`❌ [DEBUG] Exception in handleSubmitAppointment: ${err instanceof Error ? err.message : String(err)}`, 'error');
       console.error('Error submitting appointment:', err);
       setValidationMessage('An error occurred. Please try again.');
       setIsSubmitting(false);
@@ -2689,101 +2612,6 @@ const BookingFlow = () => {
         </div>
       </div>
 
-      {/* Debug Panel */}
-      {showDebugPanel && (
-        <div className={`fixed bottom-0 right-0 z-50 bg-gray-900 text-white shadow-2xl transition-all duration-300 ${
-          debugPanelMinimized ? 'w-80 h-12' : 'w-full max-w-2xl h-96'
-        }`}>
-          <div className="flex items-center justify-between bg-gray-800 px-4 py-2 border-b border-gray-700">
-            <div className="flex items-center gap-2">
-              <Bug className="w-4 h-4" />
-              <span className="font-semibold text-sm">Debug Logs</span>
-              <span className="text-xs text-gray-400">({debugLogs.length})</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={clearDebugLogs}
-                className="p-1 hover:bg-gray-700 rounded transition-colors"
-                title="Clear logs"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setDebugPanelMinimized(!debugPanelMinimized)}
-                className="p-1 hover:bg-gray-700 rounded transition-colors"
-                title={debugPanelMinimized ? "Maximize" : "Minimize"}
-              >
-                {debugPanelMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
-              </button>
-              <button
-                onClick={() => setShowDebugPanel(false)}
-                className="p-1 hover:bg-gray-700 rounded transition-colors"
-                title="Close"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-          {!debugPanelMinimized && (
-            <div className="h-[calc(100%-3rem)] overflow-y-auto p-4 font-mono text-xs">
-              {debugLogs.length === 0 ? (
-                <div className="text-gray-500 text-center py-8">
-                  No debug logs yet. Start booking to see logs.
-                </div>
-              ) : (
-                <div className="space-y-1">
-                  {debugLogs.map((log) => {
-                    const timeStr = log.timestamp.toLocaleTimeString();
-                    const getColor = () => {
-                      switch (log.type) {
-                        case 'error': return 'text-red-400';
-                        case 'warning': return 'text-yellow-400';
-                        case 'success': return 'text-green-400';
-                        default: return 'text-gray-300';
-                      }
-                    };
-                    const getBgColor = () => {
-                      switch (log.type) {
-                        case 'error': return 'bg-red-900/20';
-                        case 'warning': return 'bg-yellow-900/20';
-                        case 'success': return 'bg-green-900/20';
-                        default: return 'bg-gray-800/50';
-                      }
-                    };
-                    return (
-                      <div
-                        key={log.id}
-                        className={`p-2 rounded ${getBgColor()} border-l-2 ${
-                          log.type === 'error' ? 'border-red-500' :
-                          log.type === 'warning' ? 'border-yellow-500' :
-                          log.type === 'success' ? 'border-green-500' :
-                          'border-gray-600'
-                        }`}
-                      >
-                        <div className="flex items-start gap-2">
-                          <span className="text-gray-500 text-[10px] min-w-[60px]">{timeStr}</span>
-                          <span className={`flex-1 ${getColor()}`}>{log.message}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Debug Panel Toggle Button (when hidden) */}
-      {!showDebugPanel && (
-        <button
-          onClick={() => setShowDebugPanel(true)}
-          className="fixed bottom-4 right-4 z-50 bg-gray-900 text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors"
-          title="Show Debug Panel"
-        >
-          <Bug className="w-5 h-5" />
-        </button>
-      )}
     </div>
   );
 };
