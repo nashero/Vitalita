@@ -1,11 +1,33 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { LogIn, LayoutDashboard } from 'lucide-react';
+import { isAuthenticated } from '../utils/auth';
 import FirstImage from '../images/First.jpg';
 import SecondImage from '../images/Second.jpg';
 import ThirdImage from '../images/Third.jpg';
 
 function HeroSection() {
   const { t } = useTranslation();
+  const [authenticated, setAuthenticated] = useState(() => isAuthenticated());
+
+  useEffect(() => {
+    const checkAuth = () => {
+      setAuthenticated(isAuthenticated());
+    };
+
+    // Check on mount
+    checkAuth();
+
+    // Listen for auth changes (when login/logout happens)
+    window.addEventListener('auth-change', checkAuth);
+    window.addEventListener('storage', checkAuth);
+
+    return () => {
+      window.removeEventListener('auth-change', checkAuth);
+      window.removeEventListener('storage', checkAuth);
+    };
+  }, []);
   
   return (
     <section className="hero" id="book">
@@ -31,9 +53,16 @@ function HeroSection() {
               <span className="button-icon">👤</span>
               {t('hero.firstTimeDonating')}
             </Link>
-            <Link className="button secondary login-button" to="/login">
-              <span className="button-icon">🔑</span>
-              {t('hero.bookAppointmentNow')}
+            <Link 
+              className="button secondary login-button" 
+              to={authenticated ? "/appointments" : "/login"}
+            >
+              {authenticated ? (
+                <LayoutDashboard className="button-icon" size={18} />
+              ) : (
+                <LogIn className="button-icon" size={18} />
+              )}
+              {authenticated ? t('hero.viewDashboard') : t('hero.bookAppointmentNow')}
             </Link>
           </div>
         </div>

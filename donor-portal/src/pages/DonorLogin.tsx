@@ -116,6 +116,9 @@ const DonorLogin = () => {
       sessionStorage.setItem('donor_id', donorData.donor_id || formData.donorId.toUpperCase());
       sessionStorage.setItem('donor_email', donorData.email || '');
 
+      // Dispatch custom event to notify Header component of auth state change
+      window.dispatchEvent(new Event('auth-change'));
+
       // Redirect to appointments page
       navigate('/appointments');
     } catch (err) {

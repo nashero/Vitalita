@@ -3,8 +3,10 @@
     "home": "Home",
     "bookAppointment": "Prenota Appuntamento",
     "myAppointments": "I Miei Appuntamenti",
+    "myAccount": "Il Mio Account",
     "help": "Aiuto",
     "logIn": "Accedi",
+    "logOut": "Esci",
     "toggleMenu": "Apri/Chiudi menu di navigazione",
     "closeMenu": "Chiudi menu",
     "openMenu": "Apri menu"
@@ -39,7 +41,8 @@
     "donorRegistrationTitle": "Registrazione Donatore e Accesso",
     "donorRegistrationDescription": "Sei nuovo su Vitalita? Registrati come donatore o accedi al tuo account esistente per gestire gli appuntamenti.",
     "firstTimeDonating": "Prima Volta che Doni?",
-    "bookAppointmentNow": "Prenota il tuo appuntamento Ora",
+    "bookAppointmentNow": "Sei già un Donatore?",
+    "viewDashboard": "Visualizza Dashboard",
     "imageAlt1": "Professionisti medici che trasportano un paziente",
     "imageAlt2": "Professionista sanitario che conforta un paziente",
     "imageAlt3": "Team medico che festeggia con un giovane paziente"
