@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { addWeeks, differenceInCalendarDays, format, isBefore } from 'date-fns';
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 import { ensureLeafletIcon } from '../utils/mapDefaults';
+import { supabase } from '../lib/supabase';
 import 'leaflet/dist/leaflet.css';
 
 ensureLeafletIcon();
@@ -102,8 +103,9 @@ const MyAppointments = () => {
     null,
   );
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [loadingAppointments, setLoadingAppointments] = useState(true);
 
-  // Check authentication on mount
+  // Check authentication on mount and fetch appointments
   useEffect(() => {
     const donorHashId = sessionStorage.getItem('donor_hash_id');
     if (donorHashId) {
@@ -111,16 +113,114 @@ const MyAppointments = () => {
       // Load profile data if needed
       const donorEmail = sessionStorage.getItem('donor_email');
       const donorId = sessionStorage.getItem('donor_id');
+      
+      // Fetch appointments from database
+      const fetchAppointments = async () => {
+        try {
+          setLoadingAppointments(true);
+          
+          // Fetch upcoming appointments (future dates, excluding cancelled)
+          const { data: upcomingData, error: upcomingError } = await supabase
+            .from('appointments')
+            .select(`
+              appointment_id,
+              appointment_datetime,
+              donation_type,
+              status,
+              donation_centers!donation_center_id (
+                name,
+                address,
+                city,
+                center_id
+              )
+            `)
+            .eq('donor_hash_id', donorHashId)
+            .gte('appointment_datetime', new Date().toISOString())
+            .not('status', 'eq', 'CANCELLED')
+            .not('status', 'eq', 'cancelled')
+            .order('appointment_datetime', { ascending: true });
+
+          if (upcomingError) {
+            console.error('Error fetching upcoming appointments:', upcomingError);
+          }
+
+          // Fetch donation history (completed donations)
+          const { data: historyData, error: historyError } = await supabase
+            .from('donation_history')
+            .select(`
+              history_id,
+              donation_date,
+              donation_type,
+              donation_centers!donation_center_id (
+                name
+              )
+            `)
+            .eq('donor_hash_id', donorHashId)
+            .order('donation_date', { ascending: false })
+            .limit(20);
+
+          if (historyError) {
+            console.error('Error fetching donation history:', historyError);
+          }
+
+          // Transform upcoming appointments to match the interface
+          const upcoming: Appointment[] = (upcomingData || []).map((apt: any) => {
+            const appointmentDate = new Date(apt.appointment_datetime);
+            const center = Array.isArray(apt.donation_centers) 
+              ? apt.donation_centers[0] 
+              : apt.donation_centers;
+
+            return {
+              id: apt.appointment_id,
+              isoDate: format(appointmentDate, 'yyyy-MM-dd'),
+              time: format(appointmentDate, 'HH:mm'),
+              locationName: center?.name || 'Unknown Center',
+              address: center?.address || '',
+              lat: center?.latitude || 45.4642, // Default to Milan if not set
+              lng: center?.longitude || 9.1900, // Default to Milan if not set
+            };
+          });
+
+          // Transform donation history to match the interface
+          const history: DonationRecord[] = (historyData || []).map((record: any) => {
+            const center = Array.isArray(record.donation_centers)
+              ? record.donation_centers[0]
+              : record.donation_centers;
+
+            return {
+              id: record.history_id,
+              isoDate: format(new Date(record.donation_date), 'yyyy-MM-dd'),
+              locationName: center?.name || 'Unknown Center',
+            };
+          });
+
+          // Set profile with fetched data
+          setProfile({
+            id: donorHashId,
+            name: donorId || 'Donor',
+            email: donorEmail || '',
+            phone: '',
+            upcoming,
+            history,
+          });
+        } catch (error) {
+          console.error('Error fetching appointments:', error);
+          // Set profile with empty arrays on error
+          setProfile({
+            id: donorHashId,
+            name: donorId || 'Donor',
+            email: donorEmail || '',
+            phone: '',
+            upcoming: [],
+            history: [],
+          });
+        } finally {
+          setLoadingAppointments(false);
+        }
+      };
+
       if (donorEmail || donorId) {
-        // Set a basic profile for authenticated user
-        setProfile({
-          id: donorHashId,
-          name: donorId || 'Donor',
-          email: donorEmail || '',
-          phone: '',
-          upcoming: [],
-          history: [],
-        });
+        fetchAppointments();
       }
     } else {
       // Redirect to login if not authenticated
@@ -262,18 +362,39 @@ const MyAppointments = () => {
     setCancelConfirmationId(appointmentId);
   };
 
-  const confirmCancelAppointment = () => {
+  const confirmCancelAppointment = async () => {
     if (!profile || !cancelConfirmationId) {
       return;
     }
 
-    const filtered = profile.upcoming.filter(
-      (appointment) => appointment.id !== cancelConfirmationId,
-    );
+    try {
+      // Update appointment status in database
+      const { error: updateError } = await supabase
+        .from('appointments')
+        .update({ status: 'CANCELLED' })
+        .eq('appointment_id', cancelConfirmationId)
+        .eq('donor_hash_id', profile.id);
 
-    setProfile({ ...profile, upcoming: filtered });
-    setCancelConfirmationId(null);
-    setActionMessage('Your appointment has been cancelled.');
+      if (updateError) {
+        console.error('Error cancelling appointment:', updateError);
+        setActionMessage('Failed to cancel appointment. Please try again.');
+        setCancelConfirmationId(null);
+        return;
+      }
+
+      // Remove from local state
+      const filtered = profile.upcoming.filter(
+        (appointment) => appointment.id !== cancelConfirmationId,
+      );
+
+      setProfile({ ...profile, upcoming: filtered });
+      setCancelConfirmationId(null);
+      setActionMessage('Your appointment has been cancelled.');
+    } catch (error) {
+      console.error('Error cancelling appointment:', error);
+      setActionMessage('Failed to cancel appointment. Please try again.');
+      setCancelConfirmationId(null);
+    }
   };
 
   const renderLogin = () => (
@@ -539,6 +660,17 @@ const MyAppointments = () => {
   const renderAuthedContent = () => {
     if (!profile) {
       return null;
+    }
+
+    if (loadingAppointments) {
+      return (
+        <section className="wizard-step appointments-welcome">
+          <header className="wizard-step-header">
+            <h1>Loading your appointments...</h1>
+            <p className="wizard-step-subtitle">Please wait while we fetch your data.</p>
+          </header>
+        </section>
+      );
     }
 
     const lastDonation = formattedHistory[0];

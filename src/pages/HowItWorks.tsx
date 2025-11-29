@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   ChevronDown,
   ChevronUp,
@@ -192,15 +193,15 @@ const AnalyticsDashboardMockup = () => {
 const implementationSteps = [
   {
     step: 1,
-    title: 'Setup Your Organization',
+    title: 'Hassle Free Onboarding',
     timeframe: 'Week 1',
     icon: Settings,
-    description: 'Get your organization configured and ready to go',
+    description: 'We configure everything for you—ready to go from day one.',
     details: [
-      'Configure donation centers and locations',
-      'Set capacity limits per location',
+      'Configure your donation centers and locations',
+      'Set capacity limits per location for you',
       'Define operating hours and schedules',
-      'Import existing donor database (CSV/Excel support)',
+      'Import your existing donor database (CSV/Excel support)',
     ],
     visual: <ConfigurationDashboardMockup />,
   },
@@ -209,12 +210,13 @@ const implementationSteps = [
     title: 'Customize Your Workflows',
     timeframe: 'Week 1-2',
     icon: Workflow,
-    description: 'Tailor the platform to your organization\'s needs',
+    description: 'Works out of the box, customizable when needed.',
     details: [
-      'Establish eligibility criteria',
-      'Configure health screening questions',
+      'Works out of the box with pre-configured workflows',
+      'Open workflow definitions allow customization if needed',
+      'Establish eligibility criteria for you',
       'Set up notification templates',
-      'Define user roles and permissions',
+      
     ],
     visual: <WorkflowBuilderMockup />,
   },
@@ -223,12 +225,12 @@ const implementationSteps = [
     title: 'Launch & Invite Donors',
     timeframe: 'Week 2',
     icon: Send,
-    description: 'Go live and start engaging your donor community',
+    description: 'Intuitive and simple—no technical expertise needed.',
     details: [
       'Send enrollment invitations via email/SMS',
-      'Provide donors with portal access link',
-      'Train staff on platform usage (we provide training)',
-      'Go live with first appointments',
+      'Provide donors with portal access links',
+      'Train your staff on platform usage',
+      'Help you go live with first appointments',
     ],
     visual: <CommunicationDashboardMockup />,
   },
@@ -237,12 +239,12 @@ const implementationSteps = [
     title: 'Manage, Optimize ( Key Performance Indicators)',
     timeframe: 'Ongoing',
     icon: BarChart3,
-    description: 'Continuously improve your operations with data-driven insights',
+    description: 'Manage donors, track KPIs, and maintain compliance—all in one place.',
     details: [
-      'Monitor appointments in real-time',
-      'Track center capacity and utilization',
-      'Analyze performance metrics',
-      'Continuously improve based on data',
+      'Manage your donors throughout the entire lifecycle',
+      'Generate KPIs as the output of our management and monitoring',
+      'Conduct quality audits to maintain compliance and standards',
+      'Continuously monitor and optimize operations for peak performance',
     ],
     visual: <AnalyticsDashboardMockup />,
   },
@@ -252,22 +254,36 @@ const faqs = [
   {
     question: 'How long does setup take?',
     answer:
-      'Most organizations can complete the initial setup in 1-2 weeks. The timeline depends on the complexity of your organization structure and the number of donation centers you need to configure. Our team works closely with you to ensure a smooth and efficient setup process.',
+      'Vitalita completes the initial setup for you in 1-2 weeks. The timeline depends on the complexity of your organization structure and the number of donation centers we need to configure. Our team handles everything to ensure a smooth and efficient setup process with minimal effort required from you.',
   },
   {
     question: 'Do we need technical expertise?',
     answer:
-      'No technical expertise is required. Vitalita is designed to be user-friendly and intuitive. Our implementation team provides comprehensive training for all staff members, and we offer ongoing support to ensure your team feels confident using the platform. However, if you have IT staff who want to be involved, we\'re happy to work with them.',
+      'No technical expertise is required. Vitalita handles all the technical setup for you. Our implementation team does all the heavy lifting, provides comprehensive training for all staff members, and offers ongoing support to ensure your team feels confident using the platform. Very little effort is needed from your organization - we give you everything ready to go.',
   },
   {
     question: 'What support do you provide?',
     answer:
-      'We provide comprehensive support throughout your implementation and beyond. This includes dedicated implementation specialists, Italian-speaking success managers, bi-weekly adoption pulse checks, quarterly optimization reviews, and 24/7 technical support. We also offer training materials, documentation, and on-site or remote training sessions for your staff.',
+      'We provide a seamless onboarding process for new customers. Our dedicated implementation team handles all technical setup, while our success managers guide you through every step. We offer comprehensive staff training, ongoing support, and optimization assistance. We handle the complexity so you can focus on what matters most.',
+  },
+  {
+    question: 'How many people are needed to manage Vitalita at your end?',
+    answer: (
+      <div className="space-y-2">
+        <p className="text-sm leading-relaxed text-slate-600">
+          Once existing donor information is available, we will need:
+        </p>
+        <ul className="ml-4 list-disc space-y-2 text-sm leading-relaxed text-slate-600">
+          <li>The number of slots available on an hourly basis for specific dates</li>
+          <li>2 people on site - one person to fill things and one person to approve changes</li>
+        </ul>
+      </div>
+    ),
   },
   {
     question: 'Can we migrate existing donor data?',
     answer:
-      'Yes! Vitalita supports importing existing donor databases in CSV and Excel formats. Our team will help you map your existing data fields to our system and ensure a smooth migration. We can handle donor information, donation history, contact preferences, and more. Data migration is typically completed during the setup phase.',
+      'Yes! Vitalita handles importing your existing donor databases in CSV and Excel formats. Our team maps your existing data fields to our system and ensures a smooth migration. We handle donor information, donation history, contact preferences, and more. Data migration is typically completed during the setup phase - all done by us.',
   },
 ];
 
@@ -298,7 +314,11 @@ const FAQAccordion = () => {
           </button>
           {openIndex === index && (
             <div className="px-6 pb-6">
-              <p className="text-sm leading-relaxed text-slate-600">{faq.answer}</p>
+              {typeof faq.answer === 'string' ? (
+                <p className="text-sm leading-relaxed text-slate-600">{faq.answer}</p>
+              ) : (
+                faq.answer
+              )}
             </div>
           )}
         </div>
@@ -316,11 +336,10 @@ const HowItWorks = () => {
         <div className="mx-auto max-w-4xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">Implementation Process</p>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-          Streamline Your Blood Donation Management
+          4 Simple Steps to Streamline Your Blood Donation Management
           </h1>
           <p className="mt-5 text-lg leading-relaxed text-slate-600">
-            Our streamlined implementation process gets your organization live quickly and efficiently. With dedicated
-            support and intuitive setup tools, you'll be managing donations in no time.
+            We handle all the setup—you focus on saving lives.
           </p>
         </div>
       </section>
@@ -348,11 +367,10 @@ const HowItWorks = () => {
                     {step.title}
                   </h2>
                   <p className="mt-4 text-lg leading-relaxed text-slate-600">{step.description}</p>
-                  <ul className="mt-6 space-y-3">
+                  <ul className="mt-6 ml-6 list-disc space-y-3">
                     {step.details.map((detail, detailIndex) => (
-                      <li key={detailIndex} className="flex items-start gap-3">
-                        <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-500" />
-                        <span className="text-sm leading-relaxed text-slate-600">{detail}</span>
+                      <li key={detailIndex} className="text-sm leading-relaxed text-slate-600">
+                        {detail}
                       </li>
                     ))}
                   </ul>
@@ -407,6 +425,36 @@ const HowItWorks = () => {
           <div className="mt-12">
             <FAQAccordion />
           </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="section-container pb-12 sm:pb-16">
+        <div className="relative overflow-hidden rounded-[40px] border border-slate-200 bg-gradient-to-br from-red-50 via-white to-slate-50 px-6 py-10 sm:px-10 sm:py-12 shadow-xl shadow-red-100/50">
+          <div className="grid items-center gap-8 lg:grid-cols-[2fr_1fr]">
+            <div className="space-y-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-red-600">Ready to get started?</p>
+              <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">See Your Implementation Plan</h2>
+              <p className="text-sm leading-relaxed text-slate-600">
+                See how we handle onboarding, workflows, and optimization—tailored to your needs. We do the heavy lifting, you focus on saving lives.
+              </p>
+              <div className="flex flex-wrap gap-3 text-xs text-slate-600">
+                <span className="rounded-full border border-red-200 bg-white/80 px-3 py-1">1-2 week setup timeline</span>
+                <span className="rounded-full border border-red-200 bg-white/80 px-3 py-1">Zero technical expertise needed</span>
+                <span className="rounded-full border border-red-200 bg-white/80 px-3 py-1">Full implementation support</span>
+              </div>
+            </div>
+            <div className="flex justify-center lg:justify-end">
+              <Link
+                to="/contact"
+                className="inline-flex items-center justify-center rounded-[12px] bg-gradient-to-r from-red-500 via-orange-500 to-red-600 px-10 py-5 text-base font-semibold text-white shadow-lg shadow-red-500/30 transition hover:from-red-600 hover:via-orange-600 hover:to-red-700 hover:shadow-xl hover:shadow-red-500/40 hover:-translate-y-0.5"
+              >
+                Request Implementation Demo
+              </Link>
+            </div>
+          </div>
+          <div className="pointer-events-none absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-red-200/30 blur-3xl" />
+          <div className="pointer-events-none absolute left-0 top-0 h-40 w-40 rounded-full bg-red-100/40 blur-3xl" />
         </div>
       </section>
 

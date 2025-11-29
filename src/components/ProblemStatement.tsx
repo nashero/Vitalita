@@ -2,6 +2,12 @@ import { AlertTriangle, BarChart2, ClipboardList } from 'lucide-react';
 
 const painPoints = [
   {
+    icon: <AlertTriangle className="h-6 w-6" />,
+    title: 'Compliance pressure',
+    description:
+      'GDPR, ISO standards, and regional health regulations demand traceability and secure donor data stewardship.',
+  },
+  {
     icon: <ClipboardList className="h-6 w-6" />,
     title: 'Fragmented workflows',
     description:
@@ -13,12 +19,6 @@ const painPoints = [
     description:
       'Leadership lacks real-time view of campaign performance, deferrals, and capacity, making planning reactive instead of proactive.',
   },
-  {
-    icon: <AlertTriangle className="h-6 w-6" />,
-    title: 'Compliance pressure',
-    description:
-      'GDPR, ISO standards, and regional health regulations demand traceability and secure donor data stewardship.',
-  },
 ];
 
 const ProblemStatement = () => {
@@ -27,7 +27,7 @@ const ProblemStatement = () => {
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">The Challenge</p>
         <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-          Donation networks deserve better than manual coordination
+        Goodbye Spreadsheets, Hello Intelligence
         </h2>
         <p className="mt-4 text-base leading-relaxed text-slate-600">
           Italian blood organizations manage thousands of donors, rotating medical teams, and mobile units—often with

@@ -4,12 +4,12 @@
 
 :root {
   color-scheme: light;
-  --brand-red: #c7253e;
-  --brand-dark: #1c1b1f;
-  --brand-light: #fff7f8;
-  --neutral: #f6f6f8;
-  --text-main: #212529;
-  --text-muted: #4b4f56;
+  --brand-red: #dc2626;
+  --brand-dark: #0f172a;
+  --brand-light: #ffffff;
+  --neutral: #f8fafc;
+  --text-main: #0f172a;
+  --text-muted: #475569;
   --focus: #0a67ff;
   --error: #d32f2f;
   --success: #2e7d32;
@@ -232,9 +232,17 @@ button:focus-visible {
   font-size: 1rem;
   font-weight: 600;
   border-radius: 999px;
-  background-color: var(--brand-red);
-  color: #ffffff;
+  background-color: transparent;
+  color: #64748b;
+  border: 2px solid #cbd5e1;
   min-height: 44px;
+  transition: all 0.2s ease;
+}
+
+.login-button:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  color: #475569;
 }
 
 .icon-circle {
@@ -244,7 +252,7 @@ button:focus-visible {
 .hero {
   padding: 2rem 1.5rem;
   border-radius: 1.5rem;
-  background-color: #f5f5f5;
+  background-color: #ffffff;
 }
 
 .hero-content {
@@ -357,8 +365,16 @@ button:focus-visible {
 }
 
 .button.primary {
-  background-color: var(--brand-red);
-  color: #ffffff;
+  background-color: transparent;
+  color: #64748b;
+  border: 2px solid #cbd5e1;
+  transition: all 0.2s ease;
+}
+
+.button.primary:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  color: #475569;
 }
 
 .button.secondary {
@@ -368,9 +384,17 @@ button:focus-visible {
 }
 
 .button.secondary.login-button {
-  background-color: #0a67ff;
+  background-color: #14b8a6;
   color: #ffffff;
-  border: 2px solid #0a67ff;
+  border: 2px solid #14b8a6;
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+}
+
+.button.secondary.login-button:hover {
+  background-color: #0d9488;
+  border-color: #0d9488;
+  box-shadow: 0 6px 16px rgba(20, 184, 166, 0.4);
+  transform: translateY(-2px);
 }
 
 .steps {
@@ -695,7 +719,7 @@ button:focus-visible {
 }
 
 .progress-step.completed .progress-index {
-  background-color: rgba(199, 37, 62, 0.12);
+  background-color: rgba(220, 38, 38, 0.12);
   color: var(--brand-red);
 }
 
@@ -801,7 +825,7 @@ button:focus-visible {
 .center-card.selected {
   border-color: var(--brand-red);
   background-color: #ffffff;
-  box-shadow: 0 12px 28px rgba(199, 37, 62, 0.12);
+  box-shadow: 0 12px 28px rgba(220, 38, 38, 0.12);
 }
 
 .center-card-body {
@@ -846,7 +870,7 @@ button:focus-visible {
 }
 
 .inline-alert.warning {
-  background-color: rgba(199, 37, 62, 0.12);
+  background-color: rgba(220, 38, 38, 0.12);
 }
 
 .alternative-slots p {
@@ -901,7 +925,7 @@ button:focus-visible {
 .slot-button.selected {
   border-color: var(--brand-red);
   background-color: #ffffff;
-  box-shadow: 0 12px 28px rgba(199, 37, 62, 0.12);
+  box-shadow: 0 12px 28px rgba(220, 38, 38, 0.12);
 }
 
 .slot-button .slot-status {
@@ -1017,7 +1041,7 @@ button:focus-visible {
   height: 32px;
   border-radius: 50%;
   border: none;
-  background-color: rgba(199, 37, 62, 0.12);
+  background-color: rgba(220, 38, 38, 0.12);
   color: var(--brand-red);
   font-weight: 700;
   cursor: help;
@@ -1213,7 +1237,7 @@ button:focus-visible {
 .appointment-card.next {
   border-color: var(--brand-red);
   background-color: #ffffff;
-  box-shadow: 0 16px 32px rgba(199, 37, 62, 0.12);
+  box-shadow: 0 16px 32px rgba(220, 38, 38, 0.12);
 }
 
 .appointment-card-header {
@@ -1261,7 +1285,7 @@ button:focus-visible {
 
 .button.secondary.danger {
   border-color: transparent;
-  background-color: rgba(199, 37, 62, 0.1);
+  background-color: rgba(220, 38, 38, 0.1);
   color: var(--brand-red);
 }
 
@@ -1354,7 +1378,7 @@ button:focus-visible {
 
 .eligibility-reminder {
   margin-top: 1.25rem;
-  background-color: rgba(199, 37, 62, 0.12);
+  background-color: rgba(220, 38, 38, 0.12);
   padding: 1rem 1.25rem;
   border-radius: 1rem;
 }
@@ -1471,7 +1495,7 @@ button:focus-visible {
 .search-input:focus {
   outline: none;
   border-color: var(--brand-red);
-  box-shadow: 0 0 0 4px rgba(199, 37, 62, 0.1);
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
 }
 
 .search-icon {
@@ -1675,7 +1699,7 @@ button:focus-visible {
   border-color: var(--brand-red);
   background-color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(199, 37, 62, 0.1);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
 }
 
 .contact-icon {
@@ -1727,14 +1751,14 @@ button:focus-visible {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(199, 37, 62, 0.3);
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);
   transition: all 0.2s ease;
   min-height: 56px;
 }
 
 .voice-help-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(199, 37, 62, 0.4);
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
 }
 
 .voice-help-button:focus-visible {
@@ -1831,7 +1855,7 @@ button:focus-visible {
 .voice-input:focus {
   outline: none;
   border-color: var(--brand-red);
-  box-shadow: 0 0 0 2px rgba(199, 37, 62, 0.1);
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
 }
 
 .voice-send-button {
@@ -1851,7 +1875,7 @@ button:focus-visible {
 }
 
 .voice-send-button:hover {
-  background-color: #a01d32;
+  background-color: #b91c1c;
 }
 
 .voice-send-button:focus-visible {
@@ -2490,8 +2514,8 @@ textarea:focus-visible {
 }
 
 .registration-notice-privacy {
-  background-color: rgba(199, 37, 62, 0.1);
-  border: 1px solid rgba(199, 37, 62, 0.2);
+  background-color: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.2);
 }
 
 .registration-notice-warning {
@@ -2617,7 +2641,7 @@ textarea:focus-visible {
 .input-wrapper input:focus {
   outline: none;
   border-color: var(--brand-red);
-  box-shadow: 0 0 0 3px rgba(199, 37, 62, 0.1);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
 .input-wrapper input:disabled {

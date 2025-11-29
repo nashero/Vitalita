@@ -14,7 +14,13 @@ import {
   AlertCircle,
   CheckCircle,
   Loader,
-  RefreshCw
+  RefreshCw,
+  Share2,
+  X,
+  Minimize2,
+  Maximize2,
+  Trash2,
+  Bug
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n';
@@ -68,9 +74,11 @@ type BookingStep = 'type' | 'booking' | 'confirmation' | 'success';
 
 interface AppointmentBookingProps {
   onBack: () => void;
+  onBookingSuccess?: () => void;
+  onBookingComplete?: () => void;
 }
 
-export default function AppointmentBooking({ onBack }: AppointmentBookingProps) {
+export default function AppointmentBooking({ onBack, onBookingSuccess, onBookingComplete }: AppointmentBookingProps) {
   const { t } = useTranslation();
   const { donor } = useAuth();
   const [currentStep, setCurrentStep] = useState<BookingStep>('type');
@@ -85,6 +93,27 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [allCenters, setAllCenters] = useState<DonationCenter[]>([]);
   const [showWeekends, setShowWeekends] = useState(false); // Weekend slot visibility toggle
+  const [debugLogs, setDebugLogs] = useState<Array<{ id: string; timestamp: Date; message: string; type: 'info' | 'success' | 'error' | 'warning' }>>([]);
+  const [showDebugPanel, setShowDebugPanel] = useState(true);
+  const [debugPanelMinimized, setDebugPanelMinimized] = useState(false);
+
+  // Debug logging function
+  const addDebugLog = (message: string, type: 'info' | 'success' | 'error' | 'warning' = 'info') => {
+    const logEntry = {
+      id: `${Date.now()}-${Math.random()}`,
+      timestamp: new Date(),
+      message,
+      type
+    };
+    setDebugLogs(prev => [...prev.slice(-99), logEntry]); // Keep last 100 logs
+    // Also log to console
+    const consoleMethod = type === 'error' ? console.error : type === 'warning' ? console.warn : console.log;
+    consoleMethod(message);
+  };
+
+  const clearDebugLogs = () => {
+    setDebugLogs([]);
+  };
 
   const donationTypes = [
     {
@@ -104,10 +133,10 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
       title: t('appointment.plasmaDonation'),
       description: t('appointment.plasmaDonationMedical'),
       duration: '90-120 minutes',
-      color: 'from-blue-500 to-blue-600',
-      bgColor: 'bg-blue-50',
-      iconColor: 'text-blue-600',
-      borderColor: 'border-blue-200 hover:border-blue-300',
+      color: 'from-slate-700 to-slate-800',
+      bgColor: 'bg-slate-50',
+      iconColor: 'text-slate-700',
+      borderColor: 'border-slate-200 hover:border-slate-300',
     },
   ];
 
@@ -488,101 +517,352 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
   };
 
   const confirmBooking = async () => {
-    if (!selectedSlot || !donor || !selectedType) return;
+    addDebugLog('🚀 [DEBUG] confirmBooking called', 'info');
+    const stateInfo = {
+      selectedSlot: selectedSlot ? {
+        slot_id: selectedSlot.slot_id,
+        center_id: selectedSlot.center_id,
+        slot_datetime: selectedSlot.slot_datetime,
+        current_bookings: selectedSlot.current_bookings
+      } : null,
+      donor: donor ? {
+        donor_hash_id: donor.donor_hash_id,
+        hasHashId: !!donor.donor_hash_id
+      } : null,
+      selectedType,
+      loading,
+      currentStep
+    };
+    addDebugLog(`🚀 [DEBUG] Current state: ${JSON.stringify(stateInfo, null, 2)}`, 'info');
+
+    if (!selectedSlot || !donor || !selectedType) {
+      const missingData = {
+        hasSelectedSlot: !!selectedSlot,
+        hasDonor: !!donor,
+        hasSelectedType: !!selectedType
+      };
+      addDebugLog(`❌ [DEBUG] Missing required data: ${JSON.stringify(missingData)}`, 'error');
+      return;
+    }
 
     try {
+      addDebugLog('🔄 [DEBUG] Setting loading to true', 'info');
       setLoading(true);
       setError(null);
 
       // Real-time slot validation before proceeding
+      addDebugLog('🔍 [DEBUG] Starting slot validation...', 'info');
       const validation = await validateSlotAvailability(selectedSlot);
+      addDebugLog(`🔍 [DEBUG] Validation result: ${JSON.stringify(validation)}`, validation.isValid ? 'success' : 'warning');
+      
       if (!validation.isValid && validation.error) {
+        addDebugLog(`❌ [DEBUG] Validation failed: ${JSON.stringify(validation.error)}`, 'error');
         setError(validation.error);
+        setLoading(false);
         return;
       }
 
+      addDebugLog('✅ [DEBUG] Validation passed, proceeding to create appointment', 'success');
+
       // Create the appointment record
+      const appointmentData = {
+        donor_hash_id: donor.donor_hash_id,
+        donation_center_id: selectedSlot.center_id,
+        appointment_datetime: selectedSlot.slot_datetime,
+        donation_type: selectedType === 'Blood' ? 'Blood' : 'Plasma',
+        status: 'SCHEDULED',
+        booking_channel: 'online',
+        confirmation_sent: false,
+        reminder_sent: false,
+      };
+
+      addDebugLog(`📝 [DEBUG] Creating appointment with data: ${JSON.stringify(appointmentData, null, 2)}`, 'info');
+      addDebugLog(`📝 [DEBUG] Supabase client available: ${!!supabase}`, 'info');
+
+      const insertStartTime = Date.now();
       const { data: appointment, error: appointmentError } = await supabase
         .from('appointments')
-        .insert({
-          donor_hash_id: donor.donor_hash_id,
-          donation_center_id: selectedSlot.center_id,
-          appointment_datetime: selectedSlot.slot_datetime,
-          donation_type: selectedType === 'Blood' ? 'Blood' : 'Plasma',
-          status: 'SCHEDULED',
-          booking_channel: 'online',
-          confirmation_sent: false,
-          reminder_sent: false,
-        })
+        .insert(appointmentData)
         .select()
         .single();
+      const insertEndTime = Date.now();
 
-      if (appointmentError) {
-        console.error('Error creating appointment:', appointmentError);
-        console.error('Error details:', {
+      addDebugLog(`📝 [DEBUG] Insert operation completed in ${insertEndTime - insertStartTime}ms`, 'info');
+      const insertResult = {
+        hasData: !!appointment,
+        hasError: !!appointmentError,
+        appointment: appointment ? {
+          appointment_id: appointment.appointment_id,
+          donor_hash_id: appointment.donor_hash_id,
+          appointment_datetime: appointment.appointment_datetime,
+          status: appointment.status
+        } : null,
+        error: appointmentError ? {
           code: appointmentError.code,
           message: appointmentError.message,
           details: appointmentError.details,
           hint: appointmentError.hint
-        });
+        } : null
+      };
+      addDebugLog(`📝 [DEBUG] Insert result: ${JSON.stringify(insertResult, null, 2)}`, appointmentError ? 'error' : 'info');
+
+      if (appointmentError) {
+        addDebugLog(`❌ [DEBUG] ERROR creating appointment: ${JSON.stringify(appointmentError)}`, 'error');
+        const errorDetails = {
+          code: appointmentError.code,
+          message: appointmentError.message,
+          details: appointmentError.details,
+          hint: appointmentError.hint
+        };
+        const attemptedData = {
+          donor_hash_id: donor.donor_hash_id,
+          donation_center_id: selectedSlot.center_id,
+          appointment_datetime: selectedSlot.slot_datetime,
+          donation_type: selectedType,
+          status: 'SCHEDULED'
+        };
+        addDebugLog(`❌ [DEBUG] Error details: ${JSON.stringify(errorDetails, null, 2)}`, 'error');
+        addDebugLog(`❌ [DEBUG] Attempted appointment data: ${JSON.stringify(attemptedData, null, 2)}`, 'error');
         setError(getAppointmentError(appointmentError));
+        setLoading(false);
         return;
       }
 
+      if (!appointment) {
+        addDebugLog('❌ [DEBUG] No appointment returned from insert, but no error either', 'error');
+        setError(getAppointmentError({ 
+          code: 'APPOINTMENT_CREATION_FAILED', 
+          message: 'Appointment was not created',
+          userMessage: 'Failed to create appointment. Please try again.',
+          suggestion: 'Please try again or contact support.',
+          severity: 'error'
+        }));
+        setLoading(false);
+        return;
+      }
+
+      addDebugLog(`✅ [DEBUG] Appointment created successfully: ${appointment.appointment_id}`, 'success');
+      addDebugLog(`✅ [DEBUG] Full appointment object: ${JSON.stringify(appointment, null, 2)}`, 'success');
+
       // Update the availability slot with optimistic locking
-      const { error: slotUpdateError } = await supabase
+      const slotUpdateInfo = {
+        slot_id: selectedSlot.slot_id,
+        current_bookings: selectedSlot.current_bookings,
+        new_bookings: selectedSlot.current_bookings + 1
+      };
+      addDebugLog(`🔄 [DEBUG] Updating slot: ${JSON.stringify(slotUpdateInfo, null, 2)}`, 'info');
+
+      const slotUpdateStartTime = Date.now();
+      const { data: updatedSlot, error: slotUpdateError } = await supabase
         .from('availability_slots')
         .update({ 
           current_bookings: selectedSlot.current_bookings + 1 
         })
         .eq('slot_id', selectedSlot.slot_id)
         .eq('current_bookings', selectedSlot.current_bookings) // Optimistic locking
-        .eq('is_available', true); // Double-check availability
+        .eq('is_available', true) // Double-check availability
+        .select();
+      const slotUpdateEndTime = Date.now();
+
+      addDebugLog(`🔄 [DEBUG] Slot update operation completed in ${slotUpdateEndTime - slotUpdateStartTime}ms`, 'info');
+      const slotUpdateResult = {
+        hasData: !!updatedSlot,
+        dataLength: updatedSlot?.length || 0,
+        hasError: !!slotUpdateError,
+        updatedSlot: updatedSlot ? JSON.stringify(updatedSlot, null, 2) : null,
+        error: slotUpdateError ? {
+          code: slotUpdateError.code,
+          message: slotUpdateError.message,
+          details: slotUpdateError.details,
+          hint: slotUpdateError.hint
+        } : null
+      };
+      addDebugLog(`🔄 [DEBUG] Slot update result: ${JSON.stringify(slotUpdateResult, null, 2)}`, slotUpdateError ? 'error' : 'info');
 
       if (slotUpdateError) {
-        console.error('Error updating slot:', slotUpdateError);
+        addDebugLog(`❌ [DEBUG] ERROR updating slot: ${JSON.stringify(slotUpdateError)}`, 'error');
+        const slotErrorDetails = {
+          code: slotUpdateError.code,
+          message: slotUpdateError.message,
+          details: slotUpdateError.details,
+          hint: slotUpdateError.hint
+        };
+        addDebugLog(`❌ [DEBUG] Slot update failed. Details: ${JSON.stringify(slotErrorDetails, null, 2)}`, 'error');
+        const slotInfo = {
+          slot_id: selectedSlot.slot_id,
+          current_bookings: selectedSlot.current_bookings,
+          capacity: (selectedSlot as any).capacity || 'unknown'
+        };
+        addDebugLog(`❌ [DEBUG] Slot information at time of update: ${JSON.stringify(slotInfo, null, 2)}`, 'error');
         
         // If slot update failed, we need to rollback the appointment
+        addDebugLog(`🔄 [DEBUG] Rolling back appointment: ${appointment.appointment_id}`, 'warning');
+        const rollbackStartTime = Date.now();
         const { error: rollbackError } = await supabase
           .from('appointments')
           .delete()
           .eq('appointment_id', appointment.appointment_id);
+        const rollbackEndTime = Date.now();
+        
+        addDebugLog(`🔄 [DEBUG] Rollback operation completed in ${rollbackEndTime - rollbackStartTime}ms`, 'info');
+        const rollbackResult = {
+          hasError: !!rollbackError,
+          error: rollbackError ? {
+            code: rollbackError.code,
+            message: rollbackError.message
+          } : null
+        };
+        addDebugLog(`🔄 [DEBUG] Rollback result: ${JSON.stringify(rollbackResult, null, 2)}`, rollbackError ? 'error' : 'success');
         
         if (rollbackError) {
-          console.error('Error rolling back appointment:', rollbackError);
+          addDebugLog(`❌ [DEBUG] ERROR rolling back appointment: ${JSON.stringify(rollbackError)}`, 'error');
+          addDebugLog(`⚠️ [DEBUG] WARNING: Appointment was created but could not be rolled back! Appointment ID: ${appointment.appointment_id}`, 'error');
+        } else {
+          addDebugLog('✅ [DEBUG] Appointment rolled back successfully', 'success');
         }
 
         // Set error and return to prevent inconsistent state
         setError(getAppointmentError({ 
           code: 'SLOT_UPDATE_FAILED', 
           message: t('appointment.failedToUpdateSlot'),
-          userMessage: 'Unable to secure your time slot.',
+          userMessage: 'Unable to secure your time slot. The slot may have been booked by someone else.',
           suggestion: 'Please try again or select a different time slot.',
           severity: 'error'
         }));
+        setLoading(false);
         return;
       }
 
-      // Create audit log for the booking
-      await supabase.rpc('create_audit_log', {
-        p_user_id: donor.donor_hash_id,
-        p_user_type: 'donor',
-        p_action: 'appointment_booking',
-        p_details: t('appointment.appointmentBookedFor', { 
-          type: selectedType === 'Blood' ? t('appointment.bloodDonation').toLowerCase() : t('appointment.plasmaDonation').toLowerCase(),
-          date: new Date(selectedSlot.slot_datetime).toLocaleDateString()
-        }),
-        p_resource_type: 'appointments',
-        p_resource_id: appointment.appointment_id,
-        p_status: 'success'
-      });
+      // Check if update actually modified any rows (optimistic locking check)
+      if (!updatedSlot || updatedSlot.length === 0) {
+        addDebugLog('❌ [DEBUG] ERROR: Slot update returned no rows. This means:', 'error');
+        addDebugLog('   - The slot was modified by another user between fetch and update', 'error');
+        addDebugLog('   - The current_bookings value changed (optimistic locking prevented update)', 'error');
+        addDebugLog('   - OR the slot is no longer available', 'error');
+        addDebugLog('🔄 [DEBUG] Rolling back appointment due to failed slot update', 'warning');
+        
+        const rollbackStartTime = Date.now();
+        const { error: rollbackError } = await supabase
+          .from('appointments')
+          .delete()
+          .eq('appointment_id', appointment.appointment_id);
+        const rollbackEndTime = Date.now();
+        
+        addDebugLog(`🔄 [DEBUG] Rollback operation completed in ${rollbackEndTime - rollbackStartTime}ms`, 'info');
+        const rollbackResult2 = {
+          hasError: !!rollbackError,
+          error: rollbackError ? {
+            code: rollbackError.code,
+            message: rollbackError.message
+          } : null
+        };
+        addDebugLog(`🔄 [DEBUG] Rollback result: ${JSON.stringify(rollbackResult2, null, 2)}`, rollbackError ? 'error' : 'success');
+        
+        if (rollbackError) {
+          addDebugLog(`❌ [DEBUG] ERROR rolling back appointment: ${JSON.stringify(rollbackError)}`, 'error');
+          addDebugLog(`⚠️ [DEBUG] CRITICAL: Appointment created but could not be rolled back! Appointment ID: ${appointment.appointment_id}`, 'error');
+          addDebugLog('   This appointment will remain in the database but slot was not updated!', 'error');
+        } else {
+          addDebugLog('✅ [DEBUG] Appointment rolled back successfully', 'success');
+        }
+        
+        setError(getAppointmentError({ 
+          code: 'SLOT_UPDATE_FAILED', 
+          message: t('appointment.failedToUpdateSlot'),
+          userMessage: 'Unable to secure your time slot. The slot may have been booked by someone else.',
+          suggestion: 'Please refresh and try again or select a different time slot.',
+          severity: 'error'
+        }));
+        setLoading(false);
+        return;
+      }
 
+      addDebugLog(`✅ [DEBUG] Slot updated successfully. Updated slot data: ${JSON.stringify(updatedSlot, null, 2)}`, 'success');
+      addDebugLog(`✅ [DEBUG] Appointment saved successfully. Appointment ID: ${appointment.appointment_id}`, 'success');
+
+      // Verify the appointment was saved correctly by fetching it back
+      addDebugLog('🔍 [DEBUG] Verifying appointment in database...', 'info');
+      const verifyStartTime = Date.now();
+      const { data: verifyAppointment, error: verifyError } = await supabase
+        .from('appointments')
+        .select('appointment_id, donor_hash_id, appointment_datetime, status')
+        .eq('appointment_id', appointment.appointment_id)
+        .single();
+      const verifyEndTime = Date.now();
+
+      addDebugLog(`🔍 [DEBUG] Verification operation completed in ${verifyEndTime - verifyStartTime}ms`, 'info');
+      const verifyResult = {
+        hasData: !!verifyAppointment,
+        hasError: !!verifyError,
+        verifyAppointment: verifyAppointment ? JSON.stringify(verifyAppointment, null, 2) : null,
+        error: verifyError ? {
+          code: verifyError.code,
+          message: verifyError.message
+        } : null
+      };
+      addDebugLog(`🔍 [DEBUG] Verification result: ${JSON.stringify(verifyResult, null, 2)}`, verifyError ? 'error' : 'success');
+
+      if (verifyError || !verifyAppointment) {
+        addDebugLog(`❌ [DEBUG] ERROR: Failed to verify appointment was saved: ${JSON.stringify(verifyError)}`, 'error');
+        setError(getAppointmentError({ 
+          code: 'APPOINTMENT_VERIFICATION_FAILED', 
+          message: 'Appointment was created but could not be verified.',
+          userMessage: 'There was an issue verifying your appointment. Please check your appointments or contact support.',
+          suggestion: 'Please check your dashboard or contact support if the appointment does not appear.',
+          severity: 'warning'
+        }));
+        setLoading(false);
+        return;
+      }
+
+      addDebugLog(`✅ [DEBUG] Appointment verified in database: ${JSON.stringify(verifyAppointment, null, 2)}`, 'success');
+
+      // Create audit log for the booking (non-blocking)
+      // Use a fire-and-forget approach to avoid blocking the UI
+      (async () => {
+        try {
+          await supabase.rpc('create_audit_log', {
+            p_user_id: donor.donor_hash_id,
+            p_user_type: 'donor',
+            p_action: 'appointment_booking',
+            p_details: t('appointment.appointmentBookedFor', { 
+              type: selectedType === 'Blood' ? t('appointment.bloodDonation').toLowerCase() : t('appointment.plasmaDonation').toLowerCase(),
+              date: new Date(selectedSlot.slot_datetime).toLocaleDateString()
+            }),
+            p_resource_type: 'appointments',
+            p_resource_id: appointment.appointment_id,
+            p_status: 'success'
+          });
+        } catch (err) {
+          console.warn('Failed to create audit log (non-critical):', err);
+        }
+      })();
+
+      // Notify parent component that booking was successful (do this BEFORE changing step)
+      // This ensures the appointment is refreshed in the dashboard immediately
+      addDebugLog('📞 [DEBUG] Calling onBookingSuccess callback...', 'info');
+      if (onBookingSuccess) {
+        onBookingSuccess();
+        addDebugLog('✅ [DEBUG] onBookingSuccess callback executed', 'success');
+      } else {
+        addDebugLog('⚠️ [DEBUG] onBookingSuccess callback not provided', 'warning');
+      }
+      
+      addDebugLog('🔄 [DEBUG] Setting booking success state and changing step to success', 'info');
       setBookingSuccess(true);
       setCurrentStep('success');
+      addDebugLog('✅ [DEBUG] Step changed to success, booking flow complete', 'success');
     } catch (err) {
-      console.error('Error booking appointment:', err);
+      addDebugLog(`❌ [DEBUG] Error booking appointment: ${err instanceof Error ? err.message : String(err)}`, 'error');
+      const errorDetails = {
+        message: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+        error: err
+      };
+      addDebugLog(`❌ [DEBUG] Error details: ${JSON.stringify(errorDetails, null, 2)}`, 'error');
       setError(getAppointmentError(err));
     } finally {
+      addDebugLog('🔄 [DEBUG] Setting loading to false (finally block)', 'info');
       setLoading(false);
     }
   };
@@ -788,20 +1068,23 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
                 disabled={!available}
                 title={available ? `${slotsForDate.length} ${t('appointment.availableSlots').toLowerCase()} ${t('appointment.availableSlotsFrom')} ${date.toLocaleDateString()}` : t('appointment.noSlotsAvailable')}
                 className={`
-                  h-12 w-full rounded-lg text-sm font-medium transition-all duration-200 relative
+                  h-12 w-full rounded-lg text-sm font-medium transition-all duration-200 relative flex flex-col items-center justify-center
                   ${today 
-                    ? 'bg-blue-600 text-white ring-2 ring-blue-300' 
+                    ? `ring-2 ring-blue-300 bg-white ${date.getDay() === 0 ? 'text-red-600' : 'text-gray-900'}` 
                     : selected
                     ? 'bg-blue-600 text-white'
                     : available
-                    ? 'text-gray-900 bg-white hover:bg-blue-50 hover:text-blue-700 hover:ring-2 hover:ring-blue-200 cursor-pointer'
+                    ? `bg-white hover:bg-blue-50 hover:ring-2 hover:ring-blue-200 cursor-pointer ${date.getDay() === 0 ? 'text-red-600 hover:text-red-700' : 'text-gray-900'}`
                     : 'text-gray-300 bg-gray-50 cursor-not-allowed'
                   }
                   ${!isCurrentMonth ? 'opacity-50' : ''}
                 `}
               >
-                {date.getDate()}
-                {available && (
+                <span>{date.getDate()}</span>
+                {today && (
+                  <span className="text-[10px] text-gray-600 mt-0.5">Today</span>
+                )}
+                {available && !today && (
                   <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   </div>
@@ -926,7 +1209,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
                 <select
                   value={selectedCenter || ''}
                   onChange={(e) => handleCenterSelection(e.target.value)}
-                  className="w-full px-3 py-2 border border-orange-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Choose a center...</option>
                   {allCenters.map((center) => (
@@ -1006,7 +1289,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
                           <button
                             key={timeSlot.slot.slot_id}
                             onClick={() => handleTimeSlotSelection(timeSlot.slot)}
-                            className="px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all duration-200 font-medium"
+                            className="px-4 py-3 bg-white border-2 border-blue-300 rounded-lg text-gray-900 hover:bg-blue-50 hover:border-blue-400 transition-all duration-200 font-medium"
                           >
                             {timeSlot.displayTime}
                           </button>
@@ -1029,6 +1312,68 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
     </div>
   );
 
+  const handleAddToCalendar = () => {
+    if (!selectedSlot || !selectedType) return;
+
+    const slotDate = new Date(selectedSlot.slot_datetime);
+    const endDate = new Date(slotDate.getTime() + 45 * 60 * 1000); // 45 minutes duration
+
+    const formatICS = (date: Date) => {
+      return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    };
+
+    const icsContent = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Vitalita//Appointment Booking//EN',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      `UID:${selectedSlot.slot_id}@vitalita.com`,
+      `DTSTAMP:${formatICS(new Date())}`,
+      `DTSTART:${formatICS(slotDate)}`,
+      `DTEND:${formatICS(endDate)}`,
+      `SUMMARY:${selectedType} Donation Appointment - ${selectedSlot.center?.name || 'Donation Center'}`,
+      `LOCATION:${selectedSlot.center?.address || ''}, ${selectedSlot.center?.city || ''}`,
+      `DESCRIPTION:Thank you for booking with Vitalita. Please arrive 15 minutes early and bring a valid ID.`,
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\r\n');
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'vitalita-appointment.ics';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleShare = () => {
+    if (!selectedSlot || !selectedType || !selectedSlot.center) return;
+
+    const dateTime = formatDateTime(selectedSlot.slot_datetime);
+    const shareText = `I'm donating ${selectedType.toLowerCase()} on ${dateTime.date} at ${dateTime.time} at ${selectedSlot.center.name}. Join me!`;
+    const shareUrl = window.location.origin;
+
+    if (navigator.share) {
+      navigator.share({
+        title: 'Blood Donation Appointment',
+        text: shareText,
+        url: shareUrl,
+      }).catch(() => {
+        // Fallback if share is cancelled
+      });
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(`${shareText} ${shareUrl}`).then(() => {
+        alert('Appointment details copied to clipboard!');
+      });
+    }
+  };
+
   const renderConfirmation = () => {
     if (!selectedSlot || !selectedType) return null;
     
@@ -1042,7 +1387,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
+          <div className="bg-gradient-to-r from-red-50 to-red-100 px-6 py-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">{t('appointment.bookingSummary')}</h3>
           </div>
           
@@ -1080,12 +1425,12 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           </div>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <div className="flex items-start">
-            <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 mr-3" />
-            <div className="text-sm text-blue-800">
+            <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 mr-3" />
+            <div className="text-sm text-red-800">
               <p className="font-medium mb-1">Important Reminders:</p>
-              <ul className="space-y-1 text-blue-700">
+              <ul className="space-y-1 text-red-700">
                 <li>• Please arrive 15 minutes early</li>
                 <li>• Bring a valid ID</li>
                 <li>• Eat a healthy meal before donating</li>
@@ -1095,18 +1440,40 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
           </div>
         </div>
 
-        <div className="flex space-x-4">
+        <div className="flex flex-col sm:flex-row gap-3">
           <button
-            onClick={() => setCurrentStep('booking')}
-            className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-200 transition-colors duration-200"
+            onClick={handleAddToCalendar}
+            className="flex-1 bg-red-600 text-white py-3 px-4 rounded-lg font-bold hover:bg-red-700 transition-colors duration-200 flex items-center justify-center"
+            style={{ backgroundColor: '#dc2626' }}
           >
-            <ArrowLeft className="w-4 h-4 inline mr-2" />
-            {t('common.back')}
+            <span className="mr-2" role="img" aria-label="calendar">📅</span>
+            Add to Calendar
           </button>
           <button
-            onClick={confirmBooking}
+            onClick={handleShare}
+            className="flex-1 bg-white border-2 border-red-600 text-red-600 py-3 px-4 rounded-lg font-normal hover:bg-red-50 transition-colors duration-200 flex items-center justify-center"
+            style={{ backgroundColor: '#ffffff', borderColor: '#dc2626', color: '#dc2626' }}
+          >
+            Share
+          </button>
+        </div>
+        
+        <div className="flex space-x-4 pt-4">
+          <button
+            onClick={() => setCurrentStep('booking')}
+            className="flex-1 border-2 border-red-600 text-red-600 bg-white py-3 px-4 rounded-lg font-semibold hover:bg-red-50 transition-colors duration-200"
+            style={{ borderColor: '#dc2626', color: '#dc2626', backgroundColor: '#ffffff' }}
+          >
+            Back
+          </button>
+          <button
+            onClick={() => {
+              addDebugLog('🖱️ [DEBUG] "Done" button clicked in confirmation step', 'info');
+              confirmBooking();
+            }}
             disabled={loading}
-            className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="flex-1 bg-white border-2 border-red-600 text-red-600 py-3 px-4 rounded-lg font-normal hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
+            style={{ backgroundColor: '#ffffff', borderColor: '#dc2626', color: '#dc2626' }}
           >
             {loading ? (
               <div className="flex items-center justify-center">
@@ -1114,10 +1481,7 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
                 {t('common.loading')}
               </div>
             ) : (
-              <>
-                <Check className="w-4 h-4 inline mr-2" />
-                {t('appointment.confirmBooking')}
-              </>
+              'Done'
             )}
           </button>
         </div>
@@ -1129,49 +1493,140 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
     if (!selectedSlot || !selectedType) return null;
     
     const dateTime = formatDateTime(selectedSlot.slot_datetime);
+    const center = selectedSlot.center;
     
     return (
-      <div className="space-y-6 max-w-2xl mx-auto text-center">
-        <div className="bg-green-100 p-6 rounded-full w-24 h-24 mx-auto flex items-center justify-center">
-          <CheckCircle className="w-12 h-12 text-green-600" />
-        </div>
-        
-        <div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">{t('appointment.bookingSuccess')}</h2>
-          <p className="text-gray-600 text-lg">{t('appointment.bookingSuccessDesc')}</p>
+      <div className="space-y-6 max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            Your appointment is confirmed! 🎉
+          </h2>
+          <p className="text-gray-600 text-lg">
+            You're all set. Here's everything you need to know.
+          </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('appointment.appointmentDetails')}</h3>
-          <div className="space-y-3 text-left">
-            <div className="flex justify-between">
-              <span className="text-gray-600">{t('appointment.date')}:</span>
-              <span className="font-semibold">{dateTime.date}</span>
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Column - Appointment Details */}
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Appointment details</h3>
+              <div className="space-y-3">
+                <div>
+                  <p className="font-semibold text-gray-900 text-lg">{dateTime.date}</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-900 text-lg">{dateTime.time}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="font-semibold text-gray-900">{center?.name}</p>
+                  <p className="text-gray-600">{center?.address}</p>
+                  {center?.city && center?.country && (
+                    <p className="text-gray-600">{center.city}, {center.country}</p>
+                  )}
+                </div>
+                {center?.address && (
+                  <a
+                    href={`https://maps.google.com/maps?q=${encodeURIComponent(center.address)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-red-600 hover:text-red-700 font-medium"
+                  >
+                    Get directions
+                  </a>
+                )}
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">{t('appointment.time')}:</span>
-              <span className="font-semibold">{dateTime.time}</span>
+
+            {/* What to bring */}
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">What to bring</h3>
+              <ul className="space-y-2 text-gray-700">
+                <li>• Valid photo ID</li>
+                <li>• Hydration (water bottle is perfect)</li>
+                <li>• Something to eat afterwards</li>
+              </ul>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">{t('appointment.center')}:</span>
-              <span className="font-semibold">{selectedSlot.center?.name}</span>
+          </div>
+
+          {/* Right Column - Actions */}
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <div className="space-y-4">
+                <button
+                  onClick={handleAddToCalendar}
+                  className="w-full bg-red-600 text-white py-3 px-4 rounded-lg font-bold hover:bg-red-700 transition-colors duration-200 flex items-center justify-center"
+                  style={{ backgroundColor: '#dc2626' }}
+                >
+                  <span className="mr-2">📅</span>
+                  Add to Calendar
+                </button>
+                
+                <button
+                  onClick={handleShare}
+                  className="w-full bg-white border-2 border-red-600 text-red-600 py-3 px-4 rounded-lg font-normal hover:bg-red-50 transition-colors duration-200 flex items-center justify-center"
+                  style={{ backgroundColor: '#ffffff', borderColor: '#dc2626', color: '#dc2626' }}
+                >
+                  Share
+                </button>
+                
+                <p className="text-sm text-gray-600 text-center">
+                  We'll send you a reminder the day before your appointment.
+                </p>
+              </div>
+            </div>
+
+            {/* What to expect */}
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">What to expect</h3>
+              <p className="text-gray-700">
+                The entire visit usually takes about 45 minutes. Our team will guide you through each step and answer any questions. Wear comfortable clothing with sleeves that can be rolled up.
+              </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <div className="flex items-center justify-center text-green-800">
-            <CheckCircle className="w-5 h-5 mr-2" />
-            <span className="font-medium">Confirmation sent to your preferred communication channel</span>
-          </div>
+        {/* Bottom Buttons */}
+        <div className="flex space-x-4 pt-4">
+          <button
+            onClick={() => setCurrentStep('booking')}
+            className="flex-1 border-2 border-red-600 text-red-600 bg-white py-3 px-4 rounded-lg font-semibold hover:bg-red-50 transition-colors duration-200"
+          >
+            Back
+          </button>
+          <button
+            onClick={async () => {
+              addDebugLog('🖱️ [DEBUG] "Done" button clicked in success step', 'info');
+              const currentState = {
+                hasOnBookingComplete: !!onBookingComplete,
+                hasOnBack: !!onBack,
+                bookingSuccess,
+                currentStep
+              };
+              addDebugLog(`🖱️ [DEBUG] Current state: ${JSON.stringify(currentState, null, 2)}`, 'info');
+              
+              // Ensure appointment is saved before navigating away
+              // The appointment should already be saved at this point, but we'll verify
+              if (onBookingComplete) {
+                addDebugLog('📞 [DEBUG] Calling onBookingComplete callback...', 'info');
+                // Call the callback which will refresh the dashboard
+                onBookingComplete();
+                addDebugLog('✅ [DEBUG] onBookingComplete callback executed', 'success');
+              } else {
+                addDebugLog('📞 [DEBUG] onBookingComplete not provided, calling onBack...', 'warning');
+                // Fall back to onBack if no callback provided
+                onBack();
+                addDebugLog('✅ [DEBUG] onBack executed', 'info');
+              }
+            }}
+            className="flex-1 bg-white border-2 border-red-600 text-red-600 py-3 px-4 rounded-lg font-normal hover:bg-red-50 transition-colors duration-200"
+            style={{ backgroundColor: '#ffffff', borderColor: '#dc2626', color: '#dc2626' }}
+          >
+            Done
+          </button>
         </div>
-
-        <button
-          onClick={onBack}
-          className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-8 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200"
-        >
-          {t('dashboard.backToLanding')}
-        </button>
       </div>
     );
   };
@@ -1234,13 +1689,15 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <button
-                onClick={onBack}
-                className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200 mr-4"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                {t('dashboard.backToLanding')}
-              </button>
+              {currentStep !== 'success' && (
+                <button
+                  onClick={onBack}
+                  className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200 mr-4"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  {t('dashboard.backToLanding')}
+                </button>
+              )}
               <Calendar className="w-8 h-8 text-blue-600 mr-3" />
               <h1 className="text-xl font-bold text-gray-900">{t('appointment.title')}</h1>
             </div>
@@ -1268,6 +1725,102 @@ export default function AppointmentBooking({ onBack }: AppointmentBookingProps) 
         {currentStep === 'confirmation' && renderConfirmation()}
         {currentStep === 'success' && renderSuccess()}
       </main>
+
+      {/* Debug Panel */}
+      {showDebugPanel && (
+        <div className={`fixed bottom-0 right-0 z-50 bg-gray-900 text-white shadow-2xl transition-all duration-300 ${
+          debugPanelMinimized ? 'w-80 h-12' : 'w-full max-w-2xl h-96'
+        }`}>
+          <div className="flex items-center justify-between bg-gray-800 px-4 py-2 border-b border-gray-700">
+            <div className="flex items-center gap-2">
+              <Bug className="w-4 h-4" />
+              <span className="font-semibold text-sm">Debug Logs</span>
+              <span className="text-xs text-gray-400">({debugLogs.length})</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={clearDebugLogs}
+                className="p-1 hover:bg-gray-700 rounded transition-colors"
+                title="Clear logs"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setDebugPanelMinimized(!debugPanelMinimized)}
+                className="p-1 hover:bg-gray-700 rounded transition-colors"
+                title={debugPanelMinimized ? "Maximize" : "Minimize"}
+              >
+                {debugPanelMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
+              </button>
+              <button
+                onClick={() => setShowDebugPanel(false)}
+                className="p-1 hover:bg-gray-700 rounded transition-colors"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+          {!debugPanelMinimized && (
+            <div className="h-[calc(100%-3rem)] overflow-y-auto p-4 font-mono text-xs">
+              {debugLogs.length === 0 ? (
+                <div className="text-gray-500 text-center py-8">
+                  No debug logs yet. Start booking to see logs.
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {debugLogs.map((log) => {
+                    const timeStr = log.timestamp.toLocaleTimeString();
+                    const getColor = () => {
+                      switch (log.type) {
+                        case 'error': return 'text-red-400';
+                        case 'warning': return 'text-yellow-400';
+                        case 'success': return 'text-green-400';
+                        default: return 'text-gray-300';
+                      }
+                    };
+                    const getBgColor = () => {
+                      switch (log.type) {
+                        case 'error': return 'bg-red-900/20';
+                        case 'warning': return 'bg-yellow-900/20';
+                        case 'success': return 'bg-green-900/20';
+                        default: return 'bg-gray-800/50';
+                      }
+                    };
+                    return (
+                      <div
+                        key={log.id}
+                        className={`p-2 rounded ${getBgColor()} border-l-2 ${
+                          log.type === 'error' ? 'border-red-500' :
+                          log.type === 'warning' ? 'border-yellow-500' :
+                          log.type === 'success' ? 'border-green-500' :
+                          'border-gray-600'
+                        }`}
+                      >
+                        <div className="flex items-start gap-2">
+                          <span className="text-gray-500 text-[10px] min-w-[60px]">{timeStr}</span>
+                          <span className={`flex-1 ${getColor()}`}>{log.message}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Debug Panel Toggle Button (when hidden) */}
+      {!showDebugPanel && (
+        <button
+          onClick={() => setShowDebugPanel(true)}
+          className="fixed bottom-4 right-4 z-50 bg-gray-900 text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors"
+          title="Show Debug Panel"
+        >
+          <Bug className="w-5 h-5" />
+        </button>
+      )}
     </div>
   );
 }

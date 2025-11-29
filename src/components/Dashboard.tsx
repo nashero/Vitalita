@@ -42,6 +42,17 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
     }
   }, [donor]);
 
+  // Refresh appointments when returning from booking
+  useEffect(() => {
+    if (!showBooking && donor) {
+      // Add a small delay to ensure database transaction is committed
+      const timer = setTimeout(() => {
+        fetchAppointments();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [showBooking, donor]);
+
   const checkSessionValidity = () => {
     const validation = validatePinSession();
     if (validation.isValid && validation.sessionData) {
@@ -73,8 +84,8 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
           )
         `)
         .eq('donor_hash_id', donor?.donor_hash_id)
-        .order('appointment_datetime', { ascending: false })
-        .limit(5);
+        .order('appointment_datetime', { ascending: true })
+        .limit(10);
 
       if (fetchError) {
         console.error('Error fetching appointments:', fetchError);
@@ -122,7 +133,27 @@ export default function Dashboard({ onBackToLanding }: { onBackToLanding?: () =>
   if (!donor) return null;
 
   if (showBooking) {
-    return <AppointmentBooking onBack={() => setShowBooking(false)} />;
+    return (
+      <AppointmentBooking 
+        onBack={() => setShowBooking(false)} 
+        onBookingSuccess={() => {
+          // Refresh appointments when booking is successful
+          // Add a small delay to ensure database transaction is committed
+          setTimeout(() => {
+            fetchAppointments();
+          }, 300);
+        }}
+        onBookingComplete={() => {
+          // Return to dashboard after booking is complete
+          setShowBooking(false);
+          // Refresh appointments to show the new booking
+          // Add a small delay to ensure database transaction is committed
+          setTimeout(() => {
+            fetchAppointments();
+          }, 500);
+        }}
+      />
+    );
   }
 
   if (showHistory) {

@@ -29,11 +29,10 @@ const SolutionOverview = () => {
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-200">Our Promise</p>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-              A modern platform designed with Italian donor networks
+            Born in Italy. Built for Everyone.
             </h2>
             <p className="mt-5 text-base leading-relaxed text-white/80">
-              Vitalita harmonizes donor engagement, operational logistics, and data visibility across every region. From
-              recruitment to retention, we provide the digital backbone to sustain life-saving blood supply.
+            Vitalita began with the complex needs of Italy’s largest donor organizations. Today it delivers AI-powered scheduling, outreach, and operational visibility that any healthcare service can deploy in days — securely, reliably, and at scale.
             </p>
           </div>
           <div className="grid gap-6">

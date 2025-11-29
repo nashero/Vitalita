@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addDays, format, setHours, setMinutes } from 'date-fns';
+import { addDays, format, setHours, setMinutes, parseISO } from 'date-fns';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import { X, Minimize2, Maximize2, Trash2, Bug } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import { ensureLeafletIcon } from '../utils/mapDefaults';
+import { supabase } from '../lib/supabase';
 
 type RiskLevel = 'normal' | 'high';
 
@@ -13,6 +15,8 @@ interface TimeSlot {
   spotsLeft: number;
   status: 'available' | 'filling';
   riskLevel: RiskLevel;
+  slot_datetime: string;
+  slot_id: string;
 }
 
 interface TimeSlotWithDate extends TimeSlot {
@@ -32,12 +36,15 @@ interface LatLng {
 
 interface DonationCenter {
   id: string;
+  center_id: string;
   name: string;
   address: string;
+  city: string;
   postalCode: string;
   distanceKm: number;
   position: LatLng;
   availability: CenterAvailability[];
+  isDefault?: boolean;
 }
 
 interface PersonalInfo {
@@ -181,35 +188,7 @@ const createAvailability = (
   });
 };
 
-const centers: DonationCenter[] = [
-  {
-    id: 'milan-centro',
-    name: 'Centro Donazioni Duomo',
-    address: 'Via Torino 18, Milano',
-    postalCode: '20122',
-    distanceKm: 1.1,
-    position: { lat: 45.4627, lng: 9.1856 },
-    availability: createAvailability([1, 2, 4, 5, 7, 9], slotBlueprintA),
-  },
-  {
-    id: 'milan-navigli',
-    name: 'Sala Donatori Navigli',
-    address: 'Alzaia Naviglio Grande 34, Milano',
-    postalCode: '20144',
-    distanceKm: 2.6,
-    position: { lat: 45.4508, lng: 9.1737 },
-    availability: createAvailability([2, 3, 6, 8, 10], slotBlueprintB),
-  },
-  {
-    id: 'monza',
-    name: 'Vitalita Monza',
-    address: 'Via Vittorio Emanuele 8, Monza',
-    postalCode: '20900',
-    distanceKm: 15.4,
-    position: { lat: 45.5845, lng: 9.2744 },
-    availability: createAvailability([1, 3, 5, 6, 9], slotBlueprintC),
-  },
-];
+// Centers will be loaded from database
 
 ensureLeafletIcon();
 
@@ -225,12 +204,12 @@ const MapViewUpdater = ({ position }: { position: LatLng }) => {
   return null;
 };
 
-const findCenterById = (centerId: string | null) => {
+const findCenterById = (centers: DonationCenter[], centerId: string | null) => {
   if (!centerId) {
     return null;
   }
   for (const center of centers) {
-    if (center.id === centerId) {
+    if (center.id === centerId || center.center_id === centerId) {
       return center;
     }
   }
@@ -268,13 +247,13 @@ const BookingFlow = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [postalCodeQuery, setPostalCodeQuery] = useState('');
-  const [selectedCenterId, setSelectedCenterId] = useState<string | null>(
-    centers[0]?.id ?? null,
-  );
-  const [selectedDateIso, setSelectedDateIso] = useState<string | null>(
-    centers[0]?.availability[0]?.isoDate ?? null,
-  );
+  const [centers, setCenters] = useState<DonationCenter[]>([]);
+  const [loadingCenters, setLoadingCenters] = useState(true);
+  const [donorDefaultCenter, setDonorDefaultCenter] = useState<string | null>(null);
+  const [selectedCenterId, setSelectedCenterId] = useState<string | null>(null);
+  const [selectedDateIso, setSelectedDateIso] = useState<string | null>(null);
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
+  const [selectedDonationType, setSelectedDonationType] = useState<'Blood' | 'Plasma'>('Blood');
   const [validationMessage, setValidationMessage] = useState<string | null>(
     null,
   );
@@ -286,6 +265,30 @@ const BookingFlow = () => {
   );
   const [autofillMessage, setAutofillMessage] = useState<string | null>(null);
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  const [currentMonthView, setCurrentMonthView] = useState(new Date());
+  
+  // Debug panel state
+  const [debugLogs, setDebugLogs] = useState<Array<{ id: string; timestamp: Date; message: string; type: 'info' | 'success' | 'error' | 'warning' }>>([]);
+  const [showDebugPanel, setShowDebugPanel] = useState(true);
+  const [debugPanelMinimized, setDebugPanelMinimized] = useState(false);
+
+  // Debug logging function
+  const addDebugLog = (message: string, type: 'info' | 'success' | 'error' | 'warning' = 'info') => {
+    const logEntry = {
+      id: `${Date.now()}-${Math.random()}`,
+      timestamp: new Date(),
+      message,
+      type
+    };
+    setDebugLogs(prev => [...prev.slice(-99), logEntry]); // Keep last 100 logs
+    // Also log to console
+    const consoleMethod = type === 'error' ? console.error : type === 'warning' ? console.warn : console.log;
+    consoleMethod(message);
+  };
+
+  const clearDebugLogs = () => {
+    setDebugLogs([]);
+  };
 
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     fullName: '',
@@ -303,6 +306,194 @@ const BookingFlow = () => {
     travel: '',
   });
 
+  // Fetch donor's default center and all centers on mount
+  useEffect(() => {
+    const fetchDonorAndCenters = async () => {
+      try {
+        setLoadingCenters(true);
+        const donorHashId = sessionStorage.getItem('donor_hash_id');
+        let defaultCenterName: string | null = null;
+
+        // Fetch donor's default center if logged in
+        if (donorHashId) {
+          const { data: donorData, error: donorError } = await supabase
+            .from('donors')
+            .select('avis_donor_center')
+            .eq('donor_hash_id', donorHashId)
+            .single();
+
+          if (!donorError && donorData?.avis_donor_center) {
+            defaultCenterName = donorData.avis_donor_center;
+            setDonorDefaultCenter(defaultCenterName);
+          }
+        }
+
+        // Fetch all donation centers
+        const { data: centersData, error: centersError } = await supabase
+          .from('donation_centers')
+          .select('*')
+          .eq('is_active', true)
+          .order('name');
+
+        if (centersError) {
+          console.error('Error fetching centers:', centersError);
+          setValidationMessage('Failed to load donation centers. Please try again.');
+          return;
+        }
+
+        if (centersData && centersData.length > 0) {
+          const centersWithAvailability: DonationCenter[] = centersData.map((center) => ({
+            id: center.center_id,
+            center_id: center.center_id,
+            name: center.name,
+            address: center.address,
+            city: center.city || '',
+            postalCode: center.postal_code || '',
+            distanceKm: 0, // Can be calculated if needed
+            position: {
+              lat: center.latitude || 45.4642, // Default to Milan if not set
+              lng: center.longitude || 9.1900,
+            },
+            availability: [], // Will be populated when center is selected
+            isDefault: defaultCenterName ? center.name === defaultCenterName : false,
+          }));
+
+          setCenters(centersWithAvailability);
+
+          // Pre-select donor's default center if available
+          if (defaultCenterName) {
+            const defaultCenter = centersWithAvailability.find(
+              (c) => c.name === defaultCenterName
+            );
+            if (defaultCenter) {
+              setSelectedCenterId(defaultCenter.id);
+            } else if (centersWithAvailability.length > 0) {
+              // Otherwise select first center
+              setSelectedCenterId(centersWithAvailability[0].id);
+            }
+          } else if (centersWithAvailability.length > 0) {
+            // Select first center if no default
+            setSelectedCenterId(centersWithAvailability[0].id);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setValidationMessage('An error occurred while loading centers. Please try again.');
+      } finally {
+        setLoadingCenters(false);
+      }
+    };
+
+    fetchDonorAndCenters();
+  }, []);
+
+  // Fetch availability slots when center or donation type is selected
+  useEffect(() => {
+    const fetchAvailability = async () => {
+      if (!selectedCenterId || centers.length === 0) return;
+
+      try {
+        // Fetch all slots for the center and donation type, regardless of is_available flag
+        // We'll filter by capacity in the application logic
+        const { data: slotsData, error: slotsError } = await supabase
+          .from('availability_slots')
+          .select(`
+            *,
+            donation_centers!inner(
+              center_id,
+              name,
+              address,
+              city
+            )
+          `)
+          .eq('center_id', selectedCenterId)
+          .eq('donation_type', selectedDonationType)
+          .gte('slot_datetime', new Date().toISOString())
+          .order('slot_datetime', { ascending: true });
+
+        if (slotsError) {
+          console.error('Error fetching slots:', slotsError);
+          return;
+        }
+
+        if (slotsData) {
+          console.log(`Fetched ${slotsData.length} slots from database for center ${selectedCenterId}, type ${selectedDonationType}`);
+          
+          // Group slots by date and filter by available capacity
+          const slotsByDate = new Map<string, TimeSlot[]>();
+          const now = new Date();
+
+          slotsData.forEach((slot) => {
+            const slotDate = new Date(slot.slot_datetime);
+            
+            // Skip slots in the past
+            if (slotDate < now) {
+              return;
+            }
+
+            // Only include slots that have available capacity
+            const spotsLeft = slot.capacity - slot.current_bookings;
+            if (spotsLeft <= 0) {
+              return; // Skip fully booked slots
+            }
+
+            const isoDate = format(slotDate, 'yyyy-MM-dd');
+            const time = format(slotDate, 'HH:mm');
+            const riskLevel: RiskLevel = spotsLeft <= 2 ? 'high' : 'normal';
+            const status: 'available' | 'filling' = spotsLeft <= 3 ? 'filling' : 'available';
+
+            if (!slotsByDate.has(isoDate)) {
+              slotsByDate.set(isoDate, []);
+            }
+
+            slotsByDate.get(isoDate)!.push({
+              id: `${isoDate}-${slot.slot_id}`,
+              time,
+              spotsLeft,
+              status,
+              riskLevel,
+              slot_datetime: slot.slot_datetime,
+              slot_id: slot.slot_id,
+            });
+          });
+
+          // Convert to CenterAvailability format
+          const availability: CenterAvailability[] = Array.from(slotsByDate.entries()).map(
+            ([isoDate, slots]) => ({
+              isoDate,
+              date: parseISO(isoDate),
+              slots: slots.sort((a, b) => a.time.localeCompare(b.time)),
+            })
+          );
+
+          console.log(`Processed ${availability.length} dates with available slots:`, 
+            availability.map(a => `${a.isoDate} (${a.slots.length} slots)`).join(', '));
+
+          // Update the selected center's availability
+          setCenters((prevCenters) =>
+            prevCenters.map((center) =>
+              center.id === selectedCenterId || center.center_id === selectedCenterId
+                ? { ...center, availability }
+                : center
+            )
+          );
+
+          // Auto-select first available date if none selected
+          if (!selectedDateIso && availability.length > 0) {
+            setSelectedDateIso(availability[0].isoDate);
+          }
+
+          // Reset month view to current month when availability is loaded
+          setCurrentMonthView(new Date());
+        }
+      } catch (err) {
+        console.error('Error fetching availability:', err);
+      }
+    };
+
+    fetchAvailability();
+  }, [selectedCenterId, selectedDonationType]);
+
   const filteredCenters = useMemo(() => {
     const query = postalCodeQuery.trim();
     if (!query) {
@@ -315,11 +506,11 @@ const BookingFlow = () => {
     });
 
     return match.length > 0 ? match : centers;
-  }, [postalCodeQuery]);
+  }, [postalCodeQuery, centers]);
 
   const selectedCenter = useMemo(
-    () => findCenterById(selectedCenterId),
-    [selectedCenterId],
+    () => findCenterById(centers, selectedCenterId),
+    [centers, selectedCenterId],
   );
 
   const currentAvailability = selectedCenter?.availability ?? [];
@@ -388,9 +579,12 @@ const BookingFlow = () => {
   const handleSelectCenter = (centerId: string) => {
     setSelectedCenterId(centerId);
     setValidationMessage(null);
+    setSelectedDateIso(null);
+    setSelectedSlotId(null);
+    setCurrentMonthView(new Date()); // Reset to current month
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setValidationMessage(null);
 
     if (currentStep === 1) {
@@ -492,11 +686,182 @@ const BookingFlow = () => {
         setValidationMessage('Please answer all the health questions.');
         return;
       }
+
+      // Submit appointment before advancing to confirmation step
+      const success = await handleSubmitAppointment();
+      if (success) {
+        // Only advance to step 5 if appointment was successfully saved
+        setCurrentStep((step) => step + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      return;
+    }
+
+    if (currentStep === 5) {
+      // Step 5 is just the confirmation view - appointment is already saved
+      // No action needed here
+      return;
     }
 
     if (currentStep < steps.length) {
       setCurrentStep((step) => step + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleSubmitAppointment = async (): Promise<boolean> => {
+    addDebugLog('🚀 [DEBUG] handleSubmitAppointment called', 'info');
+    
+    if (!selectedSlot || !selectedCenter) {
+      addDebugLog('❌ [DEBUG] Missing selectedSlot or selectedCenter', 'error');
+      setValidationMessage('Please select a date, time, and center.');
+      return false;
+    }
+
+    try {
+      addDebugLog('🔄 [DEBUG] Setting isSubmitting to true', 'info');
+      setIsSubmitting(true);
+      const donorHashId = sessionStorage.getItem('donor_hash_id');
+      
+      addDebugLog(`🔍 [DEBUG] Donor hash ID from session: ${donorHashId ? 'found' : 'not found'}`, donorHashId ? 'success' : 'error');
+
+      if (!donorHashId) {
+        addDebugLog('❌ [DEBUG] No donor hash ID found, redirecting to login', 'error');
+        setValidationMessage('Please log in to book an appointment.');
+        navigate('/login');
+        return false;
+      }
+
+      // Create appointment
+      const appointmentData = {
+        donor_hash_id: donorHashId,
+        donation_center_id: selectedCenter.center_id,
+        appointment_datetime: selectedSlot.slot_datetime,
+        donation_type: selectedDonationType,
+        status: 'SCHEDULED',
+        booking_channel: 'online',
+        confirmation_sent: false,
+        reminder_sent: false,
+      };
+      
+      addDebugLog(`📝 [DEBUG] Creating appointment with data: ${JSON.stringify(appointmentData, null, 2)}`, 'info');
+      
+      const insertStartTime = Date.now();
+      const { data: appointment, error: appointmentError } = await supabase
+        .from('appointments')
+        .insert(appointmentData)
+        .select()
+        .single();
+      const insertEndTime = Date.now();
+      
+      addDebugLog(`📝 [DEBUG] Insert operation completed in ${insertEndTime - insertStartTime}ms`, 'info');
+      addDebugLog(`📝 [DEBUG] Insert result: ${appointment ? 'SUCCESS' : 'FAILED'}`, appointment ? 'success' : 'error');
+      
+      if (appointmentError) {
+        addDebugLog(`❌ [DEBUG] ERROR creating appointment: ${JSON.stringify(appointmentError)}`, 'error');
+        console.error('Error creating appointment:', appointmentError);
+        setValidationMessage('Failed to book appointment. Please try again.');
+        setIsSubmitting(false);
+        return false;
+      }
+      
+      addDebugLog(`✅ [DEBUG] Appointment created successfully: ${appointment?.appointment_id}`, 'success');
+
+      // Update slot bookings count
+      // First get current bookings count
+      addDebugLog(`🔍 [DEBUG] Fetching current slot data for slot_id: ${selectedSlot.slot_id}`, 'info');
+      const fetchStartTime = Date.now();
+      const { data: currentSlot, error: slotFetchError } = await supabase
+        .from('availability_slots')
+        .select('current_bookings, capacity')
+        .eq('slot_id', selectedSlot.slot_id)
+        .single();
+      const fetchEndTime = Date.now();
+      
+      addDebugLog(`🔍 [DEBUG] Slot fetch completed in ${fetchEndTime - fetchStartTime}ms`, 'info');
+      addDebugLog(`🔍 [DEBUG] Slot data: ${currentSlot ? JSON.stringify(currentSlot, null, 2) : 'null'}`, currentSlot ? 'success' : 'error');
+
+      if (slotFetchError || !currentSlot) {
+        addDebugLog(`❌ [DEBUG] Error fetching slot: ${JSON.stringify(slotFetchError)}`, 'error');
+        console.error('Error fetching slot:', slotFetchError);
+        // Appointment was created, but slot update failed
+        setValidationMessage('Appointment created, but there was an issue updating slot availability. Please contact support.');
+        setIsSubmitting(false);
+        return false;
+      }
+
+      // Update with optimistic locking
+      const newBookings = currentSlot.current_bookings + 1;
+      addDebugLog(`🔄 [DEBUG] Calculating new bookings: ${currentSlot.current_bookings} + 1 = ${newBookings}`, 'info');
+      addDebugLog(`🔄 [DEBUG] Slot capacity: ${currentSlot.capacity}`, 'info');
+      
+      if (newBookings > currentSlot.capacity) {
+        addDebugLog(`❌ [DEBUG] Slot is now full (${newBookings} > ${currentSlot.capacity}), rolling back appointment`, 'error');
+        setValidationMessage('This slot is now full. Please select another time.');
+        // Delete the appointment we just created
+        const deleteStartTime = Date.now();
+        const { error: deleteError } = await supabase
+          .from('appointments')
+          .delete()
+          .eq('appointment_id', appointment.appointment_id);
+        const deleteEndTime = Date.now();
+        addDebugLog(`🔄 [DEBUG] Appointment deletion completed in ${deleteEndTime - deleteStartTime}ms`, deleteError ? 'error' : 'success');
+        if (deleteError) {
+          addDebugLog(`❌ [DEBUG] Error deleting appointment: ${JSON.stringify(deleteError)}`, 'error');
+        }
+        setIsSubmitting(false);
+        return false;
+      }
+
+      addDebugLog(`🔄 [DEBUG] Updating slot with optimistic locking...`, 'info');
+      addDebugLog(`🔄 [DEBUG] Update conditions: slot_id=${selectedSlot.slot_id}, current_bookings=${currentSlot.current_bookings}`, 'info');
+      
+      const updateStartTime = Date.now();
+      const { error: slotUpdateError } = await supabase
+        .from('availability_slots')
+        .update({ 
+          current_bookings: newBookings,
+          is_available: newBookings < currentSlot.capacity
+        })
+        .eq('slot_id', selectedSlot.slot_id)
+        .eq('current_bookings', currentSlot.current_bookings); // Optimistic locking
+      const updateEndTime = Date.now();
+      
+      addDebugLog(`🔄 [DEBUG] Slot update operation completed in ${updateEndTime - updateStartTime}ms`, 'info');
+      addDebugLog(`🔄 [DEBUG] Slot update result: ${slotUpdateError ? 'FAILED' : 'SUCCESS'}`, slotUpdateError ? 'error' : 'success');
+
+      if (slotUpdateError) {
+        addDebugLog(`❌ [DEBUG] Error updating slot: ${JSON.stringify(slotUpdateError)}`, 'error');
+        console.error('Error updating slot:', slotUpdateError);
+        // Appointment was created, but slot update failed - rollback appointment
+        addDebugLog(`🔄 [DEBUG] Rolling back appointment: ${appointment.appointment_id}`, 'warning');
+        const rollbackStartTime = Date.now();
+        const { error: rollbackError } = await supabase
+          .from('appointments')
+          .delete()
+          .eq('appointment_id', appointment.appointment_id);
+        const rollbackEndTime = Date.now();
+        addDebugLog(`🔄 [DEBUG] Rollback completed in ${rollbackEndTime - rollbackStartTime}ms`, rollbackError ? 'error' : 'success');
+        if (rollbackError) {
+          addDebugLog(`❌ [DEBUG] Error during rollback: ${JSON.stringify(rollbackError)}`, 'error');
+        }
+        setValidationMessage('Slot was just booked by someone else. Please select another time.');
+        setIsSubmitting(false);
+        return false;
+      }
+
+      // Success - appointment saved and slot updated
+      addDebugLog('✅ [DEBUG] Appointment booking completed successfully!', 'success');
+      addDebugLog(`✅ [DEBUG] Final state: appointment_id=${appointment.appointment_id}, slot updated`, 'success');
+      setValidationMessage(null);
+      setIsSubmitting(false);
+      return true;
+    } catch (err) {
+      addDebugLog(`❌ [DEBUG] Exception in handleSubmitAppointment: ${err instanceof Error ? err.message : String(err)}`, 'error');
+      console.error('Error submitting appointment:', err);
+      setValidationMessage('An error occurred. Please try again.');
+      setIsSubmitting(false);
+      return false;
     }
   };
 
@@ -586,8 +951,8 @@ const BookingFlow = () => {
   const resetAndExit = () => {
     setCurrentStep(1);
     setPostalCodeQuery('');
-    setSelectedCenterId(centers[0]?.id ?? null);
-    setSelectedDateIso(centers[0]?.availability[0]?.isoDate ?? null);
+    setSelectedCenterId(centers.length > 0 ? centers[0]?.id ?? null : null);
+    setSelectedDateIso(centers.length > 0 && centers[0]?.availability.length > 0 ? centers[0]?.availability[0]?.isoDate ?? null : null);
     setSelectedSlotId(null);
     setPersonalInfo({
       fullName: '',
@@ -603,7 +968,7 @@ const BookingFlow = () => {
       medications: '',
       travel: '',
     });
-    navigate('/');
+    navigate('/appointments');
   };
 
   const renderStepTitle = (title: string, subtitle?: string, id?: string) => (
@@ -615,13 +980,59 @@ const BookingFlow = () => {
 
   const renderStepOne = () => (
     <section className="wizard-step" aria-labelledby="step-select-center">
+      {/* Step Header with Progress Indicator */}
+      <div style={{
+        marginBottom: '2rem',
+        padding: '1rem',
+        backgroundColor: '#f9fafb',
+        borderRadius: '0.5rem',
+        border: '1px solid #e5e7eb',
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+        }}>
+          <span style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '32px',
+            height: '32px',
+            borderRadius: '50%',
+            backgroundColor: '#dc2626',
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: '0.875rem',
+          }}>
+            1
+          </span>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
+              Step 1: Select Center
+            </h3>
+            <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>
+              Choose your preferred donation center
+            </p>
+          </div>
+        </div>
+      </div>
+
       {renderStepTitle(
         'Where would you like to donate?',
-        'Choose the Vitalita center that is most convenient for you.',
+        donorDefaultCenter
+          ? `Your default center is ${donorDefaultCenter}. You can select a different center if needed.`
+          : 'Choose the AVIS center that is most convenient for you.',
         'step-select-center',
       )}
 
-      <div className="center-search">
+      {loadingCenters ? (
+        <div style={{ textAlign: 'center', padding: '2rem' }}>
+          <p>Loading centers...</p>
+        </div>
+      ) : (
+        <>
+          <div className="center-search">
         <label htmlFor="postalCode" className="postal-code-label">
           Enter your postal code to see nearby centers
         </label>
@@ -645,88 +1056,185 @@ const BookingFlow = () => {
             </button>
           )}
         </div>
-        <p className="postal-code-note">
-          We’ll always show you the closest options available today.
-        </p>
-      </div>
+            <p className="postal-code-note">
+              We&apos;ll always show you the closest options available today.
+            </p>
+          </div>
 
-      <div className="center-map-wrapper">
-        <MapContainer
-          center={[
-            selectedCenter?.position.lat ?? centers[0].position.lat,
-            selectedCenter?.position.lng ?? centers[0].position.lng,
-          ]}
-          zoom={12}
-          scrollWheelZoom={false}
-          style={{ height: '260px', width: '100%' }}
-        >
-          {selectedCenter && <MapViewUpdater position={selectedCenter.position} />}
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          {centers.map((center) => (
-            <Marker key={center.id} position={[center.position.lat, center.position.lng]}>
-              <Popup>
-                <div className="map-popup">
-                  <strong>{center.name}</strong>
-                  <p>{center.address}</p>
-                  <button
-                    type="button"
-                    className="text-button"
-                    onClick={() => handleSelectCenter(center.id)}
-                  >
-                    Select this center
-                  </button>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      </div>
-
-      <div className="center-list">
-        {filteredCenters.map((center) => {
-          const isSelected = center.id === selectedCenter?.id;
-          return (
-            <article
-              key={center.id}
-              className={`center-card ${isSelected ? 'selected' : ''}`}
-            >
-              <div className="center-card-body">
-                <div className="center-card-heading">
-                  <h2>{center.name}</h2>
-                  <span className="center-distance">
-                    {center.distanceKm.toFixed(1)} km away
-                  </span>
-                </div>
-                <p className="center-address">{center.address}</p>
-                <p className="center-postal">Postal code {center.postalCode}</p>
-                <p className="center-availability">
-                  Next available: {format(center.availability[0].date, 'EEEE d MMMM')}
-                </p>
-              </div>
-              <button
-                type="button"
-                className="button primary"
-                onClick={() => handleSelectCenter(center.id)}
-                aria-pressed={isSelected}
+          {centers.length > 0 && (
+            <div className="center-map-wrapper">
+              <MapContainer
+                center={[
+                  selectedCenter?.position.lat ?? centers[0].position.lat,
+                  selectedCenter?.position.lng ?? centers[0].position.lng,
+                ]}
+                zoom={12}
+                scrollWheelZoom={false}
+                style={{ height: '260px', width: '100%' }}
               >
-                {isSelected ? 'Selected' : 'Select'}
-              </button>
-            </article>
-          );
-        })}
-      </div>
+                {selectedCenter && <MapViewUpdater position={selectedCenter.position} />}
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                {centers.map((center) => (
+                  <Marker key={center.id} position={[center.position.lat, center.position.lng]}>
+                    <Popup>
+                      <div className="map-popup">
+                        <strong>{center.name}</strong>
+                        <p>{center.address}</p>
+                        <button
+                          type="button"
+                          className="text-button"
+                          onClick={() => handleSelectCenter(center.id)}
+                        >
+                          Select this center
+                        </button>
+                      </div>
+                    </Popup>
+                  </Marker>
+                ))}
+              </MapContainer>
+            </div>
+          )}
+
+          <div className="center-list">
+            {filteredCenters.length === 0 ? (
+              <p style={{ textAlign: 'center', padding: '2rem' }}>
+                No centers found. Please try again later.
+              </p>
+            ) : (
+              filteredCenters.map((center) => {
+                const isSelected = center.id === selectedCenter?.id || center.center_id === selectedCenter?.center_id;
+                const isDefault = center.name === donorDefaultCenter;
+                return (
+                  <article
+                    key={center.id}
+                    className={`center-card ${isSelected ? 'selected' : ''} ${isDefault ? 'default-center' : ''}`}
+                  >
+                    <div className="center-card-body">
+                      {isDefault && (
+                        <span className="default-badge" style={{ fontSize: '0.875rem', color: '#dc2626', fontWeight: 600, marginBottom: '0.5rem', display: 'block' }}>
+                          Your Default Center
+                        </span>
+                      )}
+                      <div className="center-card-heading">
+                        <h2>{center.name}</h2>
+                        {center.distanceKm > 0 && (
+                          <span className="center-distance">
+                            {center.distanceKm.toFixed(1)} km away
+                          </span>
+                        )}
+                      </div>
+                      <p className="center-address">{center.address}</p>
+                      {center.postalCode && (
+                        <p className="center-postal">Postal code {center.postalCode}</p>
+                      )}
+                      {center.availability.length > 0 && (
+                        <p className="center-availability">
+                          Next available: {format(center.availability[0].date, 'EEEE d MMMM')}
+                        </p>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      className="button primary"
+                      onClick={() => handleSelectCenter(center.id)}
+                      aria-pressed={isSelected}
+                    >
+                      {isSelected ? 'Selected' : 'Select'}
+                    </button>
+                  </article>
+                );
+              })
+            )}
+          </div>
+        </>
+      )}
     </section>
   );
 
   const renderStepTwo = () => (
     <section className="wizard-step">
+      {/* Step Header with Progress Indicator */}
+      <div style={{
+        marginBottom: '2rem',
+        padding: '1rem',
+        backgroundColor: '#f9fafb',
+        borderRadius: '0.5rem',
+        border: '1px solid #e5e7eb',
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+        }}>
+          <span style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '32px',
+            height: '32px',
+            borderRadius: '50%',
+            backgroundColor: '#dc2626',
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: '0.875rem',
+          }}>
+            2
+          </span>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
+              Step 2: Date & Time
+            </h3>
+            <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>
+              Select your preferred appointment date and time
+            </p>
+          </div>
+        </div>
+      </div>
+
       {renderStepTitle(
         'When can you donate?',
         'Pick the date and time that fits your schedule.',
       )}
+
+      {/* Donation Type Selection */}
+      <div style={{ marginBottom: '2rem' }}>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
+          Donation Type <span aria-label="required">*</span>
+        </label>
+        <div className="choice-group" role="radiogroup" style={{ display: 'flex', gap: '1rem' }}>
+          <label>
+            <input
+              type="radio"
+              name="donationType"
+              value="Blood"
+              checked={selectedDonationType === 'Blood'}
+              onChange={(e) => {
+                setSelectedDonationType(e.target.value as 'Blood' | 'Plasma');
+                setSelectedDateIso(null);
+                setSelectedSlotId(null);
+              }}
+            />
+            Blood Donation
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="donationType"
+              value="Plasma"
+              checked={selectedDonationType === 'Plasma'}
+              onChange={(e) => {
+                setSelectedDonationType(e.target.value as 'Blood' | 'Plasma');
+                setSelectedDateIso(null);
+                setSelectedSlotId(null);
+              }}
+            />
+            Plasma Donation
+          </label>
+        </div>
+      </div>
 
       {slotError && (
         <div className="inline-alert">
@@ -761,73 +1269,821 @@ const BookingFlow = () => {
         </div>
       )}
 
-      <div className="date-picker">
-        <h2>Available dates</h2>
-        <div className="date-grid">
-          {currentAvailability.map((day) => {
-            const isSelected = day.isoDate === selectedDateIso;
-            return (
-              <button
-                key={day.isoDate}
-                type="button"
-                className={`date-card ${isSelected ? 'selected' : ''}`}
-                onClick={() => {
-                  setSelectedDateIso(day.isoDate);
-                  setValidationMessage(null);
-                }}
-              >
-                <span className="date-day">{format(day.date, 'EEE')}</span>
-                <span className="date-number">{format(day.date, 'd')}</span>
-                <span className="date-month">{format(day.date, 'MMM')}</span>
-              </button>
-            );
-          })}
+      {!selectedCenter && (
+        <div className="inline-alert warning">
+          <p>Please select a donation center first.</p>
         </div>
-      </div>
+      )}
 
-      <div className="time-slot-picker">
-        <h2>Select a time</h2>
-        <div className="slot-grid">
-          {selectedDateAvailability?.slots.map((slot) => {
-            const isSelected = slot.id === selectedSlotId;
-            return (
-              <button
-                key={slot.id}
-                type="button"
-                className={`slot-button ${isSelected ? 'selected' : ''}`}
-                onClick={() => {
-                  setSelectedSlotId(slot.id);
-                  setValidationMessage(null);
-                  setSlotError(null);
-                }}
-              >
-                <span className="slot-time">{slot.time}</span>
-                {slot.status === 'filling' && (
-                  <span className="slot-status">
-                    Only {slot.spotsLeft} spots left!
-                  </span>
-                )}
-              </button>
-            );
-          })}
+      {selectedCenter && currentAvailability.length === 0 && (
+        <div className="inline-alert" style={{
+          padding: '1.5rem',
+          backgroundColor: '#fef2f2',
+          border: '2px solid #fecaca',
+          borderRadius: '0.5rem',
+          marginBottom: '1.5rem',
+        }}>
+          <h3 style={{ marginTop: 0, marginBottom: '0.75rem', color: '#dc2626', fontSize: '1.125rem' }}>
+            No Available Slots
+          </h3>
+          <p style={{ marginBottom: '1rem', color: '#991b1b' }}>
+            No available slots found for {selectedDonationType} donation at this center.
+          </p>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className="button primary"
+              onClick={() => setCurrentStep(1)}
+              style={{
+                backgroundColor: '#dc2626',
+                borderColor: '#dc2626',
+              }}
+            >
+              Try Different Center
+            </button>
+            <button
+              type="button"
+              className="button secondary"
+              onClick={() => {
+                setSelectedDonationType(selectedDonationType === 'Blood' ? 'Plasma' : 'Blood');
+              }}
+            >
+              Try {selectedDonationType === 'Blood' ? 'Plasma' : 'Blood'} Donation
+            </button>
+            <a
+              href="https://vitalita.com/callback"
+              target="_blank"
+              rel="noreferrer"
+              className="button secondary"
+              style={{
+                textDecoration: 'none',
+                display: 'inline-block',
+              }}
+            >
+              Request a Callback
+            </a>
+          </div>
         </div>
-        <a
-          className="text-link"
-          href="https://vitalita.com/callback"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Can’t find a good time? Request a callback.
-        </a>
-      </div>
+      )}
+
+      {selectedCenter && currentAvailability.length > 0 && (() => {
+        // Filter dates for current month and next month
+        const currentMonth = currentMonthView.getMonth();
+        const currentYear = currentMonthView.getFullYear();
+        const nextMonth = currentMonth === 11 ? 0 : currentMonth + 1;
+        const nextYear = currentMonth === 11 ? currentYear + 1 : currentYear;
+
+        // Get all dates in the current and next month
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const filteredDates = currentAvailability.filter((day) => {
+          const dayMonth = day.date.getMonth();
+          const dayYear = day.date.getFullYear();
+          return (
+            (dayMonth === currentMonth && dayYear === currentYear) ||
+            (dayMonth === nextMonth && dayYear === nextYear)
+          );
+        });
+
+        // Group dates by month
+        const datesByMonth = new Map<string, CenterAvailability[]>();
+        filteredDates.forEach((day) => {
+          const monthKey = format(day.date, 'yyyy-MM');
+          if (!datesByMonth.has(monthKey)) {
+            datesByMonth.set(monthKey, []);
+          }
+          datesByMonth.get(monthKey)!.push(day);
+        });
+
+        // Generate all days for the two months (including days without availability)
+        const generateMonthDays = (year: number, month: number) => {
+          const firstDay = new Date(year, month, 1);
+          const lastDay = new Date(year, month + 1, 0);
+          const days: Array<{ date: Date; isoDate: string; hasAvailability: boolean; availability?: CenterAvailability }> = [];
+
+          // Add days from start of month
+          for (let day = 1; day <= lastDay.getDate(); day++) {
+            const date = new Date(year, month, day);
+            const isoDate = format(date, 'yyyy-MM-dd');
+            const hasAvailability = filteredDates.some((d) => d.isoDate === isoDate);
+            const availability = filteredDates.find((d) => d.isoDate === isoDate);
+
+            days.push({
+              date,
+              isoDate,
+              hasAvailability,
+              availability,
+            });
+          }
+
+          return days;
+        };
+
+        const currentMonthDays = generateMonthDays(currentYear, currentMonth);
+        const nextMonthDays = generateMonthDays(nextYear, nextMonth);
+
+        const handlePreviousMonth = () => {
+          const newDate = new Date(currentYear, currentMonth - 1, 1);
+          setCurrentMonthView(newDate);
+        };
+
+        const handleNextMonth = () => {
+          const newDate = new Date(currentYear, currentMonth + 1, 1);
+          setCurrentMonthView(newDate);
+        };
+
+        // Helper function to generate calendar grid with proper day-of-week alignment
+        const generateCalendarGrid = (days: Array<{ date: Date; isoDate: string; hasAvailability: boolean; availability?: CenterAvailability }>, year: number, month: number) => {
+          const firstDay = new Date(year, month, 1);
+          const lastDay = new Date(year, month + 1, 0);
+          const startDayOfWeek = firstDay.getDay(); // 0 = Sunday, 1 = Monday, etc.
+          const totalDays = lastDay.getDate();
+          
+          const grid: Array<{ date: Date | null; isoDate: string | null; hasAvailability: boolean; availability?: CenterAvailability; slotCount?: number }> = [];
+          
+          // Add empty cells for days before the first day of the month
+          for (let i = 0; i < startDayOfWeek; i++) {
+            grid.push({ date: null, isoDate: null, hasAvailability: false });
+          }
+          
+          // Add all days of the month
+          for (let day = 1; day <= totalDays; day++) {
+            const date = new Date(year, month, day);
+            const isoDate = format(date, 'yyyy-MM-dd');
+            const dayData = days.find(d => d.isoDate === isoDate);
+            const slotCount = dayData?.availability?.slots.length || 0;
+            
+            grid.push({
+              date,
+              isoDate,
+              hasAvailability: dayData?.hasAvailability || false,
+              availability: dayData?.availability,
+              slotCount,
+            });
+          }
+          
+          return grid;
+        };
+
+        const currentMonthGrid = generateCalendarGrid(currentMonthDays, currentYear, currentMonth);
+        const nextMonthGrid = generateCalendarGrid(nextMonthDays, nextYear, nextMonth);
+        const isToday = (date: Date | null) => {
+          if (!date) return false;
+          return format(date, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd');
+        };
+
+        return (
+          <>
+            <div className="date-picker" style={{
+              backgroundColor: '#ffffff',
+              padding: '1.5rem',
+              borderRadius: '0.75rem',
+              border: '2px solid #e5e7eb',
+              marginBottom: '2rem',
+            }}>
+              {/* Month Navigation */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '1.5rem',
+              }}>
+                <button
+                  type="button"
+                  onClick={handlePreviousMonth}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    color: '#2563eb',
+                    cursor: 'pointer',
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                  }}
+                >
+                  &lt; Prev Month
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNextMonth}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    color: '#2563eb',
+                    cursor: 'pointer',
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                  }}
+                >
+                  Next Month &gt;
+                </button>
+              </div>
+
+              {/* Two Calendars Side by Side */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '1.5rem',
+              }}>
+                {/* Current Month Calendar */}
+                <div>
+                  <h3 style={{
+                    marginBottom: '0.5rem',
+                    fontSize: '1.125rem',
+                    fontWeight: 600,
+                    color: '#1f2937',
+                  }}>
+                    {format(new Date(currentYear, currentMonth, 1), 'MMMM yyyy')}
+                  </h3>
+                  {/* Day of week headers */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(7, 1fr)',
+                    gap: '0.25rem',
+                    marginBottom: '0.25rem',
+                  }}>
+                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                      <div key={day} style={{
+                        textAlign: 'center',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        color: '#6b7280',
+                        padding: '0.125rem',
+                      }}>
+                        {day}
+                      </div>
+                    ))}
+                  </div>
+                  {/* Calendar grid */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(7, 1fr)',
+                    gap: '0.25rem',
+                  }}>
+                    {currentMonthGrid.map((day, index) => {
+                      if (!day.date) {
+                        return <div key={`empty-${index}`} style={{ minHeight: '50px' }} />;
+                      }
+                      
+                      const isSelected = day.isoDate === selectedDateIso;
+                      const isPast = day.date < today;
+                      const isAvailable = day.hasAvailability && !isPast;
+                      const isTodayDate = isToday(day.date);
+
+                      return (
+                        <button
+                          key={day.isoDate}
+                          type="button"
+                          onClick={() => {
+                            if (isAvailable) {
+                              setSelectedDateIso(day.isoDate!);
+                              setValidationMessage(null);
+                            }
+                          }}
+                          disabled={!isAvailable}
+                          style={{
+                            minHeight: '50px',
+                            padding: '0.375rem',
+                            borderRadius: '0.5rem',
+                            border: isSelected ? '2px solid #2563eb' : '1px solid #e5e7eb',
+                            backgroundColor: isSelected ? '#eff6ff' : isAvailable ? '#ffffff' : '#f9fafb',
+                            cursor: isAvailable ? 'pointer' : 'not-allowed',
+                            opacity: isAvailable ? 1 : 0.4,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '0.125rem',
+                            position: 'relative',
+                            transition: 'all 0.2s ease',
+                          }}
+                          onMouseEnter={(e) => {
+                            if (isAvailable && !isSelected) {
+                              e.currentTarget.style.backgroundColor = '#f3f4f6';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (isAvailable && !isSelected) {
+                              e.currentTarget.style.backgroundColor = '#ffffff';
+                            }
+                          }}
+                        >
+                          <span style={{
+                            fontSize: '1rem',
+                            fontWeight: 600,
+                            color: isAvailable ? '#1f2937' : '#9ca3af',
+                          }}>
+                            {format(day.date, 'd')}
+                          </span>
+                          {isAvailable && (
+                            <>
+                              <span
+                                style={{
+                                  position: 'absolute',
+                                  top: '4px',
+                                  right: '4px',
+                                  width: '8px',
+                                  height: '8px',
+                                  borderRadius: '50%',
+                                  backgroundColor: '#10b981',
+                                }}
+                                aria-label="Available"
+                              />
+                              {day.slotCount && day.slotCount > 0 && (
+                                <span style={{
+                                  fontSize: '0.75rem',
+                                  color: '#10b981',
+                                  fontWeight: 600,
+                                  marginTop: '0.125rem',
+                                }}>
+                                  {day.slotCount}
+                                </span>
+                              )}
+                            </>
+                          )}
+                          {isTodayDate && (
+                            <span style={{
+                              fontSize: '0.625rem',
+                              color: isSelected ? '#2563eb' : '#6b7280',
+                              fontWeight: 500,
+                              marginTop: '0.0625rem',
+                            }}>
+                              Today
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Next Month Calendar */}
+                {nextMonthDays.length > 0 && (
+                  <div>
+                    <h3 style={{
+                      marginBottom: '0.5rem',
+                      fontSize: '1.125rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                    }}>
+                      {format(new Date(nextYear, nextMonth, 1), 'MMMM yyyy')}
+                    </h3>
+                    {/* Day of week headers */}
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(7, 1fr)',
+                      gap: '0.25rem',
+                      marginBottom: '0.25rem',
+                    }}>
+                      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                        <div key={day} style={{
+                          textAlign: 'center',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          color: '#6b7280',
+                          padding: '0.125rem',
+                        }}>
+                          {day}
+                        </div>
+                      ))}
+                    </div>
+                    {/* Calendar grid */}
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(7, 1fr)',
+                      gap: '0.25rem',
+                    }}>
+                      {nextMonthGrid.map((day, index) => {
+                        if (!day.date) {
+                          return <div key={`empty-${index}`} style={{ minHeight: '50px' }} />;
+                        }
+                        
+                        const isSelected = day.isoDate === selectedDateIso;
+                        const isPast = day.date < today;
+                        const isAvailable = day.hasAvailability && !isPast;
+                        const isTodayDate = isToday(day.date);
+
+                        return (
+                          <button
+                            key={day.isoDate}
+                            type="button"
+                            onClick={() => {
+                              if (isAvailable) {
+                                setSelectedDateIso(day.isoDate!);
+                                setValidationMessage(null);
+                              }
+                            }}
+                            disabled={!isAvailable}
+                            style={{
+                              minHeight: '50px',
+                              padding: '0.375rem',
+                              borderRadius: '0.5rem',
+                              border: isSelected ? '2px solid #2563eb' : '1px solid #e5e7eb',
+                              backgroundColor: isSelected ? '#eff6ff' : isAvailable ? '#ffffff' : '#f9fafb',
+                              cursor: isAvailable ? 'pointer' : 'not-allowed',
+                              opacity: isAvailable ? 1 : 0.4,
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '0.125rem',
+                              position: 'relative',
+                              transition: 'all 0.2s ease',
+                            }}
+                            onMouseEnter={(e) => {
+                              if (isAvailable && !isSelected) {
+                                e.currentTarget.style.backgroundColor = '#f3f4f6';
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (isAvailable && !isSelected) {
+                                e.currentTarget.style.backgroundColor = '#ffffff';
+                              }
+                            }}
+                          >
+                            <span style={{
+                              fontSize: '1rem',
+                              fontWeight: 600,
+                              color: isAvailable ? '#1f2937' : '#9ca3af',
+                            }}>
+                              {format(day.date, 'd')}
+                            </span>
+                            {isAvailable && (
+                              <>
+                                <span
+                                  style={{
+                                    position: 'absolute',
+                                    top: '4px',
+                                    right: '4px',
+                                    width: '8px',
+                                    height: '8px',
+                                    borderRadius: '50%',
+                                    backgroundColor: '#10b981',
+                                  }}
+                                  aria-label="Available"
+                                />
+                                {day.slotCount && day.slotCount > 0 && (
+                                  <span style={{
+                                    fontSize: '0.75rem',
+                                    color: '#10b981',
+                                    fontWeight: 600,
+                                    marginTop: '0.125rem',
+                                  }}>
+                                    {day.slotCount}
+                                  </span>
+                                )}
+                              </>
+                            )}
+                            {isTodayDate && (
+                              <span style={{
+                                fontSize: '0.625rem',
+                                color: isSelected ? '#2563eb' : '#6b7280',
+                                fontWeight: 500,
+                                marginTop: '0.0625rem',
+                              }}>
+                                Today
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Time slots only appear after date is selected */}
+            {!selectedDateIso && (
+              <div style={{
+                marginTop: '2rem',
+                padding: '2rem',
+                textAlign: 'center',
+                backgroundColor: '#f9fafb',
+                borderRadius: '0.5rem',
+                border: '2px dashed #d1d5db',
+              }}>
+                <p style={{ margin: 0, fontSize: '1rem', color: '#6b7280', fontWeight: 500 }}>
+                  👆 Please select a date above to see available time slots
+                </p>
+              </div>
+            )}
+
+            {selectedDateIso && (
+              <div className="time-slot-picker" style={{ marginTop: '2rem' }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  marginBottom: '1.5rem',
+                  paddingBottom: '0.75rem',
+                  borderBottom: '2px solid #dc2626',
+                }}>
+                  <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' }}>
+                    Select a time
+                  </h2>
+                  <span style={{
+                    fontSize: '0.875rem',
+                    color: '#6b7280',
+                    fontStyle: 'italic',
+                  }}>
+                    for {format(selectedDateAvailability?.date || new Date(selectedDateIso), 'EEEE, MMMM d')}
+                  </span>
+                </div>
+                {selectedDateAvailability?.slots.length === 0 ? (
+                  <div className="inline-alert" style={{
+                    padding: '1.5rem',
+                    backgroundColor: '#fef2f2',
+                    border: '2px solid #fecaca',
+                    borderRadius: '0.5rem',
+                  }}>
+                    <h3 style={{ marginTop: 0, marginBottom: '0.75rem', color: '#dc2626', fontSize: '1.125rem' }}>
+                      No Time Slots Available
+                    </h3>
+                    <p style={{ marginBottom: '1rem', color: '#991b1b' }}>
+                      No time slots available for this date. Please select another date.
+                    </p>
+                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        className="button primary"
+                        onClick={() => setSelectedDateIso(null)}
+                        style={{
+                          backgroundColor: '#dc2626',
+                          borderColor: '#dc2626',
+                        }}
+                      >
+                        Select Different Date
+                      </button>
+                      <a
+                        href="https://vitalita.com/callback"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="button secondary"
+                        style={{
+                          textDecoration: 'none',
+                          display: 'inline-block',
+                        }}
+                      >
+                        Join Waitlist
+                      </a>
+                      <a
+                        href="https://vitalita.com/callback"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="button secondary"
+                        style={{
+                          textDecoration: 'none',
+                          display: 'inline-block',
+                        }}
+                      >
+                        Request Alternative Date
+                      </a>
+                    </div>
+                  </div>
+                ) : (() => {
+                // Group slots by time of day
+                const groupSlots = (slots: TimeSlot[]) => {
+                  const morning: TimeSlot[] = [];
+                  const lunch: TimeSlot[] = [];
+                  const afternoon: TimeSlot[] = [];
+
+                  slots.forEach((slot) => {
+                    const hour = parseInt(slot.time.split(':')[0]);
+                    if (hour >= 8 && hour < 11) {
+                      morning.push(slot);
+                    } else if (hour >= 11 && hour < 14) {
+                      lunch.push(slot);
+                    } else if (hour >= 14 && hour <= 18) {
+                      afternoon.push(slot);
+                    }
+                  });
+
+                  return { morning, lunch, afternoon };
+                };
+
+                const { morning, lunch, afternoon } = groupSlots(selectedDateAvailability.slots);
+
+                const renderSlotGroup = (title: string, slots: TimeSlot[]) => {
+                  if (slots.length === 0) return null;
+
+                  return (
+                    <div key={title} style={{ marginBottom: '1.5rem' }}>
+                      <h3 style={{ fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.75rem', color: '#6b7280' }}>
+                        {title}
+                      </h3>
+                      <div className="slot-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '0.75rem' }}>
+                        {slots.map((slot) => {
+                          const isSelected = slot.id === selectedSlotId;
+                          const isBooked = slot.spotsLeft === 0;
+                          const isAvailable = !isBooked && slot.spotsLeft > 0;
+
+                          return (
+                            <button
+                              key={slot.id}
+                              type="button"
+                              className={`slot-button ${isSelected ? 'selected' : ''} ${!isAvailable || isBooked ? 'unavailable' : 'available'}`}
+                              onClick={() => {
+                                if (isAvailable && !isBooked) {
+                                  setSelectedSlotId(slot.id);
+                                  setValidationMessage(null);
+                                  setSlotError(null);
+                                }
+                              }}
+                              disabled={!isAvailable || isBooked}
+                              style={{
+                                position: 'relative',
+                                padding: '0.75rem 1rem',
+                                border: isSelected
+                                  ? '2px solid #dc2626'
+                                  : isAvailable && !isBooked
+                                  ? '2px solid #10b981'
+                                  : '2px solid #e5e7eb',
+                                backgroundColor: isSelected
+                                  ? '#fef2f2'
+                                  : isAvailable && !isBooked
+                                  ? '#f0fdf4'
+                                  : '#f9fafb',
+                                borderRadius: '0.5rem',
+                                cursor: isAvailable && !isBooked ? 'pointer' : 'not-allowed',
+                                opacity: isBooked ? 0.5 : 1,
+                                transition: 'all 0.2s ease',
+                                textDecoration: isBooked ? 'line-through' : 'none',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: '0.25rem',
+                              }}
+                              onMouseEnter={(e) => {
+                                if (isAvailable && !isBooked && !isSelected) {
+                                  e.currentTarget.style.backgroundColor = '#dcfce7';
+                                  e.currentTarget.style.borderColor = '#10b981';
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                if (isAvailable && !isBooked && !isSelected) {
+                                  e.currentTarget.style.backgroundColor = '#f0fdf4';
+                                  e.currentTarget.style.borderColor = '#10b981';
+                                }
+                              }}
+                            >
+                              {isSelected && (
+                                <span
+                                  style={{
+                                    position: 'absolute',
+                                    top: '4px',
+                                    right: '4px',
+                                    width: '18px',
+                                    height: '18px',
+                                    borderRadius: '50%',
+                                    backgroundColor: '#dc2626',
+                                    color: 'white',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '12px',
+                                    fontWeight: 'bold',
+                                  }}
+                                  aria-label="Selected"
+                                >
+                                  ✓
+                                </span>
+                              )}
+                              <span
+                                className="slot-time"
+                                style={{
+                                  fontSize: '1rem',
+                                  fontWeight: isSelected ? 700 : 600,
+                                  color: isBooked ? '#9ca3af' : isSelected ? '#dc2626' : '#1f2937',
+                                }}
+                              >
+                                {slot.time}
+                              </span>
+                              {isBooked ? (
+                                <span
+                                  style={{
+                                    fontSize: '0.75rem',
+                                    color: '#9ca3af',
+                                    textTransform: 'uppercase',
+                                  }}
+                                >
+                                  Booked
+                                </span>
+                              ) : slot.status === 'filling' ? (
+                                <span
+                                  style={{
+                                    fontSize: '0.75rem',
+                                    color: '#f59e0b',
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  {slot.spotsLeft} left
+                                </span>
+                              ) : (
+                                <span
+                                  style={{
+                                    fontSize: '0.75rem',
+                                    color: '#10b981',
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  Available
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                };
+
+                return (
+                  <>
+                    {renderSlotGroup('Morning', morning)}
+                    {renderSlotGroup('Lunch', lunch)}
+                    {renderSlotGroup('Afternoon', afternoon)}
+                  </>
+                );
+              })()}
+                {selectedDateAvailability?.slots.length > 0 && (
+                  <div style={{ marginTop: '1.5rem', padding: '1rem', backgroundColor: '#eff6ff', borderRadius: '0.5rem', border: '1px solid #bfdbfe' }}>
+                    <p style={{ margin: 0, fontSize: '0.875rem', color: '#1e40af' }}>
+                      <strong>Need a different time?</strong> You can{' '}
+                      <a
+                        href="https://vitalita.com/callback"
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ color: '#2563eb', textDecoration: 'underline', fontWeight: 600 }}
+                      >
+                        request a callback
+                      </a>
+                      {' '}or{' '}
+                      <a
+                        href="https://vitalita.com/waitlist"
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ color: '#2563eb', textDecoration: 'underline', fontWeight: 600 }}
+                      >
+                        join our waitlist
+                      </a>
+                      {' '}for preferred times.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </>
+        );
+      })()}
     </section>
   );
 
   const renderStepThree = () => (
     <section className="wizard-step">
+      {/* Step Header with Progress Indicator */}
+      <div style={{
+        marginBottom: '2rem',
+        padding: '1rem',
+        backgroundColor: '#f9fafb',
+        borderRadius: '0.5rem',
+        border: '1px solid #e5e7eb',
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+        }}>
+          <span style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '32px',
+            height: '32px',
+            borderRadius: '50%',
+            backgroundColor: '#dc2626',
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: '0.875rem',
+          }}>
+            3
+          </span>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
+              Step 3: Your Details
+            </h3>
+            <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>
+              Provide your contact information
+            </p>
+          </div>
+        </div>
+      </div>
+
       {renderStepTitle(
         'Tell us about yourself',
-        'We’ll send reminders and keep you updated about your appointment.',
+        "We'll send reminders and keep you updated about your appointment.",
       )}
 
       {autofillMessage && (
@@ -937,7 +2193,7 @@ const BookingFlow = () => {
               }
             }}
           />
-          <small id="phone-hint" className="field-hint">We'll send you an SMS reminder.</small>
+          <small id="phone-hint" className="field-hint">We&apos;ll send you an SMS reminder.</small>
           {fieldErrors.phone && (
             <span id="phone-error" className="field-error" role="alert">
               {fieldErrors.phone}
@@ -999,7 +2255,7 @@ const BookingFlow = () => {
                 }}
                 aria-describedby={fieldErrors.hasDonatedBefore ? 'hasDonatedBefore-error' : undefined}
               />
-              Yes, I'm a returning donor
+              Yes, I&apos;m a returning donor
             </label>
             <label>
               <input
@@ -1039,6 +2295,44 @@ const BookingFlow = () => {
   const renderStepFour = () => {
     return (
       <section className="wizard-step">
+        {/* Step Header with Progress Indicator */}
+        <div style={{
+          marginBottom: '2rem',
+          padding: '1rem',
+          backgroundColor: '#f9fafb',
+          borderRadius: '0.5rem',
+          border: '1px solid #e5e7eb',
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+          }}>
+            <span style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              backgroundColor: '#dc2626',
+              color: 'white',
+              fontWeight: 'bold',
+              fontSize: '0.875rem',
+            }}>
+              4
+            </span>
+            <div>
+              <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
+                Step 4: Health Check
+              </h3>
+              <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>
+                Answer a few health screening questions
+              </p>
+            </div>
+          </div>
+        </div>
+
         {renderStepTitle(
           'Just a few quick questions',
           'These help us keep everyone safe.',
@@ -1115,9 +2409,47 @@ const BookingFlow = () => {
 
     return (
       <section className="wizard-step">
+        {/* Step Header with Progress Indicator */}
+        <div style={{
+          marginBottom: '2rem',
+          padding: '1rem',
+          backgroundColor: '#f9fafb',
+          borderRadius: '0.5rem',
+          border: '1px solid #e5e7eb',
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+          }}>
+            <span style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              backgroundColor: '#dc2626',
+              color: 'white',
+              fontWeight: 'bold',
+              fontSize: '0.875rem',
+            }}>
+              5
+            </span>
+            <div>
+              <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
+                Step 5: Confirmation
+              </h3>
+              <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>
+                Review and confirm your appointment details
+              </p>
+            </div>
+          </div>
+        </div>
+
         {renderStepTitle(
           'Your appointment is confirmed! 🎉',
-          "You're all set. Here’s everything you need to know.",
+          "You're all set. Here's everything you need to know.",
         )}
 
         <div className="confirmation-details">
@@ -1143,10 +2475,37 @@ const BookingFlow = () => {
           </div>
 
           <div className="confirmation-actions">
-            <button type="button" className="button primary" onClick={handleAddToCalendar}>
+            <button
+              type="button"
+              className="button primary"
+              onClick={handleAddToCalendar}
+              style={{
+                backgroundColor: '#dc2626',
+                borderColor: '#dc2626',
+                color: '#ffffff',
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <span style={{ marginRight: '0.5rem' }}>📅</span>
               Add to Calendar
             </button>
-            <button type="button" className="button secondary" onClick={handleShare}>
+            <button
+              type="button"
+              className="button secondary"
+              onClick={handleShare}
+              style={{
+                backgroundColor: '#ffffff',
+                borderColor: '#dc2626',
+                color: '#dc2626',
+                fontWeight: 'normal',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               Share
             </button>
             {shareMenuOpen && (
@@ -1195,7 +2554,20 @@ const BookingFlow = () => {
         </div>
 
         <div className="done-action">
-          <button type="button" className="button primary" onClick={resetAndExit}>
+          <button
+            type="button"
+            className="button secondary"
+            onClick={resetAndExit}
+            style={{
+              backgroundColor: '#ffffff',
+              borderColor: '#dc2626',
+              color: '#dc2626',
+              fontWeight: 'normal',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             Done
           </button>
         </div>
@@ -1276,12 +2648,142 @@ const BookingFlow = () => {
               onClick={handleNext}
               disabled={isSubmitting}
               aria-busy={isSubmitting}
+              style={{
+                backgroundColor: '#e11d48',
+                borderColor: '#e11d48',
+                color: '#ffffff',
+                minWidth: '150px',
+                boxShadow: '0 2px 8px rgba(225, 29, 72, 0.2)',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                if (!isSubmitting) {
+                  e.currentTarget.style.backgroundColor = '#be123c';
+                  e.currentTarget.style.borderColor = '#be123c';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(225, 29, 72, 0.3)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isSubmitting) {
+                  e.currentTarget.style.backgroundColor = '#e11d48';
+                  e.currentTarget.style.borderColor = '#e11d48';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(225, 29, 72, 0.2)';
+                }
+              }}
             >
-              {isSubmitting ? 'Processing...' : 'Next'}
+              {isSubmitting ? (
+                'Processing...'
+              ) : currentStep === 1 ? (
+                'Continue to Date & Time'
+              ) : currentStep === 2 ? (
+                selectedDateIso && selectedSlotId ? 'Review Appointment' : 'Select Date & Time'
+              ) : currentStep === 3 ? (
+                'Continue to Health Check'
+              ) : currentStep === 4 ? (
+                'Confirm Appointment'
+              ) : (
+                'Next'
+              )}
             </button>
           )}
         </div>
       </div>
+
+      {/* Debug Panel */}
+      {showDebugPanel && (
+        <div className={`fixed bottom-0 right-0 z-50 bg-gray-900 text-white shadow-2xl transition-all duration-300 ${
+          debugPanelMinimized ? 'w-80 h-12' : 'w-full max-w-2xl h-96'
+        }`}>
+          <div className="flex items-center justify-between bg-gray-800 px-4 py-2 border-b border-gray-700">
+            <div className="flex items-center gap-2">
+              <Bug className="w-4 h-4" />
+              <span className="font-semibold text-sm">Debug Logs</span>
+              <span className="text-xs text-gray-400">({debugLogs.length})</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={clearDebugLogs}
+                className="p-1 hover:bg-gray-700 rounded transition-colors"
+                title="Clear logs"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setDebugPanelMinimized(!debugPanelMinimized)}
+                className="p-1 hover:bg-gray-700 rounded transition-colors"
+                title={debugPanelMinimized ? "Maximize" : "Minimize"}
+              >
+                {debugPanelMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
+              </button>
+              <button
+                onClick={() => setShowDebugPanel(false)}
+                className="p-1 hover:bg-gray-700 rounded transition-colors"
+                title="Close"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+          {!debugPanelMinimized && (
+            <div className="h-[calc(100%-3rem)] overflow-y-auto p-4 font-mono text-xs">
+              {debugLogs.length === 0 ? (
+                <div className="text-gray-500 text-center py-8">
+                  No debug logs yet. Start booking to see logs.
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {debugLogs.map((log) => {
+                    const timeStr = log.timestamp.toLocaleTimeString();
+                    const getColor = () => {
+                      switch (log.type) {
+                        case 'error': return 'text-red-400';
+                        case 'warning': return 'text-yellow-400';
+                        case 'success': return 'text-green-400';
+                        default: return 'text-gray-300';
+                      }
+                    };
+                    const getBgColor = () => {
+                      switch (log.type) {
+                        case 'error': return 'bg-red-900/20';
+                        case 'warning': return 'bg-yellow-900/20';
+                        case 'success': return 'bg-green-900/20';
+                        default: return 'bg-gray-800/50';
+                      }
+                    };
+                    return (
+                      <div
+                        key={log.id}
+                        className={`p-2 rounded ${getBgColor()} border-l-2 ${
+                          log.type === 'error' ? 'border-red-500' :
+                          log.type === 'warning' ? 'border-yellow-500' :
+                          log.type === 'success' ? 'border-green-500' :
+                          'border-gray-600'
+                        }`}
+                      >
+                        <div className="flex items-start gap-2">
+                          <span className="text-gray-500 text-[10px] min-w-[60px]">{timeStr}</span>
+                          <span className={`flex-1 ${getColor()}`}>{log.message}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Debug Panel Toggle Button (when hidden) */}
+      {!showDebugPanel && (
+        <button
+          onClick={() => setShowDebugPanel(true)}
+          className="fixed bottom-4 right-4 z-50 bg-gray-900 text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors"
+          title="Show Debug Panel"
+        >
+          <Bug className="w-5 h-5" />
+        </button>
+      )}
     </div>
   );
 };
