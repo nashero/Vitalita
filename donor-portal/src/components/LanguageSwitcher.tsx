@@ -19,10 +19,11 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
   const { i18n, t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<'left' | 'right'>('right');
 
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
-  // Close dropdown when clicking outside
+  // Close dropdown when clicking outside and calculate position
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -30,14 +31,41 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
       }
     };
 
+    const calculatePosition = () => {
+      if (dropdownRef.current && isOpen) {
+        // Use setTimeout to ensure dropdown is rendered before calculating
+        setTimeout(() => {
+          if (!dropdownRef.current) return;
+          
+          const rect = dropdownRef.current.getBoundingClientRect();
+          const dropdownWidth = variant === 'default' ? 224 : 192; // w-56 = 14rem = 224px, w-48 = 12rem = 192px
+          const spaceOnRight = window.innerWidth - rect.right;
+          const spaceOnLeft = rect.left;
+          
+          // If not enough space on right and more space on left, position left
+          if (spaceOnRight < dropdownWidth && spaceOnLeft > spaceOnRight) {
+            setDropdownPosition('left');
+          } else {
+            setDropdownPosition('right');
+          }
+        }, 0);
+      }
+    };
+
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
+      calculatePosition();
+      window.addEventListener('resize', calculatePosition);
+      // Recalculate on scroll too
+      window.addEventListener('scroll', calculatePosition, true);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('resize', calculatePosition);
+      window.removeEventListener('scroll', calculatePosition, true);
     };
-  }, [isOpen]);
+  }, [isOpen, variant]);
 
   const handleLanguageChange = (languageCode: string) => {
     i18n.changeLanguage(languageCode);
@@ -57,7 +85,7 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
         </button>
         
         {isOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+          <div className={`absolute ${dropdownPosition === 'right' ? 'right-0 left-auto' : 'left-0 right-auto'} mt-2 w-48 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[100]`}>
             {languages.map((language) => (
               <button
                 key={language.code}
@@ -96,7 +124,7 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
         </button>
         
         {isOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+          <div className={`absolute ${dropdownPosition === 'right' ? 'right-0 left-auto' : 'left-0 right-auto'} mt-2 w-48 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[100]`}>
             {languages.map((language) => (
               <button
                 key={language.code}
@@ -137,7 +165,7 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
       </button>
       
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+        <div className={`absolute ${dropdownPosition === 'right' ? 'right-0 left-auto' : 'left-0 right-auto'} mt-2 w-56 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[100]`}>
           <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
             {t('language.selectLanguage')}
           </div>

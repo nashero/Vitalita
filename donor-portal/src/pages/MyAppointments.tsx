@@ -547,14 +547,14 @@ const MyAppointments = () => {
                 <br />
                 {appointment.address}
               </p>
-              <div className="appointment-map">
+              <div className="appointment-map" style={{ width: '100%', overflow: 'hidden', borderRadius: '0.5rem' }}>
                 <MapContainer
                   center={[appointment.lat, appointment.lng]}
                   zoom={13}
                   scrollWheelZoom={false}
                   dragging={false}
                   doubleClickZoom={false}
-                  style={{ height: '180px', width: '100%' }}
+                  style={{ height: '180px', width: '100%', minHeight: '150px' }}
                 >
                   <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
