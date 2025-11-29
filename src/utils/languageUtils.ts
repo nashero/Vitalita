@@ -95,3 +95,32 @@ export function getDayNames(currentLanguage: string): string[] {
   
   return days;
 }
+
+/**
+ * Format number with proper locale
+ */
+export function formatNumber(
+  value: number, 
+  currentLanguage: string, 
+  options?: Intl.NumberFormatOptions
+): string {
+  const locale = getCurrentLocale(currentLanguage);
+  return new Intl.NumberFormat(locale, options).format(value);
+}
+
+/**
+ * Format currency with proper locale
+ */
+export function formatCurrency(
+  value: number, 
+  currentLanguage: string, 
+  currency: string = 'USD',
+  options?: Intl.NumberFormatOptions
+): string {
+  const locale = getCurrentLocale(currentLanguage);
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+    ...options
+  }).format(value);
+}

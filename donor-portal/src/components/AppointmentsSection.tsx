@@ -1,14 +1,18 @@
+import { useTranslation } from 'react-i18next';
+
 function AppointmentsSection() {
+  const { t } = useTranslation();
+  
   return (
     <section className="appointments" id="appointments" aria-labelledby="appointments-title">
       <div className="appointments-card">
-        <h2 id="appointments-title">My Appointments</h2>
-        <p>Log in to see your upcoming visits, change times, or cancel.</p>
+        <h2 id="appointments-title">{t('appointments.title')}</h2>
+        <p>{t('appointments.description')}</p>
         <a className="button primary" href="/login">
-          Log In to Continue
+          {t('appointments.logInToContinue')}
         </a>
         <p className="appointments-note">
-          Need to make a change right away? Call us at 1-800-123-4567.
+          {t('appointments.note')}
         </p>
       </div>
     </section>

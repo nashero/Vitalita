@@ -15,12 +15,7 @@ import {
   CheckCircle,
   Loader,
   RefreshCw,
-  Share2,
-  X,
-  Minimize2,
-  Maximize2,
-  Trash2,
-  Bug
+  Share2
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n';
@@ -93,27 +88,6 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [allCenters, setAllCenters] = useState<DonationCenter[]>([]);
   const [showWeekends, setShowWeekends] = useState(false); // Weekend slot visibility toggle
-  const [debugLogs, setDebugLogs] = useState<Array<{ id: string; timestamp: Date; message: string; type: 'info' | 'success' | 'error' | 'warning' }>>([]);
-  const [showDebugPanel, setShowDebugPanel] = useState(true);
-  const [debugPanelMinimized, setDebugPanelMinimized] = useState(false);
-
-  // Debug logging function
-  const addDebugLog = (message: string, type: 'info' | 'success' | 'error' | 'warning' = 'info') => {
-    const logEntry = {
-      id: `${Date.now()}-${Math.random()}`,
-      timestamp: new Date(),
-      message,
-      type
-    };
-    setDebugLogs(prev => [...prev.slice(-99), logEntry]); // Keep last 100 logs
-    // Also log to console
-    const consoleMethod = type === 'error' ? console.error : type === 'warning' ? console.warn : console.log;
-    consoleMethod(message);
-  };
-
-  const clearDebugLogs = () => {
-    setDebugLogs([]);
-  };
 
   const donationTypes = [
     {
@@ -164,8 +138,6 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
       setLoading(true);
       setError(null);
 
-      console.log('Fetching available slots for:', donationType, 'Date filter:', date);
-      
       // Fetch slots from current date up to 2 years in the future to ensure calendar shows full range
 
       let query = supabase
@@ -204,36 +176,6 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
         .order('slot_datetime', { ascending: true })
         .limit(100000); // Very high limit to ensure we get all slots
 
-      // If the first query fails or returns limited results, try a simpler query
-      if (!slots || slots.length < 100) {
-        console.log('First query returned limited results, trying simpler query...');
-        const { data: simpleSlots, error: simpleError } = await supabase
-          .from('availability_slots')
-          .select('*')
-          .eq('donation_type', donationType)
-          .eq('is_available', true)
-          .gte('slot_datetime', new Date().toISOString()) // Include current date and all future slots
-          .lte('slot_datetime', new Date(Date.now() + 2 * 365 * 24 * 60 * 60 * 1000).toISOString()) // Fetch slots up to 2 years in the future to show full calendar range
-          .order('slot_datetime', { ascending: true })
-          .limit(100000);
-        
-        if (simpleError) {
-          console.error('Simple query error:', simpleError);
-        } else {
-          console.log('Simple query result:', { 
-            slotsCount: simpleSlots?.length || 0,
-            firstSlot: simpleSlots?.[0]?.slot_datetime,
-            lastSlot: simpleSlots?.[simpleSlots?.length - 1]?.slot_datetime
-          });
-        }
-      }
-
-      console.log('Query result:', { 
-        slotsCount: slots?.length || 0, 
-        error: slotsError,
-        firstSlot: slots?.[0]?.slot_datetime,
-        lastSlot: slots?.[slots?.length - 1]?.slot_datetime
-      });
 
       if (slotsError) {
         console.error('Error fetching slots:', slotsError);
@@ -260,7 +202,6 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
         } : undefined,
       })) || [];
 
-      console.log('Transformed slots count:', transformedSlots.length);
       setAvailableSlots(transformedSlots);
     } catch (err) {
       console.error('Error fetching slots:', err);
@@ -517,52 +458,22 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
   };
 
   const confirmBooking = async () => {
-    addDebugLog('🚀 [DEBUG] confirmBooking called', 'info');
-    const stateInfo = {
-      selectedSlot: selectedSlot ? {
-        slot_id: selectedSlot.slot_id,
-        center_id: selectedSlot.center_id,
-        slot_datetime: selectedSlot.slot_datetime,
-        current_bookings: selectedSlot.current_bookings
-      } : null,
-      donor: donor ? {
-        donor_hash_id: donor.donor_hash_id,
-        hasHashId: !!donor.donor_hash_id
-      } : null,
-      selectedType,
-      loading,
-      currentStep
-    };
-    addDebugLog(`🚀 [DEBUG] Current state: ${JSON.stringify(stateInfo, null, 2)}`, 'info');
-
     if (!selectedSlot || !donor || !selectedType) {
-      const missingData = {
-        hasSelectedSlot: !!selectedSlot,
-        hasDonor: !!donor,
-        hasSelectedType: !!selectedType
-      };
-      addDebugLog(`❌ [DEBUG] Missing required data: ${JSON.stringify(missingData)}`, 'error');
       return;
     }
 
     try {
-      addDebugLog('🔄 [DEBUG] Setting loading to true', 'info');
       setLoading(true);
       setError(null);
 
       // Real-time slot validation before proceeding
-      addDebugLog('🔍 [DEBUG] Starting slot validation...', 'info');
       const validation = await validateSlotAvailability(selectedSlot);
-      addDebugLog(`🔍 [DEBUG] Validation result: ${JSON.stringify(validation)}`, validation.isValid ? 'success' : 'warning');
       
       if (!validation.isValid && validation.error) {
-        addDebugLog(`❌ [DEBUG] Validation failed: ${JSON.stringify(validation.error)}`, 'error');
         setError(validation.error);
         setLoading(false);
         return;
       }
-
-      addDebugLog('✅ [DEBUG] Validation passed, proceeding to create appointment', 'success');
 
       // Create the appointment record
       const appointmentData = {
@@ -576,60 +487,19 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
         reminder_sent: false,
       };
 
-      addDebugLog(`📝 [DEBUG] Creating appointment with data: ${JSON.stringify(appointmentData, null, 2)}`, 'info');
-      addDebugLog(`📝 [DEBUG] Supabase client available: ${!!supabase}`, 'info');
-
-      const insertStartTime = Date.now();
       const { data: appointment, error: appointmentError } = await supabase
         .from('appointments')
         .insert(appointmentData)
         .select()
         .single();
-      const insertEndTime = Date.now();
-
-      addDebugLog(`📝 [DEBUG] Insert operation completed in ${insertEndTime - insertStartTime}ms`, 'info');
-      const insertResult = {
-        hasData: !!appointment,
-        hasError: !!appointmentError,
-        appointment: appointment ? {
-          appointment_id: appointment.appointment_id,
-          donor_hash_id: appointment.donor_hash_id,
-          appointment_datetime: appointment.appointment_datetime,
-          status: appointment.status
-        } : null,
-        error: appointmentError ? {
-          code: appointmentError.code,
-          message: appointmentError.message,
-          details: appointmentError.details,
-          hint: appointmentError.hint
-        } : null
-      };
-      addDebugLog(`📝 [DEBUG] Insert result: ${JSON.stringify(insertResult, null, 2)}`, appointmentError ? 'error' : 'info');
 
       if (appointmentError) {
-        addDebugLog(`❌ [DEBUG] ERROR creating appointment: ${JSON.stringify(appointmentError)}`, 'error');
-        const errorDetails = {
-          code: appointmentError.code,
-          message: appointmentError.message,
-          details: appointmentError.details,
-          hint: appointmentError.hint
-        };
-        const attemptedData = {
-          donor_hash_id: donor.donor_hash_id,
-          donation_center_id: selectedSlot.center_id,
-          appointment_datetime: selectedSlot.slot_datetime,
-          donation_type: selectedType,
-          status: 'SCHEDULED'
-        };
-        addDebugLog(`❌ [DEBUG] Error details: ${JSON.stringify(errorDetails, null, 2)}`, 'error');
-        addDebugLog(`❌ [DEBUG] Attempted appointment data: ${JSON.stringify(attemptedData, null, 2)}`, 'error');
         setError(getAppointmentError(appointmentError));
         setLoading(false);
         return;
       }
 
       if (!appointment) {
-        addDebugLog('❌ [DEBUG] No appointment returned from insert, but no error either', 'error');
         setError(getAppointmentError({ 
           code: 'APPOINTMENT_CREATION_FAILED', 
           message: 'Appointment was not created',
@@ -641,18 +511,8 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
         return;
       }
 
-      addDebugLog(`✅ [DEBUG] Appointment created successfully: ${appointment.appointment_id}`, 'success');
-      addDebugLog(`✅ [DEBUG] Full appointment object: ${JSON.stringify(appointment, null, 2)}`, 'success');
-
       // Update the availability slot with optimistic locking
-      const slotUpdateInfo = {
-        slot_id: selectedSlot.slot_id,
-        current_bookings: selectedSlot.current_bookings,
-        new_bookings: selectedSlot.current_bookings + 1
-      };
-      addDebugLog(`🔄 [DEBUG] Updating slot: ${JSON.stringify(slotUpdateInfo, null, 2)}`, 'info');
 
-      const slotUpdateStartTime = Date.now();
       const { data: updatedSlot, error: slotUpdateError } = await supabase
         .from('availability_slots')
         .update({ 
@@ -662,64 +522,13 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
         .eq('current_bookings', selectedSlot.current_bookings) // Optimistic locking
         .eq('is_available', true) // Double-check availability
         .select();
-      const slotUpdateEndTime = Date.now();
-
-      addDebugLog(`🔄 [DEBUG] Slot update operation completed in ${slotUpdateEndTime - slotUpdateStartTime}ms`, 'info');
-      const slotUpdateResult = {
-        hasData: !!updatedSlot,
-        dataLength: updatedSlot?.length || 0,
-        hasError: !!slotUpdateError,
-        updatedSlot: updatedSlot ? JSON.stringify(updatedSlot, null, 2) : null,
-        error: slotUpdateError ? {
-          code: slotUpdateError.code,
-          message: slotUpdateError.message,
-          details: slotUpdateError.details,
-          hint: slotUpdateError.hint
-        } : null
-      };
-      addDebugLog(`🔄 [DEBUG] Slot update result: ${JSON.stringify(slotUpdateResult, null, 2)}`, slotUpdateError ? 'error' : 'info');
 
       if (slotUpdateError) {
-        addDebugLog(`❌ [DEBUG] ERROR updating slot: ${JSON.stringify(slotUpdateError)}`, 'error');
-        const slotErrorDetails = {
-          code: slotUpdateError.code,
-          message: slotUpdateError.message,
-          details: slotUpdateError.details,
-          hint: slotUpdateError.hint
-        };
-        addDebugLog(`❌ [DEBUG] Slot update failed. Details: ${JSON.stringify(slotErrorDetails, null, 2)}`, 'error');
-        const slotInfo = {
-          slot_id: selectedSlot.slot_id,
-          current_bookings: selectedSlot.current_bookings,
-          capacity: (selectedSlot as any).capacity || 'unknown'
-        };
-        addDebugLog(`❌ [DEBUG] Slot information at time of update: ${JSON.stringify(slotInfo, null, 2)}`, 'error');
-        
         // If slot update failed, we need to rollback the appointment
-        addDebugLog(`🔄 [DEBUG] Rolling back appointment: ${appointment.appointment_id}`, 'warning');
-        const rollbackStartTime = Date.now();
         const { error: rollbackError } = await supabase
           .from('appointments')
           .delete()
           .eq('appointment_id', appointment.appointment_id);
-        const rollbackEndTime = Date.now();
-        
-        addDebugLog(`🔄 [DEBUG] Rollback operation completed in ${rollbackEndTime - rollbackStartTime}ms`, 'info');
-        const rollbackResult = {
-          hasError: !!rollbackError,
-          error: rollbackError ? {
-            code: rollbackError.code,
-            message: rollbackError.message
-          } : null
-        };
-        addDebugLog(`🔄 [DEBUG] Rollback result: ${JSON.stringify(rollbackResult, null, 2)}`, rollbackError ? 'error' : 'success');
-        
-        if (rollbackError) {
-          addDebugLog(`❌ [DEBUG] ERROR rolling back appointment: ${JSON.stringify(rollbackError)}`, 'error');
-          addDebugLog(`⚠️ [DEBUG] WARNING: Appointment was created but could not be rolled back! Appointment ID: ${appointment.appointment_id}`, 'error');
-        } else {
-          addDebugLog('✅ [DEBUG] Appointment rolled back successfully', 'success');
-        }
 
         // Set error and return to prevent inconsistent state
         setError(getAppointmentError({ 
@@ -735,36 +544,10 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
 
       // Check if update actually modified any rows (optimistic locking check)
       if (!updatedSlot || updatedSlot.length === 0) {
-        addDebugLog('❌ [DEBUG] ERROR: Slot update returned no rows. This means:', 'error');
-        addDebugLog('   - The slot was modified by another user between fetch and update', 'error');
-        addDebugLog('   - The current_bookings value changed (optimistic locking prevented update)', 'error');
-        addDebugLog('   - OR the slot is no longer available', 'error');
-        addDebugLog('🔄 [DEBUG] Rolling back appointment due to failed slot update', 'warning');
-        
-        const rollbackStartTime = Date.now();
         const { error: rollbackError } = await supabase
           .from('appointments')
           .delete()
           .eq('appointment_id', appointment.appointment_id);
-        const rollbackEndTime = Date.now();
-        
-        addDebugLog(`🔄 [DEBUG] Rollback operation completed in ${rollbackEndTime - rollbackStartTime}ms`, 'info');
-        const rollbackResult2 = {
-          hasError: !!rollbackError,
-          error: rollbackError ? {
-            code: rollbackError.code,
-            message: rollbackError.message
-          } : null
-        };
-        addDebugLog(`🔄 [DEBUG] Rollback result: ${JSON.stringify(rollbackResult2, null, 2)}`, rollbackError ? 'error' : 'success');
-        
-        if (rollbackError) {
-          addDebugLog(`❌ [DEBUG] ERROR rolling back appointment: ${JSON.stringify(rollbackError)}`, 'error');
-          addDebugLog(`⚠️ [DEBUG] CRITICAL: Appointment created but could not be rolled back! Appointment ID: ${appointment.appointment_id}`, 'error');
-          addDebugLog('   This appointment will remain in the database but slot was not updated!', 'error');
-        } else {
-          addDebugLog('✅ [DEBUG] Appointment rolled back successfully', 'success');
-        }
         
         setError(getAppointmentError({ 
           code: 'SLOT_UPDATE_FAILED', 
@@ -777,33 +560,14 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
         return;
       }
 
-      addDebugLog(`✅ [DEBUG] Slot updated successfully. Updated slot data: ${JSON.stringify(updatedSlot, null, 2)}`, 'success');
-      addDebugLog(`✅ [DEBUG] Appointment saved successfully. Appointment ID: ${appointment.appointment_id}`, 'success');
-
       // Verify the appointment was saved correctly by fetching it back
-      addDebugLog('🔍 [DEBUG] Verifying appointment in database...', 'info');
-      const verifyStartTime = Date.now();
       const { data: verifyAppointment, error: verifyError } = await supabase
         .from('appointments')
         .select('appointment_id, donor_hash_id, appointment_datetime, status')
         .eq('appointment_id', appointment.appointment_id)
         .single();
-      const verifyEndTime = Date.now();
-
-      addDebugLog(`🔍 [DEBUG] Verification operation completed in ${verifyEndTime - verifyStartTime}ms`, 'info');
-      const verifyResult = {
-        hasData: !!verifyAppointment,
-        hasError: !!verifyError,
-        verifyAppointment: verifyAppointment ? JSON.stringify(verifyAppointment, null, 2) : null,
-        error: verifyError ? {
-          code: verifyError.code,
-          message: verifyError.message
-        } : null
-      };
-      addDebugLog(`🔍 [DEBUG] Verification result: ${JSON.stringify(verifyResult, null, 2)}`, verifyError ? 'error' : 'success');
 
       if (verifyError || !verifyAppointment) {
-        addDebugLog(`❌ [DEBUG] ERROR: Failed to verify appointment was saved: ${JSON.stringify(verifyError)}`, 'error');
         setError(getAppointmentError({ 
           code: 'APPOINTMENT_VERIFICATION_FAILED', 
           message: 'Appointment was created but could not be verified.',
@@ -814,8 +578,6 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
         setLoading(false);
         return;
       }
-
-      addDebugLog(`✅ [DEBUG] Appointment verified in database: ${JSON.stringify(verifyAppointment, null, 2)}`, 'success');
 
       // Create audit log for the booking (non-blocking)
       // Use a fire-and-forget approach to avoid blocking the UI
@@ -840,29 +602,15 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
 
       // Notify parent component that booking was successful (do this BEFORE changing step)
       // This ensures the appointment is refreshed in the dashboard immediately
-      addDebugLog('📞 [DEBUG] Calling onBookingSuccess callback...', 'info');
       if (onBookingSuccess) {
         onBookingSuccess();
-        addDebugLog('✅ [DEBUG] onBookingSuccess callback executed', 'success');
-      } else {
-        addDebugLog('⚠️ [DEBUG] onBookingSuccess callback not provided', 'warning');
       }
       
-      addDebugLog('🔄 [DEBUG] Setting booking success state and changing step to success', 'info');
       setBookingSuccess(true);
       setCurrentStep('success');
-      addDebugLog('✅ [DEBUG] Step changed to success, booking flow complete', 'success');
     } catch (err) {
-      addDebugLog(`❌ [DEBUG] Error booking appointment: ${err instanceof Error ? err.message : String(err)}`, 'error');
-      const errorDetails = {
-        message: err instanceof Error ? err.message : String(err),
-        stack: err instanceof Error ? err.stack : undefined,
-        error: err
-      };
-      addDebugLog(`❌ [DEBUG] Error details: ${JSON.stringify(errorDetails, null, 2)}`, 'error');
       setError(getAppointmentError(err));
     } finally {
-      addDebugLog('🔄 [DEBUG] Setting loading to false (finally block)', 'info');
       setLoading(false);
     }
   };
@@ -899,31 +647,34 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
     ];
 
     return (
-      <div className="flex items-center justify-center mb-8">
+      <div className="flex items-center justify-center mb-4 sm:mb-8 px-2 sm:px-0 overflow-x-auto">
         {steps.map((step, index) => (
           <React.Fragment key={step.id}>
-            <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-200 ${
-              step.completed 
-                ? 'bg-blue-600 border-blue-600 text-white' 
-                : currentStep === step.id
-                ? 'border-blue-600 text-blue-600 bg-blue-50'
-                : 'border-gray-300 text-gray-400'
-            }`}>
-              {step.completed ? (
-                <Check className="w-5 h-5" />
-              ) : (
-                <span className="text-sm font-semibold">{index + 1}</span>
-              )}
-            </div>
-            <div className="ml-3 mr-8">
-              <p className={`text-sm font-medium ${
-                step.completed || currentStep === step.id ? 'text-gray-900' : 'text-gray-400'
+            <div className="flex flex-col sm:flex-row items-center min-w-0">
+              <div className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 transition-all duration-200 flex-shrink-0 ${
+                step.completed 
+                  ? 'bg-blue-600 border-blue-600 text-white' 
+                  : currentStep === step.id
+                  ? 'border-blue-600 text-blue-600 bg-blue-50'
+                  : 'border-gray-300 text-gray-400'
               }`}>
-                {step.label}
-              </p>
+                {step.completed ? (
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6" />
+                ) : (
+                  <span className="text-sm sm:text-base font-semibold">{index + 1}</span>
+                )}
+              </div>
+              <div className="ml-0 sm:ml-3 mt-1 sm:mt-0 mr-2 sm:mr-8">
+                <p className={`text-xs sm:text-sm font-medium text-center sm:text-left whitespace-nowrap ${
+                  step.completed || currentStep === step.id ? 'text-gray-900' : 'text-gray-400'
+                }`}>
+                  <span className="hidden sm:inline">{step.label}</span>
+                  <span className="sm:hidden">{step.label.split(' ')[0]}</span>
+                </p>
+              </div>
             </div>
             {index < steps.length - 1 && (
-              <div className={`flex-1 h-0.5 mx-4 ${
+              <div className={`hidden sm:flex flex-1 h-0.5 mx-2 sm:mx-4 min-w-[20px] ${
                 step.completed ? 'bg-blue-600' : 'bg-gray-300'
               }`} />
             )}
@@ -934,28 +685,28 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
   };
 
   const renderTypeSelection = () => (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('appointment.selectType')}</h2>
-        <p className="text-gray-600">Select the type of donation you'd like to make</p>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="text-center px-4 sm:px-0">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{t('appointment.selectType')}</h2>
+        <p className="text-sm sm:text-base text-gray-600">Select the type of donation you'd like to make</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto px-4 sm:px-0">
         {donationTypes.map((donation) => {
           const Icon = donation.icon;
           return (
             <button
               key={donation.type}
               onClick={() => handleTypeSelection(donation.type)}
-              className={`p-8 rounded-2xl border-2 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] ${donation.borderColor} ${donation.bgColor} hover:shadow-lg`}
+              className={`p-6 sm:p-8 rounded-2xl border-2 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] min-h-[44px] ${donation.borderColor} ${donation.bgColor} hover:shadow-lg`}
             >
               <div className="text-center">
-                <div className={`inline-flex p-4 rounded-full ${donation.bgColor} mb-4`}>
-                  <Icon className={`w-8 h-8 ${donation.iconColor}`} />
+                <div className={`inline-flex p-3 sm:p-4 rounded-full ${donation.bgColor} mb-3 sm:mb-4`}>
+                  <Icon className={`w-7 h-7 sm:w-8 sm:h-8 ${donation.iconColor}`} />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{donation.title}</h3>
-                <p className="text-gray-600 mb-4">{donation.description}</p>
-                <div className="flex items-center justify-center text-sm text-gray-500">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{donation.title}</h3>
+                <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">{donation.description}</p>
+                <div className="flex items-center justify-center text-xs sm:text-sm text-gray-500">
                   <Clock className="w-4 h-4 mr-2" />
                   {donation.duration}
                 </div>
@@ -1006,7 +757,6 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
         return slotDate.toDateString() === date.toDateString();
       });
       
-              // Production: No debug logging needed
       
       return hasSlots;
     };
@@ -1021,34 +771,37 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
     };
 
     return (
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-        <div className="flex items-center justify-between mb-6">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-3 sm:p-6">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
           <button
             onClick={() => setCurrentMonth(new Date(year, month - 1, 1))}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+            aria-label="Previous month"
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
           
-          <h3 className="text-xl font-semibold text-gray-900">{getMonthName(currentMonth)}</h3>
+          <h3 className="text-base sm:text-xl font-semibold text-gray-900 text-center px-2">{getMonthName(currentMonth)}</h3>
           
           <button
             onClick={() => setCurrentMonth(new Date(year, month + 1, 1))}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+            aria-label="Next month"
           >
             <ArrowRight className="w-5 h-5 text-gray-600" />
           </button>
         </div>
 
-        <div className="grid grid-cols-7 gap-1 mb-4">
+        <div className="grid grid-cols-7 gap-0.5 sm:gap-1 mb-2 sm:mb-4">
           {[t('appointment.sunday'), t('appointment.monday'), t('appointment.tuesday'), t('appointment.wednesday'), t('appointment.thursday'), t('appointment.friday'), t('appointment.saturday')].map(day => (
-            <div key={day} className="text-sm font-medium text-gray-500 text-center py-2">
-              {day}
+            <div key={day} className="text-xs sm:text-sm font-medium text-gray-500 text-center py-1 sm:py-2">
+              <span className="hidden sm:inline">{day}</span>
+              <span className="sm:hidden">{day.substring(0, 3)}</span>
             </div>
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
           {days.map((date, index) => {
             const available = isAvailable(date);
             const today = isToday(date);
@@ -1068,7 +821,7 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
                 disabled={!available}
                 title={available ? `${slotsForDate.length} ${t('appointment.availableSlots').toLowerCase()} ${t('appointment.availableSlotsFrom')} ${date.toLocaleDateString()}` : t('appointment.noSlotsAvailable')}
                 className={`
-                  h-12 w-full rounded-lg text-sm font-medium transition-all duration-200 relative flex flex-col items-center justify-center
+                  h-10 sm:h-12 w-full rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 relative flex flex-col items-center justify-center min-h-[44px]
                   ${today 
                     ? `ring-2 ring-blue-300 bg-white ${date.getDay() === 0 ? 'text-red-600' : 'text-gray-900'}` 
                     : selected
@@ -1082,11 +835,11 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
               >
                 <span>{date.getDate()}</span>
                 {today && (
-                  <span className="text-[10px] text-gray-600 mt-0.5">Today</span>
+                  <span className="text-[8px] sm:text-[10px] text-gray-600 mt-0.5">Today</span>
                 )}
                 {available && !today && (
-                  <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <div className="absolute bottom-0.5 sm:bottom-1 left-1/2 transform -translate-x-1/2">
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full"></div>
                   </div>
                 )}
               </button>
@@ -1098,16 +851,16 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
   };
 
   const renderBookingInterface = () => (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('appointment.selectAppointmentDate')}</h2>
-        <p className="text-gray-600">{t('appointment.chooseConvenientDate', { type: selectedType?.toLowerCase() })}</p>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="text-center px-4 sm:px-0">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{t('appointment.selectAppointmentDate')}</h2>
+        <p className="text-sm sm:text-base text-gray-600">{t('appointment.chooseConvenientDate', { type: selectedType?.toLowerCase() })}</p>
         
         {/* Refresh button */}
         <button
           onClick={() => fetchAvailableSlots(selectedType!)}
           disabled={loading}
-          className="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
         >
           <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           {loading ? t('appointment.refreshing') : t('appointment.refresh')}
@@ -1117,7 +870,7 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
         {availableSlots.length > 0 && (
           <button
             onClick={jumpToLatestAvailableMonth}
-            className="mt-2 ml-2 inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+            className="mt-2 sm:ml-2 inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 min-h-[44px]"
           >
             <Calendar className="w-4 h-4 mr-2" />
             {t('appointment.jumpToLatest')}
@@ -1176,7 +929,7 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
         {/* Calendar Section */}
         <div>
           {renderCalendar()}
@@ -1187,8 +940,8 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
           {selectedDate ? (
             <>
               {/* Selected Date Header */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+                <h3 className="text-lg sm:text-2xl font-bold text-gray-900 mb-2">
                   {formatDate(selectedDate, i18n.language, {
                     weekday: 'long',
                     year: 'numeric',
@@ -1196,20 +949,20 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
                     day: 'numeric'
                   })}
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-sm sm:text-base text-gray-600">
                   {selectedType === 'Blood' ? t('appointment.bloodDonationAppointment') : t('appointment.plasmaDonationAppointment')}
                 </p>
               </div>
 
               {/* Center Selection */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   {t('appointment.selectCenter')}:
                 </label>
                 <select
                   value={selectedCenter || ''}
                   onChange={(e) => handleCenterSelection(e.target.value)}
-                  className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-3 sm:py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base sm:text-sm min-h-[44px]"
                 >
                   <option value="">Choose a center...</option>
                   {allCenters.map((center) => (
@@ -1222,8 +975,8 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
 
               {/* Time Slots */}
               {selectedCenter && (
-                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">{t('appointment.availableSlots')}</h4>
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+                  <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">{t('appointment.availableSlots')}</h4>
                   
                   {loading ? (
                     <div className="flex items-center justify-center py-8">
@@ -1231,7 +984,7 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
                       <span className="ml-2 text-gray-600">Loading time slots...</span>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                       {(() => {
                         // Filter slots for selected center and date
                         const centerSlots = availableSlots.filter(slot => 
@@ -1289,7 +1042,7 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
                           <button
                             key={timeSlot.slot.slot_id}
                             onClick={() => handleTimeSlotSelection(timeSlot.slot)}
-                            className="px-4 py-3 bg-white border-2 border-blue-300 rounded-lg text-gray-900 hover:bg-blue-50 hover:border-blue-400 transition-all duration-200 font-medium"
+                            className="px-4 py-3 bg-white border-2 border-blue-300 rounded-lg text-gray-900 hover:bg-blue-50 hover:border-blue-400 transition-all duration-200 font-medium min-h-[44px] text-sm sm:text-base"
                           >
                             {timeSlot.displayTime}
                           </button>
@@ -1301,10 +1054,10 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
               )}
             </>
           ) : (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center">
-              <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('appointment.selectADate')}</h3>
-              <p className="text-gray-600">{t('appointment.chooseDateFromCalendar')}</p>
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 sm:p-12 text-center">
+              <Calendar className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">{t('appointment.selectADate')}</h3>
+              <p className="text-sm sm:text-base text-gray-600">{t('appointment.chooseDateFromCalendar')}</p>
             </div>
           )}
         </div>
@@ -1380,18 +1133,18 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
     const dateTime = formatDateTime(selectedSlot.slot_datetime);
     
     return (
-      <div className="space-y-6 max-w-2xl mx-auto">
+      <div className="space-y-4 sm:space-y-6 max-w-2xl mx-auto px-4 sm:px-0">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('appointment.confirmBooking')}</h2>
-          <p className="text-gray-600">Please review your appointment details</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{t('appointment.confirmBooking')}</h2>
+          <p className="text-sm sm:text-base text-gray-600">Please review your appointment details</p>
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <div className="bg-gradient-to-r from-red-50 to-red-100 px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">{t('appointment.bookingSummary')}</h3>
+          <div className="bg-gradient-to-r from-red-50 to-red-100 px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900">{t('appointment.bookingSummary')}</h3>
           </div>
           
-          <div className="p-6 space-y-4">
+          <div className="p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between py-3 border-b border-gray-100">
               <span className="text-gray-600">{t('appointment.donationType')}</span>
               <span className="font-semibold text-gray-900">{selectedType}</span>
@@ -1425,10 +1178,10 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
           </div>
         </div>
 
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4">
           <div className="flex items-start">
-            <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 mr-3" />
-            <div className="text-sm text-red-800">
+            <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 mt-0.5 mr-2 sm:mr-3 flex-shrink-0" />
+            <div className="text-xs sm:text-sm text-red-800">
               <p className="font-medium mb-1">Important Reminders:</p>
               <ul className="space-y-1 text-red-700">
                 <li>• Please arrive 15 minutes early</li>
@@ -1443,7 +1196,7 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={handleAddToCalendar}
-            className="flex-1 bg-red-600 text-white py-3 px-4 rounded-lg font-bold hover:bg-red-700 transition-colors duration-200 flex items-center justify-center"
+            className="flex-1 bg-red-600 text-white py-3 px-4 rounded-lg font-bold hover:bg-red-700 transition-colors duration-200 flex items-center justify-center min-h-[44px] text-sm sm:text-base"
             style={{ backgroundColor: '#dc2626' }}
           >
             <span className="mr-2" role="img" aria-label="calendar">📅</span>
@@ -1451,28 +1204,27 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
           </button>
           <button
             onClick={handleShare}
-            className="flex-1 bg-white border-2 border-red-600 text-red-600 py-3 px-4 rounded-lg font-normal hover:bg-red-50 transition-colors duration-200 flex items-center justify-center"
+            className="flex-1 bg-white border-2 border-red-600 text-red-600 py-3 px-4 rounded-lg font-normal hover:bg-red-50 transition-colors duration-200 flex items-center justify-center min-h-[44px] text-sm sm:text-base"
             style={{ backgroundColor: '#ffffff', borderColor: '#dc2626', color: '#dc2626' }}
           >
             Share
           </button>
         </div>
         
-        <div className="flex space-x-4 pt-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:space-x-4 pt-4">
           <button
             onClick={() => setCurrentStep('booking')}
-            className="flex-1 border-2 border-red-600 text-red-600 bg-white py-3 px-4 rounded-lg font-semibold hover:bg-red-50 transition-colors duration-200"
+            className="flex-1 border-2 border-red-600 text-red-600 bg-white py-3 px-4 rounded-lg font-semibold hover:bg-red-50 transition-colors duration-200 min-h-[44px] text-sm sm:text-base"
             style={{ borderColor: '#dc2626', color: '#dc2626', backgroundColor: '#ffffff' }}
           >
             Back
           </button>
           <button
             onClick={() => {
-              addDebugLog('🖱️ [DEBUG] "Done" button clicked in confirmation step', 'info');
               confirmBooking();
             }}
             disabled={loading}
-            className="flex-1 bg-white border-2 border-red-600 text-red-600 py-3 px-4 rounded-lg font-normal hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
+            className="flex-1 bg-white border-2 border-red-600 text-red-600 py-3 px-4 rounded-lg font-normal hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center min-h-[44px] text-sm sm:text-base"
             style={{ backgroundColor: '#ffffff', borderColor: '#dc2626', color: '#dc2626' }}
           >
             {loading ? (
@@ -1496,13 +1248,13 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
     const center = selectedSlot.center;
     
     return (
-      <div className="space-y-6 max-w-5xl mx-auto">
+      <div className="space-y-4 sm:space-y-6 max-w-5xl mx-auto px-4 sm:px-0">
         {/* Header */}
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
             Your appointment is confirmed! 🎉
           </h2>
-          <p className="text-gray-600 text-lg">
+          <p className="text-sm sm:text-lg text-gray-600">
             You're all set. Here's everything you need to know.
           </p>
         </div>
@@ -1510,15 +1262,15 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column - Appointment Details */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Appointment details</h3>
+          <div className="space-y-4 sm:space-y-6">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Appointment details</h3>
               <div className="space-y-3">
                 <div>
-                  <p className="font-semibold text-gray-900 text-lg">{dateTime.date}</p>
+                  <p className="font-semibold text-gray-900 text-base sm:text-lg">{dateTime.date}</p>
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900 text-lg">{dateTime.time}</p>
+                  <p className="font-semibold text-gray-900 text-base sm:text-lg">{dateTime.time}</p>
                 </div>
                 <div className="space-y-1">
                   <p className="font-semibold text-gray-900">{center?.name}</p>
@@ -1541,9 +1293,9 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
             </div>
 
             {/* What to bring */}
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">What to bring</h3>
-              <ul className="space-y-2 text-gray-700">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">What to bring</h3>
+              <ul className="space-y-2 text-sm sm:text-base text-gray-700">
                 <li>• Valid photo ID</li>
                 <li>• Hydration (water bottle is perfect)</li>
                 <li>• Something to eat afterwards</li>
@@ -1552,12 +1304,12 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
           </div>
 
           {/* Right Column - Actions */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
               <div className="space-y-4">
                 <button
                   onClick={handleAddToCalendar}
-                  className="w-full bg-red-600 text-white py-3 px-4 rounded-lg font-bold hover:bg-red-700 transition-colors duration-200 flex items-center justify-center"
+                  className="w-full bg-red-600 text-white py-3 px-4 rounded-lg font-bold hover:bg-red-700 transition-colors duration-200 flex items-center justify-center min-h-[44px] text-sm sm:text-base"
                   style={{ backgroundColor: '#dc2626' }}
                 >
                   <span className="mr-2">📅</span>
@@ -1566,7 +1318,7 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
                 
                 <button
                   onClick={handleShare}
-                  className="w-full bg-white border-2 border-red-600 text-red-600 py-3 px-4 rounded-lg font-normal hover:bg-red-50 transition-colors duration-200 flex items-center justify-center"
+                  className="w-full bg-white border-2 border-red-600 text-red-600 py-3 px-4 rounded-lg font-normal hover:bg-red-50 transition-colors duration-200 flex items-center justify-center min-h-[44px] text-sm sm:text-base"
                   style={{ backgroundColor: '#ffffff', borderColor: '#dc2626', color: '#dc2626' }}
                 >
                   Share
@@ -1579,9 +1331,9 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
             </div>
 
             {/* What to expect */}
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">What to expect</h3>
-              <p className="text-gray-700">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">What to expect</h3>
+              <p className="text-sm sm:text-base text-gray-700">
                 The entire visit usually takes about 45 minutes. Our team will guide you through each step and answer any questions. Wear comfortable clothing with sleeves that can be rolled up.
               </p>
             </div>
@@ -1589,39 +1341,24 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
         </div>
 
         {/* Bottom Buttons */}
-        <div className="flex space-x-4 pt-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:space-x-4 pt-4">
           <button
             onClick={() => setCurrentStep('booking')}
-            className="flex-1 border-2 border-red-600 text-red-600 bg-white py-3 px-4 rounded-lg font-semibold hover:bg-red-50 transition-colors duration-200"
+            className="flex-1 border-2 border-red-600 text-red-600 bg-white py-3 px-4 rounded-lg font-semibold hover:bg-red-50 transition-colors duration-200 min-h-[44px] text-sm sm:text-base"
           >
             Back
           </button>
           <button
             onClick={async () => {
-              addDebugLog('🖱️ [DEBUG] "Done" button clicked in success step', 'info');
-              const currentState = {
-                hasOnBookingComplete: !!onBookingComplete,
-                hasOnBack: !!onBack,
-                bookingSuccess,
-                currentStep
-              };
-              addDebugLog(`🖱️ [DEBUG] Current state: ${JSON.stringify(currentState, null, 2)}`, 'info');
-              
               // Ensure appointment is saved before navigating away
               // The appointment should already be saved at this point, but we'll verify
               if (onBookingComplete) {
-                addDebugLog('📞 [DEBUG] Calling onBookingComplete callback...', 'info');
-                // Call the callback which will refresh the dashboard
                 onBookingComplete();
-                addDebugLog('✅ [DEBUG] onBookingComplete callback executed', 'success');
               } else {
-                addDebugLog('📞 [DEBUG] onBookingComplete not provided, calling onBack...', 'warning');
-                // Fall back to onBack if no callback provided
                 onBack();
-                addDebugLog('✅ [DEBUG] onBack executed', 'info');
               }
             }}
-            className="flex-1 bg-white border-2 border-red-600 text-red-600 py-3 px-4 rounded-lg font-normal hover:bg-red-50 transition-colors duration-200"
+            className="flex-1 bg-white border-2 border-red-600 text-red-600 py-3 px-4 rounded-lg font-normal hover:bg-red-50 transition-colors duration-200 min-h-[44px] text-sm sm:text-base"
             style={{ backgroundColor: '#ffffff', borderColor: '#dc2626', color: '#dc2626' }}
           >
             Done
@@ -1686,28 +1423,31 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+          <div className="flex justify-between items-center h-14 sm:h-16">
+            <div className="flex items-center min-w-0 flex-1">
               {currentStep !== 'success' && (
                 <button
                   onClick={onBack}
-                  className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200 mr-4"
+                  className="flex items-center px-2 sm:px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200 mr-2 sm:mr-4 min-w-[44px] min-h-[44px] flex-shrink-0"
+                  aria-label={t('dashboard.backToLanding')}
                 >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  {t('dashboard.backToLanding')}
+                  <ArrowLeft className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">{t('dashboard.backToLanding')}</span>
                 </button>
               )}
-              <Calendar className="w-8 h-8 text-blue-600 mr-3" />
-              <h1 className="text-xl font-bold text-gray-900">{t('appointment.title')}</h1>
+              <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 mr-2 sm:mr-3 flex-shrink-0" />
+              <h1 className="text-base sm:text-xl font-bold text-gray-900 truncate">{t('appointment.title')}</h1>
             </div>
-            <LanguageSwitcher variant="minimal" />
+            <div className="flex-shrink-0">
+              <LanguageSwitcher variant="minimal" />
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-8">
         {renderStepIndicator()}
 
         {error && (
@@ -1726,101 +1466,6 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
         {currentStep === 'success' && renderSuccess()}
       </main>
 
-      {/* Debug Panel */}
-      {showDebugPanel && (
-        <div className={`fixed bottom-0 right-0 z-50 bg-gray-900 text-white shadow-2xl transition-all duration-300 ${
-          debugPanelMinimized ? 'w-80 h-12' : 'w-full max-w-2xl h-96'
-        }`}>
-          <div className="flex items-center justify-between bg-gray-800 px-4 py-2 border-b border-gray-700">
-            <div className="flex items-center gap-2">
-              <Bug className="w-4 h-4" />
-              <span className="font-semibold text-sm">Debug Logs</span>
-              <span className="text-xs text-gray-400">({debugLogs.length})</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={clearDebugLogs}
-                className="p-1 hover:bg-gray-700 rounded transition-colors"
-                title="Clear logs"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setDebugPanelMinimized(!debugPanelMinimized)}
-                className="p-1 hover:bg-gray-700 rounded transition-colors"
-                title={debugPanelMinimized ? "Maximize" : "Minimize"}
-              >
-                {debugPanelMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
-              </button>
-              <button
-                onClick={() => setShowDebugPanel(false)}
-                className="p-1 hover:bg-gray-700 rounded transition-colors"
-                title="Close"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-          {!debugPanelMinimized && (
-            <div className="h-[calc(100%-3rem)] overflow-y-auto p-4 font-mono text-xs">
-              {debugLogs.length === 0 ? (
-                <div className="text-gray-500 text-center py-8">
-                  No debug logs yet. Start booking to see logs.
-                </div>
-              ) : (
-                <div className="space-y-1">
-                  {debugLogs.map((log) => {
-                    const timeStr = log.timestamp.toLocaleTimeString();
-                    const getColor = () => {
-                      switch (log.type) {
-                        case 'error': return 'text-red-400';
-                        case 'warning': return 'text-yellow-400';
-                        case 'success': return 'text-green-400';
-                        default: return 'text-gray-300';
-                      }
-                    };
-                    const getBgColor = () => {
-                      switch (log.type) {
-                        case 'error': return 'bg-red-900/20';
-                        case 'warning': return 'bg-yellow-900/20';
-                        case 'success': return 'bg-green-900/20';
-                        default: return 'bg-gray-800/50';
-                      }
-                    };
-                    return (
-                      <div
-                        key={log.id}
-                        className={`p-2 rounded ${getBgColor()} border-l-2 ${
-                          log.type === 'error' ? 'border-red-500' :
-                          log.type === 'warning' ? 'border-yellow-500' :
-                          log.type === 'success' ? 'border-green-500' :
-                          'border-gray-600'
-                        }`}
-                      >
-                        <div className="flex items-start gap-2">
-                          <span className="text-gray-500 text-[10px] min-w-[60px]">{timeStr}</span>
-                          <span className={`flex-1 ${getColor()}`}>{log.message}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Debug Panel Toggle Button (when hidden) */}
-      {!showDebugPanel && (
-        <button
-          onClick={() => setShowDebugPanel(true)}
-          className="fixed bottom-4 right-4 z-50 bg-gray-900 text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition-colors"
-          title="Show Debug Panel"
-        >
-          <Bug className="w-5 h-5" />
-        </button>
-      )}
     </div>
   );
 }

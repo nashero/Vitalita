@@ -1,0 +1,526 @@
+{
+  "navigation": {
+    "home": "Home",
+    "bookAppointment": "Prenota Appuntamento",
+    "myAppointments": "I Miei Appuntamenti",
+    "help": "Aiuto",
+    "logIn": "Accedi",
+    "toggleMenu": "Apri/Chiudi menu di navigazione",
+    "closeMenu": "Chiudi menu",
+    "openMenu": "Apri menu"
+  },
+  "common": {
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "success": "Successo",
+    "cancel": "Annulla",
+    "confirm": "Conferma",
+    "save": "Salva",
+    "back": "Indietro",
+    "next": "Avanti",
+    "close": "Chiudi",
+    "submit": "Invia"
+  },
+  "language": {
+    "selectLanguage": "Seleziona Lingua",
+    "english": "English",
+    "italian": "Italiano"
+  },
+  "footer": {
+    "help": "Aiuto",
+    "privacy": "Privacy",
+    "contact": "Contatti",
+    "backToVitalita": "Torna a Vitalita.org"
+  },
+  "hero": {
+    "title": "Prenota la Tua Donazione, ",
+    "titleHighlight": "Salva Vite",
+    "description": "Prenota la tua donazione di sangue o plasma online in pochi minuti. Unisciti a migliaia di donatori che fanno la differenza ogni giorno.",
+    "donorRegistrationTitle": "Registrazione Donatore e Accesso",
+    "donorRegistrationDescription": "Sei nuovo su Vitalita? Registrati come donatore o accedi al tuo account esistente per gestire gli appuntamenti.",
+    "firstTimeDonating": "Prima Volta che Doni?",
+    "bookAppointmentNow": "Prenota il tuo appuntamento Ora",
+    "imageAlt1": "Professionisti medici che trasportano un paziente",
+    "imageAlt2": "Professionista sanitario che conforta un paziente",
+    "imageAlt3": "Team medico che festeggia con un giovane paziente"
+  },
+  "steps": {
+    "title": "Le Tue 4 Semplici Fasi",
+    "step1Title": "Scegli il Tuo Centro",
+    "step1Text": "Trova una sede vicino a te",
+    "step2Title": "Scegli un Orario",
+    "step2Text": "Seleziona un giorno e un orario che funzionano per te",
+    "step3Title": "Conferma",
+    "step3Text": "Riceverai un promemoria prima del tuo appuntamento",
+    "step4Title": "Dona",
+    "step4Text": "Ogni donazione può aiutare fino a 3 persone"
+  },
+  "firstTimeDonor": {
+    "title": "Nuovo alla Donazione?",
+    "intro": "Ti guideremo in ogni fase del percorso.",
+    "whatHappensTitle": "Cosa Succede",
+    "fact1": "Il check-in è cordiale e veloce.",
+    "fact2": "Puoi portare un amico o un familiare.",
+    "fact3": "Spuntini e acqua ti aspettano dopo la donazione.",
+    "whoCanDonateTitle": "Chi Può Donare",
+    "eligibility1": "Ti senti in salute oggi.",
+    "eligibility2": "Hai almeno 16 anni (con consenso) o 17+.",
+    "eligibility3": "Pesi almeno 50 kg (110 libbre).",
+    "learnMore": "Scopri di Più"
+  },
+  "appointments": {
+    "title": "I Miei Appuntamenti",
+    "description": "Accedi per vedere le tue visite imminenti, cambiare orari o annullare.",
+    "logInToContinue": "Accedi per Continuare",
+    "note": "Hai bisogno di fare una modifica subito? Chiamaci al 1-800-123-4567."
+  },
+  "help": {
+    "title": "Hai Bisogno di Aiuto?",
+    "description": "Siamo felici di guidarti. Scegli il modo migliore per contattarci.",
+    "viewCommonQuestions": "Visualizza Domande Comuni",
+    "callUs": "Chiamaci",
+    "supportHours": "Orari di supporto: 8:00 – 20:00, tutti i giorni.",
+    "page": {
+      "heroTitle": "Come Possiamo Aiutarti?",
+      "heroDescription": "Trova risposte alle domande comuni sulla donazione di sangue",
+      "searchPlaceholder": "Scrivi la tua domanda qui",
+      "categories": {
+        "before": "Prima di Donare",
+        "during": "Durante il Tuo Appuntamento",
+        "after": "Dopo la Donazione",
+        "appointment": "Domande sugli Appuntamenti"
+      },
+      "noResults": "Nessuna domanda trovata corrispondente alla tua ricerca.",
+      "clearSearch": "Cancella ricerca",
+      "contact": {
+        "title": "Non trovi quello che cerchi?",
+        "description": "Siamo qui per aiutarti. Contattaci utilizzando uno di questi metodi:",
+        "callUs": "Chiamaci",
+        "telegram": "Telegram",
+        "telegramValue": "Chatta con noi",
+        "email": "Email",
+        "responseTime": "Di solito rispondiamo entro 1 ora"
+      },
+      "voiceHelp": {
+        "button": "Hai bisogno di aiuto? Inizia chat vocale",
+        "close": "Chiudi chat vocale",
+        "ready": "Pronto ad aiutare. Qual è la tua domanda?",
+        "placeholder": "Fai la tua domanda...",
+        "send": "Invia"
+      },
+      "questions": {
+        "before": {
+          "whoCanDonate": {
+            "question": "Chi può donare sangue?",
+            "answer": "La maggior parte degli adulti sani può donare sangue. Devi avere almeno 16 anni (con consenso dei genitori) o 17 anni e più, pesare almeno 50 kg (110 libbre) e sentirti in salute il giorno della donazione. Il nostro team esaminerà la tua storia medica per assicurarsi che sia sicuro per te donare."
+          },
+          "whatToEat": {
+            "question": "Cosa dovrei mangiare prima di donare?",
+            "answer": "Fai un pasto completo e bevi molta acqua prima del tuo appuntamento. Evita cibi grassi subito prima di donare, poiché possono influenzare alcuni dei nostri test. Mantenere l'idratazione è particolarmente importante—l'acqua aiuta a rendere il processo di donazione più fluido."
+          },
+          "medications": {
+            "question": "Posso donare se sto assumendo farmaci?",
+            "answer": "Molti farmaci vanno benissimo e puoi comunque donare. Quando arrivi, fai sapere al nostro team quali farmaci stai assumendo. Controlleremo per assicurarci che tutto sia sicuro. Nella maggior parte dei casi, i farmaci comuni non ti impediscono di donare."
+          },
+          "howLong": {
+            "question": "Quanto tempo richiede una donazione?",
+            "answer": "La donazione di sangue effettiva richiede circa 10-15 minuti. L'intera visita, inclusi il check-in, un rapido screening sanitario, la donazione stessa e un breve riposo dopo, di solito richiede circa 45 minuti in totale. Vogliamo che tu ti senta a tuo agio e non di fretta."
+          },
+          "willItHurt": {
+            "question": "Farà male?",
+            "answer": "La maggior parte delle persone sente solo un breve pizzico quando viene inserito l'ago, simile a un normale esame del sangue. Dopo quello, non dovresti sentire alcun dolore. Il nostro personale è esperto e gentile, e ci assicureremo che tu sia a tuo agio durante tutto il processo."
+          }
+        },
+        "during": {
+          "whatToBring": {
+            "question": "Cosa dovrei portare?",
+            "answer": "Porta un documento d'identità valido con foto, come una patente di guida o un passaporto. È anche utile portare una bottiglia d'acqua per rimanere idratato, e potresti voler portare qualcosa di leggero da mangiare dopo. Indossa abiti comodi con maniche che possono essere arrotolate facilmente."
+          },
+          "whenArrive": {
+            "question": "Cosa succede quando arrivo?",
+            "answer": "Quando arrivi, farai il check-in alla reception. Ti chiederemo di compilare un rapido questionario sanitario, e poi un membro del nostro team ti accompagnerà attraverso un breve processo di screening. Questo include il controllo della tua temperatura, polso e livelli di emoglobina. È tutto molto veloce e semplice."
+          },
+          "afterDonating": {
+            "question": "Cosa faccio dopo aver donato?",
+            "answer": "Dopo aver donato, ti chiederemo di riposare per circa 10-15 minuti e fare uno spuntino e bere qualcosa. Questo aiuta il tuo corpo ad adattarsi e si assicura che tu ti senta bene prima di partire. Prenditela comoda per il resto della giornata ed evita il sollevamento pesi o esercizi intensi."
+          },
+          "driveHome": {
+            "question": "Posso guidare a casa dopo?",
+            "answer": "Sì, la maggior parte delle persone può guidare a casa dopo aver donato. Tuttavia, se ti senti stordito o non stai bene, per favore fai sapere al nostro team. Ci assicureremo che tu stia bene prima di partire, e possiamo organizzare qualcuno che venga a prenderti se necessario. È sempre meglio essere al sicuro."
+          }
+        },
+        "after": {
+          "howWillFeel": {
+            "question": "Come mi sentirò dopo?",
+            "answer": "La maggior parte delle persone si sente benissimo dopo aver donato! Potresti sentirti un po' stanco, il che è normale. Assicurati di bere molti liquidi, fare un pasto completo e riposare un po'. Alcune persone si sentono energizzate sapendo di aver aiutato a salvare delle vite. Se hai qualche preoccupazione, non esitare a contattarci."
+          },
+          "whenDonateAgain": {
+            "question": "Quando posso donare di nuovo?",
+            "answer": "Puoi donare sangue intero ogni 8 settimane (56 giorni). Questo dà al tuo corpo abbastanza tempo per reintegrare il sangue che hai donato. Ti ricorderemo quando sarai idoneo a donare di nuovo, e puoi sempre controllare la tua storia di donazioni nel tuo account."
+          },
+          "feelUnwell": {
+            "question": "E se non mi sento bene?",
+            "answer": "Se non ti senti bene dopo aver donato, per favore contattaci subito. Puoi chiamare la nostra linea di supporto o contattarci tramite il nostro sito web. La maggior parte delle reazioni sono minori e si risolvono rapidamente, ma siamo qui per aiutarti se hai bisogno di noi. Non esitare a metterti in contatto—il tuo benessere è la nostra priorità."
+          },
+          "bloodUsed": {
+            "question": "Come viene utilizzato il mio sangue?",
+            "answer": "Il tuo sangue donato passa attraverso test e lavorazioni attente, poi viene utilizzato per aiutare i pazienti che ne hanno bisogno. Questo include persone che subiscono un intervento chirurgico, coloro che vengono trattati per il cancro, vittime di incidenti e pazienti con malattie croniche. Una donazione può aiutare a salvare fino a tre vite. Grazie per fare la differenza!"
+          }
+        },
+        "appointment": {
+          "changeAppointment": {
+            "question": "Come posso cambiare il mio appuntamento?",
+            "answer": "Puoi cambiare il tuo appuntamento facilmente tramite il tuo account sul nostro sito web. Vai semplicemente a \"I Miei Appuntamenti\" e seleziona l'appuntamento che vuoi cambiare. Potrai scegliere una nuova data e ora che funzionano meglio per te. Se hai bisogno di aiuto, chiamaci e ti assisteremo."
+          },
+          "cancelAppointment": {
+            "question": "E se devo annullare?",
+            "answer": "Puoi annullare il tuo appuntamento in qualsiasi momento tramite il tuo account, o chiamandoci. Capiamo che a volte i piani cambiano. Se devi annullare, per favore faccelo sapere il prima possibile così possiamo offrire lo slot a qualcun altro. Puoi sempre riprogrammare per un altro momento che funziona per te."
+          },
+          "noReminder": {
+            "question": "Non ho ricevuto un promemoria—cosa devo fare?",
+            "answer": "Inviamo promemoria via SMS ed email il giorno prima del tuo appuntamento. Se non ne hai ricevuto uno, per favore controlla che le tue informazioni di contatto siano corrette nel tuo account. Puoi anche controllare i dettagli del tuo appuntamento online in qualsiasi momento. Se hai ancora problemi, chiamaci e ti aiuteremo a risolverli."
+          },
+          "bringSomeone": {
+            "question": "Posso portare qualcuno con me?",
+            "answer": "Sì, sei il benvenuto a portare un amico o un familiare con te. Possono aspettare nella nostra comoda area di attesa mentre doni. Avere qualcuno con te può rendere l'esperienza più rilassante, specialmente se è la tua prima volta a donare."
+          }
+        }
+      }
+    }
+  },
+  "booking": {
+    "steps": {
+      "selectCenter": "Seleziona Centro",
+      "dateTime": "Data e Ora",
+      "yourDetails": "I Tuoi Dettagli",
+      "healthCheck": "Controllo Salute",
+      "confirmation": "Conferma"
+    },
+    "step1": {
+      "title": "Dove vorresti donare?",
+      "subtitleDefault": "Il tuo centro predefinito è {{center}}. Puoi selezionare un centro diverso se necessario.",
+      "subtitleNoDefault": "Scegli il centro AVIS più comodo per te.",
+      "stepTitle": "Passo 1: Seleziona Centro",
+      "stepDescription": "Scegli il tuo centro di donazione preferito",
+      "loadingCenters": "Caricamento centri...",
+      "postalCodeLabel": "Inserisci il tuo codice postale per vedere i centri vicini",
+      "postalCodePlaceholder": "es. 20122",
+      "clear": "Cancella",
+      "postalCodeNote": "Ti mostreremo sempre le opzioni più vicine disponibili oggi.",
+      "selectThisCenter": "Seleziona questo centro",
+      "noCentersFound": "Nessun centro trovato. Riprova più tardi.",
+      "yourDefaultCenter": "Il Tuo Centro Predefinito",
+      "kmAway": "{{distance}} km di distanza",
+      "postalCode": "Codice postale {{code}}",
+      "nextAvailable": "Prossima disponibilità: {{date}}",
+      "selected": "Selezionato",
+      "select": "Seleziona"
+    },
+    "step2": {
+      "title": "Quando puoi donare?",
+      "subtitle": "Scegli la data e l'ora che si adattano al tuo programma.",
+      "stepTitle": "Passo 2: Data e Ora",
+      "stepDescription": "Seleziona la data e l'ora dell'appuntamento preferite",
+      "donationType": "Tipo di Donazione",
+      "bloodDonation": "Donazione di Sangue",
+      "plasmaDonation": "Donazione di Plasma",
+      "slotError": "Sembra che quell'orario si sia appena riempito. Troviamo un altro slot che funzioni per te.",
+      "alternativeSlotsTitle": "Ecco alcune aperture disponibili che puoi prendere subito:",
+      "onlySpotsLeft": "Solo {{count}} posti rimasti!",
+      "pleaseSelectCenter": "Seleziona prima un centro di donazione.",
+      "noAvailableSlots": "Nessuno Slot Disponibile",
+      "noSlotsFound": "Nessuno slot disponibile trovato per la donazione {{type}} in questo centro.",
+      "tryDifferentCenter": "Prova un Centro Diverso",
+      "tryOtherDonation": "Prova Donazione di {{type}}",
+      "requestCallback": "Richiedi una Chiamata",
+      "prevMonth": "< Mese Precedente",
+      "nextMonth": "Mese Successivo >",
+      "today": "Oggi",
+      "selectDatePrompt": "👆 Seleziona una data sopra per vedere gli slot orari disponibili",
+      "selectTime": "Seleziona un orario",
+      "forDate": "per {{date}}",
+      "noTimeSlots": "Nessuno Slot Orario Disponibile",
+      "noTimeSlotsMessage": "Nessuno slot orario disponibile per questa data. Seleziona un'altra data.",
+      "selectDifferentDate": "Seleziona Data Diversa",
+      "joinWaitlist": "Iscriviti alla Lista d'Attesa",
+      "requestAlternativeDate": "Richiedi Data Alternativa",
+      "morning": "Mattina",
+      "lunch": "Pranzo",
+      "afternoon": "Pomeriggio",
+      "booked": "Prenotato",
+      "left": "{{count}} rimasti",
+      "available": "Disponibile",
+      "needDifferentTime": "Hai bisogno di un orario diverso?",
+      "requestCallbackLink": "richiedi una chiamata",
+      "joinWaitlistLink": "iscriviti alla nostra lista d'attesa",
+      "forPreferredTimes": "per orari preferiti."
+    },
+    "step3": {
+      "title": "Raccontaci di te",
+      "subtitle": "Ti invieremo promemoria e ti terremo aggiornato sul tuo appuntamento.",
+      "stepTitle": "Passo 3: I Tuoi Dettagli",
+      "stepDescription": "Fornisci le tue informazioni di contatto",
+      "autofillMessage": "Bentornato! Abbiamo precompilato le tue informazioni. Controllale rapidamente prima di continuare.",
+      "gotIt": "Capito",
+      "fullName": "Nome Completo",
+      "fullNamePlaceholder": "es. Giulia Rossi",
+      "dateOfBirth": "Data di Nascita",
+      "phoneNumber": "Numero di Telefono",
+      "phonePlaceholder": "es. 333 555 1212",
+      "phoneHint": "Ti invieremo un promemoria SMS.",
+      "email": "Email",
+      "optional": "(opzionale)",
+      "emailPlaceholder": "Ti invieremo una conferma",
+      "hasDonatedBefore": "Hai già donato prima?",
+      "yesReturning": "Sì, sono un donatore che ritorna",
+      "noFirstTime": "No, questa è la mia prima volta",
+      "required": "*",
+      "fullNameRequired": "Il nome completo è obbligatorio",
+      "dobRequired": "La data di nascita è obbligatoria",
+      "phoneRequired": "Il numero di telefono è obbligatorio",
+      "hasDonatedBeforeRequired": "Per favore, facci sapere se hai già donato prima",
+      "pleaseCorrectErrors": "Per favore, correggi gli errori qui sotto"
+    },
+    "step4": {
+      "title": "Solo poche domande veloci",
+      "subtitle": "Questi ci aiutano a mantenere tutti al sicuro.",
+      "stepTitle": "Passo 4: Controllo Salute",
+      "stepDescription": "Rispondi a poche domande di screening sanitario",
+      "recentDonation": "Hai donato sangue nelle ultime 8 settimane?",
+      "recentDonationHelp": "Devi aspettare 8 settimane tra le donazioni di sangue.",
+      "feelsHealthy": "Ti senti in salute oggi?",
+      "feelsHealthyHelp": "Non ti senti bene? Possiamo riprogrammare così sarai al meglio.",
+      "medications": "Stai attualmente assumendo farmaci?",
+      "medicationsHelp": "Alcuni farmaci vanno bene—faccelo sapere così possiamo confermare.",
+      "travel": "Hai viaggiato fuori dall'Italia di recente?",
+      "travelHelp": "Alcune destinazioni potrebbero richiedere un breve periodo di attesa.",
+      "yes": "Sì",
+      "no": "No",
+      "pleaseAnswerAll": "Per favore, rispondi a tutte le domande sulla salute."
+    },
+    "step5": {
+      "title": "Il tuo appuntamento è confermato! 🎉",
+      "subtitle": "Tutto pronto. Ecco tutto ciò che devi sapere.",
+      "stepTitle": "Passo 5: Conferma",
+      "stepDescription": "Rivedi e conferma i dettagli del tuo appuntamento",
+      "appointmentDetails": "Dettagli appuntamento",
+      "getDirections": "Ottieni indicazioni",
+      "addToCalendar": "Aggiungi al Calendario",
+      "share": "Condividi",
+      "shareMessage": "Ho prenotato una donazione con Vitalita il {{date}} alle {{time}} presso {{center}}. Vuoi unirti a me?",
+      "shareOnTelegram": "Condividi su Telegram",
+      "shareViaEmail": "Condividi via Email",
+      "reminderMessage": "Ti invieremo un promemoria il giorno prima del tuo appuntamento.",
+      "whatToBring": "Cosa portare",
+      "whatToBring1": "Documento d'identità valido con foto",
+      "whatToBring2": "Idratazione (una bottiglia d'acqua è perfetta)",
+      "whatToBring3": "Qualcosa da mangiare dopo",
+      "whatToExpect": "Cosa aspettarsi",
+      "whatToExpectText": "L'intera visita di solito richiede circa 45 minuti. Il nostro team ti guiderà attraverso ogni fase e risponderà a qualsiasi domanda. Indossa abiti comodi con maniche che possono essere arrotolate.",
+      "done": "Fatto"
+    },
+    "validation": {
+      "chooseCenter": "Per favore, scegli un centro di donazione per continuare.",
+      "selectDateAndTime": "Per favore, seleziona una data e uno slot orario disponibile.",
+      "selectDateTimeCenter": "Per favore, seleziona una data, un orario e un centro.",
+      "loginRequired": "Per favore, accedi per prenotare un appuntamento.",
+      "failedToBook": "Impossibile prenotare l'appuntamento. Riprova.",
+      "appointmentCreatedIssue": "Appuntamento creato, ma c'è stato un problema nell'aggiornare la disponibilità dello slot. Contatta il supporto.",
+      "slotFull": "Questo slot è ora pieno. Seleziona un altro orario.",
+      "slotBookedByOther": "Lo slot è stato appena prenotato da qualcun altro. Seleziona un altro orario.",
+      "errorOccurred": "Si è verificato un errore. Riprova.",
+      "failedToLoadCenters": "Impossibile caricare i centri di donazione. Riprova.",
+      "errorLoadingCenters": "Si è verificato un errore durante il caricamento dei centri. Riprova."
+    },
+    "buttons": {
+      "back": "Indietro",
+      "continueToDateTime": "Continua a Data e Ora",
+      "selectDateTime": "Seleziona Data e Ora",
+      "reviewAppointment": "Rivedi Appuntamento",
+      "continueToHealthCheck": "Continua al Controllo Salute",
+      "confirmAppointment": "Conferma Appuntamento",
+      "processing": "Elaborazione..."
+    }
+  },
+  "myAppointments": {
+    "login": {
+      "title": "Accedi per vedere i tuoi appuntamenti",
+      "subtitle": "Inserisci la tua email o il numero di telefono e ti invieremo un codice monouso.",
+      "email": "Email",
+      "phoneNumber": "Numero di telefono",
+      "phoneHint": "Usa il numero di cellulare che hai condiviso con noi durante la prenotazione.",
+      "sendCode": "Inviami un codice",
+      "enterCode": "Inserisci il codice che ti abbiamo inviato",
+      "codePlaceholder": "Codice a sei cifre",
+      "didntGetIt": "Non l'hai ricevuto?",
+      "tryAgain": "Riprova",
+      "verifyAndContinue": "Verifica e continua",
+      "codeSent": "Abbiamo inviato un codice monouso a {{email}}. Inseriscilo sopra per continuare.",
+      "codeSentGeneric": "Abbiamo inviato un codice monouso ai tuoi dati di contatto. Inseriscilo sopra per continuare.",
+      "accountNotFound": "Non abbiamo trovato un account con questi dettagli.",
+      "incorrectCode": "Questo codice non è corretto. Riprova.",
+      "signedIn": "Ora sei connesso."
+    },
+    "loading": {
+      "title": "Caricamento dei tuoi appuntamenti...",
+      "subtitle": "Attendi mentre recuperiamo i tuoi dati."
+    },
+    "welcome": {
+      "title": "Bentornato, {{name}}!",
+      "subtitle": "Ecco una rapida panoramica delle tue donazioni e di cosa c'è in arrivo."
+    },
+    "upcoming": {
+      "title": "Appuntamenti imminenti",
+      "subtitle": "Hai bisogno di fare una modifica? Puoi gestire tutto qui.",
+      "empty": {
+        "title": "Non hai appuntamenti imminenti",
+        "description": "Prenota la tua prossima visita con pochi tap.",
+        "bookNow": "Prenota Ora"
+      },
+      "countdown": {
+        "passed": "La data del tuo appuntamento è passata",
+        "today": "Il tuo appuntamento è oggi",
+        "oneDay": "Il tuo appuntamento è tra 1 giorno",
+        "days": "Il tuo appuntamento è tra {{days}} giorni"
+      },
+      "actions": {
+        "getDirections": "Ottieni Indicazioni",
+        "addToCalendar": "Aggiungi al Calendario",
+        "changeAppointment": "Modifica Appuntamento",
+        "cancel": "Annulla"
+      },
+      "cancelConfirmation": {
+        "message": "Sei sicuro di voler annullare questo appuntamento? La disponibilità può riempirsi rapidamente.",
+        "yesCancel": "Sì, annullalo",
+        "keepIt": "Mantienilo"
+      },
+      "cancelSuccess": "Il tuo appuntamento è stato annullato.",
+      "cancelError": "Impossibile annullare l'appuntamento. Riprova."
+    },
+    "history": {
+      "title": "Storia delle donazioni",
+      "subtitle": "Hai aiutato a salvare fino a {{count}} vite. Grazie!",
+      "empty": {
+        "title": "Non hai ancora donato con noi",
+        "description": "Non vediamo l'ora di darti il benvenuto per la tua prima donazione!"
+      },
+      "thankYou": "Grazie per aver donato!",
+      "eligibilityReminder": "Promemoria idoneità:",
+      "canDonateAgain": "Puoi donare di nuovo dopo il {{date}}."
+    },
+    "cta": {
+      "readyToDonate": "Pronto a donare di nuovo?",
+      "updateInformation": "Hai bisogno di aggiornare le tue informazioni?"
+    },
+    "calendar": {
+      "summary": "Appuntamento Donazione di Sangue - {{location}}",
+      "description": "Si prega di arrivare 10 minuti prima e portare un documento d'identità valido."
+    },
+    "unknownCenter": "Centro Sconosciuto",
+    "defaultDonorName": "Donatore"
+  },
+  "registration": {
+    "title": "Registrazione Donatore",
+    "back": "Indietro",
+    "backAriaLabel": "Torna alla pagina precedente",
+    "success": {
+      "title": "Registrazione Inviata con Successo!",
+      "message": "La tua registrazione è stata inviata per la revisione. Il personale AVIS esaminerà e attiverà il tuo account. Il processo richiede circa 45 giorni. Una volta che sarai verificato come donatore, riceverai una notifica via email."
+    },
+    "privacy": {
+      "title": "Privacy e Sicurezza",
+      "description": "Le tue informazioni personali saranno hashate in modo sicuro e i dati originali non saranno memorizzati. Questo garantisce la conformità GDPR mantenendo un'autenticazione sicura."
+    },
+    "form": {
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "dateOfBirth": "Data di Nascita",
+      "donorId": "ID Donatore",
+      "email": "Indirizzo Email",
+      "required": "*",
+      "requiredAriaLabel": "obbligatorio",
+      "firstNamePlaceholder": "Inserisci il tuo nome",
+      "lastNamePlaceholder": "Inserisci il tuo cognome",
+      "donorIdPlaceholder": "Inserisci il tuo ID donatore alfanumerico di 5 cifre",
+      "emailPlaceholder": "Inserisci il tuo indirizzo email",
+      "ageRequirement": "Devi avere almeno 18 anni per donare",
+      "donorIdHint": "Inserisci l'ID alfanumerico di 5 cifre fornito da AVIS",
+      "emailHint": "Ti invieremo un'email di verifica a questo indirizzo"
+    },
+    "validation": {
+      "firstNameRequired": "Il nome è obbligatorio",
+      "lastNameRequired": "Il cognome è obbligatorio",
+      "dateOfBirthRequired": "La data di nascita è obbligatoria",
+      "donorIdRequired": "L'ID donatore è obbligatorio",
+      "emailRequired": "L'indirizzo email è obbligatorio",
+      "donorIdFormatError": "L'ID donatore deve essere esattamente di 5 caratteri alfanumerici",
+      "emailFormatError": "Inserisci un indirizzo email valido",
+      "ageRequirementError": "Devi avere almeno 18 anni per donare",
+      "registrationFailed": "Registrazione fallita. Riprova o contatta il personale AVIS per assistenza.",
+      "accountExists": "Esiste già un account donatore con questi dettagli. Contatta il personale AVIS per assistenza.",
+      "emailExists": "Esiste già un account con questo indirizzo email. Usa un'email diversa o contatta il personale AVIS per assistenza.",
+      "genericFailure": "Registrazione fallita. Riprova."
+    },
+    "warning": {
+      "title": "Prima di Continuare",
+      "doubleCheckTitle": "Rivedi i dettagli",
+      "doubleCheckMessage": "Rivedi questi dettagli prima di inviare — non potranno essere modificati una volta salvati:",
+      "detailFirstName": "Nome",
+      "detailLastName": "Cognome",
+      "detailDateOfBirth": "Data di Nascita",
+      "detailDonorId": "ID Donatore",
+      "verificationProcessTitle": "Processo di Verifica",
+      "step1": "Invia il modulo di registrazione",
+      "step2": "Il personale AVIS esaminerà e attiverà il tuo account",
+      "step3": "Il processo richiede circa 45 giorni",
+      "step4": "Una volta che sarai verificato come donatore, riceverai una notifica via email",
+      "step5": "Una volta verificata la tua email, potrai creare un PIN a 5 cifre per accedere al sistema"
+    },
+    "submit": {
+      "button": "Invia Registrazione",
+      "submitting": "Invio in corso..."
+    }
+  },
+  "login": {
+    "title": "Accesso Donatore",
+    "back": "Indietro",
+    "backAriaLabel": "Torna alla pagina precedente",
+    "form": {
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "dateOfBirth": "Data di Nascita",
+      "donorId": "ID Donatore",
+      "required": "*",
+      "requiredAriaLabel": "obbligatorio",
+      "firstNamePlaceholder": "Inserisci il tuo nome",
+      "lastNamePlaceholder": "Inserisci il tuo cognome",
+      "donorIdPlaceholder": "Inserisci il tuo ID donatore alfanumerico di 5 cifre",
+      "ageRequirement": "Devi avere almeno 18 anni per donare",
+      "donorIdHint": "Inserisci l'ID alfanumerico di 5 cifre fornito da AVIS"
+    },
+    "validation": {
+      "firstNameRequired": "Il nome è obbligatorio",
+      "lastNameRequired": "Il cognome è obbligatorio",
+      "dateOfBirthRequired": "La data di nascita è obbligatoria",
+      "donorIdRequired": "L'ID donatore è obbligatorio",
+      "donorIdFormatError": "L'ID donatore deve essere esattamente di 5 caratteri alfanumerici",
+      "dateOfBirthFormatError": "Inserisci una data di nascita valida"
+    },
+    "errors": {
+      "accountNotFound": "Nessun account trovato con questi dettagli. Controlla le tue informazioni o registrati come nuovo donatore.",
+      "loginFailed": "Accesso fallito. Riprova o contatta il personale AVIS per assistenza.",
+      "accountNotActive": "Il tuo account non è attivo. Contatta il personale AVIS per assistenza.",
+      "accountNotActivated": "Il tuo account non è ancora stato attivato. Attendi l'approvazione del personale AVIS. Il processo richiede circa 45 giorni.",
+      "emailNotVerified": "Verifica il tuo indirizzo email prima di accedere. Controlla la tua email per il link di verifica."
+    },
+    "submit": {
+      "button": "Accedi",
+      "loggingIn": "Accesso in corso..."
+    },
+    "registerLink": {
+      "newToVitalita": "Sei nuovo su Vitalita?",
+      "registerAsDonor": "Registrati come donatore"
+    }
+  }
+}
+

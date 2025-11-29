@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   CheckCircle2,
   Clock,
@@ -17,19 +18,20 @@ import {
 } from 'lucide-react';
 
 const HowWeSimplify = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="bg-slate-50">
       {/* Hero Section */}
       <section className="section-container relative overflow-hidden py-12">
         <div className="absolute left-1/2 top-0 -z-10 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-red-500/10 blur-[120px]" />
         <div className="mx-auto max-w-4xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">Innovation</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">{t('simplicityDelivered.hero.badge')}</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-            How We Transform Blood Donation
+            {t('simplicityDelivered.hero.title')}
           </h1>
           <p className="mt-4 text-lg leading-relaxed text-slate-600">
-            Vitalita reimagines the complex world of blood donation into a streamlined, intuitive experience for
-            organizations and donors alike. Discover how we've simplified every step of the process.
+            {t('simplicityDelivered.hero.description')}
           </p>
         </div>
       </section>
@@ -40,13 +42,13 @@ const HowWeSimplify = () => {
           <div className="mb-8 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50/80 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-red-600 shadow-sm">
               <Building2 className="h-4 w-4" />
-              <span>For Organizations</span>
+              <span>{t('simplicityDelivered.organizations.badge')}</span>
             </div>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-              Streamlined Blood Donation Management
+              {t('simplicityDelivered.organizations.title')}
             </h2>
             <p className="mt-3 text-lg leading-relaxed text-slate-600">
-              Eliminate complexity. Automate processes. Save time.
+              {t('simplicityDelivered.organizations.subtitle')}
             </p>
           </div>
 
@@ -55,14 +57,14 @@ const HowWeSimplify = () => {
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg">
               <div className="mb-4 flex items-center gap-2">
                 <FileText className="h-5 w-5 text-red-600" />
-                <h3 className="text-xl font-semibold text-slate-900">Before Vitalita</h3>
+                <h3 className="text-xl font-semibold text-slate-900">{t('simplicityDelivered.organizations.before.title')}</h3>
               </div>
               <ul className="space-y-2">
                 {[
-                  'Manual scheduling & phone calls',
-                  'Time-consuming eligibility checks',
-                  'Multiple disconnected systems',
-                  'Paper forms & manual reminders',
+                  t('simplicityDelivered.organizations.before.items.manualScheduling'),
+                  t('simplicityDelivered.organizations.before.items.timeConsumingChecks'),
+                  t('simplicityDelivered.organizations.before.items.disconnectedSystems'),
+                  t('simplicityDelivered.organizations.before.items.paperForms'),
                 ].map((item, index) => (
                   <li key={index} className="flex items-start gap-3 text-sm text-slate-600">
                     <span className="mt-1 text-red-300">✗</span>
@@ -75,14 +77,14 @@ const HowWeSimplify = () => {
             <div className="rounded-2xl border border-red-200 bg-gradient-to-br from-red-50 to-white p-6 shadow-lg">
               <div className="mb-4 flex items-center gap-2">
                 <Zap className="h-5 w-5 text-red-600" />
-                <h3 className="text-xl font-semibold text-slate-900">With Vitalita</h3>
+                <h3 className="text-xl font-semibold text-slate-900">{t('simplicityDelivered.organizations.with.title')}</h3>
               </div>
               <ul className="space-y-2">
                 {[
-                  'Automated scheduling with real-time availability',
-                  'Instant eligibility checks',
-                  'Unified platform - one login',
-                  'Automated notifications & digital screening',
+                  t('simplicityDelivered.organizations.with.items.automatedScheduling'),
+                  t('simplicityDelivered.organizations.with.items.instantChecks'),
+                  t('simplicityDelivered.organizations.with.items.unifiedPlatform'),
+                  t('simplicityDelivered.organizations.with.items.automatedNotifications'),
                 ].map((item, index) => (
                   <li key={index} className="flex items-start gap-3 text-sm text-slate-700">
                     <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-500" />
@@ -98,39 +100,39 @@ const HowWeSimplify = () => {
             {[
               {
                 icon: Calendar,
-                title: 'One-Click Scheduling',
-                description: 'Donors book in seconds. Your team sees everything in real-time.',
-                benefit: 'Save 15+ hours/week',
+                title: t('simplicityDelivered.organizations.features.oneClickScheduling.title'),
+                description: t('simplicityDelivered.organizations.features.oneClickScheduling.description'),
+                benefit: t('simplicityDelivered.organizations.features.oneClickScheduling.benefit'),
               },
               {
                 icon: Users,
-                title: 'Automated Donor Management',
-                description: 'Complete profiles with automatic eligibility tracking. No spreadsheets.',
-                benefit: 'Manage 10,000+ donors',
+                title: t('simplicityDelivered.organizations.features.automatedDonorManagement.title'),
+                description: t('simplicityDelivered.organizations.features.automatedDonorManagement.description'),
+                benefit: t('simplicityDelivered.organizations.features.automatedDonorManagement.benefit'),
               },
               {
                 icon: Bell,
-                title: 'Smart Notifications',
-                description: 'Automated SMS and email reminders keep donors engaged.',
-                benefit: '90% fewer no-shows',
+                title: t('simplicityDelivered.organizations.features.smartNotifications.title'),
+                description: t('simplicityDelivered.organizations.features.smartNotifications.description'),
+                benefit: t('simplicityDelivered.organizations.features.smartNotifications.benefit'),
               },
               {
                 icon: BarChart3,
-                title: 'Real-Time Analytics',
-                description: 'Instant insights into capacity and performance.',
-                benefit: 'No IT support needed',
+                title: t('simplicityDelivered.organizations.features.realTimeAnalytics.title'),
+                description: t('simplicityDelivered.organizations.features.realTimeAnalytics.description'),
+                benefit: t('simplicityDelivered.organizations.features.realTimeAnalytics.benefit'),
               },
               {
                 icon: Shield,
-                title: 'Compliance Made Simple',
-                description: 'Automated health screening ensures compliance effortlessly.',
-                benefit: '100% compliance',
+                title: t('simplicityDelivered.organizations.features.complianceMadeSimple.title'),
+                description: t('simplicityDelivered.organizations.features.complianceMadeSimple.description'),
+                benefit: t('simplicityDelivered.organizations.features.complianceMadeSimple.benefit'),
               },
               {
                 icon: Clock,
-                title: 'Quick Setup',
-                description: 'Up and running in 1-2 weeks. We handle everything.',
-                benefit: 'Minimal training',
+                title: t('simplicityDelivered.organizations.features.quickSetup.title'),
+                description: t('simplicityDelivered.organizations.features.quickSetup.description'),
+                benefit: t('simplicityDelivered.organizations.features.quickSetup.benefit'),
               },
             ].map((feature, index) => {
               const IconComponent = feature.icon;
@@ -161,13 +163,13 @@ const HowWeSimplify = () => {
           <div className="mb-8 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-red-100 bg-red-50/80 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-red-600 shadow-sm">
               <UserCheck className="h-4 w-4" />
-              <span>For Individual Donors</span>
+              <span>{t('simplicityDelivered.donors.badge')}</span>
             </div>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-              Stress-Free Donation Experience
+              {t('simplicityDelivered.donors.title')}
             </h2>
             <p className="mt-3 text-lg leading-relaxed text-slate-600">
-              Book, donate, and track your impact—all in minutes.
+              {t('simplicityDelivered.donors.subtitle')}
             </p>
           </div>
 
@@ -175,40 +177,40 @@ const HowWeSimplify = () => {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[
               {
-                step: '1',
+                step: t('simplicityDelivered.donors.steps.easyRegistration.step'),
                 icon: Smartphone,
-                title: 'Easy Registration',
-                description: 'Sign up in minutes. Your profile is saved securely.',
+                title: t('simplicityDelivered.donors.steps.easyRegistration.title'),
+                description: t('simplicityDelivered.donors.steps.easyRegistration.description'),
               },
               {
-                step: '2',
+                step: t('simplicityDelivered.donors.steps.bookInSeconds.step'),
                 icon: Calendar,
-                title: 'Book in Seconds',
-                description: 'See available slots in real-time. Choose location, date, and time.',
+                title: t('simplicityDelivered.donors.steps.bookInSeconds.title'),
+                description: t('simplicityDelivered.donors.steps.bookInSeconds.description'),
               },
               {
-                step: '3',
+                step: t('simplicityDelivered.donors.steps.smartReminders.step'),
                 icon: Bell,
-                title: 'Smart Reminders',
-                description: 'Automatic reminders before your appointment.',
+                title: t('simplicityDelivered.donors.steps.smartReminders.title'),
+                description: t('simplicityDelivered.donors.steps.smartReminders.description'),
               },
               {
-                step: '4',
+                step: t('simplicityDelivered.donors.steps.digitalScreening.step'),
                 icon: FileText,
-                title: 'Digital Screening',
-                description: 'Complete health questionnaire online. No paper forms.',
+                title: t('simplicityDelivered.donors.steps.digitalScreening.title'),
+                description: t('simplicityDelivered.donors.steps.digitalScreening.description'),
               },
               {
-                step: '5',
+                step: t('simplicityDelivered.donors.steps.easyNavigation.step'),
                 icon: MapPin,
-                title: 'Easy Navigation',
-                description: 'Get directions and know exactly what to expect.',
+                title: t('simplicityDelivered.donors.steps.easyNavigation.title'),
+                description: t('simplicityDelivered.donors.steps.easyNavigation.description'),
               },
               {
-                step: '6',
+                step: t('simplicityDelivered.donors.steps.trackYourImpact.step'),
                 icon: Heart,
-                title: 'Track Your Impact',
-                description: 'See donation history and the lives you\'ve helped save.',
+                title: t('simplicityDelivered.donors.steps.trackYourImpact.title'),
+                description: t('simplicityDelivered.donors.steps.trackYourImpact.description'),
               },
             ].map((step, index) => {
               const IconComponent = step.icon;
@@ -233,23 +235,23 @@ const HowWeSimplify = () => {
           {/* Donor Benefits Summary */}
           <div className="mt-10 rounded-3xl border border-red-200 bg-gradient-to-br from-red-50 via-white to-red-50 p-6 shadow-lg">
             <div className="text-center">
-              <h3 className="text-2xl font-semibold text-slate-900">Simple by Design</h3>
+              <h3 className="text-2xl font-semibold text-slate-900">{t('simplicityDelivered.donors.benefits.title')}</h3>
             </div>
             <div className="mt-6 grid gap-5 md:grid-cols-3">
               {[
                 {
-                  stat: '5 minutes',
-                  label: 'To book an appointment',
+                  stat: t('simplicityDelivered.donors.benefits.stats.fiveMinutes.stat'),
+                  label: t('simplicityDelivered.donors.benefits.stats.fiveMinutes.label'),
                   icon: Clock,
                 },
                 {
-                  stat: 'Zero',
-                  label: 'Paper forms',
+                  stat: t('simplicityDelivered.donors.benefits.stats.zero.stat'),
+                  label: t('simplicityDelivered.donors.benefits.stats.zero.label'),
                   icon: FileText,
                 },
                 {
-                  stat: '100%',
-                  label: 'Digital experience',
+                  stat: t('simplicityDelivered.donors.benefits.stats.hundredPercent.stat'),
+                  label: t('simplicityDelivered.donors.benefits.stats.hundredPercent.label'),
                   icon: Smartphone,
                 },
               ].map((benefit, index) => {
@@ -273,25 +275,25 @@ const HowWeSimplify = () => {
       <section className="section-container py-12">
         <div className="mx-auto max-w-4xl">
           <div className="text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">The Result</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">{t('simplicityDelivered.overallBenefits.badge')}</p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-              Simple for Everyone
+              {t('simplicityDelivered.overallBenefits.title')}
             </h2>
             <p className="mt-3 text-lg leading-relaxed text-slate-600">
-              From complex processes to streamlined experiences that work for everyone.
+              {t('simplicityDelivered.overallBenefits.description')}
             </p>
           </div>
 
           {/* Key Metrics */}
           <div className="mt-8 rounded-3xl border border-red-200 bg-gradient-to-br from-red-600 to-red-700 p-6 text-white shadow-xl">
             <div className="text-center">
-              <h3 className="text-2xl font-semibold">The Impact</h3>
+              <h3 className="text-2xl font-semibold">{t('simplicityDelivered.overallBenefits.impact.title')}</h3>
             </div>
             <div className="mt-6 grid gap-5 md:grid-cols-3">
               {[
-                { value: '80%', label: 'Reduction in admin time' },
-                { value: '90%', label: 'Fewer scheduling conflicts' },
-                { value: '95%', label: 'Donor satisfaction rate' },
+                { value: t('simplicityDelivered.overallBenefits.impact.metrics.adminTime.value'), label: t('simplicityDelivered.overallBenefits.impact.metrics.adminTime.label') },
+                { value: t('simplicityDelivered.overallBenefits.impact.metrics.schedulingConflicts.value'), label: t('simplicityDelivered.overallBenefits.impact.metrics.schedulingConflicts.label') },
+                { value: t('simplicityDelivered.overallBenefits.impact.metrics.donorSatisfaction.value'), label: t('simplicityDelivered.overallBenefits.impact.metrics.donorSatisfaction.label') },
               ].map((metric, index) => (
                 <div key={index} className="text-center">
                   <div className="text-4xl font-bold">{metric.value}</div>
@@ -308,10 +310,10 @@ const HowWeSimplify = () => {
         <div className="relative overflow-hidden rounded-[40px] border border-slate-200 bg-gradient-to-br from-red-50 via-white to-slate-50 px-6 py-10 sm:px-10 sm:py-12 shadow-xl shadow-red-100/50">
           <div className="grid items-center gap-8 lg:grid-cols-[2fr_1fr]">
             <div className="space-y-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-red-600">See it in action</p>
-              <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Experience the Simplification</h2>
+              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-red-600">{t('simplicityDelivered.cta.badge')}</p>
+              <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{t('simplicityDelivered.cta.title')}</h2>
               <p className="text-sm leading-relaxed text-slate-600">
-                See how we transform complex processes into simple, automated workflows. Watch hours of manual work become minutes of effortless automation.
+                {t('simplicityDelivered.cta.description')}
               </p>
             </div>
             <div className="flex justify-center lg:justify-end">
@@ -319,7 +321,7 @@ const HowWeSimplify = () => {
                 to="/contact"
                 className="inline-flex items-center justify-center rounded-[12px] bg-gradient-to-r from-red-500 via-orange-500 to-red-600 px-10 py-5 text-base font-semibold text-white shadow-lg shadow-red-500/30 transition hover:from-red-600 hover:via-orange-600 hover:to-red-700 hover:shadow-xl hover:shadow-red-500/40 hover:-translate-y-0.5"
               >
-                See Demo
+                {t('simplicityDelivered.cta.button')}
               </Link>
             </div>
           </div>

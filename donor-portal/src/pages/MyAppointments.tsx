@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { addWeeks, differenceInCalendarDays, format, isBefore } from 'date-fns';
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 import { ensureLeafletIcon } from '../utils/mapDefaults';
@@ -88,6 +89,7 @@ type LoginStage = 'enter' | 'verify';
 
 const MyAppointments = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [loginStage, setLoginStage] = useState<LoginStage>('enter');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -174,7 +176,7 @@ const MyAppointments = () => {
               id: apt.appointment_id,
               isoDate: format(appointmentDate, 'yyyy-MM-dd'),
               time: format(appointmentDate, 'HH:mm'),
-              locationName: center?.name || 'Unknown Center',
+              locationName: center?.name || t('myAppointments.unknownCenter'),
               address: center?.address || '',
               lat: center?.latitude || 45.4642, // Default to Milan if not set
               lng: center?.longitude || 9.1900, // Default to Milan if not set
@@ -190,14 +192,14 @@ const MyAppointments = () => {
             return {
               id: record.history_id,
               isoDate: format(new Date(record.donation_date), 'yyyy-MM-dd'),
-              locationName: center?.name || 'Unknown Center',
+              locationName: center?.name || t('myAppointments.unknownCenter'),
             };
           });
 
           // Set profile with fetched data
           setProfile({
             id: donorHashId,
-            name: donorId || 'Donor',
+            name: donorId || t('myAppointments.defaultDonorName'),
             email: donorEmail || '',
             phone: '',
             upcoming,
@@ -208,7 +210,7 @@ const MyAppointments = () => {
           // Set profile with empty arrays on error
           setProfile({
             id: donorHashId,
-            name: donorId || 'Donor',
+            name: donorId || t('myAppointments.defaultDonorName'),
             email: donorEmail || '',
             phone: '',
             upcoming: [],
@@ -274,7 +276,7 @@ const MyAppointments = () => {
     );
 
     if (!matchedProfile) {
-      setLoginError("We couldn't find an account with those details.");
+      setLoginError(t('myAppointments.login.accountNotFound'));
       return;
     }
 
@@ -286,12 +288,12 @@ const MyAppointments = () => {
 
   const handleVerifyOtp = () => {
     if (otp !== MOCK_OTP) {
-      setLoginError('That code is not correct. Please try again.');
+      setLoginError(t('myAppointments.login.incorrectCode'));
       return;
     }
 
     setLoginError(null);
-    setActionMessage('You are now signed in.');
+    setActionMessage(t('myAppointments.login.signedIn'));
     setIsAuthenticated(true);
   };
 
@@ -312,15 +314,15 @@ const MyAppointments = () => {
     const days = differenceInCalendarDays(appointmentDate, today);
 
     if (days < 0) {
-      return 'Your appointment date has passed';
+      return t('myAppointments.upcoming.countdown.passed');
     }
     if (days === 0) {
-      return 'Your appointment is today';
+      return t('myAppointments.upcoming.countdown.today');
     }
     if (days === 1) {
-      return 'Your appointment is in 1 day';
+      return t('myAppointments.upcoming.countdown.oneDay');
     }
-    return `Your appointment is in ${days} days`;
+    return t('myAppointments.upcoming.countdown.days', { days });
   };
 
   const handleAddToCalendar = (appointment: Appointment) => {
@@ -340,9 +342,9 @@ const MyAppointments = () => {
       `DTSTAMP:${format(new Date(), "yyyyMMdd'T'HHmmss'Z'")}`,
       `DTSTART:${formatICS(start)}`,
       `DTEND:${formatICS(end)}`,
-      `SUMMARY:Blood Donation Appointment - ${appointment.locationName}`,
+      `SUMMARY:${t('myAppointments.calendar.summary', { location: appointment.locationName })}`,
       `LOCATION:${appointment.address}`,
-      'DESCRIPTION:Please arrive 10 minutes early and bring a valid ID.',
+      `DESCRIPTION:${t('myAppointments.calendar.description')}`,
       'END:VEVENT',
       'END:VCALENDAR',
     ].join('\r\n');
@@ -377,7 +379,7 @@ const MyAppointments = () => {
 
       if (updateError) {
         console.error('Error cancelling appointment:', updateError);
-        setActionMessage('Failed to cancel appointment. Please try again.');
+        setActionMessage(t('myAppointments.upcoming.cancelError'));
         setCancelConfirmationId(null);
         return;
       }
@@ -389,10 +391,10 @@ const MyAppointments = () => {
 
       setProfile({ ...profile, upcoming: filtered });
       setCancelConfirmationId(null);
-      setActionMessage('Your appointment has been cancelled.');
+      setActionMessage(t('myAppointments.upcoming.cancelSuccess'));
     } catch (error) {
       console.error('Error cancelling appointment:', error);
-      setActionMessage('Failed to cancel appointment. Please try again.');
+      setActionMessage(t('myAppointments.upcoming.cancelError'));
       setCancelConfirmationId(null);
     }
   };
@@ -400,9 +402,9 @@ const MyAppointments = () => {
   const renderLogin = () => (
     <section className="wizard-step appointments-auth">
       <header className="wizard-step-header">
-        <h1>Log in to see your appointments</h1>
+        <h1>{t('myAppointments.login.title')}</h1>
         <p className="wizard-step-subtitle">
-          Enter your email or phone number and we’ll send you a one-time code.
+          {t('myAppointments.login.subtitle')}
         </p>
       </header>
       <form
@@ -415,7 +417,7 @@ const MyAppointments = () => {
         {loginStage === 'enter' && (
           <>
             <div className="form-field">
-              <label htmlFor="authEmail">Email</label>
+              <label htmlFor="authEmail">{t('myAppointments.login.email')}</label>
               <input
                 id="authEmail"
                 type="email"
@@ -426,7 +428,7 @@ const MyAppointments = () => {
               />
             </div>
             <div className="form-field">
-              <label htmlFor="authPhone">Phone number</label>
+              <label htmlFor="authPhone">{t('myAppointments.login.phoneNumber')}</label>
               <input
                 id="authPhone"
                 type="tel"
@@ -436,11 +438,11 @@ const MyAppointments = () => {
                 autoComplete="tel"
               />
               <small className="field-hint">
-                Use the mobile number you shared with us when booking.
+                {t('myAppointments.login.phoneHint')}
               </small>
             </div>
             <button type="submit" className="button primary">
-              Send me a code
+              {t('myAppointments.login.sendCode')}
             </button>
           </>
         )}
@@ -448,18 +450,18 @@ const MyAppointments = () => {
         {loginStage === 'verify' && (
           <>
             <div className="form-field">
-              <label htmlFor="otpCode">Enter the code sent to you</label>
+              <label htmlFor="otpCode">{t('myAppointments.login.enterCode')}</label>
               <input
                 id="otpCode"
                 type="text"
                 inputMode="numeric"
                 maxLength={6}
-                placeholder="Six-digit code"
+                placeholder={t('myAppointments.login.codePlaceholder')}
                 value={otp}
                 onChange={(event) => setOtp(event.target.value)}
               />
               <small className="field-hint">
-                Didn’t get it?{' '}
+                {t('myAppointments.login.didntGetIt')}{' '}
                 <button
                   type="button"
                   className="text-button"
@@ -469,12 +471,12 @@ const MyAppointments = () => {
                     setOtp('');
                   }}
                 >
-                  Try again
+                  {t('myAppointments.login.tryAgain')}
                 </button>
               </small>
             </div>
             <button type="submit" className="button primary">
-              Verify and continue
+              {t('myAppointments.login.verifyAndContinue')}
             </button>
           </>
         )}
@@ -488,8 +490,9 @@ const MyAppointments = () => {
         {otpSent && loginStage === 'verify' && !loginError && (
           <div className="inline-notice">
             <p>
-              We sent a one-time code to {profile?.email || 'your contact details'}.
-              Enter it above to continue.
+              {profile?.email
+                ? t('myAppointments.login.codeSent', { email: profile.email })
+                : t('myAppointments.login.codeSentGeneric')}
             </p>
           </div>
         )}
@@ -505,14 +508,14 @@ const MyAppointments = () => {
     if (formattedUpcoming.length === 0) {
       return (
         <article className="appointments-empty">
-          <h2>You don’t have any upcoming appointments</h2>
-          <p>Book your next visit in just a few taps.</p>
+          <h2>{t('myAppointments.upcoming.empty.title')}</h2>
+          <p>{t('myAppointments.upcoming.empty.description')}</p>
           <button
             type="button"
             className="button primary"
             onClick={() => navigate('/book')}
           >
-            Book Now
+            {t('myAppointments.upcoming.empty.bookNow')}
           </button>
         </article>
       );
@@ -569,35 +572,34 @@ const MyAppointments = () => {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Get Directions
+                  {t('myAppointments.upcoming.actions.getDirections')}
                 </a>
                 <button
                   type="button"
                   className="button secondary"
                   onClick={() => handleAddToCalendar(appointment)}
                 >
-                  Add to Calendar
+                  {t('myAppointments.upcoming.actions.addToCalendar')}
                 </button>
                 <button
                   type="button"
                   className="button secondary"
                   onClick={() => navigate('/book')}
                 >
-                  Change Appointment
+                  {t('myAppointments.upcoming.actions.changeAppointment')}
                 </button>
                 <button
                   type="button"
                   className="button secondary danger"
                   onClick={() => handleCancelAppointment(appointment.id)}
                 >
-                  Cancel
+                  {t('myAppointments.upcoming.actions.cancel')}
                 </button>
               </div>
               {cancelConfirmationId === appointment.id && (
                 <div className="inline-alert warning">
                   <p>
-                    Are you sure you want to cancel this appointment? Availability can
-                    fill up quickly.
+                    {t('myAppointments.upcoming.cancelConfirmation.message')}
                   </p>
                   <div className="confirmation-buttons">
                     <button
@@ -605,14 +607,14 @@ const MyAppointments = () => {
                       className="button primary"
                       onClick={confirmCancelAppointment}
                     >
-                      Yes, cancel it
+                      {t('myAppointments.upcoming.cancelConfirmation.yesCancel')}
                     </button>
                     <button
                       type="button"
                       className="button secondary"
                       onClick={() => setCancelConfirmationId(null)}
                     >
-                      Keep it
+                      {t('myAppointments.upcoming.cancelConfirmation.keepIt')}
                     </button>
                   </div>
                 </div>
@@ -632,8 +634,8 @@ const MyAppointments = () => {
     if (formattedHistory.length === 0) {
       return (
         <div className="history-empty">
-          <h3>You haven’t donated with us yet</h3>
-          <p>We can’t wait to welcome you for your first donation!</p>
+          <h3>{t('myAppointments.history.empty.title')}</h3>
+          <p>{t('myAppointments.history.empty.description')}</p>
         </div>
       );
     }
@@ -648,7 +650,7 @@ const MyAppointments = () => {
               <div className="timeline-card">
                 <p className="timeline-date">{format(recordDate, 'EEEE d MMMM')}</p>
                 <p className="timeline-location">{record.locationName}</p>
-                <p className="timeline-message">Thank you for donating!</p>
+                <p className="timeline-message">{t('myAppointments.history.thankYou')}</p>
               </div>
             </li>
           );
@@ -666,8 +668,8 @@ const MyAppointments = () => {
       return (
         <section className="wizard-step appointments-welcome">
           <header className="wizard-step-header">
-            <h1>Loading your appointments...</h1>
-            <p className="wizard-step-subtitle">Please wait while we fetch your data.</p>
+            <h1>{t('myAppointments.loading.title')}</h1>
+            <p className="wizard-step-subtitle">{t('myAppointments.loading.subtitle')}</p>
           </header>
         </section>
       );
@@ -684,9 +686,9 @@ const MyAppointments = () => {
       <>
         <section className="wizard-step appointments-welcome">
           <header className="wizard-step-header">
-            <h1>Welcome back, {profile.name}!</h1>
+            <h1>{t('myAppointments.welcome.title', { name: profile.name })}</h1>
             <p className="wizard-step-subtitle">
-              Here’s a quick look at your donations and what’s coming up next.
+              {t('myAppointments.welcome.subtitle')}
             </p>
           </header>
           {actionMessage && (
@@ -698,9 +700,9 @@ const MyAppointments = () => {
 
         <section className="wizard-step appointments-upcoming">
           <header className="wizard-step-header">
-            <h2>Upcoming appointments</h2>
+            <h2>{t('myAppointments.upcoming.title')}</h2>
             <p className="wizard-step-subtitle">
-              Need to make a change? You can manage everything here.
+              {t('myAppointments.upcoming.subtitle')}
             </p>
           </header>
           {renderUpcomingCards()}
@@ -708,16 +710,16 @@ const MyAppointments = () => {
 
         <section className="wizard-step appointments-history">
           <header className="wizard-step-header">
-            <h2>Donation history</h2>
+            <h2>{t('myAppointments.history.title')}</h2>
             <p className="wizard-step-subtitle">
-              You’ve helped save up to {impactLivesSaved} lives. Thank you!
+              {t('myAppointments.history.subtitle', { count: impactLivesSaved })}
             </p>
           </header>
           {renderDonationHistory()}
           {nextEligibleDate && (
             <div className="eligibility-reminder">
-              <strong>Eligibility reminder:</strong> You can donate again after{' '}
-              {nextEligibleDate}.
+              <strong>{t('myAppointments.history.eligibilityReminder')}</strong>{' '}
+              {t('myAppointments.history.canDonateAgain', { date: nextEligibleDate })}
             </div>
           )}
         </section>
@@ -729,10 +731,10 @@ const MyAppointments = () => {
               className="button primary"
               onClick={() => navigate('/book')}
             >
-              Ready to donate again?
+              {t('myAppointments.cta.readyToDonate')}
             </button>
             <a className="text-link" href="/profile">
-              Need to update your information?
+              {t('myAppointments.cta.updateInformation')}
             </a>
           </div>
         </section>

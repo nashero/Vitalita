@@ -1,41 +1,45 @@
-const facts = [
-  'Check-in is friendly and quick.',
-  'You can bring a friend or family member.',
-  'Snacks and water are waiting after you donate.'
-];
-
-const eligibility = [
-  'You feel healthy today.',
-  'You are at least 16 (with consent) or 17+.',
-  'You weigh 110 pounds or more.'
-];
+import { useTranslation } from 'react-i18next';
 
 function FirstTimeDonorSection() {
+  const { t } = useTranslation();
+  
+  const facts = [
+    'firstTimeDonor.fact1',
+    'firstTimeDonor.fact2',
+    'firstTimeDonor.fact3'
+  ];
+
+  const eligibility = [
+    'firstTimeDonor.eligibility1',
+    'firstTimeDonor.eligibility2',
+    'firstTimeDonor.eligibility3'
+  ];
+  
   return (
     <section className="first-time" id="first-time" aria-labelledby="first-time-title">
       <div className="card">
-        <h2 id="first-time-title">New to Donating?</h2>
-        <p className="card-intro">We will guide you every step of the way.</p>
+        <h2 id="first-time-title">{t('firstTimeDonor.title')}</h2>
+        <p className="card-intro">{t('firstTimeDonor.intro')}</p>
         <div className="card-content">
           <div>
-            <h3>What Happens</h3>
+            <h3>{t('firstTimeDonor.whatHappensTitle')}</h3>
             <ul className="simple-list">
-              {facts.map((fact) => (
-                <li key={fact}>{fact}</li>
+              {facts.map((factKey) => (
+                <li key={factKey}>{t(factKey)}</li>
               ))}
             </ul>
           </div>
           <div>
-            <h3>Who Can Donate</h3>
+            <h3>{t('firstTimeDonor.whoCanDonateTitle')}</h3>
             <ul className="simple-list">
-              {eligibility.map((item) => (
-                <li key={item}>{item}</li>
+              {eligibility.map((itemKey) => (
+                <li key={itemKey}>{t(itemKey)}</li>
               ))}
             </ul>
           </div>
         </div>
         <a className="button secondary card-button" href="/help">
-          Learn More
+          {t('firstTimeDonor.learnMore')}
         </a>
       </div>
     </section>
