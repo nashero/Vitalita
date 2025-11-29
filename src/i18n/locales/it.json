@@ -33,6 +33,11 @@
   },
   "navigation": {
     "home": "Home",
+    "howItWorks": "Come Funziona",
+    "simplicityDelivered": "Semplicità Garantita",
+    "features": "Caratteristiche",
+    "caseStudies": "Casi di Studio",
+    "talkToUs": "Parlaci!",
     "donorPortal": "Registrati come Donatore",
     "staffPortal": "Portale Staff",
     "faq": "FAQ",
@@ -40,7 +45,8 @@
     "analytics": "Analisi",
     "staffArea": "Area Staff",
     "pinAuthDemo": "Demo Autenticazione PIN",
-    "moreOptions": "Altre Opzioni"
+    "moreOptions": "Altre Opzioni",
+    "toggleNavigation": "Attiva/disattiva navigazione"
   },
   "landing": {
     "title": "Prenota la Tua Donazione, Salva Vite",
@@ -576,6 +582,643 @@
       "accountVerifiedDescription": "Il tuo account è stato verificato. Conferma i tuoi dettagli e configura il tuo PIN.",
       "registrationDetails": "I tuoi Dettagli di Registrazione:",
       "continueToPinSetup": "Continua alla Configurazione PIN"
+    }
+  },
+  "demo": {
+    "title": "Demo Internazionalizzazione",
+    "welcome": {
+      "title": "Benvenuto nella Demo i18n",
+      "description": "Questo componente dimostra un'implementazione completa di internazionalizzazione con supporto per inglese e italiano, inclusa la formattazione localizzata di date e numeri, e un design completamente responsive per dispositivi mobili."
+    },
+    "localization": {
+      "date": {
+        "title": "Localizzazione Date",
+        "sample": "Data di Esempio (31 dicembre 2025)"
+      },
+      "number": {
+        "title": "Localizzazione Numeri",
+        "sample": "Numero di Esempio (123.456,78)"
+      },
+      "currency": {
+        "title": "Localizzazione Valuta",
+        "sample": "Importo Valuta di Esempio"
+      }
+    },
+    "features": {
+      "title": "Caratteristiche Principali",
+      "i18n": {
+        "title": "Internazionalizzazione",
+        "description": "Supporto completo per inglese e italiano con cambio lingua semplice"
+      },
+      "responsive": {
+        "title": "Responsive Mobile",
+        "description": "Layout ottimizzato per tutte le dimensioni dello schermo, specialmente dispositivi mobili"
+      },
+      "localization": {
+        "title": "Localizzazione",
+        "description": "Date, numeri e valute formattati secondo la località"
+      },
+      "performance": {
+        "title": "Aggiornamenti Istantanei",
+        "description": "Tutto il testo si aggiorna immediatamente quando la lingua viene cambiata"
+      }
+    },
+    "instructions": {
+      "title": "Come Usare",
+      "step1": "Usa il selettore di lingua nell'intestazione per cambiare tra inglese e italiano",
+      "step2": "Nota come tutto il testo, le date e i numeri si aggiornano automaticamente",
+      "step3": "Ridimensiona la finestra del browser per vedere il design responsive per mobile",
+      "step4": "Su dispositivi mobili (larghezza massima: 600px), il layout si adatta per una visualizzazione ottimale"
+    },
+    "footer": {
+      "text": "© 2025 Demo Internazionalizzazione. Tutti i diritti riservati."
+    }
+  },
+  "caseStudies": {
+    "title": "Casi di Studio",
+    "heading": "Trasformare l'impegno dei donatori in tutta Italia",
+    "subtitle": "Vitalita collabora con organizzazioni di donazione del sangue per creare un impatto misurabile rapidamente. Esplora le iniziative selezionate dalla nostra comunità.",
+    "seeInAction": "Vedi Vitalita in azione",
+    "demoDescription": "Richiedi una demo personalizzata per esplorare come possiamo replicare questi risultati nella tua organizzazione.",
+    "requestDemo": "Richiedi una Demo",
+    "studies": {
+      "avisLombardia": {
+        "organization": "AVIS LOMBARDIA",
+        "summary": "CRM donatori unificato e programmazione dinamica in 12 province, riducendo le mancate presentazioni del 22% e migliorando l'utilizzo del personale.",
+        "highlight": "22% MENO MANCATE PRESENTAZIONI",
+        "detail": "I promemoria automatizzati tramite Telegram e SMS hanno sostituito le chiamate manuali, liberando i coordinatori per l'outreach."
+      },
+      "croceRossaToscana": {
+        "organization": "CROCE ROSSA TOSCANA",
+        "summary": "Coordinamento semplificato delle campagne mobili di donazione con tracciamento inventario in tempo reale, aumentando l'efficienza della raccolta del 35% nelle campagne regionali.",
+        "highlight": "35% AUMENTO EFFICIENZA",
+        "detail": "Il sistema di programmazione integrato ha consentito una migliore allocazione delle risorse e tempi di attesa ridotti, risultando in maggiore soddisfazione e fidelizzazione dei donatori."
+      },
+      "fidasVeneto": {
+        "organization": "FIDAS VENETO",
+        "summary": "Trasformazione digitale della registrazione dei donatori e della gestione dell'idoneità, riducendo il carico amministrativo del 40% migliorando al contempo l'accuratezza dei dati.",
+        "highlight": "40% MENO TEMPO AMMINISTRATIVO",
+        "detail": "I controlli di idoneità automatizzati e i moduli digitali hanno eliminato i processi cartacei, permettendo al personale di concentrarsi sull'impegno dei donatori e sull'outreach della comunità."
+      }
+    }
+  },
+  "featuresPage": {
+    "header": {
+      "badge": "Piattaforma",
+      "title": "Tutto Ciò di Cui Hai Bisogno per Gestire le Donazioni di Sangue in Modo Efficiente",
+      "description": "Vitalita unifica programmazione, coinvolgimento dei donatori e analisi in una singola piattaforma operativa su misura per AVIS e le reti sanitarie italiane. Offri a ogni coordinatore e volontario un ambiente di lavoro moderno progettato per decisioni più rapide e raccolte più sicure.",
+      "tags": {
+        "enterpriseCloud": "Cloud enterprise-ready",
+        "clinicalCompliance": "Costruito con conformità clinica",
+        "trustedCenters": "Fidato dai principali centri donatori"
+      }
+    },
+    "features": {
+      "smartScheduling": {
+        "title": "Sistema di Programmazione Intelligente",
+        "description": "Offri ai coordinatori un centro di comando in tempo reale per bilanciare slot di donazione, personale e attrezzature in ogni sede con sicurezza.",
+        "bullets": {
+          "realTimeTracking": "Tracciamento disponibilità in tempo reale",
+          "capacityManagement": "Gestione automatica della capacità",
+          "multiLocation": "Coordinamento multi-sede",
+          "conflictDetection": "Rilevamento e prevenzione conflitti"
+        },
+        "benefits": "Riduci i conflitti di programmazione del 90%, risparmia 15 ore a settimana",
+        "mockup": {
+          "today": "Oggi",
+          "romeCenter": "Centro Raccolta Roma",
+          "full": "pieno",
+          "onTrack": "In Regola",
+          "noConflicts": "Nessun conflitto",
+          "staffShortage": "Carenza di personale rilevata"
+        }
+      },
+      "donorManagement": {
+        "title": "Gestione Completa dei Donatori",
+        "description": "Mantieni una visione completa di ogni donatore—dalla storia sanitaria alle finestre di idoneità—così i team possono concentrarsi sulle relazioni, non sui fogli di calcolo.",
+        "bullets": {
+          "completeProfiles": "Profili donatori completi",
+          "medicalHistory": "Tracciamento storia medica",
+          "eligibilityStatus": "Monitoraggio stato idoneità",
+          "healthScreening": "Screening sanitario automatizzato"
+        },
+        "benefits": "Traccia oltre 10.000 donatori senza sforzo, garantisci la conformità automaticamente",
+        "mockup": {
+          "donorProfile": "Profilo Donatore",
+          "donated": "Donato",
+          "times": "volte",
+          "eligible": "Idoneo",
+          "bloodType": "Gruppo Sanguigno",
+          "lastDonation": "Ultima Donazione",
+          "nextEligible": "Prossimo Idoneo",
+          "automatedScreening": "Screening Automatico",
+          "ok": "OK"
+        }
+      },
+      "communicationTools": {
+        "title": "Strumenti di Comunicazione Intelligenti",
+        "description": "Lancia campagne multi-canale e personalizzate che mantengono i donatori coinvolti—senza aggiungere lavoro ai coordinatori.",
+        "bullets": {
+          "automatedReminders": "Promemoria appuntamenti automatizzati (Email, SMS, Calendario)",
+          "customizableTemplates": "Modelli notifiche personalizzabili",
+          "recallCampaigns": "Campagne di richiamo donatori",
+          "emergencyBroadcasts": "Trasmissioni richieste sangue di emergenza"
+        },
+        "benefits": "Aumenta i tassi di presenza del 40%, riduce drasticamente le assenze",
+        "mockup": {
+          "campaignComposer": "Compositore Campagne",
+          "channels": "Canali",
+          "reminderTemplate": "Modello promemoria",
+          "automatedFollowup": "Follow-up automatico abilitato",
+          "attendance": "presenza",
+          "liveDeliveryStatus": "Stato consegna in tempo reale",
+          "smsSent": "SMS inviati",
+          "donors": "donatori",
+          "emailsScheduled": "Email programmate",
+          "calendarInvitesConfirmed": "Inviti calendario confermati"
+        }
+      },
+      "analyticsDashboard": {
+        "title": "Dashboard Analisi Avanzata",
+        "description": "Misura le prestazioni delle donazioni, comprendi il comportamento dei donatori e prevedi la domanda con visualizzazioni chiare su misura per la tua rete.",
+        "bullets": {
+          "realTimeMetrics": "Metriche donazioni in tempo reale",
+          "demographicInsights": "Approfondimenti demografici donatori",
+          "centerPerformance": "Tracciamento prestazioni centri",
+          "inventoryForecasting": "Previsione inventario",
+          "customReports": "Generazione report personalizzati"
+        },
+        "benefits": "Prendi decisioni basate sui dati, ottimizza le operazioni",
+        "mockup": {
+          "dashboard": "Dashboard",
+          "nationalPerformance": "Prestazioni Nazionali",
+          "live": "In Diretta",
+          "donations": "Donazioni",
+          "vsPrevious": "rispetto ai 30 giorni precedenti",
+          "unitsCollected": "unità raccolte",
+          "forecast": "Previsione",
+          "inventoryForecast": "Previsione Inventario",
+          "safeFor": "Sicuro per",
+          "days": "giorni",
+          "customReportGeneration": "Generazione report personalizzati",
+          "exportDescription": "Esporta riepiloghi PDF pronti per dirigenti o programma push CSV al tuo stack BI—su misura per regioni, centri o campagne."
+        }
+      },
+      "integrationSecurity": {
+        "title": "Integrazione e Sicurezza",
+        "description": "Connetti Vitalita con i sistemi clinici mantenendo i dati dei donatori sicuri con controlli di livello enterprise costruiti per l'assistenza sanitaria.",
+        "bullets": {
+          "medicalRecordIntegration": "Integrazione sistemi cartelle cliniche",
+          "gdprCompliant": "Gestione dati conforme GDPR",
+          "encryptedStorage": "Archiviazione crittografata sicura",
+          "roleBasedAccess": "Controllo accesso basato su ruoli"
+        },
+        "benefits": "Fiducia per scalare con protezioni di sicurezza ferree",
+        "mockup": {
+          "securityCenter": "Centro Sicurezza",
+          "accessOverview": "Panoramica Accessi",
+          "encryptedAtRest": "Crittografato a riposo",
+          "gdprProcessingLog": "Log elaborazione GDPR",
+          "compliant": "Conforme",
+          "roleMatrix": "Matrice ruoli",
+          "enforced": "applicato",
+          "hospitalEhrSync": "Sincronizzazione EHR ospedale"
+        }
+      }
+    },
+    "cta": {
+      "badge": "Esplora la piattaforma",
+      "title": "Sperimenta Ogni Funzionalità dal Vivo",
+      "description": "Vedi come tutte le funzionalità lavorano insieme in una piattaforma unificata con scenari reali dai tuoi centri donazione.",
+      "tags": {
+        "liveWalkthrough": "Dimostrazione dal vivo",
+        "integration": "Integrazione",
+        "security": "Sicurezza"
+      },
+      "button": "Richiedi Demo Funzionalità"
+    }
+  },
+  "footer": {
+    "poweredBy": "Powered by Vitalita",
+    "platformDescription": "Piattaforma di Gestione Donazioni di Sangue",
+    "description": "Progettata specificamente per le organizzazioni per orchestrare l'impegno dei donatori, semplificare la programmazione e dare a ogni coordinatore un centro di comando unificato.",
+    "sections": {
+      "product": "Prodotto",
+      "company": "Azienda",
+      "portals": "Portali"
+    },
+    "links": {
+      "features": "Caratteristiche",
+      "howItWorks": "Come Funziona",
+      "caseStudies": "Casi di Studio",
+      "contact": "Contatto",
+      "partnerships": "Partnership",
+      "newsroom": "Notizie",
+      "careers": "Carriere",
+      "donorPortal": "Portale Donatore (Accesso Ospite)",
+      "coordinatorConsole": "Console Coordinatore",
+      "staffPortal": "Portale Staff",
+      "developerApi": "API Sviluppatore",
+      "privacyPolicy": "Politica sulla Privacy",
+      "termsOfService": "Termini di Servizio",
+      "security": "Sicurezza"
+    },
+    "copyright": "Tutti i diritti riservati."
+  },
+  "simplicityDelivered": {
+    "hero": {
+      "badge": "Innovazione",
+      "title": "Come Trasformiamo la Donazione di Sangue",
+      "description": "Vitalita reinventa il complesso mondo della donazione di sangue in un'esperienza semplificata e intuitiva per organizzazioni e donatori. Scopri come abbiamo semplificato ogni fase del processo."
+    },
+    "organizations": {
+      "badge": "Per le Organizzazioni",
+      "title": "Gestione Semplificata delle Donazioni di Sangue",
+      "subtitle": "Elimina la complessità. Automatizza i processi. Risparmia tempo.",
+      "before": {
+        "title": "Prima di Vitalita",
+        "items": {
+          "manualScheduling": "Pianificazione manuale e chiamate telefoniche",
+          "timeConsumingChecks": "Controlli di idoneità che richiedono tempo",
+          "disconnectedSystems": "Sistemi multipli disconnessi",
+          "paperForms": "Moduli cartacei e promemoria manuali"
+        }
+      },
+      "with": {
+        "title": "Con Vitalita",
+        "items": {
+          "automatedScheduling": "Pianificazione automatizzata con disponibilità in tempo reale",
+          "instantChecks": "Controlli di idoneità istantanei",
+          "unifiedPlatform": "Piattaforma unificata - un solo accesso",
+          "automatedNotifications": "Notifiche automatizzate e screening digitale"
+        }
+      },
+      "features": {
+        "oneClickScheduling": {
+          "title": "Prenotazione con un Click",
+          "description": "I donatori prenotano in secondi. Il tuo team vede tutto in tempo reale.",
+          "benefit": "Risparmia 15+ ore/settimana"
+        },
+        "automatedDonorManagement": {
+          "title": "Gestione Donatori Automatizzata",
+          "description": "Profili completi con tracciamento automatico dell'idoneità. Niente fogli di calcolo.",
+          "benefit": "Gestisci 10.000+ donatori"
+        },
+        "smartNotifications": {
+          "title": "Notifiche Intelligenti",
+          "description": "Promemoria automatizzati via SMS ed email mantengono i donatori coinvolti.",
+          "benefit": "90% in meno di assenze"
+        },
+        "realTimeAnalytics": {
+          "title": "Analisi in Tempo Reale",
+          "description": "Insight istantanei su capacità e prestazioni.",
+          "benefit": "Nessun supporto IT necessario"
+        },
+        "complianceMadeSimple": {
+          "title": "Conformità Semplificata",
+          "description": "Lo screening sanitario automatizzato garantisce la conformità senza sforzo.",
+          "benefit": "100% conformità"
+        },
+        "quickSetup": {
+          "title": "Configurazione Rapida",
+          "description": "Operativo in 1-2 settimane. Gestiamo tutto noi.",
+          "benefit": "Formazione minima"
+        }
+      }
+    },
+    "donors": {
+      "badge": "Per Donatori Individuali",
+      "title": "Esperienza di Donazione Senza Stress",
+      "subtitle": "Prenota, dona e traccia il tuo impatto—tutto in pochi minuti.",
+      "steps": {
+        "easyRegistration": {
+          "step": "1",
+          "title": "Registrazione Facile",
+          "description": "Iscriviti in pochi minuti. Il tuo profilo è salvato in modo sicuro."
+        },
+        "bookInSeconds": {
+          "step": "2",
+          "title": "Prenota in Secondi",
+          "description": "Vedi gli slot disponibili in tempo reale. Scegli posizione, data e ora."
+        },
+        "smartReminders": {
+          "step": "3",
+          "title": "Promemoria Intelligenti",
+          "description": "Promemoria automatici prima del tuo appuntamento."
+        },
+        "digitalScreening": {
+          "step": "4",
+          "title": "Screening Digitale",
+          "description": "Completa il questionario sanitario online. Niente moduli cartacei."
+        },
+        "easyNavigation": {
+          "step": "5",
+          "title": "Navigazione Facile",
+          "description": "Ottieni indicazioni e sappi esattamente cosa aspettarti."
+        },
+        "trackYourImpact": {
+          "step": "6",
+          "title": "Traccia il Tuo Impatto",
+          "description": "Vedi la cronologia delle donazioni e le vite che hai aiutato a salvare."
+        }
+      },
+      "benefits": {
+        "title": "Semplice per Design",
+        "stats": {
+          "fiveMinutes": {
+            "stat": "5 minuti",
+            "label": "Per prenotare un appuntamento"
+          },
+          "zero": {
+            "stat": "Zero",
+            "label": "Moduli cartacei"
+          },
+          "hundredPercent": {
+            "stat": "100%",
+            "label": "Esperienza digitale"
+          }
+        }
+      }
+    },
+    "overallBenefits": {
+      "badge": "Il Risultato",
+      "title": "Semplice per Tutti",
+      "description": "Da processi complessi a esperienze semplificate che funzionano per tutti.",
+      "impact": {
+        "title": "L'Impatto",
+        "metrics": {
+          "adminTime": {
+            "value": "80%",
+            "label": "Riduzione del tempo amministrativo"
+          },
+          "schedulingConflicts": {
+            "value": "90%",
+            "label": "Meno conflitti di programmazione"
+          },
+          "donorSatisfaction": {
+            "value": "95%",
+            "label": "Tasso di soddisfazione dei donatori"
+          }
+        }
+      }
+    },
+    "cta": {
+      "badge": "Vedilo in azione",
+      "title": "Sperimenta la Semplificazione",
+      "description": "Vedi come trasformiamo processi complessi in flussi di lavoro semplici e automatizzati. Guarda ore di lavoro manuale diventare minuti di automazione senza sforzo.",
+      "button": "Vedi Demo"
+    }
+  },
+  "howItWorks": {
+    "hero": {
+      "badge": "Processo di Implementazione",
+      "title": "4 Passi Semplici per Semplificare la Gestione delle Donazioni di Sangue",
+      "description": "Gestiamo tutta la configurazione—tu ti concentri sul salvare vite."
+    },
+    "steps": {
+      "step1": {
+        "timeframe": "Settimana 1",
+        "title": "Onboarding Senza Problemi",
+        "description": "Configuriamo tutto per te—pronto all'uso dal primo giorno.",
+        "details": [
+          "Configura i tuoi centri e le sedi di donazione",
+          "Imposta i limiti di capacità per ogni sede per te",
+          "Definisci orari e programmi operativi",
+          "Importa il tuo database donatori esistente (supporto CSV/Excel)"
+        ]
+      },
+      "step2": {
+        "timeframe": "Settimana 1-2",
+        "title": "Personalizza i Tuoi Flussi di Lavoro",
+        "description": "Funziona subito, personalizzabile quando necessario.",
+        "details": [
+          "Funziona subito con flussi di lavoro pre-configurati",
+          "Le definizioni di flusso aperte consentono personalizzazione se necessario",
+          "Stabilisci i criteri di idoneità per te",
+          "Configura i modelli di notifica"
+        ]
+      },
+      "step3": {
+        "timeframe": "Settimana 2",
+        "title": "Lancio e Invito Donatori",
+        "description": "Intuitivo e semplice—nessuna competenza tecnica necessaria.",
+        "details": [
+          "Invia inviti di iscrizione via email/SMS",
+          "Fornisci ai donatori link di accesso al portale",
+          "Forma il tuo staff sull'uso della piattaforma",
+          "Ti aiutiamo ad andare online con i primi appuntamenti"
+        ]
+      },
+      "step4": {
+        "timeframe": "In Corso",
+        "title": "Gestisci, Ottimizza ( Indicatori di Prestazione Chiave)",
+        "description": "Gestisci i donatori, monitora i KPI e mantieni la conformità—tutto in un unico posto.",
+        "details": [
+          "Gestisci i tuoi donatori durante l'intero ciclo di vita",
+          "Genera KPI come output della nostra gestione e monitoraggio",
+          "Esegui audit di qualità per mantenere conformità e standard",
+          "Monitora e ottimizza continuamente le operazioni per prestazioni ottimali"
+        ]
+      },
+      "stepLabel": "Passo"
+    },
+    "faq": {
+      "badge": "Domande Frequenti",
+      "title": "Domande sull'Implementazione",
+      "description": "Tutto quello che devi sapere per iniziare con Vitalita",
+      "questions": {
+        "setupTime": {
+          "question": "Quanto tempo richiede la configurazione?",
+          "answer": "Vitalita completa la configurazione iniziale per te in 1-2 settimane. La tempistica dipende dalla complessità della struttura della tua organizzazione e dal numero di centri di donazione che dobbiamo configurare. Il nostro team gestisce tutto per garantire un processo di configurazione fluido ed efficiente con uno sforzo minimo da parte tua."
+        },
+        "technicalExpertise": {
+          "question": "Abbiamo bisogno di competenze tecniche?",
+          "answer": "Non sono necessarie competenze tecniche. Vitalita gestisce tutta la configurazione tecnica per te. Il nostro team di implementazione fa tutto il lavoro pesante, fornisce formazione completa per tutti i membri del personale e offre supporto continuo per garantire che il tuo team si senta sicuro nell'usare la piattaforma. È necessario pochissimo sforzo da parte della tua organizzazione - ti diamo tutto pronto all'uso."
+        },
+        "support": {
+          "question": "Che tipo di supporto fornite?",
+          "answer": "Forniamo un processo di onboarding senza problemi per i nuovi clienti. Il nostro team di implementazione dedicato gestisce tutta la configurazione tecnica, mentre i nostri responsabili del successo ti guidano in ogni fase. Offriamo formazione completa per il personale, supporto continuo e assistenza per l'ottimizzazione. Gestiamo la complessità così puoi concentrarti su ciò che conta di più."
+        },
+        "staffRequired": {
+          "question": "Quante persone sono necessarie per gestire Vitalita dalla vostra parte?",
+          "answer": "Una volta che le informazioni sui donatori esistenti sono disponibili, avremo bisogno di:\n• Il numero di slot disponibili su base oraria per date specifiche\n• 2 persone in loco - una persona per compilare le cose e una persona per approvare le modifiche"
+        },
+        "dataMigration": {
+          "question": "Possiamo migrare i dati dei donatori esistenti?",
+          "answer": "Sì! Vitalita gestisce l'importazione dei tuoi database di donatori esistenti in formati CSV ed Excel. Il nostro team mappa i tuoi campi dati esistenti al nostro sistema e garantisce una migrazione fluida. Gestiamo informazioni sui donatori, cronologia delle donazioni, preferenze di contatto e altro ancora. La migrazione dei dati viene generalmente completata durante la fase di configurazione - tutto fatto da noi."
+        }
+      }
+    },
+    "cta": {
+      "badge": "Pronto per iniziare?",
+      "title": "Vedi il Tuo Piano di Implementazione",
+      "description": "Vedi come gestiamo onboarding, flussi di lavoro e ottimizzazione—su misura per le tue esigenze. Facciamo il lavoro pesante, tu ti concentri sul salvare vite.",
+      "tags": {
+        "setupTimeline": "Tempistica di configurazione di 1-2 settimane",
+        "noTechnicalExpertise": "Nessuna competenza tecnica necessaria",
+        "fullSupport": "Supporto completo all'implementazione"
+      },
+      "button": "Richiedi Demo di Implementazione"
+    },
+    "mockups": {
+      "organizationSetup": "Configurazione Organizzazione",
+      "donationCenters": "Centri di Donazione",
+      "configured": "configurati",
+      "capacity": "Capacità",
+      "hours": "Orari",
+      "workflowBuilder": "Costruttore di Flussi di Lavoro",
+      "eligibilityCriteria": "Criteri di Idoneità",
+      "healthScreening": "Screening Sanitario",
+      "notificationTemplates": "Modelli di Notifica",
+      "userRoles": "Ruoli Utente",
+      "active": "attivo",
+      "pending": "in attesa",
+      "invitationsSent": "Inviti Inviati",
+      "totalInvitations": "Inviti Totali",
+      "emailCampaign": "Campagna Email",
+      "smsBlast": "Invio SMS",
+      "portalAccess": "Accesso Portale",
+      "performanceMetrics": "Metriche di Prestazione",
+      "appointments": "Appuntamenti",
+      "utilization": "Utilizzo",
+      "weeklyCapacity": "Capacità Settimanale",
+      "monday": "Lun",
+      "tuesday": "Mar",
+      "wednesday": "Mer",
+      "thursday": "Gio",
+      "friday": "Ven",
+      "saturday": "Sab",
+      "sunday": "Dom"
+    }
+  },
+  "home": {
+    "hero": {
+      "costOfInefficiency": "Il Costo dell'Inefficienza",
+      "everyLifeMatters": "Ogni Vita Conta.",
+      "everySecondCounts": "Ogni Secondo Conta.",
+      "subtitle": "Senza Vitalita, perdi tempo—e il tempo è vita.",
+      "infographicAlt": "Vitalita Rivoluziona la Donazione di Sangue - Infografica Circolare",
+      "missionStory": {
+        "title": "La Nostra Missione, La Nostra Storia",
+        "clickToRead": "Clicca per leggere la storia che ha ispirato la nostra missione",
+        "storyTitle": "Una Storia Che Non Dovrebbe Mai Accadere",
+        "storySubtitle": "Impatto reale di sistemi disconnessi",
+        "paragraph1": "Maria, una madre di 34 anni con due figli, è stata portata al pronto soccorso dopo un grave incidente. Il suo gruppo sanguigno—O negativo—era critico e urgentemente necessario.",
+        "paragraph2": "L'ospedale ha contattato la banca del sangue regionale. Un coordinatore ha controllato manualmente tre fogli di calcolo separati, ha fatto sei telefonate e ha impiegato 47 minuti per cercare di localizzare unità di O negativo disponibili.",
+        "paragraph3": "Nel frattempo, tre donatori O negativo erano stati programmati per la donazione quello stesso giorno—ma a causa di doppie prenotazioni in un sistema cartaceo, due non si sono mai presentati. Il terzo era in un'unità mobile dall'altra parte della città, ma il coordinatore non poteva verificare la disponibilità in tempo reale.",
+        "tragedyMessage": "Maria non ha ricevuto la trasfusione di sangue in tempo.",
+        "tragedySubtext": "La sua famiglia ha poi appreso che il sangue compatibile era disponibile—solo a 12 chilometri di distanza.",
+        "conclusion": "Questa tragedia non è stata causata da una carenza di sangue o da donatori disposti. È stata causata da sistemi inefficienti, coordinamento manuale e dati disconnessi."
+      },
+      "whatYouLose": {
+        "title": "Cosa Perde la Tua Organizzazione Senza Vitalita",
+        "losses": {
+          "operationalWaste": {
+            "title": "Spreco Operativo",
+            "description": "I processi manuali consumano tempo e risorse del personale",
+            "stat": "40+ ore/settimana in coordinamento"
+          },
+          "capacityLoss": {
+            "title": "Perdita di Capacità",
+            "description": "Doppie prenotazioni e gap riducono l'efficienza della raccolta",
+            "stat": "31% degli slot sottoutilizzati"
+          },
+          "livesAtRisk": {
+            "title": "Vite a Rischio",
+            "description": "Le risposte ritardate costano minuti preziosi quando ogni secondo conta",
+            "stat": "Media 2,3 ore per localizzare sangue critico"
+          },
+          "donorAttrition": {
+            "title": "Attrito dei Donatori",
+            "description": "Il coordinamento scadente porta a mancate presentazioni e perdita di fiducia",
+            "stat": "22% dei donatori non torna mai"
+          }
+        }
+      },
+      "cta": {
+        "title": "Non lasciare che un'altra vita venga persa a causa di sistemi inefficienti.",
+        "description": "Vitalita garantisce che quando qualcuno come Maria ha bisogno di sangue, venga trovato e consegnato in minuti—non ore.",
+        "scheduleDemo": "Prenota una Demo",
+        "seeHowItWorks": "Vedi Come Funziona"
+      }
+    },
+    "problemStatement": {
+      "badge": "La Sfida",
+      "title": "Addio Fogli di Calcolo, Ciao Intelligenza",
+      "description": "Le organizzazioni italiane di sangue gestiscono migliaia di donatori, team medici rotanti e unità mobili—spesso con sistemi disconnessi. Vitalita unifica persone, processi e dati in un unico centro di comando.",
+      "painPoints": {
+        "compliancePressure": {
+          "title": "Pressione normativa",
+          "description": "GDPR, standard ISO e normative sanitarie regionali richiedono tracciabilità e gestione sicura dei dati dei donatori."
+        },
+        "fragmentedWorkflows": {
+          "title": "Flussi di lavoro frammentati",
+          "description": "I capitoli regionali gestiscono fogli di calcolo, moduli cartacei e strumenti di prenotazione legacy, portando a doppie prenotazioni e abbandoni dei donatori."
+        },
+        "limitedVisibility": {
+          "title": "Visibilità limitata",
+          "description": "La leadership manca di una visione in tempo reale delle prestazioni della campagna, dei rinvii e della capacità, rendendo la pianificazione reattiva invece che proattiva."
+        }
+      }
+    },
+    "solutionOverview": {
+      "badge": "La Nostra Promessa",
+      "title": "Nato in Italia. Costruito per Tutti.",
+      "description": "Vitalita è iniziata con le complesse esigenze delle più grandi organizzazioni di donatori italiane. Oggi offre programmazione, outreach e visibilità operativa alimentate dall'IA che qualsiasi servizio sanitario può implementare in giorni — in modo sicuro, affidabile e su scala.",
+      "benefits": {
+        "oneOperatingSystem": {
+          "title": "Un sistema operativo",
+          "description": "Configurabile per strutture regionali, supportando i capitoli provinciali AVIS."
+        },
+        "intelligentAutomation": {
+          "title": "Automazione intelligente",
+          "description": "Ritmi di outreach adattivi, follow-up automatizzati dei donatori e corrispondenza della disponibilità riducono il lavoro manuale fino al 40%."
+        },
+        "trustworthyExperience": {
+          "title": "Esperienza affidabile",
+          "description": "Sicurezza pronta per ISO27001, tracciamento del consenso conforme al GDPR e audit trail completi mantengono donatori e regolatori fiduciosi."
+        }
+      }
+    },
+    "features": {
+      "badge": "Pilastri della Piattaforma",
+      "title": "Costruito per organizzazioni complesse di donatori",
+      "description": "Vitalita collega ogni team—dal reclutamento alla trasfusione—con un sistema operativo moderno che mantiene i donatori coinvolti e l'approvvigionamento di sangue affidabile.",
+      "featureList": {
+        "smartScheduling": {
+          "title": "Programmazione Intelligente",
+          "description": "Orchestrare flebotomia, volontari e unità mobili con pianificazione della capacità assistita dall'IA che rispetta le normative regionali e il ritmo delle donazioni."
+        },
+        "donorManagement": {
+          "title": "Gestione Donatori",
+          "description": "Mantenere un unico record del donatore con finestre di idoneità, storia delle donazioni, corrispondenza del gruppo sanguigno e gestione automatizzata dei rinvii."
+        },
+        "multiChannelCommunication": {
+          "title": "Comunicazione Multi-Canale",
+          "description": "Attivare campagne su SMS, Telegram, email e voce con modelli di messaggistica localizzati allineati ai requisiti di privacy italiani."
+        },
+        "actionableAnalytics": {
+          "title": "Analisi Azionabili",
+          "description": "Monitorare i KPI tra le province, misurare la conversione delle campagne e condividere insight pronti per i dirigenti in secondi—non fogli di calcolo."
+        }
+      }
+    },
+    "socialProof": {
+      "badge": "Fidato dalle principali organizzazioni italiane",
+      "organizations": {
+        "avisNazionale": {
+          "name": "AVIS Nazionale",
+          "description": "Coordinamento nazionale e integrazioni regionali",
+          "highlight": "In evidenza Partner"
+        }
+      }
+    },
+    "cta": {
+      "badge": "Prossimi Passi",
+      "title": "Pronto per elevare ogni esperienza di donazione?",
+      "description": "Unisciti alle organizzazioni italiane che modernizzano le loro operazioni con Vitalita. Orchestriamo reclutamento, logistica e fedeltà dei donatori con una piattaforma adattiva.",
+      "button": "Parlaci!",
+      "tagline": "Fidato mano nella mano con organizzazioni di donatori in tutta Italia"
     }
   }
 }

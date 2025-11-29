@@ -1,0 +1,526 @@
+{
+  "navigation": {
+    "home": "Home",
+    "bookAppointment": "Book Appointment",
+    "myAppointments": "My Appointments",
+    "help": "Help",
+    "logIn": "Log In",
+    "toggleMenu": "Toggle navigation menu",
+    "closeMenu": "Close menu",
+    "openMenu": "Open menu"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "back": "Back",
+    "next": "Next",
+    "close": "Close",
+    "submit": "Submit"
+  },
+  "language": {
+    "selectLanguage": "Select Language",
+    "english": "English",
+    "italian": "Italiano"
+  },
+  "footer": {
+    "help": "Help",
+    "privacy": "Privacy",
+    "contact": "Contact",
+    "backToVitalita": "Back to Vitalita.org"
+  },
+  "hero": {
+    "title": "Schedule Your Donation, ",
+    "titleHighlight": "Save Lives",
+    "description": "Book your blood or plasma donation online in minutes. Join thousands of donors making a difference every day.",
+    "donorRegistrationTitle": "Donor Registration & Login",
+    "donorRegistrationDescription": "New to Vitalita? Register as a donor or login to your existing account to manage appointments.",
+    "firstTimeDonating": "First Time Donating?",
+    "bookAppointmentNow": "Book your appointment Now",
+    "imageAlt1": "Medical professionals transporting a patient",
+    "imageAlt2": "Healthcare professional comforting a patient",
+    "imageAlt3": "Medical team celebrating with a young patient"
+  },
+  "steps": {
+    "title": "Your 4 Easy Steps",
+    "step1Title": "Choose Your Center",
+    "step1Text": "Find a location near you",
+    "step2Title": "Pick a Time",
+    "step2Text": "Select a day and time that works for you",
+    "step3Title": "Confirm",
+    "step3Text": "You'll get a reminder before your appointment",
+    "step4Title": "Donate",
+    "step4Text": "Each donation can help up to 3 people"
+  },
+  "firstTimeDonor": {
+    "title": "New to Donating?",
+    "intro": "We will guide you every step of the way.",
+    "whatHappensTitle": "What Happens",
+    "fact1": "Check-in is friendly and quick.",
+    "fact2": "You can bring a friend or family member.",
+    "fact3": "Snacks and water are waiting after you donate.",
+    "whoCanDonateTitle": "Who Can Donate",
+    "eligibility1": "You feel healthy today.",
+    "eligibility2": "You are at least 16 (with consent) or 17+.",
+    "eligibility3": "You weigh 110 pounds or more.",
+    "learnMore": "Learn More"
+  },
+  "appointments": {
+    "title": "My Appointments",
+    "description": "Log in to see your upcoming visits, change times, or cancel.",
+    "logInToContinue": "Log In to Continue",
+    "note": "Need to make a change right away? Call us at 1-800-123-4567."
+  },
+  "help": {
+    "title": "Need Help?",
+    "description": "We are happy to guide you. Choose the best way to reach us.",
+    "viewCommonQuestions": "View Common Questions",
+    "callUs": "Call Us",
+    "supportHours": "Support hours: 8 AM – 8 PM, every day.",
+    "page": {
+      "heroTitle": "How Can We Help You?",
+      "heroDescription": "Find answers to common questions about donating blood",
+      "searchPlaceholder": "Type your question here",
+      "categories": {
+        "before": "Before Donating",
+        "during": "During Your Appointment",
+        "after": "After Donating",
+        "appointment": "Appointment Questions"
+      },
+      "noResults": "No questions found matching your search.",
+      "clearSearch": "Clear search",
+      "contact": {
+        "title": "Can't find what you're looking for?",
+        "description": "We're here to help. Reach out to us using any of these methods:",
+        "callUs": "Call Us",
+        "telegram": "Telegram",
+        "telegramValue": "Chat with us",
+        "email": "Email",
+        "responseTime": "We usually respond within 1 hour"
+      },
+      "voiceHelp": {
+        "button": "Need help? Start voice chat",
+        "close": "Close voice chat",
+        "ready": "Ready to help. What's your question?",
+        "placeholder": "Ask your question...",
+        "send": "Send"
+      },
+      "questions": {
+        "before": {
+          "whoCanDonate": {
+            "question": "Who can donate blood?",
+            "answer": "Most healthy adults can donate blood. You need to be at least 16 years old (with parental consent) or 17 and older, weigh at least 110 pounds, and feel healthy on the day of donation. Our team will review your health history to make sure it's safe for you to donate."
+          },
+          "whatToEat": {
+            "question": "What should I eat before donating?",
+            "answer": "Have a good meal and drink plenty of water before your appointment. Avoid fatty foods right before donating, as they can affect some of our tests. Staying hydrated is especially important—water helps make the donation process smoother."
+          },
+          "medications": {
+            "question": "Can I donate if I'm taking medicine?",
+            "answer": "Many medications are perfectly fine, and you can still donate. When you arrive, let our team know what medications you're taking. We'll check to make sure everything is safe. In most cases, common medications don't prevent you from donating."
+          },
+          "howLong": {
+            "question": "How long does a donation take?",
+            "answer": "The actual blood donation takes about 10-15 minutes. Your entire visit, including check-in, a quick health screening, the donation itself, and a short rest afterward, usually takes about 45 minutes total. We want you to feel comfortable and not rushed."
+          },
+          "willItHurt": {
+            "question": "Will it hurt?",
+            "answer": "Most people feel only a brief pinch when the needle is inserted, similar to a routine blood test. After that, you shouldn't feel any pain. Our staff are experienced and gentle, and we'll make sure you're comfortable throughout the process."
+          }
+        },
+        "during": {
+          "whatToBring": {
+            "question": "What should I bring?",
+            "answer": "Bring a valid photo ID, such as a driver's license or passport. It's also helpful to bring a water bottle to stay hydrated, and you might want to bring something light to eat afterward. Wear comfortable clothing with sleeves that can be rolled up easily."
+          },
+          "whenArrive": {
+            "question": "What happens when I arrive?",
+            "answer": "When you arrive, you'll check in at the front desk. We'll ask you to fill out a quick health questionnaire, and then one of our team members will take you through a brief screening process. This includes checking your temperature, pulse, and hemoglobin levels. It's all very quick and straightforward."
+          },
+          "afterDonating": {
+            "question": "What do I do after donating?",
+            "answer": "After donating, we'll ask you to rest for about 10-15 minutes and have a snack and something to drink. This helps your body adjust and makes sure you feel good before you leave. Take it easy for the rest of the day and avoid heavy lifting or intense exercise."
+          },
+          "driveHome": {
+            "question": "Can I drive home after?",
+            "answer": "Yes, most people can drive home after donating. However, if you feel lightheaded or unwell, please let our team know. We'll make sure you're feeling okay before you leave, and we can arrange for someone to pick you up if needed. It's always better to be safe."
+          }
+        },
+        "after": {
+          "howWillFeel": {
+            "question": "How will I feel after?",
+            "answer": "Most people feel great after donating! You might feel a little tired, which is normal. Make sure to drink plenty of fluids, eat a good meal, and get some rest. Some people feel energized knowing they've helped save lives. If you have any concerns, don't hesitate to reach out to us."
+          },
+          "whenDonateAgain": {
+            "question": "When can I donate again?",
+            "answer": "You can donate whole blood every 8 weeks (56 days). This gives your body enough time to replenish the blood you donated. We'll remind you when you're eligible to donate again, and you can always check your donation history in your account."
+          },
+          "feelUnwell": {
+            "question": "What if I feel unwell?",
+            "answer": "If you feel unwell after donating, please contact us right away. You can call our support line or reach out through our website. Most reactions are minor and resolve quickly, but we're here to help if you need us. Don't hesitate to get in touch—your wellbeing is our priority."
+          },
+          "bloodUsed": {
+            "question": "How is my blood used?",
+            "answer": "Your donated blood goes through careful testing and processing, then it's used to help patients who need it. This includes people having surgery, those being treated for cancer, accident victims, and patients with chronic illnesses. One donation can help save up to three lives. Thank you for making a difference!"
+          }
+        },
+        "appointment": {
+          "changeAppointment": {
+            "question": "How do I change my appointment?",
+            "answer": "You can change your appointment easily through your account on our website. Just go to \"My Appointments\" and select the appointment you want to change. You'll be able to choose a new date and time that works better for you. If you need help, give us a call and we'll assist you."
+          },
+          "cancelAppointment": {
+            "question": "What if I need to cancel?",
+            "answer": "You can cancel your appointment at any time through your account, or by calling us. We understand that sometimes plans change. If you need to cancel, please let us know as soon as possible so we can offer the slot to someone else. You can always reschedule for another time that works for you."
+          },
+          "noReminder": {
+            "question": "I didn't get a reminder—what do I do?",
+            "answer": "We send reminders via SMS and email the day before your appointment. If you didn't receive one, please check that your contact information is correct in your account. You can also check your appointment details online at any time. If you're still having issues, give us a call and we'll help you sort it out."
+          },
+          "bringSomeone": {
+            "question": "Can I bring someone with me?",
+            "answer": "Yes, you're welcome to bring a friend or family member with you. They can wait in our comfortable waiting area while you donate. Having someone with you can make the experience more relaxing, especially if it's your first time donating."
+          }
+        }
+      }
+    }
+  },
+  "booking": {
+    "steps": {
+      "selectCenter": "Select Center",
+      "dateTime": "Date & Time",
+      "yourDetails": "Your Details",
+      "healthCheck": "Health Check",
+      "confirmation": "Confirmation"
+    },
+    "step1": {
+      "title": "Where would you like to donate?",
+      "subtitleDefault": "Your default center is {{center}}. You can select a different center if needed.",
+      "subtitleNoDefault": "Choose the AVIS center that is most convenient for you.",
+      "stepTitle": "Step 1: Select Center",
+      "stepDescription": "Choose your preferred donation center",
+      "loadingCenters": "Loading centers...",
+      "postalCodeLabel": "Enter your postal code to see nearby centers",
+      "postalCodePlaceholder": "e.g. 20122",
+      "clear": "Clear",
+      "postalCodeNote": "We'll always show you the closest options available today.",
+      "selectThisCenter": "Select this center",
+      "noCentersFound": "No centers found. Please try again later.",
+      "yourDefaultCenter": "Your Default Center",
+      "kmAway": "{{distance}} km away",
+      "postalCode": "Postal code {{code}}",
+      "nextAvailable": "Next available: {{date}}",
+      "selected": "Selected",
+      "select": "Select"
+    },
+    "step2": {
+      "title": "When can you donate?",
+      "subtitle": "Pick the date and time that fits your schedule.",
+      "stepTitle": "Step 2: Date & Time",
+      "stepDescription": "Select your preferred appointment date and time",
+      "donationType": "Donation Type",
+      "bloodDonation": "Blood Donation",
+      "plasmaDonation": "Plasma Donation",
+      "slotError": "Looks like that time just filled up. Let's find another slot that works for you.",
+      "alternativeSlotsTitle": "Here are some fresh openings you can grab right now:",
+      "onlySpotsLeft": "Only {{count}} spots left!",
+      "pleaseSelectCenter": "Please select a donation center first.",
+      "noAvailableSlots": "No Available Slots",
+      "noSlotsFound": "No available slots found for {{type}} donation at this center.",
+      "tryDifferentCenter": "Try Different Center",
+      "tryOtherDonation": "Try {{type}} Donation}}",
+      "requestCallback": "Request a Callback",
+      "prevMonth": "< Prev Month",
+      "nextMonth": "Next Month >",
+      "today": "Today",
+      "selectDatePrompt": "👆 Please select a date above to see available time slots",
+      "selectTime": "Select a time",
+      "forDate": "for {{date}}",
+      "noTimeSlots": "No Time Slots Available",
+      "noTimeSlotsMessage": "No time slots available for this date. Please select another date.",
+      "selectDifferentDate": "Select Different Date",
+      "joinWaitlist": "Join Waitlist",
+      "requestAlternativeDate": "Request Alternative Date",
+      "morning": "Morning",
+      "lunch": "Lunch",
+      "afternoon": "Afternoon",
+      "booked": "Booked",
+      "left": "{{count}} left",
+      "available": "Available",
+      "needDifferentTime": "Need a different time?",
+      "requestCallbackLink": "request a callback",
+      "joinWaitlistLink": "join our waitlist",
+      "forPreferredTimes": "for preferred times."
+    },
+    "step3": {
+      "title": "Tell us about yourself",
+      "subtitle": "We'll send reminders and keep you updated about your appointment.",
+      "stepTitle": "Step 3: Your Details",
+      "stepDescription": "Provide your contact information",
+      "autofillMessage": "Welcome back! We pre-filled your information. Give it a quick check before you continue.",
+      "gotIt": "Got it",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "e.g. Giulia Rossi",
+      "dateOfBirth": "Date of Birth",
+      "phoneNumber": "Phone Number",
+      "phonePlaceholder": "e.g. 333 555 1212",
+      "phoneHint": "We'll send you an SMS reminder.",
+      "email": "Email",
+      "optional": "(optional)",
+      "emailPlaceholder": "We'll send you a confirmation",
+      "hasDonatedBefore": "Have you donated before?",
+      "yesReturning": "Yes, I'm a returning donor",
+      "noFirstTime": "No, this is my first time",
+      "required": "*",
+      "fullNameRequired": "Full name is required",
+      "dobRequired": "Date of birth is required",
+      "phoneRequired": "Phone number is required",
+      "hasDonatedBeforeRequired": "Please let us know if you have donated before",
+      "pleaseCorrectErrors": "Please correct the errors below"
+    },
+    "step4": {
+      "title": "Just a few quick questions",
+      "subtitle": "These help us keep everyone safe.",
+      "stepTitle": "Step 4: Health Check",
+      "stepDescription": "Answer a few health screening questions",
+      "recentDonation": "Have you donated blood in the last 8 weeks?",
+      "recentDonationHelp": "You need to wait 8 weeks between blood donations.",
+      "feelsHealthy": "Do you feel healthy today?",
+      "feelsHealthyHelp": "Feeling unwell? We can reschedule so you're at your best.",
+      "medications": "Are you currently taking any medications?",
+      "medicationsHelp": "Some medicines are okay—let us know so we can confirm.",
+      "travel": "Have you traveled outside Italy recently?",
+      "travelHelp": "Certain destinations may require a short waiting period.",
+      "yes": "Yes",
+      "no": "No",
+      "pleaseAnswerAll": "Please answer all the health questions."
+    },
+    "step5": {
+      "title": "Your appointment is confirmed! 🎉",
+      "subtitle": "You're all set. Here's everything you need to know.",
+      "stepTitle": "Step 5: Confirmation",
+      "stepDescription": "Review and confirm your appointment details",
+      "appointmentDetails": "Appointment details",
+      "getDirections": "Get directions",
+      "addToCalendar": "Add to Calendar",
+      "share": "Share",
+      "shareMessage": "I booked a donation with Vitalita on {{date}} at {{time}} at {{center}}. Want to join me?",
+      "shareOnTelegram": "Share on Telegram",
+      "shareViaEmail": "Share via Email",
+      "reminderMessage": "We'll send you a reminder the day before your appointment.",
+      "whatToBring": "What to bring",
+      "whatToBring1": "Valid photo ID",
+      "whatToBring2": "Hydration (water bottle is perfect)",
+      "whatToBring3": "Something to eat afterwards",
+      "whatToExpect": "What to expect",
+      "whatToExpectText": "The entire visit usually takes about 45 minutes. Our team will guide you through each step and answer any questions. Wear comfortable clothing with sleeves that can be rolled up.",
+      "done": "Done"
+    },
+    "validation": {
+      "chooseCenter": "Please choose a donation center to continue.",
+      "selectDateAndTime": "Please select a date and an available time slot.",
+      "selectDateTimeCenter": "Please select a date, time, and center.",
+      "loginRequired": "Please log in to book an appointment.",
+      "failedToBook": "Failed to book appointment. Please try again.",
+      "appointmentCreatedIssue": "Appointment created, but there was an issue updating slot availability. Please contact support.",
+      "slotFull": "This slot is now full. Please select another time.",
+      "slotBookedByOther": "Slot was just booked by someone else. Please select another time.",
+      "errorOccurred": "An error occurred. Please try again.",
+      "failedToLoadCenters": "Failed to load donation centers. Please try again.",
+      "errorLoadingCenters": "An error occurred while loading centers. Please try again."
+    },
+    "buttons": {
+      "back": "Back",
+      "continueToDateTime": "Continue to Date & Time",
+      "selectDateTime": "Select Date & Time",
+      "reviewAppointment": "Review Appointment",
+      "continueToHealthCheck": "Continue to Health Check",
+      "confirmAppointment": "Confirm Appointment",
+      "processing": "Processing..."
+    }
+  },
+  "myAppointments": {
+    "login": {
+      "title": "Log in to see your appointments",
+      "subtitle": "Enter your email or phone number and we'll send you a one-time code.",
+      "email": "Email",
+      "phoneNumber": "Phone number",
+      "phoneHint": "Use the mobile number you shared with us when booking.",
+      "sendCode": "Send me a code",
+      "enterCode": "Enter the code sent to you",
+      "codePlaceholder": "Six-digit code",
+      "didntGetIt": "Didn't get it?",
+      "tryAgain": "Try again",
+      "verifyAndContinue": "Verify and continue",
+      "codeSent": "We sent a one-time code to {{email}}. Enter it above to continue.",
+      "codeSentGeneric": "We sent a one-time code to your contact details. Enter it above to continue.",
+      "accountNotFound": "We couldn't find an account with those details.",
+      "incorrectCode": "That code is not correct. Please try again.",
+      "signedIn": "You are now signed in."
+    },
+    "loading": {
+      "title": "Loading your appointments...",
+      "subtitle": "Please wait while we fetch your data."
+    },
+    "welcome": {
+      "title": "Welcome back, {{name}}!",
+      "subtitle": "Here's a quick look at your donations and what's coming up next."
+    },
+    "upcoming": {
+      "title": "Upcoming appointments",
+      "subtitle": "Need to make a change? You can manage everything here.",
+      "empty": {
+        "title": "You don't have any upcoming appointments",
+        "description": "Book your next visit in just a few taps.",
+        "bookNow": "Book Now"
+      },
+      "countdown": {
+        "passed": "Your appointment date has passed",
+        "today": "Your appointment is today",
+        "oneDay": "Your appointment is in 1 day",
+        "days": "Your appointment is in {{days}} days"
+      },
+      "actions": {
+        "getDirections": "Get Directions",
+        "addToCalendar": "Add to Calendar",
+        "changeAppointment": "Change Appointment",
+        "cancel": "Cancel"
+      },
+      "cancelConfirmation": {
+        "message": "Are you sure you want to cancel this appointment? Availability can fill up quickly.",
+        "yesCancel": "Yes, cancel it",
+        "keepIt": "Keep it"
+      },
+      "cancelSuccess": "Your appointment has been cancelled.",
+      "cancelError": "Failed to cancel appointment. Please try again."
+    },
+    "history": {
+      "title": "Donation history",
+      "subtitle": "You've helped save up to {{count}} lives. Thank you!",
+      "empty": {
+        "title": "You haven't donated with us yet",
+        "description": "We can't wait to welcome you for your first donation!"
+      },
+      "thankYou": "Thank you for donating!",
+      "eligibilityReminder": "Eligibility reminder:",
+      "canDonateAgain": "You can donate again after {{date}}."
+    },
+    "cta": {
+      "readyToDonate": "Ready to donate again?",
+      "updateInformation": "Need to update your information?"
+    },
+    "calendar": {
+      "summary": "Blood Donation Appointment - {{location}}",
+      "description": "Please arrive 10 minutes early and bring a valid ID."
+    },
+    "unknownCenter": "Unknown Center",
+    "defaultDonorName": "Donor"
+  },
+  "registration": {
+    "title": "Donor Registration",
+    "back": "Back",
+    "backAriaLabel": "Go back to previous page",
+    "success": {
+      "title": "Registration Submitted Successfully!",
+      "message": "Your registration has been submitted for review. AVIS staff will review and activate your account. The process takes about 45 days. Once you are verified as a donor, you'll receive a notification by email."
+    },
+    "privacy": {
+      "title": "Privacy & Security",
+      "description": "Your personal information will be securely hashed and the original data will not be stored. This ensures GDPR compliance while maintaining secure authentication."
+    },
+    "form": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "dateOfBirth": "Date of Birth",
+      "donorId": "Donor ID",
+      "email": "Email Address",
+      "required": "*",
+      "requiredAriaLabel": "required",
+      "firstNamePlaceholder": "Enter your first name",
+      "lastNamePlaceholder": "Enter your last name",
+      "donorIdPlaceholder": "Enter your 5-digit alphanumeric donor ID",
+      "emailPlaceholder": "Enter your email address",
+      "ageRequirement": "You must be at least 18 years old to donate",
+      "donorIdHint": "Enter the 5-digit alphanumeric ID provided by AVIS",
+      "emailHint": "We'll send a verification email to this address"
+    },
+    "validation": {
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "dateOfBirthRequired": "Date of birth is required",
+      "donorIdRequired": "Donor ID is required",
+      "emailRequired": "Email address is required",
+      "donorIdFormatError": "Donor ID must be exactly 5 alphanumeric characters",
+      "emailFormatError": "Please enter a valid email address",
+      "ageRequirementError": "You must be at least 18 years old to donate",
+      "registrationFailed": "Registration failed. Please try again or contact AVIS staff for assistance.",
+      "accountExists": "A donor account already exists with these details. Please contact AVIS staff for assistance.",
+      "emailExists": "An account with this email address already exists. Please use a different email or contact AVIS staff for assistance.",
+      "genericFailure": "Registration failed. Please try again."
+    },
+    "warning": {
+      "title": "Before You Continue",
+      "doubleCheckTitle": "Double-check details",
+      "doubleCheckMessage": "Double-check these details before submitting — they cannot be changed once saved:",
+      "detailFirstName": "First Name",
+      "detailLastName": "Last Name",
+      "detailDateOfBirth": "Date of Birth",
+      "detailDonorId": "Donor ID",
+      "verificationProcessTitle": "Verification Process",
+      "step1": "Submit registration form",
+      "step2": "AVIS staff will review and activate your account",
+      "step3": "The process takes about 45 days",
+      "step4": "Once you are verified as a donor, you'll receive a notification by email",
+      "step5": "Once you verify your email, you'll be able to create a 5-digit PIN to log into the system"
+    },
+    "submit": {
+      "button": "Submit Registration",
+      "submitting": "Submitting..."
+    }
+  },
+  "login": {
+    "title": "Donor Login",
+    "back": "Back",
+    "backAriaLabel": "Go back to previous page",
+    "form": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "dateOfBirth": "Date of Birth",
+      "donorId": "Donor ID",
+      "required": "*",
+      "requiredAriaLabel": "required",
+      "firstNamePlaceholder": "Enter your first name",
+      "lastNamePlaceholder": "Enter your last name",
+      "donorIdPlaceholder": "Enter your 5-digit alphanumeric donor ID",
+      "ageRequirement": "You must be at least 18 years old to donate",
+      "donorIdHint": "Enter the 5-digit alphanumeric ID provided by AVIS"
+    },
+    "validation": {
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "dateOfBirthRequired": "Date of birth is required",
+      "donorIdRequired": "Donor ID is required",
+      "donorIdFormatError": "Donor ID must be exactly 5 alphanumeric characters",
+      "dateOfBirthFormatError": "Please enter a valid date of birth"
+    },
+    "errors": {
+      "accountNotFound": "No account found with these details. Please check your information or register as a new donor.",
+      "loginFailed": "Login failed. Please try again or contact AVIS staff for assistance.",
+      "accountNotActive": "Your account is not active. Please contact AVIS staff for assistance.",
+      "accountNotActivated": "Your account is not yet activated. Please wait for AVIS staff approval. The process takes about 45 days.",
+      "emailNotVerified": "Please verify your email address before logging in. Check your email for the verification link."
+    },
+    "submit": {
+      "button": "Log In",
+      "loggingIn": "Logging in..."
+    },
+    "registerLink": {
+      "newToVitalita": "New to Vitalita?",
+      "registerAsDonor": "Register as a donor"
+    }
+  }
+}
+

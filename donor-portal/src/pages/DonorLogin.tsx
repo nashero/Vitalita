@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { generateDonorHashId } from '../utils/hash';
 
@@ -12,6 +13,7 @@ interface LoginFormData {
 
 const DonorLogin = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<LoginFormData>({
     firstName: '',
     lastName: '',
@@ -28,21 +30,21 @@ const DonorLogin = () => {
   };
 
   const validateForm = (): string | null => {
-    if (!formData.firstName.trim()) return 'First name is required';
-    if (!formData.lastName.trim()) return 'Last name is required';
-    if (!formData.dateOfBirth) return 'Date of birth is required';
-    if (!formData.donorId.trim()) return 'Donor ID is required';
+    if (!formData.firstName.trim()) return t('login.validation.firstNameRequired');
+    if (!formData.lastName.trim()) return t('login.validation.lastNameRequired');
+    if (!formData.dateOfBirth) return t('login.validation.dateOfBirthRequired');
+    if (!formData.donorId.trim()) return t('login.validation.donorIdRequired');
 
     // Validate Donor ID format (5-digit alphanumeric)
     const donorIdRegex = /^[A-Za-z0-9]{5}$/;
     if (!donorIdRegex.test(formData.donorId)) {
-      return 'Donor ID must be exactly 5 alphanumeric characters';
+      return t('login.validation.donorIdFormatError');
     }
 
     // Validate date of birth format
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(formData.dateOfBirth)) {
-      return 'Please enter a valid date of birth';
+      return t('login.validation.dateOfBirthFormatError');
     }
 
     return null;
@@ -78,34 +80,34 @@ const DonorLogin = () => {
 
       if (donorError) {
         if (donorError.code === 'PGRST116') {
-          setError('No account found with these details. Please check your information or register as a new donor.');
+          setError(t('login.errors.accountNotFound'));
         } else {
           console.error('Error checking donor:', donorError);
-          setError('Login failed. Please try again or contact AVIS staff for assistance.');
+          setError(t('login.errors.loginFailed'));
         }
         return;
       }
 
       if (!donorData) {
-        setError('No account found with these details. Please check your information or register as a new donor.');
+        setError(t('login.errors.accountNotFound'));
         return;
       }
 
       // Check if account is active
       if (!donorData.is_active) {
-        setError('Your account is not active. Please contact AVIS staff for assistance.');
+        setError(t('login.errors.accountNotActive'));
         return;
       }
 
       // Check if account is activated
       if (!donorData.account_activated) {
-        setError('Your account is not yet activated. Please wait for AVIS staff approval. The process takes about 45 days.');
+        setError(t('login.errors.accountNotActivated'));
         return;
       }
 
       // Check if email is verified
       if (!donorData.email_verified) {
-        setError('Please verify your email address before logging in. Check your email for the verification link.');
+        setError(t('login.errors.emailNotVerified'));
         return;
       }
 
@@ -118,7 +120,7 @@ const DonorLogin = () => {
       navigate('/appointments');
     } catch (err) {
       console.error('Login error:', err);
-      setError('Login failed. Please try again or contact AVIS staff for assistance.');
+      setError(t('login.errors.loginFailed'));
     } finally {
       setLoading(false);
     }
@@ -168,10 +170,10 @@ const DonorLogin = () => {
             type="button"
             onClick={handleBack}
             className="back-button"
-            aria-label="Go back to previous page"
+            aria-label={t('login.backAriaLabel')}
           >
             <span aria-hidden="true">←</span>
-            <span>Back</span>
+            <span>{t('login.back')}</span>
           </button>
 
           {/* Header */}
@@ -179,7 +181,7 @@ const DonorLogin = () => {
             <div className="registration-header-icon">
               <span aria-hidden="true">🔑</span>
             </div>
-            <h1>Donor Login</h1>
+            <h1>{t('login.title')}</h1>
           </div>
 
           {/* Form Content */}
@@ -195,7 +197,7 @@ const DonorLogin = () => {
               <div className="form-row">
                 <div className="form-field">
                   <label htmlFor="loginFirstName">
-                    First Name <span aria-label="required">*</span>
+                    {t('login.form.firstName')} <span aria-label={t('login.form.requiredAriaLabel')}>{t('login.form.required')}</span>
                   </label>
                   <div className="input-wrapper">
                     <span className="input-icon" aria-hidden="true">
@@ -208,7 +210,7 @@ const DonorLogin = () => {
                       onChange={(e) =>
                         handleInputChange('firstName', e.target.value.toUpperCase())
                       }
-                      placeholder="Enter your first name"
+                      placeholder={t('login.form.firstNamePlaceholder')}
                       disabled={loading}
                       required
                     />
@@ -220,7 +222,7 @@ const DonorLogin = () => {
 
                 <div className="form-field">
                   <label htmlFor="loginLastName">
-                    Last Name <span aria-label="required">*</span>
+                    {t('login.form.lastName')} <span aria-label={t('login.form.requiredAriaLabel')}>{t('login.form.required')}</span>
                   </label>
                   <div className="input-wrapper">
                     <span className="input-icon" aria-hidden="true">
@@ -233,7 +235,7 @@ const DonorLogin = () => {
                       onChange={(e) =>
                         handleInputChange('lastName', e.target.value.toUpperCase())
                       }
-                      placeholder="Enter your last name"
+                      placeholder={t('login.form.lastNamePlaceholder')}
                       disabled={loading}
                       required
                     />
@@ -244,7 +246,7 @@ const DonorLogin = () => {
               {/* Date of Birth */}
               <div className="form-field">
                 <label htmlFor="loginDateOfBirth">
-                  Date of Birth <span aria-label="required">*</span>
+                  {t('login.form.dateOfBirth')} <span aria-label={t('login.form.requiredAriaLabel')}>{t('login.form.required')}</span>
                 </label>
                 <div className="input-wrapper">
                   <span className="input-icon" aria-hidden="true">
@@ -264,13 +266,13 @@ const DonorLogin = () => {
                     📅
                   </span>
                 </div>
-                <p className="field-hint">You must be at least 18 years old to donate</p>
+                <p className="field-hint">{t('login.form.ageRequirement')}</p>
               </div>
 
               {/* Donor ID */}
               <div className="form-field">
                 <label htmlFor="loginDonorId">
-                  Donor ID <span aria-label="required">*</span>
+                  {t('login.form.donorId')} <span aria-label={t('login.form.requiredAriaLabel')}>{t('login.form.required')}</span>
                 </label>
                 <div className="input-wrapper">
                   <span className="input-icon" aria-hidden="true">
@@ -283,7 +285,7 @@ const DonorLogin = () => {
                     onChange={(e) =>
                       handleInputChange('donorId', e.target.value.toUpperCase())
                     }
-                    placeholder="Enter your 5-digit alphanumeric donor ID"
+                    placeholder={t('login.form.donorIdPlaceholder')}
                     maxLength={5}
                     pattern="[A-Za-z0-9]{5}"
                     disabled={loading}
@@ -291,7 +293,7 @@ const DonorLogin = () => {
                   />
                 </div>
                 <p className="field-hint">
-                  Enter the 5-digit alphanumeric ID provided by AVIS
+                  {t('login.form.donorIdHint')}
                 </p>
               </div>
 
@@ -304,12 +306,12 @@ const DonorLogin = () => {
                 {loading ? (
                   <>
                     <span className="spinner spinner-small" aria-hidden="true"></span>
-                    <span>Logging in...</span>
+                    <span>{t('login.submit.loggingIn')}</span>
                   </>
                 ) : (
                   <>
                     <span aria-hidden="true">🔑</span>
-                    <span>Log In</span>
+                    <span>{t('login.submit.button')}</span>
                   </>
                 )}
               </button>
@@ -317,14 +319,14 @@ const DonorLogin = () => {
               {/* Link to Registration */}
               <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-                  New to Vitalita?
+                  {t('login.registerLink.newToVitalita')}
                 </p>
                 <a
                   href="/register"
                   className="text-link"
                   style={{ color: 'var(--brand-red)', fontWeight: 600 }}
                 >
-                  Register as a donor
+                  {t('login.registerLink.registerAsDonor')}
                 </a>
               </div>
             </form>

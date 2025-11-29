@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { generateDonorHashId, generateSalt } from '../utils/hash';
 
@@ -13,6 +14,7 @@ interface RegistrationFormData {
 
 const DonorRegistration = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<RegistrationFormData>({
     firstName: '',
     lastName: '',
@@ -31,22 +33,22 @@ const DonorRegistration = () => {
   };
 
   const validateForm = (): string | null => {
-    if (!formData.firstName.trim()) return 'First name is required';
-    if (!formData.lastName.trim()) return 'Last name is required';
-    if (!formData.dateOfBirth) return 'Date of birth is required';
-    if (!formData.donorId.trim()) return 'Donor ID is required';
-    if (!formData.email.trim()) return 'Email address is required';
+    if (!formData.firstName.trim()) return t('registration.validation.firstNameRequired');
+    if (!formData.lastName.trim()) return t('registration.validation.lastNameRequired');
+    if (!formData.dateOfBirth) return t('registration.validation.dateOfBirthRequired');
+    if (!formData.donorId.trim()) return t('registration.validation.donorIdRequired');
+    if (!formData.email.trim()) return t('registration.validation.emailRequired');
 
     // Validate Donor ID format (5-digit alphanumeric)
     const donorIdRegex = /^[A-Za-z0-9]{5}$/;
     if (!donorIdRegex.test(formData.donorId)) {
-      return 'Donor ID must be exactly 5 alphanumeric characters';
+      return t('registration.validation.donorIdFormatError');
     }
 
     // Validate email format
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     if (!emailRegex.test(formData.email)) {
-      return 'Please enter a valid email address';
+      return t('registration.validation.emailFormatError');
     }
 
     // Validate date of birth (must be at least 18 years old)
@@ -60,7 +62,7 @@ const DonorRegistration = () => {
       (age === 18 && monthDiff < 0) ||
       (age === 18 && monthDiff === 0 && today.getDate() < birthDate.getDate())
     ) {
-      return 'You must be at least 18 years old to donate';
+      return t('registration.validation.ageRequirementError');
     }
 
     return null;
@@ -98,12 +100,12 @@ const DonorRegistration = () => {
       if (checkError && checkError.code !== 'PGRST116') {
         // PGRST116 is "not found" error, which is expected for new registrations
         console.error('Error checking existing donor:', checkError);
-        setError('Registration failed. Please try again or contact AVIS staff for assistance.');
+        setError(t('registration.validation.registrationFailed'));
         return;
       }
 
       if (existingDonor) {
-        setError('A donor account already exists with these details. Please contact AVIS staff for assistance.');
+        setError(t('registration.validation.accountExists'));
         return;
       }
 
@@ -116,12 +118,12 @@ const DonorRegistration = () => {
 
       if (emailCheckError && emailCheckError.code !== 'PGRST116') {
         console.error('Error checking existing email:', emailCheckError);
-        setError('Registration failed. Please try again or contact AVIS staff for assistance.');
+        setError(t('registration.validation.registrationFailed'));
         return;
       }
 
       if (existingEmail) {
-        setError('An account with this email address already exists. Please use a different email or contact AVIS staff for assistance.');
+        setError(t('registration.validation.emailExists'));
         return;
       }
 
@@ -142,7 +144,7 @@ const DonorRegistration = () => {
 
       if (registrationError) {
         console.error('Registration error:', registrationError);
-        setError(registrationError.message || 'Registration failed. Please try again or contact AVIS staff for assistance.');
+        setError(registrationError.message || t('registration.validation.registrationFailed'));
         return;
       }
 
@@ -164,14 +166,14 @@ const DonorRegistration = () => {
             navigate('/');
           }, 3000);
         } else {
-          setError(result.message || 'Registration failed. Please try again.');
+          setError(result.message || t('registration.validation.genericFailure'));
         }
       } else {
-        setError('Registration failed. Please try again or contact AVIS staff for assistance.');
+        setError(t('registration.validation.registrationFailed'));
       }
     } catch (err) {
       console.error('Registration error:', err);
-      setError('Registration failed. Please try again or contact AVIS staff for assistance.');
+      setError(t('registration.validation.registrationFailed'));
     } finally {
       setLoading(false);
     }
@@ -199,10 +201,10 @@ const DonorRegistration = () => {
             type="button"
             onClick={handleBack}
             className="back-button"
-            aria-label="Go back to previous page"
+            aria-label={t('registration.backAriaLabel')}
           >
             <span aria-hidden="true">←</span>
-            <span>Back</span>
+            <span>{t('registration.back')}</span>
           </button>
 
           {/* Header */}
@@ -211,18 +213,16 @@ const DonorRegistration = () => {
               <span aria-hidden="true">👤</span>
               <span aria-hidden="true" className="icon-plus">+</span>
             </div>
-            <h1>Donor Registration</h1>
+            <h1>{t('registration.title')}</h1>
           </div>
 
           {/* Form Content */}
           <div className="registration-content">
             {success ? (
               <div className="inline-alert success">
-                <strong>Registration Submitted Successfully!</strong>
+                <strong>{t('registration.success.title')}</strong>
                 <p>
-                  Your registration has been submitted for review. AVIS staff will review and
-                  activate your account. The process takes about 45 days. Once you are verified as
-                  a donor, you'll receive a notification by email.
+                  {t('registration.success.message')}
                 </p>
               </div>
             ) : (
@@ -232,12 +232,10 @@ const DonorRegistration = () => {
                   <div className="notice-icon">🛡️</div>
                   <div className="notice-content">
                     <p>
-                      <strong>Privacy & Security</strong>
+                      <strong>{t('registration.privacy.title')}</strong>
                     </p>
                     <p>
-                      Your personal information will be securely hashed and the original data will
-                      not be stored. This ensures GDPR compliance while maintaining secure
-                      authentication.
+                      {t('registration.privacy.description')}
                     </p>
                   </div>
                 </div>
@@ -253,7 +251,7 @@ const DonorRegistration = () => {
                   <div className="form-row">
                     <div className="form-field">
                       <label htmlFor="firstName">
-                        First Name <span aria-label="required">*</span>
+                        {t('registration.form.firstName')} <span aria-label={t('registration.form.requiredAriaLabel')}>{t('registration.form.required')}</span>
                       </label>
                       <div className="input-wrapper">
                         <span className="input-icon" aria-hidden="true">
@@ -266,7 +264,7 @@ const DonorRegistration = () => {
                           onChange={(e) =>
                             handleInputChange('firstName', e.target.value.toUpperCase())
                           }
-                          placeholder="Enter your first name"
+                          placeholder={t('registration.form.firstNamePlaceholder')}
                           disabled={loading}
                           required
                         />
@@ -278,7 +276,7 @@ const DonorRegistration = () => {
 
                     <div className="form-field">
                       <label htmlFor="lastName">
-                        Last Name <span aria-label="required">*</span>
+                        {t('registration.form.lastName')} <span aria-label={t('registration.form.requiredAriaLabel')}>{t('registration.form.required')}</span>
                       </label>
                       <div className="input-wrapper">
                         <span className="input-icon" aria-hidden="true">
@@ -291,7 +289,7 @@ const DonorRegistration = () => {
                           onChange={(e) =>
                             handleInputChange('lastName', e.target.value.toUpperCase())
                           }
-                          placeholder="Enter your last name"
+                          placeholder={t('registration.form.lastNamePlaceholder')}
                           disabled={loading}
                           required
                         />
@@ -302,7 +300,7 @@ const DonorRegistration = () => {
                   {/* Date of Birth */}
                   <div className="form-field">
                     <label htmlFor="dateOfBirth">
-                      Date of Birth <span aria-label="required">*</span>
+                      {t('registration.form.dateOfBirth')} <span aria-label={t('registration.form.requiredAriaLabel')}>{t('registration.form.required')}</span>
                     </label>
                     <div className="input-wrapper">
                       <span className="input-icon" aria-hidden="true">
@@ -319,13 +317,13 @@ const DonorRegistration = () => {
                         className="date-input"
                       />
                     </div>
-                    <p className="field-hint">You must be at least 18 years old to donate</p>
+                    <p className="field-hint">{t('registration.form.ageRequirement')}</p>
                   </div>
 
                   {/* Donor ID */}
                   <div className="form-field">
                     <label htmlFor="donorId">
-                      Donor ID <span aria-label="required">*</span>
+                      {t('registration.form.donorId')} <span aria-label={t('registration.form.requiredAriaLabel')}>{t('registration.form.required')}</span>
                     </label>
                     <div className="input-wrapper">
                       <span className="input-icon" aria-hidden="true">
@@ -338,7 +336,7 @@ const DonorRegistration = () => {
                         onChange={(e) =>
                           handleInputChange('donorId', e.target.value.toUpperCase())
                         }
-                        placeholder="Enter your 5-digit alphanumeric donor ID"
+                        placeholder={t('registration.form.donorIdPlaceholder')}
                         maxLength={5}
                         pattern="[A-Za-z0-9]{5}"
                         disabled={loading}
@@ -346,14 +344,14 @@ const DonorRegistration = () => {
                       />
                     </div>
                     <p className="field-hint">
-                      Enter the 5-digit alphanumeric ID provided by AVIS
+                      {t('registration.form.donorIdHint')}
                     </p>
                   </div>
 
                   {/* Email Address */}
                   <div className="form-field">
                     <label htmlFor="email">
-                      Email Address <span aria-label="required">*</span>
+                      {t('registration.form.email')} <span aria-label={t('registration.form.requiredAriaLabel')}>{t('registration.form.required')}</span>
                     </label>
                     <div className="input-wrapper">
                       <span className="input-icon" aria-hidden="true">
@@ -364,13 +362,13 @@ const DonorRegistration = () => {
                         id="email"
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
-                        placeholder="Enter your email address"
+                        placeholder={t('registration.form.emailPlaceholder')}
                         disabled={loading}
                         required
                       />
                     </div>
                     <p className="field-hint">
-                      We'll send a verification email to this address
+                      {t('registration.form.emailHint')}
                     </p>
                   </div>
 
@@ -379,30 +377,28 @@ const DonorRegistration = () => {
                     <div className="notice-icon">⚠️</div>
                     <div className="notice-content">
                       <p>
-                        <strong>Before You Continue</strong>
+                        <strong>{t('registration.warning.title')}</strong>
                       </p>
-                      <p className="notice-subheading">Double-check details</p>
+                      <p className="notice-subheading">{t('registration.warning.doubleCheckTitle')}</p>
                       <p>
-                        Double-check these details before submitting — they cannot be changed once
-                        saved:
+                        {t('registration.warning.doubleCheckMessage')}
                       </p>
                       <ul>
-                        <li>First Name</li>
-                        <li>Last Name</li>
-                        <li>Date of Birth</li>
-                        <li>Donor ID</li>
+                        <li>{t('registration.warning.detailFirstName')}</li>
+                        <li>{t('registration.warning.detailLastName')}</li>
+                        <li>{t('registration.warning.detailDateOfBirth')}</li>
+                        <li>{t('registration.warning.detailDonorId')}</li>
                       </ul>
-                      <p className="notice-subheading">Verification Process</p>
+                      <p className="notice-subheading">{t('registration.warning.verificationProcessTitle')}</p>
                       <ol>
-                        <li>Submit registration form</li>
-                        <li>AVIS staff will review and activate your account</li>
-                        <li>The process takes about 45 days</li>
+                        <li>{t('registration.warning.step1')}</li>
+                        <li>{t('registration.warning.step2')}</li>
+                        <li>{t('registration.warning.step3')}</li>
                         <li>
-                          Once you are verified as a donor, you'll receive a notification by email
+                          {t('registration.warning.step4')}
                         </li>
                         <li>
-                          Once you verify your email, you'll be able to create a 5-digit PIN to log
-                          into the system
+                          {t('registration.warning.step5')}
                         </li>
                       </ol>
                     </div>
@@ -417,12 +413,12 @@ const DonorRegistration = () => {
                     {loading ? (
                       <>
                         <span className="spinner spinner-small" aria-hidden="true"></span>
-                        <span>Submitting...</span>
+                        <span>{t('registration.submit.submitting')}</span>
                       </>
                     ) : (
                       <>
                         <span aria-hidden="true">📄</span>
-                        <span>Submit Registration</span>
+                        <span>{t('registration.submit.button')}</span>
                       </>
                     )}
                   </button>

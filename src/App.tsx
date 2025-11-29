@@ -9,6 +9,7 @@ import HowItWorks from './pages/HowItWorks';
 import HowWeSimplify from './pages/HowWeSimplify';
 import Contact from './pages/Contact';
 import CaseStudies from './pages/CaseStudies';
+import I18nDemo from './components/I18nDemo';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -21,10 +22,13 @@ const ScrollToTop = () => {
 };
 
 const App = () => {
+  const location = useLocation();
+  const isDemoRoute = location.pathname === '/i18n-demo';
+
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       <ScrollToTop />
-      <Header />
+      {!isDemoRoute && <Header />}
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -33,10 +37,11 @@ const App = () => {
           <Route path="/how-we-simplify" element={<HowWeSimplify />} />
           <Route path="/case-studies" element={<CaseStudies />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/i18n-demo" element={<I18nDemo />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </main>
-      <Footer />
+      {!isDemoRoute && <Footer />}
     </div>
   );
 };

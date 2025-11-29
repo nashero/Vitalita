@@ -1,19 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import logo from '../assets/images/vitalita_logo_heart.svg';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const navItems = [
-  { label: 'Home', path: '/' },
-  { label: 'How It Works', path: '/how-it-works' },
-  { label: 'Simplicity Delivered', path: '/how-we-simplify' },
-  { label: 'Features', path: '/features' },
-  { label: 'Case Studies', path: '/case-studies' },
+  { labelKey: 'navigation.home', path: '/' },
+  { labelKey: 'navigation.howItWorks', path: '/how-it-works' },
+  { labelKey: 'navigation.simplicityDelivered', path: '/how-we-simplify' },
+  { labelKey: 'navigation.features', path: '/features' },
+  { labelKey: 'navigation.caseStudies', path: '/case-studies' },
 ];
 
 const Header = () => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     setOpen(false);
@@ -42,17 +45,18 @@ const Header = () => {
                 ].join(' ')
               }
             >
-              {item.label}
+              {t(item.labelKey)}
             </NavLink>
           ))}
         </nav>
 
-        <div className="hidden lg:block">
+        <div className="hidden lg:flex items-center space-x-4">
+          <LanguageSwitcher variant="compact" />
           <Link
             to="/contact"
             className="rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-red-600/40 transition hover:bg-red-700 hover:shadow-red-600/50"
           >
-            Talk to us!
+            {t('navigation.talkToUs')}
           </Link>
         </div>
 
@@ -60,7 +64,7 @@ const Header = () => {
           type="button"
           onClick={() => setOpen((prev) => !prev)}
           className="inline-flex items-center justify-center rounded-full border border-slate-200 p-2 text-slate-700 transition hover:border-red-200 hover:text-red-600 lg:hidden"
-          aria-label="Toggle navigation"
+          aria-label={t('navigation.toggleNavigation')}
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -80,14 +84,17 @@ const Header = () => {
                   ].join(' ')
                 }
               >
-                {item.label}
+                {t(item.labelKey)}
               </NavLink>
             ))}
+            <div className="px-4 py-2">
+              <LanguageSwitcher variant="compact" />
+            </div>
             <Link
               to="/contact"
               className="rounded-lg bg-red-600 px-4 py-2 text-center text-white shadow-md shadow-red-600/30 transition hover:bg-red-700"
             >
-              Talk to us!
+              {t('navigation.talkToUs')}
             </Link>
           </nav>
         </div>

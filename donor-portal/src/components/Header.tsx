@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const navItems = [
-  { label: 'Home', to: '/' },
-  { label: 'Book Appointment', to: '/book' },
-  { label: 'My Appointments', to: '/appointments' },
-  { label: 'Help', to: '/help' },
+  { labelKey: 'navigation.home', to: '/' },
+  { labelKey: 'navigation.bookAppointment', to: '/book' },
+  { labelKey: 'navigation.myAppointments', to: '/appointments' },
+  { labelKey: 'navigation.help', to: '/help' },
 ];
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
   const location = useLocation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,7 +70,7 @@ function Header() {
         <button
           type="button"
           className="mobile-menu-toggle"
-          aria-label="Toggle navigation menu"
+          aria-label={t('navigation.toggleMenu')}
           aria-expanded={isMenuOpen}
           aria-controls="primary-navigation"
           onClick={toggleMenu}
@@ -78,7 +81,7 @@ function Header() {
             <span className={isMenuOpen ? 'open' : ''}></span>
           </span>
           <span className="sr-only">
-            {isMenuOpen ? 'Close menu' : 'Open menu'}
+            {isMenuOpen ? t('navigation.closeMenu') : t('navigation.openMenu')}
           </span>
         </button>
 
@@ -89,29 +92,32 @@ function Header() {
         >
           <ul className="nav-list">
             {navItems.map((item) => (
-              <li key={item.label}>
+              <li key={item.labelKey}>
                 <Link
                   className="nav-link"
                   to={item.to}
                   onClick={closeMenu}
                   aria-current={location.pathname === item.to ? 'page' : undefined}
                 >
-                  {item.label}
+                  {t(item.labelKey)}
                 </Link>
               </li>
             ))}
           </ul>
-          <Link
-            className="login-button"
-            to="/login"
-            onClick={closeMenu}
-            aria-label="Log in to view appointments"
-          >
-            <span aria-hidden="true" className="icon-circle" role="presentation">
-              👤
-            </span>
-            <span>Log In</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher variant="compact" />
+            <Link
+              className="login-button"
+              to="/login"
+              onClick={closeMenu}
+              aria-label={t('navigation.logIn')}
+            >
+              <span aria-hidden="true" className="icon-circle" role="presentation">
+                👤
+              </span>
+              <span>{t('navigation.logIn')}</span>
+            </Link>
+          </div>
         </nav>
       </div>
     </header>

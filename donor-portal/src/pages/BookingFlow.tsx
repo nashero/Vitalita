@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { addDays, format, setHours, setMinutes, parseISO } from 'date-fns';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -64,39 +65,41 @@ interface HealthAnswers {
   travel: HealthAnswer;
 }
 
-const healthQuestionItems: ReadonlyArray<{
+// Health questions will be translated in the component using useTranslation
+const healthQuestionKeys: ReadonlyArray<{
   id: keyof HealthAnswers;
-  text: string;
-  help: string;
+  textKey: string;
+  helpKey: string;
 }> = [
   {
     id: 'recentDonation',
-    text: 'Have you donated blood in the last 8 weeks?',
-    help: 'You need to wait 8 weeks between blood donations.',
+    textKey: 'booking.step4.recentDonation',
+    helpKey: 'booking.step4.recentDonationHelp',
   },
   {
     id: 'feelsHealthy',
-    text: 'Do you feel healthy today?',
-    help: 'Feeling unwell? We can reschedule so you’re at your best.',
+    textKey: 'booking.step4.feelsHealthy',
+    helpKey: 'booking.step4.feelsHealthyHelp',
   },
   {
     id: 'medications',
-    text: 'Are you currently taking any medications?',
-    help: 'Some medicines are okay—let us know so we can confirm.',
+    textKey: 'booking.step4.medications',
+    helpKey: 'booking.step4.medicationsHelp',
   },
   {
     id: 'travel',
-    text: 'Have you traveled outside Italy recently?',
-    help: 'Certain destinations may require a short waiting period.',
+    textKey: 'booking.step4.travel',
+    helpKey: 'booking.step4.travelHelp',
   },
 ];
 
-const steps = [
-  { id: 1, label: 'Select Center' },
-  { id: 2, label: 'Date & Time' },
-  { id: 3, label: 'Your Details' },
-  { id: 4, label: 'Health Check' },
-  { id: 5, label: 'Confirmation' },
+// Steps will be translated in the component using useTranslation
+const stepKeys = [
+  { id: 1, labelKey: 'booking.steps.selectCenter' },
+  { id: 2, labelKey: 'booking.steps.dateTime' },
+  { id: 3, labelKey: 'booking.steps.yourDetails' },
+  { id: 4, labelKey: 'booking.steps.healthCheck' },
+  { id: 5, labelKey: 'booking.steps.confirmation' },
 ];
 
 const returningDonorProfiles: Record<
@@ -244,6 +247,7 @@ const findSlotById = (day: CenterAvailability | null, slotId: string | null) => 
 
 const BookingFlow = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(1);
   const [postalCodeQuery, setPostalCodeQuery] = useState('');
   const [centers, setCenters] = useState<DonationCenter[]>([]);
@@ -314,7 +318,7 @@ const BookingFlow = () => {
 
         if (centersError) {
           console.error('Error fetching centers:', centersError);
-          setValidationMessage('Failed to load donation centers. Please try again.');
+          setValidationMessage(t('booking.validation.failedToLoadCenters'));
           return;
         }
 
@@ -355,7 +359,7 @@ const BookingFlow = () => {
         }
       } catch (err) {
         console.error('Error fetching data:', err);
-        setValidationMessage('An error occurred while loading centers. Please try again.');
+        setValidationMessage(t('booking.validation.errorLoadingCenters'));
       } finally {
         setLoadingCenters(false);
       }
@@ -441,8 +445,6 @@ const BookingFlow = () => {
               slots: slots.sort((a, b) => a.time.localeCompare(b.time)),
             })
           );
-
-            availability.map(a => `${a.isoDate} (${a.slots.length} slots)`).join(', '));
 
           // Update the selected center's availability
           setCenters((prevCenters) =>
@@ -545,9 +547,7 @@ const BookingFlow = () => {
         phone: prev.phone,
         autofillKey: normalizedPhone,
       }));
-      setAutofillMessage(
-        'Welcome back! We pre-filled your information. Give it a quick check before you continue.',
-      );
+      setAutofillMessage(t('booking.step3.autofillMessage'));
     }
   }, [personalInfo]);
 
@@ -564,20 +564,19 @@ const BookingFlow = () => {
 
     if (currentStep === 1) {
       if (!selectedCenter) {
-        setValidationMessage('Please choose a donation center to continue.');
+        setValidationMessage(t('booking.validation.chooseCenter'));
         return;
       }
     }
 
     if (currentStep === 2) {
       if (!selectedDateAvailability || !selectedSlot) {
-        setValidationMessage('Please select a date and an available time slot.');
+        setValidationMessage(t('booking.validation.selectDateAndTime'));
         return;
       }
 
       if (selectedSlot.riskLevel === 'high') {
-        const friendlyMessage =
-          "Looks like that time just filled up. Let’s find another slot that works for you.";
+        const friendlyMessage = t('booking.step2.slotError');
         setSlotError(friendlyMessage);
 
         const sameDayAlternatives = selectedDateAvailability.slots.filter((slot) => {
@@ -625,24 +624,24 @@ const BookingFlow = () => {
       const errors: Record<string, string> = {};
       
       if (!personalInfo.fullName.trim()) {
-        errors.fullName = 'Full name is required';
+        errors.fullName = t('booking.step3.fullNameRequired');
       }
       
       if (!personalInfo.dob) {
-        errors.dob = 'Date of birth is required';
+        errors.dob = t('booking.step3.dobRequired');
       }
       
       if (!personalInfo.phone.trim()) {
-        errors.phone = 'Phone number is required';
+        errors.phone = t('booking.step3.phoneRequired');
       }
       
       if (!personalInfo.hasDonatedBefore) {
-        errors.hasDonatedBefore = 'Please let us know if you have donated before';
+        errors.hasDonatedBefore = t('booking.step3.hasDonatedBeforeRequired');
       }
       
       if (Object.keys(errors).length > 0) {
         setFieldErrors(errors);
-        setValidationMessage('Please correct the errors below');
+        setValidationMessage(t('booking.step3.pleaseCorrectErrors'));
         return;
       }
       
@@ -651,14 +650,14 @@ const BookingFlow = () => {
 
     if (currentStep === 4) {
       const unanswered: HealthAnswers[keyof HealthAnswers][] = [];
-      for (const question of healthQuestionItems) {
+      for (const question of healthQuestionKeys) {
         if (healthAnswers[question.id] === '') {
           unanswered.push(healthAnswers[question.id]);
         }
       }
 
       if (unanswered.length > 0) {
-        setValidationMessage('Please answer all the health questions.');
+        setValidationMessage(t('booking.step4.pleaseAnswerAll'));
         return;
       }
 
@@ -678,7 +677,7 @@ const BookingFlow = () => {
       return;
     }
 
-    if (currentStep < steps.length) {
+    if (currentStep < stepKeys.length) {
       setCurrentStep((step) => step + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -686,7 +685,7 @@ const BookingFlow = () => {
 
   const handleSubmitAppointment = async (): Promise<boolean> => {
     if (!selectedSlot || !selectedCenter) {
-      setValidationMessage('Please select a date, time, and center.');
+      setValidationMessage(t('booking.validation.selectDateTimeCenter'));
       return false;
     }
 
@@ -695,7 +694,7 @@ const BookingFlow = () => {
       const donorHashId = sessionStorage.getItem('donor_hash_id');
 
       if (!donorHashId) {
-        setValidationMessage('Please log in to book an appointment.');
+        setValidationMessage(t('booking.validation.loginRequired'));
         navigate('/login');
         return false;
       }
@@ -720,7 +719,7 @@ const BookingFlow = () => {
       
       if (appointmentError) {
         console.error('Error creating appointment:', appointmentError);
-        setValidationMessage('Failed to book appointment. Please try again.');
+        setValidationMessage(t('booking.validation.failedToBook'));
         setIsSubmitting(false);
         return false;
       }
@@ -736,7 +735,7 @@ const BookingFlow = () => {
       if (slotFetchError || !currentSlot) {
         console.error('Error fetching slot:', slotFetchError);
         // Appointment was created, but slot update failed
-        setValidationMessage('Appointment created, but there was an issue updating slot availability. Please contact support.');
+        setValidationMessage(t('booking.validation.appointmentCreatedIssue'));
         setIsSubmitting(false);
         return false;
       }
@@ -745,7 +744,7 @@ const BookingFlow = () => {
       const newBookings = currentSlot.current_bookings + 1;
       
       if (newBookings > currentSlot.capacity) {
-        setValidationMessage('This slot is now full. Please select another time.');
+        setValidationMessage(t('booking.validation.slotFull'));
         // Delete the appointment we just created
         const { error: deleteError } = await supabase
           .from('appointments')
@@ -771,7 +770,7 @@ const BookingFlow = () => {
           .from('appointments')
           .delete()
           .eq('appointment_id', appointment.appointment_id);
-        setValidationMessage('Slot was just booked by someone else. Please select another time.');
+        setValidationMessage(t('booking.validation.slotBookedByOther'));
         setIsSubmitting(false);
         return false;
       }
@@ -782,7 +781,7 @@ const BookingFlow = () => {
       return true;
     } catch (err) {
       console.error('Error submitting appointment:', err);
-      setValidationMessage('An error occurred. Please try again.');
+      setValidationMessage(t('booking.validation.errorOccurred'));
       setIsSubmitting(false);
       return false;
     }
@@ -853,7 +852,11 @@ const BookingFlow = () => {
     }
 
     const friendlyDate = format(selectedDateAvailability.date, 'EEEE d MMMM');
-    const message = `I booked a donation with Vitalita on ${friendlyDate} at ${selectedSlot.time} at ${selectedCenter.name}. Want to join me?`;
+    const message = t('booking.step5.shareMessage', { 
+      date: friendlyDate, 
+      time: selectedSlot.time, 
+      center: selectedCenter.name 
+    });
 
     if (navigator.share) {
       navigator
@@ -932,32 +935,32 @@ const BookingFlow = () => {
           </span>
           <div>
             <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
-              Step 1: Select Center
+              {t('booking.step1.stepTitle')}
             </h3>
             <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>
-              Choose your preferred donation center
+              {t('booking.step1.stepDescription')}
             </p>
           </div>
         </div>
       </div>
 
       {renderStepTitle(
-        'Where would you like to donate?',
+        t('booking.step1.title'),
         donorDefaultCenter
-          ? `Your default center is ${donorDefaultCenter}. You can select a different center if needed.`
-          : 'Choose the AVIS center that is most convenient for you.',
+          ? t('booking.step1.subtitleDefault', { center: donorDefaultCenter })
+          : t('booking.step1.subtitleNoDefault'),
         'step-select-center',
       )}
 
       {loadingCenters ? (
         <div style={{ textAlign: 'center', padding: '2rem' }}>
-          <p>Loading centers...</p>
+          <p>{t('booking.step1.loadingCenters')}</p>
         </div>
       ) : (
         <>
           <div className="center-search">
         <label htmlFor="postalCode" className="postal-code-label">
-          Enter your postal code to see nearby centers
+          {t('booking.step1.postalCodeLabel')}
         </label>
         <div className="postal-code-input">
           <input
@@ -965,7 +968,7 @@ const BookingFlow = () => {
             type="text"
             inputMode="numeric"
             autoComplete="postal-code"
-            placeholder="e.g. 20122"
+            placeholder={t('booking.step1.postalCodePlaceholder')}
             value={postalCodeQuery}
             onChange={(event) => setPostalCodeQuery(event.target.value)}
           />
@@ -975,12 +978,12 @@ const BookingFlow = () => {
               className="text-button"
               onClick={() => setPostalCodeQuery('')}
             >
-              Clear
+              {t('booking.step1.clear')}
             </button>
           )}
         </div>
             <p className="postal-code-note">
-              We&apos;ll always show you the closest options available today.
+              {t('booking.step1.postalCodeNote')}
             </p>
           </div>
 
@@ -1011,7 +1014,7 @@ const BookingFlow = () => {
                           className="text-button"
                           onClick={() => handleSelectCenter(center.id)}
                         >
-                          Select this center
+                          {t('booking.step1.selectThisCenter')}
                         </button>
                       </div>
                     </Popup>
@@ -1024,7 +1027,7 @@ const BookingFlow = () => {
           <div className="center-list">
             {filteredCenters.length === 0 ? (
               <p style={{ textAlign: 'center', padding: '2rem' }}>
-                No centers found. Please try again later.
+                {t('booking.step1.noCentersFound')}
               </p>
             ) : (
               filteredCenters.map((center) => {
@@ -1038,24 +1041,24 @@ const BookingFlow = () => {
                     <div className="center-card-body">
                       {isDefault && (
                         <span className="default-badge" style={{ fontSize: '0.875rem', color: '#dc2626', fontWeight: 600, marginBottom: '0.5rem', display: 'block' }}>
-                          Your Default Center
+                          {t('booking.step1.yourDefaultCenter')}
                         </span>
                       )}
                       <div className="center-card-heading">
                         <h2>{center.name}</h2>
                         {center.distanceKm > 0 && (
                           <span className="center-distance">
-                            {center.distanceKm.toFixed(1)} km away
+                            {t('booking.step1.kmAway', { distance: center.distanceKm.toFixed(1) })}
                           </span>
                         )}
                       </div>
                       <p className="center-address">{center.address}</p>
                       {center.postalCode && (
-                        <p className="center-postal">Postal code {center.postalCode}</p>
+                        <p className="center-postal">{t('booking.step1.postalCode', { code: center.postalCode })}</p>
                       )}
                       {center.availability.length > 0 && (
                         <p className="center-availability">
-                          Next available: {format(center.availability[0].date, 'EEEE d MMMM')}
+                          {t('booking.step1.nextAvailable', { date: format(center.availability[0].date, 'EEEE d MMMM') })}
                         </p>
                       )}
                     </div>
@@ -1065,7 +1068,7 @@ const BookingFlow = () => {
                       onClick={() => handleSelectCenter(center.id)}
                       aria-pressed={isSelected}
                     >
-                      {isSelected ? 'Selected' : 'Select'}
+                      {isSelected ? t('booking.step1.selected') : t('booking.step1.select')}
                     </button>
                   </article>
                 );
@@ -1108,24 +1111,24 @@ const BookingFlow = () => {
           </span>
           <div>
             <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
-              Step 2: Date & Time
+              {t('booking.step2.stepTitle')}
             </h3>
             <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>
-              Select your preferred appointment date and time
+              {t('booking.step2.stepDescription')}
             </p>
           </div>
         </div>
       </div>
 
       {renderStepTitle(
-        'When can you donate?',
-        'Pick the date and time that fits your schedule.',
+        t('booking.step2.title'),
+        t('booking.step2.subtitle'),
       )}
 
       {/* Donation Type Selection */}
       <div style={{ marginBottom: '2rem' }}>
         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
-          Donation Type <span aria-label="required">*</span>
+          {t('booking.step2.donationType')} <span aria-label="required">*</span>
         </label>
         <div className="choice-group" role="radiogroup" style={{ display: 'flex', gap: '1rem' }}>
           <label>
@@ -1140,7 +1143,7 @@ const BookingFlow = () => {
                 setSelectedSlotId(null);
               }}
             />
-            Blood Donation
+            {t('booking.step2.bloodDonation')}
           </label>
           <label>
             <input
@@ -1154,7 +1157,7 @@ const BookingFlow = () => {
                 setSelectedSlotId(null);
               }}
             />
-            Plasma Donation
+            {t('booking.step2.plasmaDonation')}
           </label>
         </div>
       </div>
@@ -1164,7 +1167,7 @@ const BookingFlow = () => {
           <strong>{slotError}</strong>
           {alternativeSlots.length > 0 && (
             <div className="alternative-slots">
-              <p>Here are some fresh openings you can grab right now:</p>
+              <p>{t('booking.step2.alternativeSlotsTitle')}</p>
               <div className="slot-grid">
                 {alternativeSlots.map((slot) => (
                   <button
@@ -1182,7 +1185,7 @@ const BookingFlow = () => {
                       )}
                     </span>
                     {slot.status === 'filling' && (
-                      <span className="slot-status">Only {slot.spotsLeft} spots left!</span>
+                      <span className="slot-status">{t('booking.step2.onlySpotsLeft', { count: slot.spotsLeft })}</span>
                     )}
                   </button>
                 ))}
@@ -1194,7 +1197,7 @@ const BookingFlow = () => {
 
       {!selectedCenter && (
         <div className="inline-alert warning">
-          <p>Please select a donation center first.</p>
+          <p>{t('booking.step2.pleaseSelectCenter')}</p>
         </div>
       )}
 
@@ -1207,10 +1210,10 @@ const BookingFlow = () => {
           marginBottom: '1.5rem',
         }}>
           <h3 style={{ marginTop: 0, marginBottom: '0.75rem', color: '#dc2626', fontSize: '1.125rem' }}>
-            No Available Slots
+            {t('booking.step2.noAvailableSlots')}
           </h3>
           <p style={{ marginBottom: '1rem', color: '#991b1b' }}>
-            No available slots found for {selectedDonationType} donation at this center.
+            {t('booking.step2.noSlotsFound', { type: selectedDonationType })}
           </p>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <button
@@ -1222,7 +1225,7 @@ const BookingFlow = () => {
                 borderColor: '#dc2626',
               }}
             >
-              Try Different Center
+              {t('booking.step2.tryDifferentCenter')}
             </button>
             <button
               type="button"
@@ -1231,7 +1234,7 @@ const BookingFlow = () => {
                 setSelectedDonationType(selectedDonationType === 'Blood' ? 'Plasma' : 'Blood');
               }}
             >
-              Try {selectedDonationType === 'Blood' ? 'Plasma' : 'Blood'} Donation
+              {t('booking.step2.tryOtherDonation', { type: selectedDonationType === 'Blood' ? 'Plasma' : 'Blood' })}
             </button>
             <a
               href="https://vitalita.com/callback"
@@ -1243,7 +1246,7 @@ const BookingFlow = () => {
                 display: 'inline-block',
               }}
             >
-              Request a Callback
+              {t('booking.step2.requestCallback')}
             </a>
           </div>
         </div>
@@ -1385,7 +1388,7 @@ const BookingFlow = () => {
                     fontWeight: 500,
                   }}
                 >
-                  &lt; Prev Month
+                  {t('booking.step2.prevMonth')}
                 </button>
                 <button
                   type="button"
@@ -1400,7 +1403,7 @@ const BookingFlow = () => {
                     fontWeight: 500,
                   }}
                 >
-                  Next Month &gt;
+                  {t('booking.step2.nextMonth')}
                 </button>
               </div>
 
@@ -1533,7 +1536,7 @@ const BookingFlow = () => {
                               fontWeight: 500,
                               marginTop: '0.0625rem',
                             }}>
-                              Today
+                              {t('booking.step2.today')}
                             </span>
                           )}
                         </button>
@@ -1666,7 +1669,7 @@ const BookingFlow = () => {
                                 fontWeight: 500,
                                 marginTop: '0.0625rem',
                               }}>
-                                Today
+                                {t('booking.step2.today')}
                               </span>
                             )}
                           </button>
@@ -1689,7 +1692,7 @@ const BookingFlow = () => {
                 border: '2px dashed #d1d5db',
               }}>
                 <p style={{ margin: 0, fontSize: '1rem', color: '#6b7280', fontWeight: 500 }}>
-                  👆 Please select a date above to see available time slots
+                  {t('booking.step2.selectDatePrompt')}
                 </p>
               </div>
             )}
@@ -1705,14 +1708,14 @@ const BookingFlow = () => {
                   borderBottom: '2px solid #dc2626',
                 }}>
                   <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' }}>
-                    Select a time
+                    {t('booking.step2.selectTime')}
                   </h2>
                   <span style={{
                     fontSize: '0.875rem',
                     color: '#6b7280',
                     fontStyle: 'italic',
                   }}>
-                    for {format(selectedDateAvailability?.date || new Date(selectedDateIso), 'EEEE, MMMM d')}
+                    {t('booking.step2.forDate', { date: format(selectedDateAvailability?.date || new Date(selectedDateIso), 'EEEE, MMMM d') })}
                   </span>
                 </div>
                 {selectedDateAvailability?.slots.length === 0 ? (
@@ -1723,10 +1726,10 @@ const BookingFlow = () => {
                     borderRadius: '0.5rem',
                   }}>
                     <h3 style={{ marginTop: 0, marginBottom: '0.75rem', color: '#dc2626', fontSize: '1.125rem' }}>
-                      No Time Slots Available
+                      {t('booking.step2.noTimeSlots')}
                     </h3>
                     <p style={{ marginBottom: '1rem', color: '#991b1b' }}>
-                      No time slots available for this date. Please select another date.
+                      {t('booking.step2.noTimeSlotsMessage')}
                     </p>
                     <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                       <button
@@ -1738,7 +1741,7 @@ const BookingFlow = () => {
                           borderColor: '#dc2626',
                         }}
                       >
-                        Select Different Date
+                        {t('booking.step2.selectDifferentDate')}
                       </button>
                       <a
                         href="https://vitalita.com/callback"
@@ -1750,7 +1753,7 @@ const BookingFlow = () => {
                           display: 'inline-block',
                         }}
                       >
-                        Join Waitlist
+                        {t('booking.step2.joinWaitlist')}
                       </a>
                       <a
                         href="https://vitalita.com/callback"
@@ -1762,7 +1765,7 @@ const BookingFlow = () => {
                           display: 'inline-block',
                         }}
                       >
-                        Request Alternative Date
+                        {t('booking.step2.requestAlternativeDate')}
                       </a>
                     </div>
                   </div>
@@ -1789,13 +1792,13 @@ const BookingFlow = () => {
 
                 const { morning, lunch, afternoon } = groupSlots(selectedDateAvailability.slots);
 
-                const renderSlotGroup = (title: string, slots: TimeSlot[]) => {
+                const renderSlotGroup = (titleKey: string, slots: TimeSlot[]) => {
                   if (slots.length === 0) return null;
 
                   return (
-                    <div key={title} style={{ marginBottom: '1.5rem' }}>
+                    <div key={titleKey} style={{ marginBottom: '1.5rem' }}>
                       <h3 style={{ fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.75rem', color: '#6b7280' }}>
-                        {title}
+                        {t(titleKey)}
                       </h3>
                       <div className="slot-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '0.75rem' }}>
                         {slots.map((slot) => {
@@ -1892,7 +1895,7 @@ const BookingFlow = () => {
                                     textTransform: 'uppercase',
                                   }}
                                 >
-                                  Booked
+                                  {t('booking.step2.booked')}
                                 </span>
                               ) : slot.status === 'filling' ? (
                                 <span
@@ -1902,7 +1905,7 @@ const BookingFlow = () => {
                                     fontWeight: 600,
                                   }}
                                 >
-                                  {slot.spotsLeft} left
+                                  {t('booking.step2.left', { count: slot.spotsLeft })}
                                 </span>
                               ) : (
                                 <span
@@ -1912,7 +1915,7 @@ const BookingFlow = () => {
                                     fontWeight: 600,
                                   }}
                                 >
-                                  Available
+                                  {t('booking.step2.available')}
                                 </span>
                               )}
                             </button>
@@ -1925,23 +1928,23 @@ const BookingFlow = () => {
 
                 return (
                   <>
-                    {renderSlotGroup('Morning', morning)}
-                    {renderSlotGroup('Lunch', lunch)}
-                    {renderSlotGroup('Afternoon', afternoon)}
+                    {renderSlotGroup('booking.step2.morning', morning)}
+                    {renderSlotGroup('booking.step2.lunch', lunch)}
+                    {renderSlotGroup('booking.step2.afternoon', afternoon)}
                   </>
                 );
               })()}
                 {selectedDateAvailability?.slots.length > 0 && (
                   <div style={{ marginTop: '1.5rem', padding: '1rem', backgroundColor: '#eff6ff', borderRadius: '0.5rem', border: '1px solid #bfdbfe' }}>
                     <p style={{ margin: 0, fontSize: '0.875rem', color: '#1e40af' }}>
-                      <strong>Need a different time?</strong> You can{' '}
+                      <strong>{t('booking.step2.needDifferentTime')}</strong> You can{' '}
                       <a
                         href="https://vitalita.com/callback"
                         target="_blank"
                         rel="noreferrer"
                         style={{ color: '#2563eb', textDecoration: 'underline', fontWeight: 600 }}
                       >
-                        request a callback
+                        {t('booking.step2.requestCallbackLink')}
                       </a>
                       {' '}or{' '}
                       <a
@@ -1950,9 +1953,9 @@ const BookingFlow = () => {
                         rel="noreferrer"
                         style={{ color: '#2563eb', textDecoration: 'underline', fontWeight: 600 }}
                       >
-                        join our waitlist
+                        {t('booking.step2.joinWaitlistLink')}
                       </a>
-                      {' '}for preferred times.
+                      {' '}{t('booking.step2.forPreferredTimes')}
                     </p>
                   </div>
                 )}
@@ -1995,18 +1998,18 @@ const BookingFlow = () => {
           </span>
           <div>
             <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
-              Step 3: Your Details
+              {t('booking.step3.stepTitle')}
             </h3>
             <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>
-              Provide your contact information
+              {t('booking.step3.stepDescription')}
             </p>
           </div>
         </div>
       </div>
 
       {renderStepTitle(
-        'Tell us about yourself',
-        "We'll send reminders and keep you updated about your appointment.",
+        t('booking.step3.title'),
+        t('booking.step3.subtitle'),
       )}
 
       {autofillMessage && (
@@ -2017,7 +2020,7 @@ const BookingFlow = () => {
             className="text-button"
             onClick={() => setAutofillMessage(null)}
           >
-            Got it
+            {t('booking.step3.gotIt')}
           </button>
         </div>
       )}
@@ -2025,7 +2028,7 @@ const BookingFlow = () => {
       <form className="info-form" onSubmit={(event) => event.preventDefault()}>
         <div className="form-field">
           <label htmlFor="fullName">
-            Full Name <span aria-label="required">*</span>
+            {t('booking.step3.fullName')} <span aria-label="required">{t('booking.step3.required')}</span>
           </label>
           <input
             id="fullName"
@@ -2046,7 +2049,7 @@ const BookingFlow = () => {
                 });
               }
             }}
-            placeholder="e.g. Giulia Rossi"
+            placeholder={t('booking.step3.fullNamePlaceholder')}
           />
           {fieldErrors.fullName && (
             <span id="fullName-error" className="field-error" role="alert">
@@ -2057,7 +2060,7 @@ const BookingFlow = () => {
 
         <div className="form-field">
           <label htmlFor="dob">
-            Date of Birth <span aria-label="required">*</span>
+            {t('booking.step3.dateOfBirth')} <span aria-label="required">{t('booking.step3.required')}</span>
           </label>
           <input
             id="dob"
@@ -2088,7 +2091,7 @@ const BookingFlow = () => {
 
         <div className="form-field">
           <label htmlFor="phone">
-            Phone Number <span aria-label="required">*</span>
+            {t('booking.step3.phoneNumber')} <span aria-label="required">{t('booking.step3.required')}</span>
           </label>
           <input
             id="phone"
@@ -2099,7 +2102,7 @@ const BookingFlow = () => {
             aria-required="true"
             aria-invalid={fieldErrors.phone ? 'true' : 'false'}
             aria-describedby={fieldErrors.phone ? 'phone-error phone-hint' : 'phone-hint'}
-            placeholder="e.g. 333 555 1212"
+            placeholder={t('booking.step3.phonePlaceholder')}
             value={personalInfo.phone}
             onChange={(event) => {
               setPersonalInfo((prev) => ({
@@ -2116,7 +2119,7 @@ const BookingFlow = () => {
               }
             }}
           />
-          <small id="phone-hint" className="field-hint">We&apos;ll send you an SMS reminder.</small>
+          <small id="phone-hint" className="field-hint">{t('booking.step3.phoneHint')}</small>
           {fieldErrors.phone && (
             <span id="phone-error" className="field-error" role="alert">
               {fieldErrors.phone}
@@ -2126,7 +2129,7 @@ const BookingFlow = () => {
 
         <div className="form-field">
           <label htmlFor="email">
-            Email <span className="field-optional">(optional)</span>
+            {t('booking.step3.email')} <span className="field-optional">{t('booking.step3.optional')}</span>
           </label>
           <input
             id="email"
@@ -2134,7 +2137,7 @@ const BookingFlow = () => {
             autoComplete="email"
             aria-invalid={fieldErrors.email ? 'true' : 'false'}
             aria-describedby={fieldErrors.email ? 'email-error' : undefined}
-            placeholder="We'll send you a confirmation"
+            placeholder={t('booking.step3.emailPlaceholder')}
             value={personalInfo.email}
             onChange={(event) => {
               setPersonalInfo((prev) => ({ ...prev, email: event.target.value }));
@@ -2155,7 +2158,7 @@ const BookingFlow = () => {
         </div>
 
         <fieldset className="form-field">
-          <legend>Have you donated before? <span aria-label="required">*</span></legend>
+          <legend>{t('booking.step3.hasDonatedBefore')} <span aria-label="required">{t('booking.step3.required')}</span></legend>
           <div className="choice-group" role="radiogroup" aria-required="true" aria-invalid={fieldErrors.hasDonatedBefore ? 'true' : 'false'}>
             <label>
               <input
@@ -2178,7 +2181,7 @@ const BookingFlow = () => {
                 }}
                 aria-describedby={fieldErrors.hasDonatedBefore ? 'hasDonatedBefore-error' : undefined}
               />
-              Yes, I&apos;m a returning donor
+              {t('booking.step3.yesReturning')}
             </label>
             <label>
               <input
@@ -2202,7 +2205,7 @@ const BookingFlow = () => {
                 }}
                 aria-describedby={fieldErrors.hasDonatedBefore ? 'hasDonatedBefore-error' : undefined}
               />
-              No, this is my first time
+              {t('booking.step3.noFirstTime')}
             </label>
           </div>
           {fieldErrors.hasDonatedBefore && (
@@ -2247,77 +2250,81 @@ const BookingFlow = () => {
             </span>
             <div>
               <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
-                Step 4: Health Check
+                {t('booking.step4.stepTitle')}
               </h3>
               <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>
-                Answer a few health screening questions
+                {t('booking.step4.stepDescription')}
               </p>
             </div>
           </div>
         </div>
 
         {renderStepTitle(
-          'Just a few quick questions',
-          'These help us keep everyone safe.',
+          t('booking.step4.title'),
+          t('booking.step4.subtitle'),
           'health-questions-title',
         )}
 
         <div className="health-questions" role="group" aria-labelledby="health-questions-title">
-          {healthQuestionItems.map((question) => (
-            <fieldset className="health-question" key={question.id}>
-              <div className="health-question-header">
-                <legend className="health-question-title">{question.text}</legend>
-                <button
-                  type="button"
-                  className="info-icon"
-                  aria-label={`Help for ${question.text}: ${question.help}`}
-                  aria-expanded="false"
-                >
-                  i
-                </button>
-              </div>
-              <p className="health-help" id={`${question.id}-help`}>{question.help}</p>
-              <div className="choice-group" role="radiogroup" aria-required="true" aria-labelledby={`${question.id}-label`}>
-                <span id={`${question.id}-label`} className="sr-only">{question.text}</span>
-                <label>
-                  <input
-                    type="radio"
-                    name={question.id}
-                    value="yes"
-                    required
-                    aria-required="true"
-                    aria-describedby={`${question.id}-help`}
-                    checked={healthAnswers[question.id] === 'yes'}
-                    onChange={() =>
-                      setHealthAnswers((prev) => ({
-                        ...prev,
-                        [question.id]: 'yes',
-                      }))
-                    }
-                  />
-                  Yes
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name={question.id}
-                    value="no"
-                    required
-                    aria-required="true"
-                    aria-describedby={`${question.id}-help`}
-                    checked={healthAnswers[question.id] === 'no'}
-                    onChange={() =>
-                      setHealthAnswers((prev) => ({
-                        ...prev,
-                        [question.id]: 'no',
-                      }))
-                    }
-                  />
-                  No
-                </label>
-              </div>
-            </fieldset>
-          ))}
+          {healthQuestionKeys.map((question) => {
+            const questionText = t(question.textKey);
+            const questionHelp = t(question.helpKey);
+            return (
+              <fieldset className="health-question" key={question.id}>
+                <div className="health-question-header">
+                  <legend className="health-question-title">{questionText}</legend>
+                  <button
+                    type="button"
+                    className="info-icon"
+                    aria-label={`Help for ${questionText}: ${questionHelp}`}
+                    aria-expanded="false"
+                  >
+                    i
+                  </button>
+                </div>
+                <p className="health-help" id={`${question.id}-help`}>{questionHelp}</p>
+                <div className="choice-group" role="radiogroup" aria-required="true" aria-labelledby={`${question.id}-label`}>
+                  <span id={`${question.id}-label`} className="sr-only">{questionText}</span>
+                  <label>
+                    <input
+                      type="radio"
+                      name={question.id}
+                      value="yes"
+                      required
+                      aria-required="true"
+                      aria-describedby={`${question.id}-help`}
+                      checked={healthAnswers[question.id] === 'yes'}
+                      onChange={() =>
+                        setHealthAnswers((prev) => ({
+                          ...prev,
+                          [question.id]: 'yes',
+                        }))
+                      }
+                    />
+                    {t('booking.step4.yes')}
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name={question.id}
+                      value="no"
+                      required
+                      aria-required="true"
+                      aria-describedby={`${question.id}-help`}
+                      checked={healthAnswers[question.id] === 'no'}
+                      onChange={() =>
+                        setHealthAnswers((prev) => ({
+                          ...prev,
+                          [question.id]: 'no',
+                        }))
+                      }
+                    />
+                    {t('booking.step4.no')}
+                  </label>
+                </div>
+              </fieldset>
+            );
+          })}
         </div>
       </section>
     );
@@ -2361,23 +2368,23 @@ const BookingFlow = () => {
             </span>
             <div>
               <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
-                Step 5: Confirmation
+                {t('booking.step5.stepTitle')}
               </h3>
               <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>
-                Review and confirm your appointment details
+                {t('booking.step5.stepDescription')}
               </p>
             </div>
           </div>
         </div>
 
         {renderStepTitle(
-          'Your appointment is confirmed! 🎉',
-          "You're all set. Here's everything you need to know.",
+          t('booking.step5.title'),
+          t('booking.step5.subtitle'),
         )}
 
         <div className="confirmation-details">
           <div className="confirmation-card">
-            <h2>Appointment details</h2>
+            <h2>{t('booking.step5.appointmentDetails')}</h2>
             <p className="confirmation-highlight">{formattedDate}</p>
             <p className="confirmation-highlight">{selectedSlot.time}</p>
             <p className="confirmation-location">
@@ -2393,7 +2400,7 @@ const BookingFlow = () => {
               rel="noreferrer"
               className="text-link"
             >
-              Get directions
+              {t('booking.step5.getDirections')}
             </a>
           </div>
 
@@ -2413,7 +2420,7 @@ const BookingFlow = () => {
               }}
             >
               <span style={{ marginRight: '0.5rem' }}>📅</span>
-              Add to Calendar
+              {t('booking.step5.addToCalendar')}
             </button>
             <button
               type="button"
@@ -2429,48 +2436,46 @@ const BookingFlow = () => {
                 justifyContent: 'center',
               }}
             >
-              Share
+              {t('booking.step5.share')}
             </button>
             {shareMenuOpen && (
               <div className="share-menu">
                 <a
                   href={`https://t.me/share/url?url=&text=${encodeURIComponent(
-                    `Come donate with me at ${formattedDate} ${selectedSlot.time} — ${selectedCenter.name}`,
+                    t('booking.step5.shareMessage', { date: formattedDate, time: selectedSlot.time, center: selectedCenter.name }),
                   )}`}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Share on Telegram
+                  {t('booking.step5.shareOnTelegram')}
                 </a>
                 <a
                   href={`mailto:?subject=Join me at Vitalita&body=${encodeURIComponent(
-                    `I’m giving blood on ${formattedDate} at ${selectedSlot.time} at ${selectedCenter.name} (${selectedCenter.address}). Want to come too?`,
+                    t('booking.step5.shareMessage', { date: formattedDate, time: selectedSlot.time, center: selectedCenter.name }),
                   )}`}
                 >
-                  Share via Email
+                  {t('booking.step5.shareViaEmail')}
                 </a>
               </div>
             )}
             <p className="confirmation-reminder">
-              We’ll send you a reminder the day before your appointment.
+              {t('booking.step5.reminderMessage')}
             </p>
           </div>
 
           <div className="confirmation-extras">
             <div>
-              <h3>What to bring</h3>
+              <h3>{t('booking.step5.whatToBring')}</h3>
               <ul>
-                <li>Valid photo ID</li>
-                <li>Hydration (water bottle is perfect)</li>
-                <li>Something to eat afterwards</li>
+                <li>{t('booking.step5.whatToBring1')}</li>
+                <li>{t('booking.step5.whatToBring2')}</li>
+                <li>{t('booking.step5.whatToBring3')}</li>
               </ul>
             </div>
             <div>
-              <h3>What to expect</h3>
+              <h3>{t('booking.step5.whatToExpect')}</h3>
               <p>
-                The entire visit usually takes about 45 minutes. Our team will guide you
-                through each step and answer any questions. Wear comfortable clothing with
-                sleeves that can be rolled up.
+                {t('booking.step5.whatToExpectText')}
               </p>
             </div>
           </div>
@@ -2491,7 +2496,7 @@ const BookingFlow = () => {
               justifyContent: 'center',
             }}
           >
-            Done
+            {t('booking.step5.done')}
           </button>
         </div>
       </section>
@@ -2520,7 +2525,7 @@ const BookingFlow = () => {
       <div className="wizard-main">
         <nav className="wizard-progress" aria-label="Booking progress">
           <ol>
-            {steps.map((step) => {
+            {stepKeys.map((step) => {
               const isCompleted = currentStep > step.id;
               const isCurrent = currentStep === step.id;
               return (
@@ -2533,7 +2538,7 @@ const BookingFlow = () => {
                   <span className="progress-index" aria-hidden="true">
                     {step.id}
                   </span>
-                  <span className="progress-label">{step.label}</span>
+                  <span className="progress-label">{t(step.labelKey)}</span>
                 </li>
               );
             })}
@@ -2541,7 +2546,7 @@ const BookingFlow = () => {
           <div
             className="progress-bar"
             style={{
-              width: `${((currentStep - 1) / (steps.length - 1)) * 100}%`,
+              width: `${((currentStep - 1) / (stepKeys.length - 1)) * 100}%`,
             }}
             role="presentation"
           />
@@ -2562,9 +2567,9 @@ const BookingFlow = () => {
             onClick={handleBack}
             disabled={currentStep === 1}
           >
-            Back
+            {t('booking.buttons.back')}
           </button>
-          {currentStep < steps.length && (
+          {currentStep < stepKeys.length && (
             <button
               type="button"
               className={`button primary ${isSubmitting ? 'loading' : ''}`}
@@ -2595,17 +2600,17 @@ const BookingFlow = () => {
               }}
             >
               {isSubmitting ? (
-                'Processing...'
+                t('booking.buttons.processing')
               ) : currentStep === 1 ? (
-                'Continue to Date & Time'
+                t('booking.buttons.continueToDateTime')
               ) : currentStep === 2 ? (
-                selectedDateIso && selectedSlotId ? 'Review Appointment' : 'Select Date & Time'
+                selectedDateIso && selectedSlotId ? t('booking.buttons.reviewAppointment') : t('booking.buttons.selectDateTime')
               ) : currentStep === 3 ? (
-                'Continue to Health Check'
+                t('booking.buttons.continueToHealthCheck')
               ) : currentStep === 4 ? (
-                'Confirm Appointment'
+                t('booking.buttons.confirmAppointment')
               ) : (
-                'Next'
+                t('common.next')
               )}
             </button>
           )}

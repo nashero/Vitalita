@@ -1,163 +1,71 @@
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type Category = 'before' | 'during' | 'after' | 'appointment';
 
 interface Question {
   id: string;
-  question: string;
-  answer: string;
+  questionKey: string;
+  answerKey: string;
 }
 
-const categories: { id: Category; label: string; questions: Question[] }[] = [
-  {
-    id: 'before',
-    label: 'Before Donating',
-    questions: [
-      {
-        id: 'who-can-donate',
-        question: 'Who can donate blood?',
-        answer:
-          'Most healthy adults can donate blood. You need to be at least 16 years old (with parental consent) or 17 and older, weigh at least 110 pounds, and feel healthy on the day of donation. Our team will review your health history to make sure it\'s safe for you to donate.',
-      },
-      {
-        id: 'what-to-eat',
-        question: 'What should I eat before donating?',
-        answer:
-          'Have a good meal and drink plenty of water before your appointment. Avoid fatty foods right before donating, as they can affect some of our tests. Staying hydrated is especially important—water helps make the donation process smoother.',
-      },
-      {
-        id: 'medications',
-        question: 'Can I donate if I\'m taking medicine?',
-        answer:
-          'Many medications are perfectly fine, and you can still donate. When you arrive, let our team know what medications you\'re taking. We\'ll check to make sure everything is safe. In most cases, common medications don\'t prevent you from donating.',
-      },
-      {
-        id: 'how-long',
-        question: 'How long does a donation take?',
-        answer:
-          'The actual blood donation takes about 10-15 minutes. Your entire visit, including check-in, a quick health screening, the donation itself, and a short rest afterward, usually takes about 45 minutes total. We want you to feel comfortable and not rushed.',
-      },
-      {
-        id: 'will-it-hurt',
-        question: 'Will it hurt?',
-        answer:
-          'Most people feel only a brief pinch when the needle is inserted, similar to a routine blood test. After that, you shouldn\'t feel any pain. Our staff are experienced and gentle, and we\'ll make sure you\'re comfortable throughout the process.',
-      },
-    ],
-  },
-  {
-    id: 'during',
-    label: 'During Your Appointment',
-    questions: [
-      {
-        id: 'what-to-bring',
-        question: 'What should I bring?',
-        answer:
-          'Bring a valid photo ID, such as a driver\'s license or passport. It\'s also helpful to bring a water bottle to stay hydrated, and you might want to bring something light to eat afterward. Wear comfortable clothing with sleeves that can be rolled up easily.',
-      },
-      {
-        id: 'when-arrive',
-        question: 'What happens when I arrive?',
-        answer:
-          'When you arrive, you\'ll check in at the front desk. We\'ll ask you to fill out a quick health questionnaire, and then one of our team members will take you through a brief screening process. This includes checking your temperature, pulse, and hemoglobin levels. It\'s all very quick and straightforward.',
-      },
-      {
-        id: 'after-donating',
-        question: 'What do I do after donating?',
-        answer:
-          'After donating, we\'ll ask you to rest for about 10-15 minutes and have a snack and something to drink. This helps your body adjust and makes sure you feel good before you leave. Take it easy for the rest of the day and avoid heavy lifting or intense exercise.',
-      },
-      {
-        id: 'drive-home',
-        question: 'Can I drive home after?',
-        answer:
-          'Yes, most people can drive home after donating. However, if you feel lightheaded or unwell, please let our team know. We\'ll make sure you\'re feeling okay before you leave, and we can arrange for someone to pick you up if needed. It\'s always better to be safe.',
-      },
-    ],
-  },
-  {
-    id: 'after',
-    label: 'After Donating',
-    questions: [
-      {
-        id: 'how-will-feel',
-        question: 'How will I feel after?',
-        answer:
-          'Most people feel great after donating! You might feel a little tired, which is normal. Make sure to drink plenty of fluids, eat a good meal, and get some rest. Some people feel energized knowing they\'ve helped save lives. If you have any concerns, don\'t hesitate to reach out to us.',
-      },
-      {
-        id: 'when-donate-again',
-        question: 'When can I donate again?',
-        answer:
-          'You can donate whole blood every 8 weeks (56 days). This gives your body enough time to replenish the blood you donated. We\'ll remind you when you\'re eligible to donate again, and you can always check your donation history in your account.',
-      },
-      {
-        id: 'feel-unwell',
-        question: 'What if I feel unwell?',
-        answer:
-          'If you feel unwell after donating, please contact us right away. You can call our support line or reach out through our website. Most reactions are minor and resolve quickly, but we\'re here to help if you need us. Don\'t hesitate to get in touch—your wellbeing is our priority.',
-      },
-      {
-        id: 'blood-used',
-        question: 'How is my blood used?',
-        answer:
-          'Your donated blood goes through careful testing and processing, then it\'s used to help patients who need it. This includes people having surgery, those being treated for cancer, accident victims, and patients with chronic illnesses. One donation can help save up to three lives. Thank you for making a difference!',
-      },
-    ],
-  },
-  {
-    id: 'appointment',
-    label: 'Appointment Questions',
-    questions: [
-      {
-        id: 'change-appointment',
-        question: 'How do I change my appointment?',
-        answer:
-          'You can change your appointment easily through your account on our website. Just go to "My Appointments" and select the appointment you want to change. You\'ll be able to choose a new date and time that works better for you. If you need help, give us a call and we\'ll assist you.',
-      },
-      {
-        id: 'cancel-appointment',
-        question: 'What if I need to cancel?',
-        answer:
-          'You can cancel your appointment at any time through your account, or by calling us. We understand that sometimes plans change. If you need to cancel, please let us know as soon as possible so we can offer the slot to someone else. You can always reschedule for another time that works for you.',
-      },
-      {
-        id: 'no-reminder',
-        question: 'I didn\'t get a reminder—what do I do?',
-        answer:
-          'We send reminders via SMS and email the day before your appointment. If you didn\'t receive one, please check that your contact information is correct in your account. You can also check your appointment details online at any time. If you\'re still having issues, give us a call and we\'ll help you sort it out.',
-      },
-      {
-        id: 'bring-someone',
-        question: 'Can I bring someone with me?',
-        answer:
-          'Yes, you\'re welcome to bring a friend or family member with you. They can wait in our comfortable waiting area while you donate. Having someone with you can make the experience more relaxing, especially if it\'s your first time donating.',
-      },
-    ],
-  },
-];
-
 const HelpPage = () => {
+  const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState<Category>('before');
   const [openQuestionId, setOpenQuestionId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isVoiceHelpOpen, setIsVoiceHelpOpen] = useState(false);
 
+  // Define question structure with translation keys
+  const questionStructure: Record<Category, Question[]> = {
+    before: [
+      { id: 'who-can-donate', questionKey: 'help.page.questions.before.whoCanDonate.question', answerKey: 'help.page.questions.before.whoCanDonate.answer' },
+      { id: 'what-to-eat', questionKey: 'help.page.questions.before.whatToEat.question', answerKey: 'help.page.questions.before.whatToEat.answer' },
+      { id: 'medications', questionKey: 'help.page.questions.before.medications.question', answerKey: 'help.page.questions.before.medications.answer' },
+      { id: 'how-long', questionKey: 'help.page.questions.before.howLong.question', answerKey: 'help.page.questions.before.howLong.answer' },
+      { id: 'will-it-hurt', questionKey: 'help.page.questions.before.willItHurt.question', answerKey: 'help.page.questions.before.willItHurt.answer' },
+    ],
+    during: [
+      { id: 'what-to-bring', questionKey: 'help.page.questions.during.whatToBring.question', answerKey: 'help.page.questions.during.whatToBring.answer' },
+      { id: 'when-arrive', questionKey: 'help.page.questions.during.whenArrive.question', answerKey: 'help.page.questions.during.whenArrive.answer' },
+      { id: 'after-donating', questionKey: 'help.page.questions.during.afterDonating.question', answerKey: 'help.page.questions.during.afterDonating.answer' },
+      { id: 'drive-home', questionKey: 'help.page.questions.during.driveHome.question', answerKey: 'help.page.questions.during.driveHome.answer' },
+    ],
+    after: [
+      { id: 'how-will-feel', questionKey: 'help.page.questions.after.howWillFeel.question', answerKey: 'help.page.questions.after.howWillFeel.answer' },
+      { id: 'when-donate-again', questionKey: 'help.page.questions.after.whenDonateAgain.question', answerKey: 'help.page.questions.after.whenDonateAgain.answer' },
+      { id: 'feel-unwell', questionKey: 'help.page.questions.after.feelUnwell.question', answerKey: 'help.page.questions.after.feelUnwell.answer' },
+      { id: 'blood-used', questionKey: 'help.page.questions.after.bloodUsed.question', answerKey: 'help.page.questions.after.bloodUsed.answer' },
+    ],
+    appointment: [
+      { id: 'change-appointment', questionKey: 'help.page.questions.appointment.changeAppointment.question', answerKey: 'help.page.questions.appointment.changeAppointment.answer' },
+      { id: 'cancel-appointment', questionKey: 'help.page.questions.appointment.cancelAppointment.question', answerKey: 'help.page.questions.appointment.cancelAppointment.answer' },
+      { id: 'no-reminder', questionKey: 'help.page.questions.appointment.noReminder.question', answerKey: 'help.page.questions.appointment.noReminder.answer' },
+      { id: 'bring-someone', questionKey: 'help.page.questions.appointment.bringSomeone.question', answerKey: 'help.page.questions.appointment.bringSomeone.answer' },
+    ],
+  };
+
+  const categories: { id: Category; labelKey: string }[] = [
+    { id: 'before', labelKey: 'help.page.categories.before' },
+    { id: 'during', labelKey: 'help.page.categories.during' },
+    { id: 'after', labelKey: 'help.page.categories.after' },
+    { id: 'appointment', labelKey: 'help.page.categories.appointment' },
+  ];
+
   const activeQuestions = useMemo(() => {
-    const category = categories.find((cat) => cat.id === activeCategory);
-    if (!category) return [];
+    const questions = questionStructure[activeCategory] || [];
 
     if (!searchQuery.trim()) {
-      return category.questions;
+      return questions;
     }
 
     const query = searchQuery.toLowerCase();
-    return category.questions.filter(
-      (q) =>
-        q.question.toLowerCase().includes(query) ||
-        q.answer.toLowerCase().includes(query),
-    );
-  }, [activeCategory, searchQuery]);
+    return questions.filter((q) => {
+      const questionText = t(q.questionKey).toLowerCase();
+      const answerText = t(q.answerKey).toLowerCase();
+      return questionText.includes(query) || answerText.includes(query);
+    });
+  }, [activeCategory, searchQuery, t]);
 
   const toggleQuestion = (questionId: string) => {
     setOpenQuestionId(openQuestionId === questionId ? null : questionId);
@@ -172,8 +80,8 @@ const HelpPage = () => {
       <div className="help-main">
         {/* Hero Section */}
         <section className="help-hero">
-          <h1>How Can We Help You?</h1>
-          <p>Find answers to common questions about donating blood</p>
+          <h1>{t('help.page.heroTitle')}</h1>
+          <p>{t('help.page.heroDescription')}</p>
         </section>
 
         {/* Search Bar */}
@@ -181,7 +89,7 @@ const HelpPage = () => {
           <div className="search-container">
             <input
               type="text"
-              placeholder="Type your question here"
+              placeholder={t('help.page.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="search-input"
@@ -208,7 +116,7 @@ const HelpPage = () => {
                   setSearchQuery('');
                 }}
               >
-                {category.label}
+                {t(category.labelKey)}
               </button>
             ))}
           </div>
@@ -228,14 +136,14 @@ const HelpPage = () => {
                       onClick={() => toggleQuestion(question.id)}
                       aria-expanded={isOpen}
                     >
-                      <span className="question-text">{question.question}</span>
+                      <span className="question-text">{t(question.questionKey)}</span>
                       <span className="question-icon" aria-hidden="true">
                         {isOpen ? '−' : '+'}
                       </span>
                     </button>
                     {isOpen && (
                       <div className="question-answer">
-                        <p>{question.answer}</p>
+                        <p>{t(question.answerKey)}</p>
                       </div>
                     )}
                   </div>
@@ -244,13 +152,13 @@ const HelpPage = () => {
             </div>
           ) : (
             <div className="no-results">
-              <p>No questions found matching your search.</p>
+              <p>{t('help.page.noResults')}</p>
               <button
                 type="button"
                 className="text-button"
                 onClick={() => setSearchQuery('')}
               >
-                Clear search
+                {t('help.page.clearSearch')}
               </button>
             </div>
           )}
@@ -258,12 +166,12 @@ const HelpPage = () => {
 
         {/* Contact Section */}
         <section className="help-contact">
-          <h2>Can't find what you're looking for?</h2>
-          <p>We're here to help. Reach out to us using any of these methods:</p>
+          <h2>{t('help.page.contact.title')}</h2>
+          <p>{t('help.page.contact.description')}</p>
           <div className="contact-options">
             <a href="tel:+391800123456" className="contact-option phone">
               <span className="contact-icon">📞</span>
-              <span className="contact-label">Call Us</span>
+              <span className="contact-label">{t('help.page.contact.callUs')}</span>
               <span className="contact-value">+39 1800 123 456</span>
             </a>
             <a
@@ -273,16 +181,16 @@ const HelpPage = () => {
               className="contact-option telegram"
             >
               <span className="contact-icon">💬</span>
-              <span className="contact-label">Telegram</span>
-              <span className="contact-value">Chat with us</span>
+              <span className="contact-label">{t('help.page.contact.telegram')}</span>
+              <span className="contact-value">{t('help.page.contact.telegramValue')}</span>
             </a>
             <a href="mailto:donations@vitalita.com" className="contact-option email">
               <span className="contact-icon">✉️</span>
-              <span className="contact-label">Email</span>
+              <span className="contact-label">{t('help.page.contact.email')}</span>
               <span className="contact-value">donations@vitalita.com</span>
             </a>
           </div>
-          <p className="contact-note">We usually respond within 1 hour</p>
+          <p className="contact-note">{t('help.page.contact.responseTime')}</p>
         </section>
       </div>
 
@@ -293,12 +201,12 @@ const HelpPage = () => {
             type="button"
             className="voice-help-button"
             onClick={handleVoiceHelpToggle}
-            aria-label="Need help? Start voice chat"
+            aria-label={t('help.page.voiceHelp.button')}
           >
             <span className="voice-help-icon" aria-hidden="true">
               🎤
             </span>
-            <span className="voice-help-text">Need help? Start voice chat</span>
+            <span className="voice-help-text">{t('help.page.voiceHelp.button')}</span>
           </button>
         ) : (
           <div className="voice-help-panel">
@@ -306,19 +214,19 @@ const HelpPage = () => {
               type="button"
               className="voice-help-close"
               onClick={handleVoiceHelpToggle}
-              aria-label="Close voice chat"
+              aria-label={t('help.page.voiceHelp.close')}
             >
               ×
             </button>
             <div className="voice-help-content">
-              <p>Ready to help. What's your question?</p>
+              <p>{t('help.page.voiceHelp.ready')}</p>
               <div className="voice-help-input">
                 <input
                   type="text"
-                  placeholder="Ask your question..."
+                  placeholder={t('help.page.voiceHelp.placeholder')}
                   className="voice-input"
                 />
-                <button type="button" className="voice-send-button" aria-label="Send">
+                <button type="button" className="voice-send-button" aria-label={t('help.page.voiceHelp.send')}>
                   →
                 </button>
               </div>
