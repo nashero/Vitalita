@@ -996,7 +996,7 @@ const BookingFlow = () => {
           </div>
 
           {centers.length > 0 && (
-            <div className="center-map-wrapper">
+            <div className="center-map-wrapper" style={{ width: '100%', overflow: 'hidden', borderRadius: '0.5rem' }}>
               <MapContainer
                 center={[
                   selectedCenter?.position.lat ?? centers[0].position.lat,
@@ -1004,7 +1004,7 @@ const BookingFlow = () => {
                 ]}
                 zoom={12}
                 scrollWheelZoom={false}
-                style={{ height: '260px', width: '100%' }}
+                style={{ height: '260px', width: '100%', minHeight: '200px' }}
               >
                 {selectedCenter && <MapViewUpdater position={selectedCenter.position} />}
                 <TileLayer
@@ -1138,7 +1138,7 @@ const BookingFlow = () => {
         <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
           {t('booking.step2.donationType')} <span aria-label="required">*</span>
         </label>
-        <div className="choice-group" role="radiogroup" style={{ display: 'flex', gap: '1rem' }}>
+        <div className="choice-group donation-type-group" role="radiogroup">
           <label>
             <input
               type="radio"
@@ -1369,7 +1369,7 @@ const BookingFlow = () => {
 
         return (
           <>
-            <div className="date-picker" style={{
+            <div className="date-picker date-picker-container" style={{
               backgroundColor: '#ffffff',
               padding: '1.5rem',
               borderRadius: '0.75rem',
@@ -1377,7 +1377,7 @@ const BookingFlow = () => {
               marginBottom: '2rem',
             }}>
               {/* Month Navigation */}
-              <div style={{
+              <div className="month-navigation" style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
@@ -1415,14 +1415,10 @@ const BookingFlow = () => {
                 </button>
               </div>
 
-              {/* Two Calendars Side by Side */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '1.5rem',
-              }}>
+              {/* Two Calendars - Responsive Grid */}
+              <div className="date-picker-grid">
                 {/* Current Month Calendar */}
-                <div>
+                <div className="calendar-month-container">
                   <h3 style={{
                     marginBottom: '0.5rem',
                     fontSize: '1.125rem',
@@ -1432,30 +1428,15 @@ const BookingFlow = () => {
                     {format(new Date(currentYear, currentMonth, 1), 'MMMM yyyy')}
                   </h3>
                   {/* Day of week headers */}
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(7, 1fr)',
-                    gap: '0.25rem',
-                    marginBottom: '0.25rem',
-                  }}>
+                  <div className="calendar-day-header">
                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                      <div key={day} style={{
-                        textAlign: 'center',
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        color: '#6b7280',
-                        padding: '0.125rem',
-                      }}>
+                      <div key={day} className="calendar-day-header-item">
                         {day}
                       </div>
                     ))}
                   </div>
                   {/* Calendar grid */}
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(7, 1fr)',
-                    gap: '0.25rem',
-                  }}>
+                  <div className="calendar-grid">
                     {currentMonthGrid.map((day, index) => {
                       if (!day.date) {
                         return <div key={`empty-${index}`} style={{ minHeight: '50px' }} />;
@@ -1470,6 +1451,7 @@ const BookingFlow = () => {
                         <button
                           key={day.isoDate}
                           type="button"
+                          className={`calendar-day-button ${isSelected ? 'selected' : ''}`}
                           onClick={() => {
                             if (isAvailable) {
                               setSelectedDateIso(day.isoDate!);
@@ -1478,20 +1460,9 @@ const BookingFlow = () => {
                           }}
                           disabled={!isAvailable}
                           style={{
-                            minHeight: '50px',
-                            padding: '0.375rem',
-                            borderRadius: '0.5rem',
                             border: isSelected ? '2px solid #2563eb' : '1px solid #e5e7eb',
                             backgroundColor: isSelected ? '#eff6ff' : isAvailable ? '#ffffff' : '#f9fafb',
-                            cursor: isAvailable ? 'pointer' : 'not-allowed',
-                            opacity: isAvailable ? 1 : 0.4,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '0.125rem',
-                            position: 'relative',
-                            transition: 'all 0.2s ease',
+                            color: isAvailable ? '#1f2937' : '#9ca3af',
                           }}
                           onMouseEnter={(e) => {
                             if (isAvailable && !isSelected) {
@@ -1505,9 +1476,7 @@ const BookingFlow = () => {
                           }}
                         >
                           <span style={{
-                            fontSize: '1rem',
                             fontWeight: 600,
-                            color: isAvailable ? '#1f2937' : '#9ca3af',
                           }}>
                             {format(day.date, 'd')}
                           </span>
@@ -1555,7 +1524,7 @@ const BookingFlow = () => {
 
                 {/* Next Month Calendar */}
                 {nextMonthDays.length > 0 && (
-                  <div>
+                  <div className="calendar-month-container">
                     <h3 style={{
                       marginBottom: '0.5rem',
                       fontSize: '1.125rem',
@@ -1565,30 +1534,15 @@ const BookingFlow = () => {
                       {format(new Date(nextYear, nextMonth, 1), 'MMMM yyyy')}
                     </h3>
                     {/* Day of week headers */}
-                    <div style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(7, 1fr)',
-                      gap: '0.25rem',
-                      marginBottom: '0.25rem',
-                    }}>
+                    <div className="calendar-day-header">
                       {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                        <div key={day} style={{
-                          textAlign: 'center',
-                          fontSize: '0.75rem',
-                          fontWeight: 600,
-                          color: '#6b7280',
-                          padding: '0.125rem',
-                        }}>
+                        <div key={day} className="calendar-day-header-item">
                           {day}
                         </div>
                       ))}
                     </div>
                     {/* Calendar grid */}
-                    <div style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(7, 1fr)',
-                      gap: '0.25rem',
-                    }}>
+                    <div className="calendar-grid">
                       {nextMonthGrid.map((day, index) => {
                         if (!day.date) {
                           return <div key={`empty-${index}`} style={{ minHeight: '50px' }} />;
@@ -1603,6 +1557,7 @@ const BookingFlow = () => {
                           <button
                             key={day.isoDate}
                             type="button"
+                            className={`calendar-day-button ${isSelected ? 'selected' : ''}`}
                             onClick={() => {
                               if (isAvailable) {
                                 setSelectedDateIso(day.isoDate!);
@@ -1611,20 +1566,9 @@ const BookingFlow = () => {
                             }}
                             disabled={!isAvailable}
                             style={{
-                              minHeight: '50px',
-                              padding: '0.375rem',
-                              borderRadius: '0.5rem',
                               border: isSelected ? '2px solid #2563eb' : '1px solid #e5e7eb',
                               backgroundColor: isSelected ? '#eff6ff' : isAvailable ? '#ffffff' : '#f9fafb',
-                              cursor: isAvailable ? 'pointer' : 'not-allowed',
-                              opacity: isAvailable ? 1 : 0.4,
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              gap: '0.125rem',
-                              position: 'relative',
-                              transition: 'all 0.2s ease',
+                              color: isAvailable ? '#1f2937' : '#9ca3af',
                             }}
                             onMouseEnter={(e) => {
                               if (isAvailable && !isSelected) {
@@ -1638,9 +1582,7 @@ const BookingFlow = () => {
                             }}
                           >
                             <span style={{
-                              fontSize: '1rem',
                               fontWeight: 600,
-                              color: isAvailable ? '#1f2937' : '#9ca3af',
                             }}>
                               {format(day.date, 'd')}
                             </span>
@@ -1707,7 +1649,7 @@ const BookingFlow = () => {
 
             {selectedDateIso && (
               <div className="time-slot-picker" style={{ marginTop: '2rem' }}>
-                <div style={{
+                <div className="time-slot-section-header" style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.75rem',
@@ -1808,7 +1750,7 @@ const BookingFlow = () => {
                       <h3 style={{ fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.75rem', color: '#6b7280' }}>
                         {t(titleKey)}
                       </h3>
-                      <div className="slot-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '0.75rem' }}>
+                      <div className="slot-grid">
                         {slots.map((slot) => {
                           const isSelected = slot.id === selectedSlotId;
                           const isBooked = slot.spotsLeft === 0;
