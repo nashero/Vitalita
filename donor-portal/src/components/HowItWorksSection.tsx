@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { UserPlus, Calendar, Heart, TrendingUp } from 'lucide-react';
 import { isAuthenticated } from '../utils/auth';
 
@@ -14,6 +15,7 @@ interface Step {
 
 function HowItWorksSection() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [visibleSteps, setVisibleSteps] = useState<boolean[]>([false, false, false, false]);
   const sectionRef = useRef<HTMLDivElement>(null);
   const stepsRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -21,32 +23,32 @@ function HowItWorksSection() {
   const steps: Step[] = [
     {
       icon: <UserPlus className="w-8 h-8" />,
-      title: 'Create Your Profile',
-      text: 'Sign up in 3 minutes with your basic information',
+      title: t('landing.howItWorks.steps.createProfile.title'),
+      text: t('landing.howItWorks.steps.createProfile.text'),
       number: '1',
       color: 'terracotta',
       iconColor: 'text-terracotta',
     },
     {
       icon: <Calendar className="w-8 h-8" />,
-      title: 'Choose Your Time',
-      text: 'Pick a convenient date and location near you',
+      title: t('landing.howItWorks.steps.chooseTime.title'),
+      text: t('landing.howItWorks.steps.chooseTime.text'),
       number: '2',
       color: 'mediterranean-blue',
       iconColor: 'text-mediterranean-blue',
     },
     {
       icon: <Heart className="w-8 h-8" />,
-      title: 'Save Lives',
-      text: 'Comfortable 20-minute process with caring staff',
+      title: t('landing.howItWorks.steps.saveLives.title'),
+      text: t('landing.howItWorks.steps.saveLives.text'),
       number: '3',
       color: 'olive-green',
       iconColor: 'text-olive-green',
     },
     {
       icon: <TrendingUp className="w-8 h-8" />,
-      title: 'See Your Impact',
-      text: 'Watch your life-saving counter grow with each donation',
+      title: t('landing.howItWorks.steps.seeImpact.title'),
+      text: t('landing.howItWorks.steps.seeImpact.text'),
       number: '4',
       color: 'terracotta',
       iconColor: 'text-terracotta',
@@ -112,10 +114,10 @@ function HowItWorksSection() {
         {/* Heading */}
         <div className="text-center mb-12 md:mb-16">
           <h2 className="text-[28px] md:text-[36px] font-bold text-espresso mb-4">
-            How Blood Donation Works
+            {t('landing.howItWorks.title')}
           </h2>
           <p className="text-lg md:text-xl text-taupe">
-            Simple, safe, and life-saving
+            {t('landing.howItWorks.subtitle')}
           </p>
         </div>
 
@@ -168,7 +170,7 @@ function HowItWorksSection() {
             onClick={handleStartJourney}
             className="bg-terracotta hover:bg-[#C5694A] text-white font-bold text-base md:text-lg px-8 py-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-terracotta focus:ring-opacity-50"
           >
-            Start Your Journey
+            {t('landing.howItWorks.cta')}
           </button>
         </div>
       </div>

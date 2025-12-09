@@ -16,25 +16,25 @@ function Footer() {
               <Heart className="w-6 h-6 text-terracotta" />
               <span className="text-xl font-bold">Vitalita</span>
             </div>
-            <p className="text-cream mb-2">Born in Italy. Ready for Everyone.</p>
+            <p className="text-cream mb-2">{t('landing.footer.tagline')}</p>
             <div className="flex items-center gap-2 mb-4">
               <span className="text-lg" aria-label="Italian flag">
                 🇮🇹
               </span>
-              <span className="text-sm text-cream">AVIS Partnership</span>
+              <span className="text-sm text-cream">{t('landing.footer.avisPartnership')}</span>
             </div>
           </div>
 
           {/* Column 2: Quick Links */}
           <div>
-            <h3 className="text-lg font-bold mb-4 text-white">Quick Links</h3>
+            <h3 className="text-lg font-bold mb-4 text-white">{t('landing.footer.quickLinks')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   to="/book"
                   className="text-cream hover:text-mediterranean-blue transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-1"
                 >
-                  Book Appointment
+                  {t('landing.footer.bookAppointment')}
                 </Link>
               </li>
               <li>
@@ -42,7 +42,7 @@ function Footer() {
                   to="/appointments"
                   className="text-cream hover:text-mediterranean-blue transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-1"
                 >
-                  My Dashboard
+                  {t('landing.footer.myDashboard')}
                 </Link>
               </li>
               <li>
@@ -50,7 +50,7 @@ function Footer() {
                   to="/help"
                   className="text-cream hover:text-mediterranean-blue transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-1"
                 >
-                  Help & FAQ
+                  {t('landing.footer.helpFaq')}
                 </Link>
               </li>
               <li>
@@ -58,7 +58,7 @@ function Footer() {
                   to="/eligibility"
                   className="text-cream hover:text-mediterranean-blue transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-1"
                 >
-                  Eligibility Check
+                  {t('landing.footer.eligibilityCheck')}
                 </Link>
               </li>
             </ul>
@@ -66,14 +66,14 @@ function Footer() {
 
           {/* Column 3: Resources */}
           <div>
-            <h3 className="text-lg font-bold mb-4 text-white">Resources</h3>
+            <h3 className="text-lg font-bold mb-4 text-white">{t('landing.footer.resources')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   to="/#how-it-works"
                   className="text-cream hover:text-mediterranean-blue transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-1"
                 >
-                  How It Works
+                  {t('landing.footer.howItWorks')}
                 </Link>
               </li>
               <li>
@@ -81,7 +81,7 @@ function Footer() {
                   to="/#testimonials"
                   className="text-cream hover:text-mediterranean-blue transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-1"
                 >
-                  Donor Stories
+                  {t('landing.footer.donorStories')}
                 </Link>
               </li>
               <li>
@@ -89,7 +89,7 @@ function Footer() {
                   to="/book"
                   className="text-cream hover:text-mediterranean-blue transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-1"
                 >
-                  Find a Center
+                  {t('landing.footer.findCenter')}
                 </Link>
               </li>
               <li>
@@ -97,7 +97,7 @@ function Footer() {
                   to="/help"
                   className="text-cream hover:text-mediterranean-blue transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-1"
                 >
-                  Contact Us
+                  {t('landing.footer.contactUs')}
                 </Link>
               </li>
             </ul>
@@ -105,7 +105,7 @@ function Footer() {
 
           {/* Column 4: Legal & Contact */}
           <div>
-            <h3 className="text-lg font-bold mb-4 text-white">Legal & Contact</h3>
+            <h3 className="text-lg font-bold mb-4 text-white">{t('landing.footer.legalContact')}</h3>
             <ul className="space-y-2 mb-4">
               <li>
                 <a
@@ -114,7 +114,7 @@ function Footer() {
                   rel="noreferrer"
                   className="text-cream hover:text-mediterranean-blue transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-1"
                 >
-                  Privacy Policy
+                  {t('landing.footer.privacyPolicy')}
                 </a>
               </li>
               <li>
@@ -124,7 +124,7 @@ function Footer() {
                   rel="noreferrer"
                   className="text-cream hover:text-mediterranean-blue transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-1"
                 >
-                  Terms of Service
+                  {t('landing.footer.terms')}
                 </a>
               </li>
               <li>
@@ -134,7 +134,7 @@ function Footer() {
                   rel="noreferrer"
                   className="text-cream hover:text-mediterranean-blue transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-1"
                 >
-                  GDPR Information
+                  {t('landing.footer.gdprInfo')}
                 </a>
               </li>
             </ul>
@@ -144,7 +144,7 @@ function Footer() {
                   href="mailto:donations@vitalita.com"
                   className="hover:text-mediterranean-blue transition-colors"
                 >
-                  donations@vitalita.com
+                  {t('landing.footer.supportEmail')}
                 </a>
               </p>
               <p>
@@ -152,7 +152,7 @@ function Footer() {
                   href="tel:+391800123456"
                   className="hover:text-mediterranean-blue transition-colors"
                 >
-                  +39 1800 123 456
+                  {t('landing.footer.supportPhone')}
                 </a>
               </p>
             </div>
@@ -163,7 +163,7 @@ function Footer() {
         <div className="border-t border-taupe/30 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-cream text-sm text-center md:text-left">
-              © 2024 Vitalita. Developed in partnership with AVIS Italy.
+              {t('landing.footer.copyright')}
             </p>
             <div className="flex items-center gap-6">
               {/* Social Media Icons */}
@@ -200,7 +200,7 @@ function Footer() {
                 rel="noreferrer"
                 className="text-cream hover:text-mediterranean-blue transition-colors text-sm font-medium focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-2"
               >
-                Back to Vitalita.org
+                {t('landing.footer.visitSite')}
               </a>
             </div>
           </div>

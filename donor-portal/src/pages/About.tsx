@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Target,
   Eye,
@@ -27,6 +28,7 @@ const ItalianFlag = ({ className = 'w-16 h-12' }: { className?: string }) => (
 );
 
 function About() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
   const [counts, setCounts] = useState({
@@ -49,15 +51,12 @@ function About() {
 
   // Set document title and meta description
   useEffect(() => {
-    document.title = 'About Vitalita | Italian Blood Donation Platform Serving Europe';
+    document.title = t('about.pageTitle');
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute(
-        'content',
-        'Learn how Vitalita partners with AVIS Italy to modernize blood donation. Born in Italy, ready to serve communities across Europe. 50,000+ donors, 150,000+ lives saved.'
-      );
+      metaDescription.setAttribute('content', t('about.metaDescription'));
     }
-  }, []);
+  }, [t]);
 
   // Intersection Observer for section animations
   useEffect(() => {
@@ -205,31 +204,16 @@ function About() {
             </div>
 
             <h1 className="text-[36px] md:text-[48px] font-bold text-espresso mb-6">
-              Born in Italy. Ready for Everyone.
+              {t('about.hero.title')}
             </h1>
             <p className="text-[18px] md:text-[20px] text-taupe mb-12 max-w-[800px] mx-auto">
-              The story of how Vitalita is transforming blood donation across Europe
+              {t('about.hero.subtitle')}
             </p>
 
             <div className="max-w-[800px] mx-auto space-y-6 text-[18px] text-taupe text-center">
-              <p>
-                Vitalita was born from a simple observation: Italy's blood donation system, managed
-                by AVIS volunteers, needed modern technology to match their incredible dedication.
-                What started as a solution for Italian donors has grown into a platform ready to
-                serve communities across Europe.
-              </p>
-              <p>
-                Our journey began when AVIS Comunale approached us with a challenge: their
-                volunteer-run scheduling system couldn't keep up with demand. Donors waited weeks
-                for appointments, and staff spent hours managing phone calls. We saw an opportunity
-                to honor their mission with technology that amplifies their impact.
-              </p>
-              <p>
-                Today, Vitalita serves over 50,000 active donors across 200+ AVIS centers in Italy,
-                and we're expanding to serve blood donation organizations across Europe. Every
-                feature we build is tested with real volunteers, approved by medical staff, and
-                designed to make saving lives as simple as booking a coffee.
-              </p>
+              <p>{t('about.hero.paragraph1')}</p>
+              <p>{t('about.hero.paragraph2')}</p>
+              <p>{t('about.hero.paragraph3')}</p>
             </div>
 
             {/* Decorative Mediterranean Pattern Border */}
@@ -266,11 +250,10 @@ function About() {
                 <Target className="w-16 h-16 text-terracotta" aria-hidden="true" />
               </div>
               <h2 className="text-[28px] md:text-[36px] font-bold text-espresso mb-4">
-                Our Mission
+                {t('about.mission.title')}
               </h2>
               <p className="text-[18px] text-taupe">
-                To make blood donation accessible, efficient, and impactful for every donor and
-                every community.
+                {t('about.mission.description')}
               </p>
             </div>
 
@@ -280,11 +263,10 @@ function About() {
                 <Eye className="w-16 h-16 text-mediterranean-blue" aria-hidden="true" />
               </div>
               <h2 className="text-[28px] md:text-[36px] font-bold text-espresso mb-4">
-                Our Vision
+                {t('about.vision.title')}
               </h2>
               <p className="text-[18px] text-taupe">
-                A Europe where every patient receives the blood they need, supported by engaged
-                donors and modern technology.
+                {t('about.vision.description')}
               </p>
             </div>
           </div>
@@ -301,10 +283,10 @@ function About() {
       >
         <div className="max-w-[1200px] mx-auto">
           <h2 className="text-[28px] md:text-[36px] font-bold text-espresso text-center mb-4">
-            Our Journey
+            {t('about.journey.title')}
           </h2>
           <p className="text-[18px] text-taupe text-center mb-16">
-            From local solution to European platform
+            {t('about.journey.subtitle')}
           </p>
 
           {/* Timeline */}
@@ -326,11 +308,10 @@ function About() {
                   <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-olive-green">
                     <div className="flex items-center gap-3 mb-3">
                       <Rocket className="w-8 h-8 text-olive-green" aria-hidden="true" />
-                      <h3 className="text-xl font-bold text-espresso">2024 - First Launch</h3>
+                      <h3 className="text-xl font-bold text-espresso">{t('about.journey.timeline.2024Launch.title')}</h3>
                     </div>
                     <p className="text-taupe">
-                      Vitalita launched in three Italian cities. Within months, appointment
-                      scheduling time dropped by 80%, and donor retention increased by 35%.
+                      {t('about.journey.timeline.2024Launch.description')}
                     </p>
                   </div>
                 </div>
@@ -351,11 +332,10 @@ function About() {
                   <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-terracotta">
                     <div className="flex items-center gap-3 mb-3">
                       <TrendingUp className="w-8 h-8 text-terracotta" aria-hidden="true" />
-                      <h3 className="text-xl font-bold text-espresso">2024 - Growing Impact</h3>
+                      <h3 className="text-xl font-bold text-espresso">{t('about.journey.timeline.2024Impact.title')}</h3>
                     </div>
                     <p className="text-taupe">
-                      Today, 50,000+ donors use Vitalita across 200+ AVIS centers. We've helped save
-                      over 150,000 lives and continue expanding across Italy.
+                      {t('about.journey.timeline.2024Impact.description')}
                     </p>
                   </div>
                 </div>
@@ -372,11 +352,10 @@ function About() {
                   <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-mediterranean-blue">
                     <div className="flex items-center gap-3 mb-3">
                       <Globe className="w-8 h-8 text-mediterranean-blue" aria-hidden="true" />
-                      <h3 className="text-xl font-bold text-espresso">2025 - European Future</h3>
+                      <h3 className="text-xl font-bold text-espresso">{t('about.journey.timeline.2025Future.title')}</h3>
                     </div>
                     <p className="text-taupe">
-                      With proven success in Italy, we're ready to partner with blood services
-                      across Europe, adapting our platform to serve every community's unique needs.
+                      {t('about.journey.timeline.2025Future.description')}
                     </p>
                   </div>
                 </div>
@@ -398,10 +377,10 @@ function About() {
       >
         <div className="max-w-[1200px] mx-auto">
           <h2 className="text-[28px] md:text-[36px] font-bold text-espresso text-center mb-4">
-            Built with AVIS Italy
+            {t('about.partnership.title')}
           </h2>
           <p className="text-[18px] text-taupe text-center mb-12">
-            A partnership rooted in trust and shared values
+            {t('about.partnership.subtitle')}
           </p>
 
           {/* AVIS Content Box */}
@@ -415,26 +394,23 @@ function About() {
               </div>
             </div>
             <p className="text-[18px] text-taupe text-center max-w-3xl mx-auto">
-              AVIS (Associazione Volontari Italiani Sangue) has been Italy's backbone of blood
-              donation for decades. Vitalita exists because AVIS trusted us to modernize their
-              mission without losing their heart. Every feature we build is tested with AVIS
-              volunteers and approved by their medical staff.
+              {t('about.partnership.description')}
             </p>
           </div>
 
           {/* Statistics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <div className="bg-white border-t-4 border-terracotta p-6 rounded-lg shadow-md text-center">
-              <p className="text-3xl font-bold text-terracotta mb-2">70+ years</p>
-              <p className="text-taupe">AVIS history</p>
+              <p className="text-3xl font-bold text-terracotta mb-2">{t('about.partnership.stats.history')}</p>
+              <p className="text-taupe">{t('about.partnership.stats.historyLabel')}</p>
             </div>
             <div className="bg-white border-t-4 border-mediterranean-blue p-6 rounded-lg shadow-md text-center">
-              <p className="text-3xl font-bold text-mediterranean-blue mb-2">Partnership since 2024</p>
-              <p className="text-taupe">Our relationship</p>
+              <p className="text-3xl font-bold text-mediterranean-blue mb-2">{t('about.partnership.stats.partnership')}</p>
+              <p className="text-taupe">{t('about.partnership.stats.partnershipLabel')}</p>
             </div>
             <div className="bg-white border-t-4 border-olive-green p-6 rounded-lg shadow-md text-center">
-              <p className="text-3xl font-bold text-olive-green mb-2">200+ centers</p>
-              <p className="text-taupe">Connected locations</p>
+              <p className="text-3xl font-bold text-olive-green mb-2">{t('about.partnership.stats.centers')}</p>
+              <p className="text-taupe">{t('about.partnership.stats.centersLabel')}</p>
             </div>
           </div>
         </div>
@@ -450,67 +426,61 @@ function About() {
       >
         <div className="max-w-[1200px] mx-auto">
           <h2 className="text-[28px] md:text-[36px] font-bold text-espresso text-center mb-16">
-            What Drives Us
+            {t('about.values.title')}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Value Card 1 */}
             <div className="bg-white border-t-4 border-terracotta p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
               <Users className="w-10 h-10 text-terracotta mb-4" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-espresso mb-3">Community First</h3>
+              <h3 className="text-xl font-bold text-espresso mb-3">{t('about.values.communityFirst.title')}</h3>
               <p className="text-taupe">
-                Every decision we make prioritizes donor experience and community impact over profit.
-                We're here to serve, not extract.
+                {t('about.values.communityFirst.description')}
               </p>
             </div>
 
             {/* Value Card 2 */}
             <div className="bg-white border-t-4 border-mediterranean-blue p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
               <Shield className="w-10 h-10 text-mediterranean-blue mb-4" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-espresso mb-3">Trust & Transparency</h3>
+              <h3 className="text-xl font-bold text-espresso mb-3">{t('about.values.trust.title')}</h3>
               <p className="text-taupe">
-                Your data is sacred. GDPR compliance isn't a checkbox—it's our foundation. We never
-                sell data, never share without permission.
+                {t('about.values.trust.description')}
               </p>
             </div>
 
             {/* Value Card 3 */}
             <div className="bg-white border-t-4 border-olive-green p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
               <Globe className="w-10 h-10 text-olive-green mb-4" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-espresso mb-3">Italian Roots, Global Vision</h3>
+              <h3 className="text-xl font-bold text-espresso mb-3">{t('about.values.roots.title')}</h3>
               <p className="text-taupe">
-                Proudly built in Italy with Mediterranean values of community and care, designed to
-                adapt to any culture, any country.
+                {t('about.values.roots.description')}
               </p>
             </div>
 
             {/* Value Card 4 */}
             <div className="bg-white border-t-4 border-terracotta p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
               <Zap className="w-10 h-10 text-terracotta mb-4" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-espresso mb-3">Simplicity Matters</h3>
+              <h3 className="text-xl font-bold text-espresso mb-3">{t('about.values.simplicity.title')}</h3>
               <p className="text-taupe">
-                Booking an appointment shouldn't require a manual. We obsess over removing friction
-                so donors can focus on saving lives.
+                {t('about.values.simplicity.description')}
               </p>
             </div>
 
             {/* Value Card 5 */}
             <div className="bg-white border-t-4 border-mediterranean-blue p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
               <BarChart className="w-10 h-10 text-mediterranean-blue mb-4" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-espresso mb-3">Evidence-Based</h3>
+              <h3 className="text-xl font-bold text-espresso mb-3">{t('about.values.evidence.title')}</h3>
               <p className="text-taupe">
-                Every feature is tested with real donors and real centers. We measure impact, listen
-                to feedback, and iterate relentlessly.
+                {t('about.values.evidence.description')}
               </p>
             </div>
 
             {/* Value Card 6 */}
             <div className="bg-white border-t-4 border-olive-green p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
               <Handshake className="w-10 h-10 text-olive-green mb-4" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-espresso mb-3">Open to Partnership</h3>
+              <h3 className="text-xl font-bold text-espresso mb-3">{t('about.values.partnership.title')}</h3>
               <p className="text-taupe">
-                We're not here to replace organizations like AVIS—we're here to empower them with
-                technology. Your mission, our tools.
+                {t('about.values.partnership.description')}
               </p>
             </div>
           </div>
@@ -527,18 +497,16 @@ function About() {
       >
         <div className="max-w-[1200px] mx-auto">
           <h2 className="text-[28px] md:text-[36px] font-bold text-espresso text-center mb-4">
-            Meet the Team
+            {t('about.team.title')}
           </h2>
           <p className="text-[18px] text-taupe text-center mb-12">
-            A small team with a big mission
+            {t('about.team.subtitle')}
           </p>
 
           {/* Team Privacy Alternative */}
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-[18px] text-taupe leading-relaxed">
-              Vitalita is built by a dedicated team of engineers, designers, and healthcare
-              professionals from around the world. We work closely with AVIS volunteers and medical staff
-              to ensure every feature serves real needs.
+              {t('about.team.description')}
             </p>
           </div>
         </div>
@@ -558,7 +526,7 @@ function About() {
 
         <div className="max-w-[1200px] mx-auto relative z-10">
           <h2 className="text-[32px] md:text-[40px] font-bold text-white text-center mb-16">
-            Our Impact in Numbers
+            {t('about.impact.title')}
           </h2>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
@@ -566,37 +534,37 @@ function About() {
               <div className="text-[36px] md:text-[48px] font-bold text-white mb-2">
                 {counts.donors.toLocaleString()}+
               </div>
-              <div className="text-white/90 text-sm md:text-base">Active Donors</div>
+              <div className="text-white/90 text-sm md:text-base">{t('about.impact.activeDonors')}</div>
             </div>
             <div className="text-center">
               <div className="text-[36px] md:text-[48px] font-bold text-white mb-2">
                 {counts.lives.toLocaleString()}+
               </div>
-              <div className="text-white/90 text-sm md:text-base">Lives Saved</div>
+              <div className="text-white/90 text-sm md:text-base">{t('about.impact.livesSaved')}</div>
             </div>
             <div className="text-center">
               <div className="text-[36px] md:text-[48px] font-bold text-white mb-2">
                 {counts.centers}+
               </div>
-              <div className="text-white/90 text-sm md:text-base">Connected Centers</div>
+              <div className="text-white/90 text-sm md:text-base">{t('about.impact.connectedCenters')}</div>
             </div>
             <div className="text-center">
               <div className="text-[36px] md:text-[48px] font-bold text-white mb-2">
                 {counts.retention}%
               </div>
-              <div className="text-white/90 text-sm md:text-base">Increase in Donor Retention</div>
+              <div className="text-white/90 text-sm md:text-base">{t('about.impact.retention')}</div>
             </div>
             <div className="text-center">
               <div className="text-[36px] md:text-[48px] font-bold text-white mb-2">
                 {counts.scheduling}%
               </div>
-              <div className="text-white/90 text-sm md:text-base">Reduction in Scheduling Time</div>
+              <div className="text-white/90 text-sm md:text-base">{t('about.impact.scheduling')}</div>
             </div>
             <div className="text-center">
               <div className="text-[36px] md:text-[48px] font-bold text-white mb-2">
                 {counts.satisfaction}%
               </div>
-              <div className="text-white/90 text-sm md:text-base">Donor Satisfaction Rate</div>
+              <div className="text-white/90 text-sm md:text-base">{t('about.impact.satisfaction')}</div>
             </div>
           </div>
         </div>
@@ -612,39 +580,39 @@ function About() {
       >
         <div className="max-w-[1200px] mx-auto">
           <h2 className="text-[28px] md:text-[32px] font-bold text-espresso text-center mb-12">
-            Security & Compliance
+            {t('about.certifications.title')}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-cream border border-taupe/30 p-6 rounded-lg text-center">
               <CheckCircle2 className="w-12 h-12 text-mediterranean-blue mx-auto mb-4" aria-hidden="true" />
-              <h3 className="text-lg font-bold text-espresso mb-2">ISO 27001 Certified</h3>
+              <h3 className="text-lg font-bold text-espresso mb-2">{t('about.certifications.iso27001.title')}</h3>
               <p className="text-sm text-taupe">
-                Information security management system certified to international standards.
+                {t('about.certifications.iso27001.description')}
               </p>
             </div>
 
             <div className="bg-cream border border-taupe/30 p-6 rounded-lg text-center">
               <Shield className="w-12 h-12 text-mediterranean-blue mx-auto mb-4" aria-hidden="true" />
-              <h3 className="text-lg font-bold text-espresso mb-2">GDPR Compliant</h3>
+              <h3 className="text-lg font-bold text-espresso mb-2">{t('about.certifications.gdpr.title')}</h3>
               <p className="text-sm text-taupe">
-                Full compliance with European data protection regulations.
+                {t('about.certifications.gdpr.description')}
               </p>
             </div>
 
             <div className="bg-cream border border-taupe/30 p-6 rounded-lg text-center">
               <Accessibility className="w-12 h-12 text-mediterranean-blue mx-auto mb-4" aria-hidden="true" />
-              <h3 className="text-lg font-bold text-espresso mb-2">WCAG 2.2 AA Accessible</h3>
+              <h3 className="text-lg font-bold text-espresso mb-2">{t('about.certifications.wcag.title')}</h3>
               <p className="text-sm text-taupe">
-                Accessible to all users, meeting the highest web accessibility standards.
+                {t('about.certifications.wcag.description')}
               </p>
             </div>
 
             <div className="bg-cream border border-taupe/30 p-6 rounded-lg text-center">
               <Award className="w-12 h-12 text-mediterranean-blue mx-auto mb-4" aria-hidden="true" />
-              <h3 className="text-lg font-bold text-espresso mb-2">Healthcare Data Protection</h3>
+              <h3 className="text-lg font-bold text-espresso mb-2">{t('about.certifications.healthcare.title')}</h3>
               <p className="text-sm text-taupe">
-                Certified for handling sensitive healthcare information securely.
+                {t('about.certifications.healthcare.description')}
               </p>
             </div>
           </div>
@@ -661,44 +629,43 @@ function About() {
       >
         <div className="max-w-[1200px] mx-auto">
           <h2 className="text-[28px] md:text-[36px] font-bold text-espresso text-center mb-12">
-            Work With Us
+            {t('about.contact.title')}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Left: For Donors */}
             <div className="bg-white p-8 rounded-lg shadow-md">
-              <h3 className="text-2xl font-bold text-espresso mb-4">For Donors</h3>
-              <p className="text-taupe mb-6">Have questions? We're here to help.</p>
+              <h3 className="text-2xl font-bold text-espresso mb-4">{t('about.contact.forDonors.title')}</h3>
+              <p className="text-taupe mb-6">{t('about.contact.forDonors.description')}</p>
               <button
                 onClick={() => navigate('/help')}
                 className="px-6 py-3 border-2 border-mediterranean-blue text-mediterranean-blue font-semibold rounded-lg hover:bg-mediterranean-blue hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50"
               >
-                Visit Help Center
+                {t('about.contact.forDonors.button')}
               </button>
             </div>
 
             {/* Right: For Organizations */}
             <div className="bg-white p-8 rounded-lg shadow-md">
-              <h3 className="text-2xl font-bold text-espresso mb-4">For Organizations</h3>
+              <h3 className="text-2xl font-bold text-espresso mb-4">{t('about.contact.forOrganizations.title')}</h3>
               <p className="text-taupe mb-4">
-                Interested in bringing Vitalita to your region?
+                {t('about.contact.forOrganizations.description')}
               </p>
               <p className="text-taupe mb-6 text-sm">
-                We partner with blood donation organizations across Europe to adapt our platform to
-                local needs.
+                {t('about.contact.forOrganizations.details')}
               </p>
               <button
-                onClick={() => window.location.href = 'mailto:partnerships@vitalita.com'}
+                onClick={() => window.location.href = `mailto:${t('about.contact.forOrganizations.email')}`}
                 className="px-6 py-3 bg-terracotta text-white font-semibold rounded-lg hover:bg-terracotta/90 transition-colors focus:outline-none focus:ring-2 focus:ring-terracotta focus:ring-opacity-50 mb-4"
               >
-                Contact Our Partnership Team
+                {t('about.contact.forOrganizations.button')}
               </button>
               <p className="text-sm text-taupe">
                 <a
-                  href="mailto:partnerships@vitalita.com"
+                  href={`mailto:${t('about.contact.forOrganizations.email')}`}
                   className="text-mediterranean-blue hover:underline"
                 >
-                  partnerships@vitalita.com
+                  {t('about.contact.forOrganizations.email')}
                 </a>
               </p>
             </div>
@@ -716,10 +683,10 @@ function About() {
       >
         <div className="max-w-[1200px] mx-auto text-center">
           <h2 className="text-[32px] md:text-[40px] font-bold text-white mb-6">
-            Ready to Save Lives?
+            {t('about.cta.title')}
           </h2>
           <p className="text-xl text-white/90 mb-12">
-            Join 50,000+ donors making a difference every day
+            {t('about.cta.subtitle')}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -727,13 +694,13 @@ function About() {
               onClick={() => navigate('/book')}
               className="px-8 py-4 bg-white text-terracotta font-bold text-lg rounded-lg hover:bg-cream transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 shadow-lg"
             >
-              Schedule Your First Donation
+              {t('about.cta.primary')}
             </button>
             <button
               onClick={() => navigate('/eligibility')}
               className="px-8 py-4 border-2 border-white text-white font-semibold text-lg rounded-lg hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
             >
-              Learn About Eligibility
+              {t('about.cta.secondary')}
             </button>
           </div>
         </div>

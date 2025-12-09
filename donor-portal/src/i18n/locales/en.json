@@ -4,6 +4,7 @@
     "bookAppointment": "Book Appointment",
     "myAppointments": "My Appointments",
     "myAccount": "My Account",
+    "about": "About",
     "help": "Help",
     "logIn": "Log In",
     "logOut": "Log Out",
@@ -21,7 +22,9 @@
     "back": "Back",
     "next": "Next",
     "close": "Close",
-    "submit": "Submit"
+    "submit": "Submit",
+    "or": "or",
+    "required": "required"
   },
   "language": {
     "selectLanguage": "Select Language",
@@ -94,14 +97,15 @@
         "appointment": "Appointment Questions"
       },
       "noResults": "No questions found matching your search.",
+      "noResultsHint": "Try a different search term or browse by category.",
       "clearSearch": "Clear search",
       "contact": {
         "title": "Can't find what you're looking for?",
         "description": "We're here to help. Reach out to us using any of these methods:",
-        "callUs": "Call Us",
-        "telegram": "Telegram",
-        "telegramValue": "Chat with us",
-        "email": "Email",
+        "callUs": "Call for Help",
+        "telegram": "Chat with Us",
+        "telegramValue": "Chat on Telegram",
+        "email": "Send an Inquiry",
         "responseTime": "We usually respond within 1 hour"
       },
       "voiceHelp": {
@@ -217,7 +221,10 @@
       "postalCode": "Postal code {{code}}",
       "nextAvailable": "Next available: {{date}}",
       "selected": "Selected",
-      "select": "Select"
+      "select": "Select",
+      "mapDataAttribution": "Map data © OpenStreetMap contributors",
+      "centerSelectedAnnouncement": "{{center}} selected. {{distance}} kilometers away.",
+      "donationCentersAriaLabel": "Donation centers"
     },
     "step2": {
       "title": "When can you donate?",
@@ -250,9 +257,23 @@
       "morning": "Morning",
       "lunch": "Lunch",
       "afternoon": "Afternoon",
+      "evening": "Evening",
       "booked": "Booked",
       "left": "{{count}} left",
       "available": "Available",
+      "full": "Full",
+      "highDemand": "High Demand",
+      "days": {
+        "sun": "Sun",
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat"
+      },
+      "limitedSlots": "Limited slots",
+      "slotsAvailable": "Slots available",
       "needDifferentTime": "Need a different time?",
       "requestCallbackLink": "request a callback",
       "joinWaitlistLink": "join our waitlist",
@@ -299,10 +320,11 @@
       "travelHelp": "Certain destinations may require a short waiting period.",
       "yes": "Yes",
       "no": "No",
-      "pleaseAnswerAll": "Please answer all the health questions."
+      "pleaseAnswerAll": "Please answer all the health questions.",
+      "warningMessage": "You may need to wait before donating. We'll confirm at your appointment."
     },
     "step5": {
-      "title": "Your appointment is confirmed! 🎉",
+      "title": "You're Scheduled to Save Lives 🎉",
       "subtitle": "You're all set. Here's everything you need to know.",
       "stepTitle": "Step 5: Confirmation",
       "stepDescription": "Review and confirm your appointment details",
@@ -314,13 +336,24 @@
       "shareOnTelegram": "Share on Telegram",
       "shareViaEmail": "Share via Email",
       "reminderMessage": "We'll send you a reminder the day before your appointment.",
-      "whatToBring": "What to bring",
-      "whatToBring1": "Valid photo ID",
-      "whatToBring2": "Hydration (water bottle is perfect)",
-      "whatToBring3": "Something to eat afterwards",
+      "whatToBring": "Before You Donate",
+      "whatToBring1": "Bring your donor ID",
+      "whatToBring2": "Hydrate well (8-10 glasses of water)",
+      "whatToBring3": "Eat a healthy meal",
       "whatToExpect": "What to expect",
       "whatToExpectText": "The entire visit usually takes about 45 minutes. Our team will guide you through each step and answer any questions. Wear comfortable clothing with sleeves that can be rolled up.",
-      "done": "Done"
+      "done": "Done",
+      "impactMessage": "This appointment will help up to {{count}} patients survive.",
+      "impactMessageDetail": "Your donation could save someone's parent, child, or friend.",
+      "whatToBring4": "Get good sleep the night before",
+      "arriveEarly": "Day of: Arrive 5 minutes early",
+      "trackImpact": "After donation: Track your impact in your dashboard",
+      "communityMessage": "You're joining 50,000+ donors in Italy",
+      "needChanges": "Need to make changes?",
+      "reschedule": "Reschedule",
+      "linkCopied": "Link Copied!",
+      "copyLink": "Copy Link",
+      "backToDashboard": "Back to Dashboard"
     },
     "validation": {
       "chooseCenter": "Please choose a donation center to continue.",
@@ -376,13 +409,14 @@
       "title": "Upcoming appointments",
       "subtitle": "Need to make a change? You can manage everything here.",
       "empty": {
-        "title": "You don't have any upcoming appointments",
+        "title": "No upcoming appointments",
         "description": "Book your next visit in just a few taps.",
-        "bookNow": "Book Now"
+        "bookNow": "Book an Appointment"
       },
+      "viewLargerMap": "View larger map",
       "countdown": {
-        "passed": "Your appointment date has passed",
-        "today": "Your appointment is today",
+        "passed": "Past",
+        "today": "Today",
         "oneDay": "Your appointment is in 1 day",
         "days": "Your appointment is in {{days}} days"
       },
@@ -393,27 +427,41 @@
         "cancel": "Cancel"
       },
       "cancelConfirmation": {
-        "message": "Are you sure you want to cancel this appointment? Availability can fill up quickly.",
-        "yesCancel": "Yes, cancel it",
-        "keepIt": "Keep it"
+        "message": "Are you sure you want to cancel this appointment?",
+        "yesCancel": "Yes, Cancel",
+        "keepIt": "Keep It"
       },
       "cancelSuccess": "Your appointment has been cancelled.",
       "cancelError": "Failed to cancel appointment. Please try again."
     },
     "history": {
-      "title": "Donation history",
+      "title": "Donation History",
       "subtitle": "You've helped save up to {{count}} lives. Thank you!",
       "empty": {
-        "title": "You haven't donated with us yet",
-        "description": "We can't wait to welcome you for your first donation!"
+        "title": "You haven't made any donations yet",
+        "description": "You haven't made any donations yet. Book your first appointment to get started!"
       },
       "thankYou": "Thank you for donating!",
       "eligibilityReminder": "Eligibility reminder:",
       "canDonateAgain": "You can donate again after {{date}}."
     },
     "cta": {
-      "readyToDonate": "Ready to donate again?",
+      "readyToDonate": "Ready to Donate Again?",
+      "bookNewAppointment": "Book New Appointment",
       "updateInformation": "Need to update your information?"
+    },
+    "stats": {
+      "quickStats": "Quick Stats",
+      "totalDonations": "Total Donations",
+      "thisYear": "This Year",
+      "livesSaved": "Lives Saved",
+      "upTo": "Up to {{count}}"
+    },
+    "impact": {
+      "livesSaved": "You've helped save up to {{count}} lives",
+      "thankYouHero": "Thank you for being a hero in your community",
+      "donationsThisYear": "{{count}} donations this year",
+      "nextEligible": "Next eligible: {{date}}"
     },
     "calendar": {
       "summary": "Blood Donation Appointment - {{location}}",
@@ -421,6 +469,15 @@
     },
     "unknownCenter": "Unknown Center",
     "defaultDonorName": "Donor"
+  },
+  "dashboard": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "schedule": "Schedule",
+      "history": "History",
+      "profile": "Profile",
+      "help": "Help"
+    }
   },
   "registration": {
     "title": "Donor Registration",
@@ -523,6 +580,273 @@
     "registerLink": {
       "newToVitalita": "New to Vitalita?",
       "registerAsDonor": "Register as a donor"
+    }
+  },
+  "landing": {
+    "hero": {
+      "counterLabel": "lives saved this year",
+      "title": "Your Blood Saves",
+      "titleHighlight": "Three",
+      "titleSuffix": "Lives",
+      "description": "Schedule your donation in 3 minutes. Every pint creates hope for patients across Italy.",
+      "primaryCta": "Start Saving Lives",
+      "secondaryCta": "I'm Already a Donor",
+      "trustLine": "Trusted by 50,000+ donors • Verified by AVIS • GDPR Protected",
+      "badgeGdpr": "GDPR Compliant",
+      "badgeAvis": "Verified by AVIS",
+      "badgeIso": "ISO 27001 Certified",
+      "imageAlt": "Smiling volunteer donor - diverse, warm lighting"
+    },
+    "howItWorks": {
+      "title": "How Blood Donation Works",
+      "subtitle": "Simple, safe, and life-saving",
+      "steps": {
+        "createProfile": {
+          "title": "Create Your Profile",
+          "text": "Sign up in 3 minutes with your basic information"
+        },
+        "chooseTime": {
+          "title": "Choose Your Time",
+          "text": "Pick a convenient date and location near you"
+        },
+        "saveLives": {
+          "title": "Save Lives",
+          "text": "Comfortable 20-minute process with caring staff"
+        },
+        "seeImpact": {
+          "title": "See Your Impact",
+          "text": "Watch your life-saving counter grow with each donation"
+        }
+      },
+      "cta": "Start Your Journey"
+    },
+    "whyDonate": {
+      "title": "Why Your Donation Matters",
+      "cards": {
+        "saveLives": {
+          "title": "Save Lives",
+          "text": "One donation helps up to three patients survive surgery, accidents, or chronic conditions."
+        },
+        "stayHealthy": {
+          "title": "Stay Healthy",
+          "text": "Regular donors benefit from free health screenings and reduced cardiovascular risk."
+        },
+        "community": {
+          "title": "Join a Community",
+          "text": "Become part of Italy's lifesaving network of 50,000+ donors."
+        }
+      },
+      "cta": "See If You're Eligible →",
+      "testimonial": {
+        "quote": "Donating blood makes me feel like I'm making a real difference. It's the easiest way to be a hero.",
+        "name": "Marco R., Milan",
+        "donations": "32 donations"
+      }
+    },
+    "trustImpact": {
+      "title": "Trusted Across Italy",
+      "stats": {
+        "activeDonors": "Active Donors",
+        "livesSaved": "Lives Saved This Year",
+        "centers": "AVIS Centers Connected"
+      },
+      "badges": {
+        "avis": {
+          "title": "AVIS",
+          "subtitle": "Official Partner"
+        },
+        "iso": {
+          "title": "ISO 27001",
+          "subtitle": "Certified"
+        },
+        "gdpr": {
+          "title": "GDPR",
+          "subtitle": "Compliant"
+        }
+      }
+    },
+    "testimonials": {
+      "title": "Stories from Our Donor Community",
+      "items": [
+        {
+          "quote": "Donating blood is the easiest way I've found to make a real difference. The Vitalita platform makes it so simple.",
+          "name": "Marco R.",
+          "location": "Milan",
+          "donations": "32 donations"
+        },
+        {
+          "quote": "I've been donating for 5 years now, and Vitalita has made scheduling so much easier. The staff at my local center are wonderful.",
+          "name": "Sofia M.",
+          "location": "Rome",
+          "donations": "28 donations"
+        },
+        {
+          "quote": "Knowing that my donation helps three people makes every appointment meaningful. The tracking feature shows my impact clearly.",
+          "name": "Giuseppe L.",
+          "location": "Naples",
+          "donations": "45 donations"
+        }
+      ],
+      "goTo": "Go to testimonial {{index}}"
+    },
+    "callToAction": {
+      "title": "Ready to Save Lives?",
+      "subtitle": "Join 50,000+ donors making a difference every day",
+      "primary": "Schedule Your First Donation",
+      "secondary": "Learn More About Eligibility"
+    },
+    "footer": {
+      "tagline": "Born in Italy. Ready for Everyone.",
+      "avisPartnership": "AVIS Partnership",
+      "quickLinks": "Quick Links",
+      "bookAppointment": "Book Appointment",
+      "myDashboard": "My Dashboard",
+      "helpFaq": "Help & FAQ",
+      "eligibilityCheck": "Eligibility Check",
+      "resources": "Resources",
+      "howItWorks": "How It Works",
+      "donorStories": "Donor Stories",
+      "findCenter": "Find a Center",
+      "contactUs": "Contact Us",
+      "legalContact": "Legal & Contact",
+      "privacyPolicy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "gdprInfo": "GDPR Information",
+      "supportEmail": "donations@vitalita.com",
+      "supportPhone": "+39 1800 123 456",
+      "copyright": "© 2024 Vitalita. Developed in partnership with AVIS Italy.",
+      "visitSite": "Visit Vitalita.org"
+    }
+  },
+  "about": {
+    "pageTitle": "About Vitalita | Italian Blood Donation Platform Serving Europe",
+    "metaDescription": "Learn how Vitalita partners with AVIS Italy to modernize blood donation. Born in Italy, ready to serve communities across Europe. 50,000+ donors, 150,000+ lives saved.",
+    "hero": {
+      "title": "Born in Italy. Ready for Everyone.",
+      "subtitle": "The story of how Vitalita is transforming blood donation across Europe",
+      "paragraph1": "Vitalita was born from a simple observation: Italy's blood donation system, managed by AVIS volunteers, needed modern technology to match their incredible dedication. What started as a solution for Italian donors has grown into a platform ready to serve communities across Europe.",
+      "paragraph2": "Our journey began when AVIS Comunale approached us with a challenge: their volunteer-run scheduling system couldn't keep up with demand. Donors waited weeks for appointments, and staff spent hours managing phone calls. We saw an opportunity to honor their mission with technology that amplifies their impact.",
+      "paragraph3": "Today, Vitalita serves over 50,000 active donors across 200+ AVIS centers in Italy, and we're expanding to serve blood donation organizations across Europe. Every feature we build is tested with real volunteers, approved by medical staff, and designed to make saving lives as simple as booking a coffee."
+    },
+    "mission": {
+      "title": "Our Mission",
+      "description": "To make blood donation accessible, efficient, and impactful for every donor and every community."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "description": "A Europe where every patient receives the blood they need, supported by engaged donors and modern technology."
+    },
+    "journey": {
+      "title": "Our Journey",
+      "subtitle": "From local solution to European platform",
+      "timeline": {
+        "2024Launch": {
+          "title": "2024 - First Launch",
+          "description": "Vitalita launched in three Italian cities. Within months, appointment scheduling time dropped by 80%, and donor retention increased by 35%."
+        },
+        "2024Impact": {
+          "title": "2024 - Growing Impact",
+          "description": "Today, 50,000+ donors use Vitalita across 200+ AVIS centers. We've helped save over 150,000 lives and continue expanding across Italy."
+        },
+        "2025Future": {
+          "title": "2025 - European Future",
+          "description": "With proven success in Italy, we're ready to partner with blood services across Europe, adapting our platform to serve every community's unique needs."
+        }
+      }
+    },
+    "partnership": {
+      "title": "Built with AVIS Italy",
+      "subtitle": "A partnership rooted in trust and shared values",
+      "description": "AVIS (Associazione Volontari Italiani Sangue) has been Italy's backbone of blood donation for decades. Vitalita exists because AVIS trusted us to modernize their mission without losing their heart. Every feature we build is tested with AVIS volunteers and approved by their medical staff.",
+      "stats": {
+        "history": "70+ years",
+        "historyLabel": "AVIS history",
+        "partnership": "Partnership since 2024",
+        "partnershipLabel": "Our relationship",
+        "centers": "200+ centers",
+        "centersLabel": "Connected locations"
+      }
+    },
+    "values": {
+      "title": "What Drives Us",
+      "communityFirst": {
+        "title": "Community First",
+        "description": "Every decision we make prioritizes donor experience and community impact over profit. We're here to serve, not extract."
+      },
+      "trust": {
+        "title": "Trust & Transparency",
+        "description": "Your data is sacred. GDPR compliance isn't a checkbox—it's our foundation. We never sell data, never share without permission."
+      },
+      "roots": {
+        "title": "Italian Roots, Global Vision",
+        "description": "Proudly built in Italy with Mediterranean values of community and care, designed to adapt to any culture, any country."
+      },
+      "simplicity": {
+        "title": "Simplicity Matters",
+        "description": "Booking an appointment shouldn't require a manual. We obsess over removing friction so donors can focus on saving lives."
+      },
+      "evidence": {
+        "title": "Evidence-Based",
+        "description": "Every feature is tested with real donors and real centers. We measure impact, listen to feedback, and iterate relentlessly."
+      },
+      "partnership": {
+        "title": "Open to Partnership",
+        "description": "We're not here to replace organizations like AVIS—we're here to empower them with technology. Your mission, our tools."
+      }
+    },
+    "team": {
+      "title": "Meet the Team",
+      "subtitle": "A small team with a big mission",
+      "description": "Vitalita is built by a dedicated team of engineers, designers, and healthcare professionals from around the world. We work closely with AVIS volunteers and medical staff to ensure every feature serves real needs."
+    },
+    "impact": {
+      "title": "Our Impact in Numbers",
+      "activeDonors": "Active Donors",
+      "livesSaved": "Lives Saved",
+      "connectedCenters": "Connected Centers",
+      "retention": "Increase in Donor Retention",
+      "scheduling": "Reduction in Scheduling Time",
+      "satisfaction": "Donor Satisfaction Rate"
+    },
+    "certifications": {
+      "title": "Security & Compliance",
+      "iso27001": {
+        "title": "ISO 27001 Certified",
+        "description": "Information security management system certified to international standards."
+      },
+      "gdpr": {
+        "title": "GDPR Compliant",
+        "description": "Full compliance with European data protection regulations."
+      },
+      "wcag": {
+        "title": "WCAG 2.2 AA Accessible",
+        "description": "Accessible to all users, meeting the highest web accessibility standards."
+      },
+      "healthcare": {
+        "title": "Healthcare Data Protection",
+        "description": "Certified for handling sensitive healthcare information securely."
+      }
+    },
+    "contact": {
+      "title": "Work With Us",
+      "forDonors": {
+        "title": "For Donors",
+        "description": "Have questions? We're here to help.",
+        "button": "Visit Help Center"
+      },
+      "forOrganizations": {
+        "title": "For Organizations",
+        "description": "Interested in bringing Vitalita to your region?",
+        "details": "We partner with blood donation organizations across Europe to adapt our platform to local needs.",
+        "button": "Contact Our Partnership Team",
+        "email": "partnerships@vitalita.com"
+      }
+    },
+    "cta": {
+      "title": "Ready to Save Lives?",
+      "subtitle": "Join 50,000+ donors making a difference every day",
+      "primary": "Schedule Your First Donation",
+      "secondary": "Learn About Eligibility"
     }
   }
 }

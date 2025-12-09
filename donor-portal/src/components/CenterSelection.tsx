@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Calendar,
   CheckCircle2,
@@ -74,6 +75,7 @@ const MapViewUpdater = ({ position }: { position: [number, number] }) => {
 };
 
 function CenterSelection({ onCenterSelect, onContinue, onBack }: CenterSelectionProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [postalCode, setPostalCode] = useState('');
   const [selectedCenterId, setSelectedCenterId] = useState<string | null>(null);
@@ -185,7 +187,10 @@ function CenterSelection({ onCenterSelect, onContinue, onBack }: CenterSelection
     setSelectedCenterId(centerId);
     setMapCenter([center.position.lat, center.position.lng]);
     onCenterSelect?.(centerId);
-    setAnnouncement(`${center.name} selected. ${center.distanceKm.toFixed(1)} kilometers away.`);
+    setAnnouncement(t('booking.step1.centerSelectedAnnouncement', { 
+      center: center.name, 
+      distance: center.distanceKm.toFixed(1) 
+    }));
 
     requestAnimationFrame(() => {
       cardRefs.current[centerId]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -236,11 +241,11 @@ function CenterSelection({ onCenterSelect, onContinue, onBack }: CenterSelection
   };
 
   const steps = [
-    { id: 1, label: 'Select Center', state: 'current' as const },
-    { id: 2, label: 'Date & Time', state: 'upcoming' as const },
-    { id: 3, label: 'Your Details', state: 'upcoming' as const },
-    { id: 4, label: 'Health Check', state: 'upcoming' as const },
-    { id: 5, label: 'Confirmation', state: 'upcoming' as const },
+    { id: 1, label: t('booking.steps.selectCenter'), state: 'current' as const },
+    { id: 2, label: t('booking.steps.dateTime'), state: 'upcoming' as const },
+    { id: 3, label: t('booking.steps.yourDetails'), state: 'upcoming' as const },
+    { id: 4, label: t('booking.steps.healthCheck'), state: 'upcoming' as const },
+    { id: 5, label: t('booking.steps.confirmation'), state: 'upcoming' as const },
   ];
 
   const terracottaMarker = useMemo(() => createMarkerIcon(palette.terracotta, 26), []);
@@ -313,25 +318,27 @@ function CenterSelection({ onCenterSelect, onContinue, onBack }: CenterSelection
             <MapPin className="w-6 h-6" aria-hidden="true" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-espresso">Step 1: Select Center</p>
-            <p className="text-sm text-taupe">Choose your preferred donation center</p>
+            <p className="text-sm font-semibold text-espresso">{t('booking.step1.stepTitle')}</p>
+            <p className="text-sm text-taupe">{t('booking.step1.stepDescription')}</p>
           </div>
         </section>
 
         {/* Heading */}
         <header className="space-y-2">
           <h1 className="text-3xl md:text-[32px] font-bold text-espresso">
-            Where would you like to donate?
+            {t('booking.step1.title')}
           </h1>
           <p className="text-base text-taupe max-w-3xl">
-            Your default center is AVIS Casalmaggiore. You can select a different center if needed.
+            {defaultCenter 
+              ? t('booking.step1.subtitleDefault', { center: defaultCenter.name })
+              : t('booking.step1.subtitleNoDefault')}
           </p>
         </header>
 
         {/* Postal code search */}
         <section className="space-y-2">
           <label className="text-base font-medium text-espresso">
-            Enter your postal code to see nearby centers
+            {t('booking.step1.postalCodeLabel')}
           </label>
           <div className="relative">
             <Search
@@ -342,12 +349,12 @@ function CenterSelection({ onCenterSelect, onContinue, onBack }: CenterSelection
             <input
               value={postalCode}
               onChange={(e) => setPostalCode(e.target.value)}
-              placeholder="e.g. 20122"
+              placeholder={t('booking.step1.postalCodePlaceholder')}
               className="w-full h-12 pl-11 pr-4 rounded-lg border border-taupe focus:border-2 focus:border-mediterranean-blue focus:outline-none text-espresso placeholder-taupe"
             />
           </div>
           <p className="text-sm text-taupe italic">
-            We&apos;ll always show you the closest options available today.
+            {t('booking.step1.postalCodeNote')}
           </p>
         </section>
 
@@ -385,7 +392,7 @@ function CenterSelection({ onCenterSelect, onContinue, onBack }: CenterSelection
                           className="text-sm text-mediterranean-blue font-semibold hover:underline"
                           onClick={() => handleSelectCenter(center.id)}
                         >
-                          Select this center
+                          {t('booking.step1.selectThisCenter')}
                         </button>
                       </div>
                     </Popup>
@@ -394,14 +401,14 @@ function CenterSelection({ onCenterSelect, onContinue, onBack }: CenterSelection
               })}
             </MapContainer>
           </div>
-          <p className="text-xs text-taupe text-right">Map data © OpenStreetMap contributors</p>
+          <p className="text-xs text-taupe text-right">{t('booking.step1.mapDataAttribution')}</p>
         </section>
 
         {/* Center cards */}
         <section
           className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6"
           role="radiogroup"
-          aria-label="Donation centers"
+          aria-label={t('booking.step1.donationCentersAriaLabel')}
           onKeyDown={handleKeyDown}
         >
           {filteredCenters.map((center) => {
@@ -410,8 +417,8 @@ function CenterSelection({ onCenterSelect, onContinue, onBack }: CenterSelection
               center.availabilityStatus === 'limited' ? palette.burntOrange : palette.oliveGreen;
             const badgeText =
               center.availabilityStatus === 'limited'
-                ? 'Limited slots'
-                : 'Slots available';
+                ? t('booking.step1.limitedSlots')
+                : t('booking.step1.slotsAvailable');
 
             return (
               <article
@@ -430,7 +437,7 @@ function CenterSelection({ onCenterSelect, onContinue, onBack }: CenterSelection
               >
                 {center.isDefault && (
                   <span className="absolute top-4 right-4 bg-terracotta text-white text-xs font-semibold px-3 py-1 rounded-md inline-flex items-center gap-1">
-                    <Heart size={14} /> Your Default Center
+                    <Heart size={14} /> {t('booking.step1.yourDefaultCenter')}
                   </span>
                 )}
                 <div className="absolute left-0 top-0 h-full w-2 rounded-l-xl bg-terracotta" aria-hidden="true" />
@@ -441,7 +448,7 @@ function CenterSelection({ onCenterSelect, onContinue, onBack }: CenterSelection
                       <MapPin className="w-4 h-4 text-mediterranean-blue" aria-hidden="true" />
                       <span>{center.address}</span>
                     </div>
-                    <p className="mt-2 text-sm text-taupe">{center.distanceKm.toFixed(1)} km away</p>
+                    <p className="mt-2 text-sm text-taupe">{t('booking.step1.kmAway', { distance: center.distanceKm.toFixed(1) })}</p>
                   </div>
                   <div
                     className="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold"
@@ -453,7 +460,7 @@ function CenterSelection({ onCenterSelect, onContinue, onBack }: CenterSelection
                 </div>
                 <p className="mt-3 text-sm font-medium text-olive-green flex items-center gap-2">
                   <Calendar size={16} className="text-olive-green" aria-hidden="true" />
-                  Next available: {center.nextAvailable}
+                  {t('booking.step1.nextAvailable', { date: center.nextAvailable })}
                 </p>
                 <div className="mt-4">
                   <button
@@ -468,7 +475,7 @@ function CenterSelection({ onCenterSelect, onContinue, onBack }: CenterSelection
                     }}
                   >
                     <CheckCircle2 className={isSelected ? 'text-white' : 'text-mediterranean-blue'} size={18} />
-                    {isSelected ? 'Selected' : 'Select'}
+                    {isSelected ? t('booking.step1.selected') : t('booking.step1.select')}
                   </button>
                 </div>
               </article>
@@ -483,7 +490,7 @@ function CenterSelection({ onCenterSelect, onContinue, onBack }: CenterSelection
             className="h-12 md:h-12 px-4 md:px-6 rounded-lg border-2 border-taupe text-taupe hover:text-espresso hover:border-espresso flex items-center justify-center gap-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mediterranean-blue"
           >
             <ChevronLeft size={18} />
-            Back
+            {t('booking.buttons.back')}
           </button>
           <button
             onClick={handleContinue}
@@ -494,7 +501,7 @@ function CenterSelection({ onCenterSelect, onContinue, onBack }: CenterSelection
                 : 'bg-taupe text-white/80 cursor-not-allowed opacity-60'
             }`}
           >
-            Continue to Date &amp; Time
+            {t('booking.buttons.continueToDateTime')}
             <ChevronRight size={18} />
           </button>
         </section>

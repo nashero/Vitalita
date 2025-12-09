@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Calendar,
   Check,
@@ -49,75 +50,12 @@ const defaultValues: PersonalDetails = {
 const inputBaseClasses =
   'w-full h-12 rounded-lg pl-11 pr-12 text-[16px] text-espresso placeholder:text-taupe/70 bg-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-mediterranean-blue';
 
-const validate = (values: PersonalDetails): Record<FieldKey, string | null> => {
-  const errors: Record<FieldKey, string | null> = {
-    fullName: null,
-    dateOfBirth: null,
-    phoneNumber: null,
-    email: null,
-    hasDonatedBefore: null,
-    donorId: null,
-  };
-
-  if (!values.fullName.trim()) {
-    errors.fullName = 'Full name is required';
-  } else if (values.fullName.trim().length < 2) {
-    errors.fullName = 'Name must be at least 2 characters';
-  }
-
-  if (!values.dateOfBirth) {
-    errors.dateOfBirth = 'Date of birth is required';
-  } else {
-    const birthDate = new Date(values.dateOfBirth);
-    const today = new Date();
-    const age =
-      today.getFullYear() -
-      birthDate.getFullYear() -
-      (today.getMonth() < birthDate.getMonth() ||
-      (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
-        ? 1
-        : 0);
-    if (age < 18) {
-      errors.dateOfBirth = 'You must be at least 18 years old to donate';
-    } else if (birthDate > today) {
-      errors.dateOfBirth = 'Date of birth cannot be in the future';
-    }
-  }
-
-  if (!values.phoneNumber.trim()) {
-    errors.phoneNumber = 'Phone number is required';
-  } else {
-    const phone = values.phoneNumber.replace(/\s/g, '');
-    const phoneRegex = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{3,}([-.\s]?[0-9]{2,})*$/;
-    if (!phoneRegex.test(phone)) {
-      errors.phoneNumber = 'Enter a valid phone number';
-    }
-  }
-
-  if (values.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
-    errors.email = 'Enter a valid email address';
-  }
-
-  if (!values.hasDonatedBefore) {
-    errors.hasDonatedBefore = 'Select an option';
-  }
-
-  if (values.hasDonatedBefore === 'yes') {
-    if (!values.donorId.trim()) {
-      errors.donorId = 'Donor ID is required for returning donors';
-    } else if (!/^[A-Za-z0-9]{5}$/.test(values.donorId.trim())) {
-      errors.donorId = 'Use a 5-digit alphanumeric ID';
-    }
-  }
-
-  return errors;
-};
-
 const PersonalDetailsStep = ({
   initialValues,
   onBack,
   onContinue,
 }: PersonalDetailsStepProps) => {
+  const { t } = useTranslation();
   const [values, setValues] = useState<PersonalDetails>({
     ...defaultValues,
     ...initialValues,
@@ -130,6 +68,70 @@ const PersonalDetailsStep = ({
     hasDonatedBefore: { error: null, touched: false },
     donorId: { error: null, touched: false },
   });
+
+  const validate = (values: PersonalDetails): Record<FieldKey, string | null> => {
+    const errors: Record<FieldKey, string | null> = {
+      fullName: null,
+      dateOfBirth: null,
+      phoneNumber: null,
+      email: null,
+      hasDonatedBefore: null,
+      donorId: null,
+    };
+
+    if (!values.fullName.trim()) {
+      errors.fullName = t('booking.step3.fullNameRequired');
+    } else if (values.fullName.trim().length < 2) {
+      errors.fullName = t('booking.step3.fullNameRequired');
+    }
+
+    if (!values.dateOfBirth) {
+      errors.dateOfBirth = t('booking.step3.dobRequired');
+    } else {
+      const birthDate = new Date(values.dateOfBirth);
+      const today = new Date();
+      const age =
+        today.getFullYear() -
+        birthDate.getFullYear() -
+        (today.getMonth() < birthDate.getMonth() ||
+        (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
+          ? 1
+          : 0);
+      if (age < 18) {
+        errors.dateOfBirth = t('booking.step3.dobRequired');
+      } else if (birthDate > today) {
+        errors.dateOfBirth = t('booking.step3.dobRequired');
+      }
+    }
+
+    if (!values.phoneNumber.trim()) {
+      errors.phoneNumber = t('booking.step3.phoneRequired');
+    } else {
+      const phone = values.phoneNumber.replace(/\s/g, '');
+      const phoneRegex = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{3,}([-.\s]?[0-9]{2,})*$/;
+      if (!phoneRegex.test(phone)) {
+        errors.phoneNumber = t('booking.step3.phoneRequired');
+      }
+    }
+
+    if (values.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
+      errors.email = t('booking.step3.emailPlaceholder');
+    }
+
+    if (!values.hasDonatedBefore) {
+      errors.hasDonatedBefore = t('booking.step3.hasDonatedBeforeRequired');
+    }
+
+    if (values.hasDonatedBefore === 'yes') {
+      if (!values.donorId.trim()) {
+        errors.donorId = t('booking.step3.hasDonatedBeforeRequired');
+      } else if (!/^[A-Za-z0-9]{5}$/.test(values.donorId.trim())) {
+        errors.donorId = t('booking.step3.hasDonatedBeforeRequired');
+      }
+    }
+
+    return errors;
+  };
   const [showPrivacy, setShowPrivacy] = useState(false);
 
   useEffect(() => {
@@ -443,8 +445,8 @@ const PersonalDetailsStep = ({
             </legend>
             <div className="grid gap-3 sm:grid-cols-2">
               {[
-                { value: 'yes' as DonatedBefore, label: "Yes, I'm a returning donor" },
-                { value: 'no' as DonatedBefore, label: 'No, this is my first time' },
+                { value: 'yes' as DonatedBefore, label: t('booking.step3.yesReturning') },
+                { value: 'no' as DonatedBefore, label: t('booking.step3.noFirstTime') },
               ].map((option) => {
                 const checked = values.hasDonatedBefore === option.value;
                 return (

@@ -8,15 +8,14 @@ import { logout, isAuthenticated as checkAuth } from '../utils/auth';
 interface NavItem {
   labelKey: string;
   to: string;
-  label: string;
   isAnchor?: boolean;
 }
 
 const navItems: NavItem[] = [
-  { labelKey: 'navigation.bookAppointment', to: '/book', label: 'Book Appointment' },
-  { labelKey: 'navigation.myAppointments', to: '/appointments', label: 'My Appointments' },
-  { labelKey: 'navigation.help', to: '/help', label: 'Help' },
-  { labelKey: 'navigation.about', to: '/about', label: 'About' },
+  { labelKey: 'navigation.bookAppointment', to: '/book' },
+  { labelKey: 'navigation.myAppointments', to: '/appointments' },
+  { labelKey: 'navigation.help', to: '/help' },
+  { labelKey: 'navigation.about', to: '/about' },
 ];
 
 function Header() {
@@ -159,7 +158,7 @@ function Header() {
                       className="text-espresso hover:text-mediterranean-blue font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-2 py-1"
                       onClick={(e) => handleNavClick(item.to, e, true)}
                     >
-                      {item.label || t(item.labelKey)}
+                      {t(item.labelKey)}
                     </a>
                   ) : (
                     <Link
@@ -168,7 +167,7 @@ function Header() {
                       onClick={(e) => handleNavClick(item.to, e)}
                       aria-current={location.pathname === item.to ? 'page' : undefined}
                     >
-                      {item.label || t(item.labelKey)}
+                      {t(item.labelKey)}
                     </Link>
                   )}
                 </li>
@@ -204,7 +203,7 @@ function Header() {
             <button
               type="button"
               className="lg:hidden p-2 text-espresso hover:text-mediterranean-blue transition-colors"
-              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-label={isMenuOpen ? t('navigation.closeMenu') : t('navigation.openMenu')}
               aria-expanded={isMenuOpen}
               aria-controls="mobile-navigation"
               onClick={toggleMenu}
@@ -247,7 +246,7 @@ function Header() {
                     className="block px-4 py-3 text-espresso hover:text-mediterranean-blue hover:bg-cream/50 font-medium transition-colors rounded-lg"
                     onClick={(e) => handleNavClick(item.to, e, true)}
                   >
-                    {item.label || t(item.labelKey)}
+                    {t(item.labelKey)}
                   </a>
                 ) : (
                   <Link
@@ -256,7 +255,7 @@ function Header() {
                     onClick={(e) => handleNavClick(item.to, e)}
                     aria-current={location.pathname === item.to ? 'page' : undefined}
                   >
-                    {item.label || t(item.labelKey)}
+                    {t(item.labelKey)}
                   </Link>
                 )}
               </li>

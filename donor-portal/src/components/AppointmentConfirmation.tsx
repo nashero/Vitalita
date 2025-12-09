@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
+import { it, enUS } from 'date-fns/locale';
 import {
   CheckCircle,
   Calendar,
@@ -39,9 +41,13 @@ const AppointmentConfirmation = ({
   patientsHelped = 3,
 }: AppointmentConfirmationProps) => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [showShareModal, setShowShareModal] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const [checkmarkAnimated, setCheckmarkAnimated] = useState(false);
+  
+  // Get date-fns locale based on current language
+  const dateLocale = i18n.language === 'it' ? it : enUS;
 
   // Trigger confetti and checkmark animation on mount
   useEffect(() => {
@@ -101,7 +107,7 @@ const AppointmentConfirmation = ({
     ? appointmentDate 
     : new Date(appointmentDate);
   
-  const formattedDate = format(dateObj, 'EEEE d MMMM');
+  const formattedDate = format(dateObj, 'EEEE d MMMM', { locale: dateLocale });
   const formattedTime = appointmentTime;
   const fullLocation = `${centerName}, ${centerAddress}`;
 
@@ -126,9 +132,9 @@ const AppointmentConfirmation = ({
       `DTSTAMP:${format(new Date(), "yyyyMMdd'T'HHmmss'Z'")}`,
       `DTSTART:${formattedStart}`,
       `DTEND:${formattedEnd}`,
-      `SUMMARY:Blood Donation Appointment - ${centerName}`,
+      `SUMMARY:${t('myAppointments.calendar.summary', { location: centerName })}`,
       `LOCATION:${centerAddress}`,
-      'DESCRIPTION:Thank you for booking with Vitalita. Please arrive 5 minutes early and remember to bring a valid ID.',
+      `DESCRIPTION:${t('myAppointments.calendar.description')}`,
       'END:VEVENT',
       'END:VCALENDAR',
     ].join('\r\n');
@@ -154,7 +160,11 @@ const AppointmentConfirmation = ({
     setTimeout(() => setLinkCopied(false), 2000);
   };
 
-  const shareMessage = `I just scheduled my blood donation with Vitalita. Join me in saving lives! 💉❤️ 🇮🇹`;
+  const shareMessage = t('booking.step5.shareMessage', { 
+    date: formattedDate, 
+    time: appointmentTime, 
+    center: centerName 
+  });
 
   const shareUrl = window.location.href;
 
@@ -197,7 +207,7 @@ const AppointmentConfirmation = ({
             onClick={() => navigate('/appointments')}
             className="border-2 border-taupe text-taupe px-6 py-3 rounded-lg font-semibold hover:bg-taupe hover:text-white transition-all duration-200"
           >
-            Back to Dashboard
+            {t('booking.step5.backToDashboard')}
           </button>
         </div>
 
@@ -238,10 +248,10 @@ const AppointmentConfirmation = ({
         {/* Heading */}
         <div className="text-center mb-8">
           <h1 className="text-[28px] md:text-[36px] font-bold text-espresso mb-3">
-            You're Scheduled to Save Lives 🎉
+            {t('booking.step5.title')}
           </h1>
           <p className="text-[18px] text-taupe">
-            You're all set. Here's everything you need to know.
+            {t('booking.step5.subtitle')}
           </p>
         </div>
 
@@ -250,7 +260,7 @@ const AppointmentConfirmation = ({
           <div className="w-2 bg-terracotta flex-shrink-0"></div>
           <div className="p-8 flex-1">
             <h2 className="text-xl font-bold text-espresso mb-6">
-              Appointment details
+              {t('booking.step5.appointmentDetails')}
             </h2>
 
             <div className="space-y-4 mb-6">
@@ -281,7 +291,7 @@ const AppointmentConfirmation = ({
                     onClick={handleGetDirections}
                     className="text-mediterranean-blue underline hover:text-terracotta transition-colors text-sm font-medium"
                   >
-                    Get directions
+                    {t('booking.step5.getDirections')}
                   </button>
                 </div>
               </div>
@@ -294,14 +304,14 @@ const AppointmentConfirmation = ({
                 className="w-full sm:flex-1 bg-terracotta text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all duration-200 flex items-center justify-center gap-2"
               >
                 <span>📅</span>
-                Add to Calendar
+                {t('booking.step5.addToCalendar')}
               </button>
               <button
                 onClick={handleShare}
                 className="w-full sm:flex-1 border-2 border-mediterranean-blue text-mediterranean-blue px-6 py-3 rounded-lg font-semibold hover:bg-mediterranean-blue hover:text-white transition-all duration-200 flex items-center justify-center gap-2"
               >
                 <Share2 className="w-5 h-5" />
-                Share Your Impact
+                {t('booking.step5.share')}
               </button>
             </div>
           </div>
@@ -313,10 +323,10 @@ const AppointmentConfirmation = ({
             <Heart className="w-5 h-5 text-terracotta flex-shrink-0 mt-1" />
             <div>
               <p className="text-base font-semibold text-espresso mb-2 leading-relaxed" style={{ lineHeight: '1.6' }}>
-                This appointment will help up to {patientsHelped} patients survive.
+                {t('booking.step5.impactMessage', { count: patientsHelped })}
               </p>
               <p className="text-base text-espresso leading-relaxed" style={{ lineHeight: '1.6' }}>
-                Your donation could save someone's parent, child, or friend.
+                {t('booking.step5.impactMessageDetail')}
               </p>
             </div>
           </div>
@@ -327,35 +337,35 @@ const AppointmentConfirmation = ({
           <div className="w-1 bg-mediterranean-blue flex-shrink-0"></div>
           <div className="p-8 flex-1">
             <h2 className="text-xl font-bold text-espresso mb-6">
-              Before You Donate
+              {t('booking.step5.whatToBring')}
             </h2>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <Droplet className="w-5 h-5 text-sky-blue flex-shrink-0 mt-0.5" />
                 <span className="text-base text-taupe">
                   <span className="text-olive-green mr-2">✓</span>
-                  Hydrate well (8-10 glasses of water)
+                  {t('booking.step5.whatToBring2')}
                 </span>
               </div>
               <div className="flex items-start gap-3">
                 <Utensils className="w-5 h-5 text-terracotta flex-shrink-0 mt-0.5" />
                 <span className="text-base text-taupe">
                   <span className="text-olive-green mr-2">✓</span>
-                  Eat a healthy meal
+                  {t('booking.step5.whatToBring3')}
                 </span>
               </div>
               <div className="flex items-start gap-3">
                 <Moon className="w-5 h-5 text-mediterranean-blue flex-shrink-0 mt-0.5" />
                 <span className="text-base text-taupe">
                   <span className="text-olive-green mr-2">✓</span>
-                  Get good sleep the night before
+                  {t('booking.step5.whatToBring4')}
                 </span>
               </div>
               <div className="flex items-start gap-3">
                 <CreditCard className="w-5 h-5 text-olive-green flex-shrink-0 mt-0.5" />
                 <span className="text-base text-taupe">
                   <span className="text-olive-green mr-2">✓</span>
-                  Bring your donor ID
+                  {t('booking.step5.whatToBring1')}
                 </span>
               </div>
             </div>
@@ -365,7 +375,7 @@ const AppointmentConfirmation = ({
         {/* What Happens Next Timeline */}
         <div className="bg-white rounded-xl shadow-md mb-6 p-8">
           <h2 className="text-xl font-bold text-espresso mb-6">
-            What Happens Next
+            {t('booking.step5.whatToExpect')}
           </h2>
           <div className="relative pl-8">
             {/* Vertical line */}
@@ -376,7 +386,7 @@ const AppointmentConfirmation = ({
               <div className="absolute left-0 top-1 w-3 h-3 rounded-full bg-olive-green border-2 border-white"></div>
               <div className="pl-6">
                 <p className="text-base text-espresso font-medium">
-                  1 day before: We'll send you a reminder
+                  {t('booking.step5.reminderMessage')}
                 </p>
               </div>
             </div>
@@ -385,7 +395,7 @@ const AppointmentConfirmation = ({
               <div className="absolute left-0 top-1 w-3 h-3 rounded-full bg-olive-green border-2 border-white"></div>
               <div className="pl-6">
                 <p className="text-base text-espresso font-medium">
-                  Day of: Arrive 5 minutes early
+                  {t('booking.step5.arriveEarly')}
                 </p>
               </div>
             </div>
@@ -394,7 +404,7 @@ const AppointmentConfirmation = ({
               <div className="absolute left-0 top-1 w-3 h-3 rounded-full bg-olive-green border-2 border-white"></div>
               <div className="pl-6">
                 <p className="text-base text-espresso font-medium">
-                  After donation: Track your impact in your dashboard
+                  {t('booking.step5.trackImpact')}
                 </p>
               </div>
             </div>
@@ -406,27 +416,27 @@ const AppointmentConfirmation = ({
           <div className="flex items-center gap-3">
             <Users className="w-6 h-6 text-olive-green flex-shrink-0" />
             <p className="text-base text-espresso font-medium">
-              You're joining 50,000+ donors in Italy
+              {t('booking.step5.communityMessage')}
             </p>
           </div>
         </div>
 
         {/* Secondary Actions */}
         <div className="text-center mb-8">
-          <p className="text-base text-espresso mb-3">Need to make changes?</p>
+          <p className="text-base text-espresso mb-3">{t('booking.step5.needChanges')}</p>
           <div className="flex flex-wrap justify-center gap-4">
             <button
               onClick={() => navigate('/book')}
               className="text-mediterranean-blue hover:underline font-medium transition-colors"
             >
-              Reschedule
+              {t('booking.step5.reschedule')}
             </button>
             <span className="text-taupe">|</span>
             <button
               onClick={() => navigate('/appointments')}
               className="text-mediterranean-blue hover:underline font-medium transition-colors"
             >
-              Cancel Appointment
+              {t('myAppointments.upcoming.actions.cancel')}
             </button>
           </div>
         </div>
@@ -437,7 +447,7 @@ const AppointmentConfirmation = ({
             onClick={() => navigate('/appointments')}
             className="bg-terracotta text-white px-8 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all duration-200"
           >
-            Done
+            {t('booking.step5.done')}
           </button>
         </div>
 
@@ -448,13 +458,13 @@ const AppointmentConfirmation = ({
               <button
                 onClick={() => setShowShareModal(false)}
                 className="absolute top-4 right-4 text-espresso hover:text-terracotta transition-colors"
-                aria-label="Close modal"
+                aria-label={t('common.close')}
               >
                 <X className="w-6 h-6" />
               </button>
 
               <h3 className="text-2xl font-bold text-espresso mb-4">
-                Share Your Impact
+                {t('booking.step5.share')}
               </h3>
 
               <div className="bg-white p-4 rounded-lg mb-6 border border-taupe">
@@ -492,12 +502,12 @@ const AppointmentConfirmation = ({
                 {linkCopied ? (
                   <>
                     <Check className="w-5 h-5" />
-                    Link Copied!
+                    {t('booking.step5.linkCopied')}
                   </>
                 ) : (
                   <>
                     <Copy className="w-5 h-5" />
-                    Copy Link
+                    {t('booking.step5.copyLink')}
                   </>
                 )}
               </button>

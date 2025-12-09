@@ -1,9 +1,11 @@
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Heart } from 'lucide-react';
 import { isAuthenticated } from '../utils/auth';
 
 function CallToActionSection() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleScheduleDonation = () => {
     if (isAuthenticated()) {
@@ -57,12 +59,12 @@ function CallToActionSection() {
       <div className="max-w-[800px] mx-auto text-center relative z-10">
         {/* Heading */}
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-          Ready to Save Lives?
+          {t('landing.callToAction.title')}
         </h2>
 
         {/* Subtext */}
         <p className="text-lg md:text-xl text-white/90 mb-10">
-          Join 50,000+ donors making a difference every day
+          {t('landing.callToAction.subtitle')}
         </p>
 
         {/* CTAs */}
@@ -71,13 +73,13 @@ function CallToActionSection() {
             onClick={handleScheduleDonation}
             className="bg-white text-terracotta hover:bg-cream font-bold text-lg px-8 py-4 rounded-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50"
           >
-            Schedule Your First Donation
+            {t('landing.callToAction.primary')}
           </button>
           <button
             onClick={handleLearnMore}
             className="border-2 border-white text-white hover:bg-white/10 font-bold text-lg px-8 py-4 rounded-lg transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50"
           >
-            Learn More About Eligibility
+            {t('landing.callToAction.secondary')}
           </button>
         </div>
       </div>

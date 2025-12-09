@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard,
   Calendar,
@@ -54,6 +55,7 @@ interface NavItem {
 }
 
 function DonorDashboard() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -120,11 +122,11 @@ function DonorDashboard() {
   ]);
 
   const navItems: NavItem[] = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-    { id: 'schedule', label: 'Schedule', icon: Calendar, path: '/book' },
-    { id: 'history', label: 'History', icon: History, path: '/appointments' },
-    { id: 'profile', label: 'Profile', icon: User, path: '/profile' },
-    { id: 'help', label: 'Help', icon: HelpCircle, path: '/help' },
+    { id: 'dashboard', label: t('dashboard.nav.dashboard'), icon: LayoutDashboard, path: '/dashboard' },
+    { id: 'schedule', label: t('dashboard.nav.schedule'), icon: Calendar, path: '/book' },
+    { id: 'history', label: t('dashboard.nav.history'), icon: History, path: '/appointments' },
+    { id: 'profile', label: t('dashboard.nav.profile'), icon: User, path: '/profile' },
+    { id: 'help', label: t('dashboard.nav.help'), icon: HelpCircle, path: '/help' },
   ];
 
   const currentPath = location.pathname;

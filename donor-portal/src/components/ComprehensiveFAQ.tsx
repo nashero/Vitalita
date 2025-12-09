@@ -182,10 +182,10 @@ const ComprehensiveFAQ = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-[36px] font-bold text-espresso mb-3">
-            How Can We Help You?
+            {t('help.page.heroTitle')}
           </h1>
           <p className="text-[18px] text-taupe">
-            Find answers to common questions about donating blood
+            {t('help.page.heroDescription')}
           </p>
         </div>
 
@@ -195,7 +195,7 @@ const ComprehensiveFAQ = () => {
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-mediterranean-blue" />
             <input
               type="text"
-              placeholder="Type your question here"
+              placeholder={t('help.page.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 py-4 bg-white rounded-xl border-2 border-transparent focus:border-mediterranean-blue focus:border-2 focus:outline-none text-espresso placeholder-taupe transition-all duration-200 shadow-sm"
@@ -285,17 +285,17 @@ const ComprehensiveFAQ = () => {
               <div className="bg-white rounded-xl shadow-md p-12 text-center">
                 <HelpCircle className="w-16 h-16 text-taupe mx-auto mb-4" />
                 <p className="text-lg font-semibold text-espresso mb-2">
-                  No questions found matching your search.
+                  {t('help.page.noResults')}
                 </p>
                 <p className="text-base text-taupe mb-4">
-                  Try a different search term or browse by category.
+                  {t('help.page.noResultsHint')}
                 </p>
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
                   className="text-mediterranean-blue hover:text-terracotta underline font-medium transition-colors"
                 >
-                  Clear search
+                  {t('help.page.clearSearch')}
                 </button>
               </div>
             )}
@@ -303,10 +303,10 @@ const ComprehensiveFAQ = () => {
             {/* Contact Section at Bottom */}
             <div className="mt-8 bg-white rounded-xl shadow-md p-6 sm:p-8">
               <h2 className="text-xl font-bold text-espresso mb-4">
-                Can't find what you're looking for?
+                {t('help.page.contact.title')}
               </h2>
               <p className="text-base text-taupe mb-6">
-                We're here to help. Reach out to us using any of these methods:
+                {t('help.page.contact.description')}
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <a
@@ -318,7 +318,7 @@ const ComprehensiveFAQ = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-espresso group-hover:text-white mb-1">
-                      Call for Help
+                      {t('help.page.contact.callUs')}
                     </p>
                     <p className="text-sm text-taupe group-hover:text-white/80">
                       +39 1800 123 456
@@ -336,10 +336,10 @@ const ComprehensiveFAQ = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-espresso group-hover:text-white mb-1">
-                      Chat with Us
+                      {t('help.page.contact.telegram')}
                     </p>
                     <p className="text-sm text-taupe group-hover:text-white/80">
-                      Chat on Telegram
+                      {t('help.page.contact.telegramValue')}
                     </p>
                   </div>
                 </a>
@@ -352,7 +352,7 @@ const ComprehensiveFAQ = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-espresso group-hover:text-white mb-1">
-                      Send an Inquiry
+                      {t('help.page.contact.email')}
                     </p>
                     <p className="text-sm text-taupe group-hover:text-white/80">
                       donations@vitalita.com
@@ -361,7 +361,7 @@ const ComprehensiveFAQ = () => {
                 </a>
               </div>
               <p className="text-sm text-taupe mt-6 text-center">
-                We usually respond within 1 hour
+                {t('help.page.contact.responseTime')}
               </p>
             </div>
           </div>

@@ -4,6 +4,7 @@
     "bookAppointment": "Prenota Appuntamento",
     "myAppointments": "I Miei Appuntamenti",
     "myAccount": "Il Mio Account",
+    "about": "Chi Siamo",
     "help": "Aiuto",
     "logIn": "Accedi",
     "logOut": "Esci",
@@ -21,7 +22,9 @@
     "back": "Indietro",
     "next": "Avanti",
     "close": "Chiudi",
-    "submit": "Invia"
+    "submit": "Invia",
+    "or": "o",
+    "required": "obbligatorio"
   },
   "language": {
     "selectLanguage": "Seleziona Lingua",
@@ -94,14 +97,15 @@
         "appointment": "Domande sugli Appuntamenti"
       },
       "noResults": "Nessuna domanda trovata corrispondente alla tua ricerca.",
+      "noResultsHint": "Prova un termine di ricerca diverso o sfoglia per categoria.",
       "clearSearch": "Cancella ricerca",
       "contact": {
         "title": "Non trovi quello che cerchi?",
         "description": "Siamo qui per aiutarti. Contattaci utilizzando uno di questi metodi:",
-        "callUs": "Chiamaci",
-        "telegram": "Telegram",
-        "telegramValue": "Chatta con noi",
-        "email": "Email",
+        "callUs": "Chiama per Aiuto",
+        "telegram": "Chatta con Noi",
+        "telegramValue": "Chatta su Telegram",
+        "email": "Invia una Richiesta",
         "responseTime": "Di solito rispondiamo entro 1 ora"
       },
       "voiceHelp": {
@@ -217,7 +221,10 @@
       "postalCode": "Codice postale {{code}}",
       "nextAvailable": "Prossima disponibilità: {{date}}",
       "selected": "Selezionato",
-      "select": "Seleziona"
+      "select": "Seleziona",
+      "mapDataAttribution": "Dati mappa © OpenStreetMap contributors",
+      "centerSelectedAnnouncement": "{{center}} selezionato. {{distance}} chilometri di distanza.",
+      "donationCentersAriaLabel": "Centri di donazione"
     },
     "step2": {
       "title": "Quando puoi donare?",
@@ -250,9 +257,23 @@
       "morning": "Mattina",
       "lunch": "Pranzo",
       "afternoon": "Pomeriggio",
+      "evening": "Sera",
       "booked": "Prenotato",
       "left": "{{count}} rimasti",
       "available": "Disponibile",
+      "full": "Pieno",
+      "highDemand": "Alta Richiesta",
+      "days": {
+        "sun": "Dom",
+        "mon": "Lun",
+        "tue": "Mar",
+        "wed": "Mer",
+        "thu": "Gio",
+        "fri": "Ven",
+        "sat": "Sab"
+      },
+      "limitedSlots": "Slot limitati",
+      "slotsAvailable": "Slot disponibili",
       "needDifferentTime": "Hai bisogno di un orario diverso?",
       "requestCallbackLink": "richiedi una chiamata",
       "joinWaitlistLink": "iscriviti alla nostra lista d'attesa",
@@ -299,10 +320,11 @@
       "travelHelp": "Alcune destinazioni potrebbero richiedere un breve periodo di attesa.",
       "yes": "Sì",
       "no": "No",
-      "pleaseAnswerAll": "Per favore, rispondi a tutte le domande sulla salute."
+      "pleaseAnswerAll": "Per favore, rispondi a tutte le domande sulla salute.",
+      "warningMessage": "Potresti dover aspettare prima di donare. Lo confermeremo al tuo appuntamento."
     },
     "step5": {
-      "title": "Il tuo appuntamento è confermato! 🎉",
+      "title": "Sei Programmato per Salvare Vite 🎉",
       "subtitle": "Tutto pronto. Ecco tutto ciò che devi sapere.",
       "stepTitle": "Passo 5: Conferma",
       "stepDescription": "Rivedi e conferma i dettagli del tuo appuntamento",
@@ -314,13 +336,24 @@
       "shareOnTelegram": "Condividi su Telegram",
       "shareViaEmail": "Condividi via Email",
       "reminderMessage": "Ti invieremo un promemoria il giorno prima del tuo appuntamento.",
-      "whatToBring": "Cosa portare",
-      "whatToBring1": "Documento d'identità valido con foto",
-      "whatToBring2": "Idratazione (una bottiglia d'acqua è perfetta)",
-      "whatToBring3": "Qualcosa da mangiare dopo",
+      "whatToBring": "Prima di Donare",
+      "whatToBring1": "Porta il tuo ID donatore",
+      "whatToBring2": "Idratati bene (8-10 bicchieri d'acqua)",
+      "whatToBring3": "Mangia un pasto sano",
       "whatToExpect": "Cosa aspettarsi",
       "whatToExpectText": "L'intera visita di solito richiede circa 45 minuti. Il nostro team ti guiderà attraverso ogni fase e risponderà a qualsiasi domanda. Indossa abiti comodi con maniche che possono essere arrotolate.",
-      "done": "Fatto"
+      "done": "Fatto",
+      "impactMessage": "Questo appuntamento aiuterà fino a {{count}} pazienti a sopravvivere.",
+      "impactMessageDetail": "La tua donazione potrebbe salvare il genitore, il figlio o l'amico di qualcuno.",
+      "whatToBring4": "Dormi bene la sera prima",
+      "arriveEarly": "Giorno dell'appuntamento: Arriva 5 minuti prima",
+      "trackImpact": "Dopo la donazione: Traccia il tuo impatto nella tua dashboard",
+      "communityMessage": "Ti stai unendo a oltre 50.000 donatori in Italia",
+      "needChanges": "Hai bisogno di fare modifiche?",
+      "reschedule": "Riprogramma",
+      "linkCopied": "Link Copiato!",
+      "copyLink": "Copia Link",
+      "backToDashboard": "Torna alla Dashboard"
     },
     "validation": {
       "chooseCenter": "Per favore, scegli un centro di donazione per continuare.",
@@ -376,13 +409,14 @@
       "title": "Appuntamenti imminenti",
       "subtitle": "Hai bisogno di fare una modifica? Puoi gestire tutto qui.",
       "empty": {
-        "title": "Non hai appuntamenti imminenti",
+        "title": "Nessun appuntamento imminente",
         "description": "Prenota la tua prossima visita con pochi tap.",
-        "bookNow": "Prenota Ora"
+        "bookNow": "Prenota un Appuntamento"
       },
+      "viewLargerMap": "Visualizza mappa più grande",
       "countdown": {
-        "passed": "La data del tuo appuntamento è passata",
-        "today": "Il tuo appuntamento è oggi",
+        "passed": "Passato",
+        "today": "Oggi",
         "oneDay": "Il tuo appuntamento è tra 1 giorno",
         "days": "Il tuo appuntamento è tra {{days}} giorni"
       },
@@ -393,27 +427,41 @@
         "cancel": "Annulla"
       },
       "cancelConfirmation": {
-        "message": "Sei sicuro di voler annullare questo appuntamento? La disponibilità può riempirsi rapidamente.",
-        "yesCancel": "Sì, annullalo",
+        "message": "Sei sicuro di voler annullare questo appuntamento?",
+        "yesCancel": "Sì, Annulla",
         "keepIt": "Mantienilo"
       },
       "cancelSuccess": "Il tuo appuntamento è stato annullato.",
       "cancelError": "Impossibile annullare l'appuntamento. Riprova."
     },
     "history": {
-      "title": "Storia delle donazioni",
+      "title": "Storia delle Donazioni",
       "subtitle": "Hai aiutato a salvare fino a {{count}} vite. Grazie!",
       "empty": {
-        "title": "Non hai ancora donato con noi",
-        "description": "Non vediamo l'ora di darti il benvenuto per la tua prima donazione!"
+        "title": "Non hai ancora fatto donazioni",
+        "description": "Non hai ancora fatto donazioni. Prenota il tuo primo appuntamento per iniziare!"
       },
       "thankYou": "Grazie per aver donato!",
       "eligibilityReminder": "Promemoria idoneità:",
       "canDonateAgain": "Puoi donare di nuovo dopo il {{date}}."
     },
     "cta": {
-      "readyToDonate": "Pronto a donare di nuovo?",
+      "readyToDonate": "Pronto a Donare di Nuovo?",
+      "bookNewAppointment": "Prenota Nuovo Appuntamento",
       "updateInformation": "Hai bisogno di aggiornare le tue informazioni?"
+    },
+    "stats": {
+      "quickStats": "Statistiche Rapide",
+      "totalDonations": "Donazioni Totali",
+      "thisYear": "Quest'Anno",
+      "livesSaved": "Vite Salvate",
+      "upTo": "Fino a {{count}}"
+    },
+    "impact": {
+      "livesSaved": "Hai aiutato a salvare fino a {{count}} vite",
+      "thankYouHero": "Grazie per essere un eroe nella tua comunità",
+      "donationsThisYear": "{{count}} donazioni quest'anno",
+      "nextEligible": "Prossima idoneità: {{date}}"
     },
     "calendar": {
       "summary": "Appuntamento Donazione di Sangue - {{location}}",
@@ -421,6 +469,15 @@
     },
     "unknownCenter": "Centro Sconosciuto",
     "defaultDonorName": "Donatore"
+  },
+  "dashboard": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "schedule": "Prenota",
+      "history": "Storia",
+      "profile": "Profilo",
+      "help": "Aiuto"
+    }
   },
   "registration": {
     "title": "Registrazione Donatore",
@@ -523,6 +580,273 @@
     "registerLink": {
       "newToVitalita": "Sei nuovo su Vitalita?",
       "registerAsDonor": "Registrati come donatore"
+    }
+  },
+  "landing": {
+    "hero": {
+      "counterLabel": "vite salvate quest'anno",
+      "title": "Il Tuo Sangue Salva",
+      "titleHighlight": "Tre",
+      "titleSuffix": "Vite",
+      "description": "Prenota la tua donazione in 3 minuti. Ogni sacca porta speranza ai pazienti in tutta Italia.",
+      "primaryCta": "Inizia a Salvare Vite",
+      "secondaryCta": "Sono già un Donatore",
+      "trustLine": "Oltre 50.000 donatori si fidano di noi • Verificato da AVIS • Protetto GDPR",
+      "badgeGdpr": "Conforme al GDPR",
+      "badgeAvis": "Verificato da AVIS",
+      "badgeIso": "Certificazione ISO 27001",
+      "imageAlt": "Volontario che sorride - contesto accogliente"
+    },
+    "howItWorks": {
+      "title": "Come Funziona la Donazione di Sangue",
+      "subtitle": "Semplice, sicura e salva-vita",
+      "steps": {
+        "createProfile": {
+          "title": "Crea il Tuo Profilo",
+          "text": "Registrati in 3 minuti con le tue informazioni di base"
+        },
+        "chooseTime": {
+          "title": "Scegli l'Orario",
+          "text": "Seleziona una data e una sede comoda per te"
+        },
+        "saveLives": {
+          "title": "Salva Vite",
+          "text": "Procedura confortevole di 20 minuti con personale attento"
+        },
+        "seeImpact": {
+          "title": "Guarda il Tuo Impatto",
+          "text": "Osserva il tuo contatore di vite salvate crescere ad ogni donazione"
+        }
+      },
+      "cta": "Inizia il Tuo Percorso"
+    },
+    "whyDonate": {
+      "title": "Perché la Tua Donazione è Importante",
+      "cards": {
+        "saveLives": {
+          "title": "Salva Vite",
+          "text": "Una donazione aiuta fino a tre pazienti a superare interventi, incidenti o malattie croniche."
+        },
+        "stayHealthy": {
+          "title": "Rimani in Salute",
+          "text": "I donatori regolari beneficiano di controlli sanitari gratuiti e di un rischio cardiovascolare ridotto."
+        },
+        "community": {
+          "title": "Unisciti alla Comunità",
+          "text": "Entra nella rete salvavita italiana di oltre 50.000 donatori."
+        }
+      },
+      "cta": "Verifica se sei idoneo →",
+      "testimonial": {
+        "quote": "Donare sangue mi fa sentire che sto facendo davvero la differenza. È il modo più semplice per essere un eroe.",
+        "name": "Marco R., Milano",
+        "donations": "32 donazioni"
+      }
+    },
+    "trustImpact": {
+      "title": "Riconosciuti in tutta Italia",
+      "stats": {
+        "activeDonors": "Donatori Attivi",
+        "livesSaved": "Vite Salvate Quest'Anno",
+        "centers": "Centri AVIS Collegati"
+      },
+      "badges": {
+        "avis": {
+          "title": "AVIS",
+          "subtitle": "Partner Ufficiale"
+        },
+        "iso": {
+          "title": "ISO 27001",
+          "subtitle": "Certificato"
+        },
+        "gdpr": {
+          "title": "GDPR",
+          "subtitle": "Conforme"
+        }
+      }
+    },
+    "testimonials": {
+      "title": "Storie dalla Nostra Comunità di Donatori",
+      "items": [
+        {
+          "quote": "Donare sangue è il modo più semplice che ho trovato per fare davvero la differenza. La piattaforma Vitalita lo rende facilissimo.",
+          "name": "Marco R.",
+          "location": "Milano",
+          "donations": "32 donazioni"
+        },
+        {
+          "quote": "Dono da 5 anni e Vitalita ha reso la prenotazione molto più semplice. Il personale del mio centro locale è fantastico.",
+          "name": "Sofia M.",
+          "location": "Roma",
+          "donations": "28 donazioni"
+        },
+        {
+          "quote": "Sapere che la mia donazione aiuta tre persone rende ogni appuntamento significativo. Il tracciamento mostra chiaramente il mio impatto.",
+          "name": "Giuseppe L.",
+          "location": "Napoli",
+          "donations": "45 donazioni"
+        }
+      ],
+      "goTo": "Vai alla testimonianza {{index}}"
+    },
+    "callToAction": {
+      "title": "Pronto a Salvare Vite?",
+      "subtitle": "Unisciti a oltre 50.000 donatori che fanno la differenza ogni giorno",
+      "primary": "Prenota la tua Prima Donazione",
+      "secondary": "Scopri di Più sull'Idoneità"
+    },
+    "footer": {
+      "tagline": "Nata in Italia. Pronta per Tutti.",
+      "avisPartnership": "Partnership AVIS",
+      "quickLinks": "Link Rapidi",
+      "bookAppointment": "Prenota Appuntamento",
+      "myDashboard": "La Mia Dashboard",
+      "helpFaq": "Aiuto e FAQ",
+      "eligibilityCheck": "Verifica Idoneità",
+      "resources": "Risorse",
+      "howItWorks": "Come Funziona",
+      "donorStories": "Storie di Donatori",
+      "findCenter": "Trova un Centro",
+      "contactUs": "Contattaci",
+      "legalContact": "Legale e Contatti",
+      "privacyPolicy": "Informativa Privacy",
+      "terms": "Termini di Servizio",
+      "gdprInfo": "Informazioni GDPR",
+      "supportEmail": "donations@vitalita.com",
+      "supportPhone": "+39 1800 123 456",
+      "copyright": "© 2024 Vitalita. Sviluppato in collaborazione con AVIS Italia.",
+      "visitSite": "Visita Vitalita.org"
+    }
+  },
+  "about": {
+    "pageTitle": "Chi Siamo - Vitalita | Piattaforma Italiana per la Donazione di Sangue al Servizio dell'Europa",
+    "metaDescription": "Scopri come Vitalita collabora con AVIS Italia per modernizzare la donazione di sangue. Nata in Italia, pronta a servire le comunità in tutta Europa. Oltre 50.000 donatori, oltre 150.000 vite salvate.",
+    "hero": {
+      "title": "Nata in Italia. Pronta per Tutti.",
+      "subtitle": "La storia di come Vitalita sta trasformando la donazione di sangue in tutta Europa",
+      "paragraph1": "Vitalita è nata da una semplice osservazione: il sistema di donazione del sangue italiano, gestito dai volontari AVIS, aveva bisogno di tecnologia moderna per eguagliare il loro incredibile impegno. Quello che è iniziato come una soluzione per i donatori italiani è cresciuto fino a diventare una piattaforma pronta a servire le comunità in tutta Europa.",
+      "paragraph2": "Il nostro viaggio è iniziato quando AVIS Comunale ci ha avvicinato con una sfida: il loro sistema di prenotazione gestito da volontari non riusciva a tenere il passo con la domanda. I donatori aspettavano settimane per gli appuntamenti e il personale trascorreva ore a gestire le chiamate telefoniche. Abbiamo visto un'opportunità per onorare la loro missione con una tecnologia che amplifica il loro impatto.",
+      "paragraph3": "Oggi, Vitalita serve oltre 50.000 donatori attivi in più di 200 centri AVIS in Italia, e ci stiamo espandendo per servire le organizzazioni di donazione del sangue in tutta Europa. Ogni funzionalità che costruiamo è testata con veri volontari, approvata dal personale medico e progettata per rendere il salvare vite semplice come prenotare un caffè."
+    },
+    "mission": {
+      "title": "La Nostra Missione",
+      "description": "Rendere la donazione di sangue accessibile, efficiente e di impatto per ogni donatore e ogni comunità."
+    },
+    "vision": {
+      "title": "La Nostra Visione",
+      "description": "Un'Europa dove ogni paziente riceve il sangue di cui ha bisogno, supportato da donatori impegnati e tecnologia moderna."
+    },
+    "journey": {
+      "title": "Il Nostro Percorso",
+      "subtitle": "Da soluzione locale a piattaforma europea",
+      "timeline": {
+        "2024Launch": {
+          "title": "2024 - Primo Lancio",
+          "description": "Vitalita è stata lanciata in tre città italiane. In pochi mesi, il tempo di prenotazione degli appuntamenti è diminuito dell'80% e la fidelizzazione dei donatori è aumentata del 35%."
+        },
+        "2024Impact": {
+          "title": "2024 - Impatto Crescente",
+          "description": "Oggi, oltre 50.000 donatori utilizzano Vitalita in più di 200 centri AVIS. Abbiamo aiutato a salvare oltre 150.000 vite e continuiamo ad espanderci in tutta Italia."
+        },
+        "2025Future": {
+          "title": "2025 - Futuro Europeo",
+          "description": "Con il successo dimostrato in Italia, siamo pronti a collaborare con i servizi di donazione del sangue in tutta Europa, adattando la nostra piattaforma per servire le esigenze uniche di ogni comunità."
+        }
+      }
+    },
+    "partnership": {
+      "title": "Costruito con AVIS Italia",
+      "subtitle": "Una partnership radicata nella fiducia e nei valori condivisi",
+      "description": "AVIS (Associazione Volontari Italiani Sangue) è stata la spina dorsale della donazione di sangue italiana per decenni. Vitalita esiste perché AVIS si è fidata di noi per modernizzare la loro missione senza perdere il loro cuore. Ogni funzionalità che costruiamo è testata con i volontari AVIS e approvata dal loro personale medico.",
+      "stats": {
+        "history": "Oltre 70 anni",
+        "historyLabel": "Storia AVIS",
+        "partnership": "Partnership dal 2024",
+        "partnershipLabel": "La nostra relazione",
+        "centers": "Oltre 200 centri",
+        "centersLabel": "Sedi collegate"
+      }
+    },
+    "values": {
+      "title": "Cosa Ci Guida",
+      "communityFirst": {
+        "title": "Comunità Prima di Tutto",
+        "description": "Ogni decisione che prendiamo dà priorità all'esperienza del donatore e all'impatto sulla comunità rispetto al profitto. Siamo qui per servire, non per estrarre."
+      },
+      "trust": {
+        "title": "Fiducia e Trasparenza",
+        "description": "I tuoi dati sono sacri. La conformità GDPR non è una casella da spuntare—è la nostra base. Non vendiamo mai dati, non condividiamo mai senza permesso."
+      },
+      "roots": {
+        "title": "Radici Italiane, Visione Globale",
+        "description": "Costruito con orgoglio in Italia con i valori mediterranei di comunità e cura, progettato per adattarsi a qualsiasi cultura, qualsiasi paese."
+      },
+      "simplicity": {
+        "title": "La Semplicità Conta",
+        "description": "Prenotare un appuntamento non dovrebbe richiedere un manuale. Ci ossessioniamo nel rimuovere gli attriti così i donatori possono concentrarsi sul salvare vite."
+      },
+      "evidence": {
+        "title": "Basato su Prove",
+        "description": "Ogni funzionalità è testata con veri donatori e veri centri. Misuriamo l'impatto, ascoltiamo il feedback e iteriamo senza sosta."
+      },
+      "partnership": {
+        "title": "Aperti alla Partnership",
+        "description": "Non siamo qui per sostituire organizzazioni come AVIS—siamo qui per potenziarle con la tecnologia. La tua missione, i nostri strumenti."
+      }
+    },
+    "team": {
+      "title": "Conosci il Team",
+      "subtitle": "Un piccolo team con una grande missione",
+      "description": "Vitalita è costruita da un team dedicato di ingegneri, designer e professionisti sanitari da tutto il mondo. Lavoriamo a stretto contatto con i volontari AVIS e il personale medico per assicurarci che ogni funzionalità serva esigenze reali."
+    },
+    "impact": {
+      "title": "Il Nostro Impatto in Numeri",
+      "activeDonors": "Donatori Attivi",
+      "livesSaved": "Vite Salvate",
+      "connectedCenters": "Centri Collegati",
+      "retention": "Aumento della Fidelizzazione dei Donatori",
+      "scheduling": "Riduzione del Tempo di Prenotazione",
+      "satisfaction": "Tasso di Soddisfazione dei Donatori"
+    },
+    "certifications": {
+      "title": "Sicurezza e Conformità",
+      "iso27001": {
+        "title": "Certificato ISO 27001",
+        "description": "Sistema di gestione della sicurezza delle informazioni certificato secondo standard internazionali."
+      },
+      "gdpr": {
+        "title": "Conforme al GDPR",
+        "description": "Piena conformità con le normative europee sulla protezione dei dati."
+      },
+      "wcag": {
+        "title": "Accessibile WCAG 2.2 AA",
+        "description": "Accessibile a tutti gli utenti, rispettando i più alti standard di accessibilità web."
+      },
+      "healthcare": {
+        "title": "Protezione dei Dati Sanitari",
+        "description": "Certificato per la gestione sicura di informazioni sanitarie sensibili."
+      }
+    },
+    "contact": {
+      "title": "Lavora con Noi",
+      "forDonors": {
+        "title": "Per i Donatori",
+        "description": "Hai domande? Siamo qui per aiutare.",
+        "button": "Visita il Centro di Aiuto"
+      },
+      "forOrganizations": {
+        "title": "Per le Organizzazioni",
+        "description": "Interessato a portare Vitalita nella tua regione?",
+        "details": "Collaboriamo con organizzazioni di donazione del sangue in tutta Europa per adattare la nostra piattaforma alle esigenze locali.",
+        "button": "Contatta il Nostro Team Partnership",
+        "email": "partnerships@vitalita.com"
+      }
+    },
+    "cta": {
+      "title": "Pronto a Salvare Vite?",
+      "subtitle": "Unisciti a oltre 50.000 donatori che fanno la differenza ogni giorno",
+      "primary": "Prenota la tua Prima Donazione",
+      "secondary": "Scopri l'Idoneità"
     }
   }
 }
