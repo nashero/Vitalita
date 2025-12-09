@@ -106,7 +106,7 @@ function HowItWorksSection() {
     <section
       id="how-it-works"
       ref={sectionRef}
-      className="relative w-full bg-white py-20 md:py-[80px] px-6 overflow-hidden"
+      className="relative w-full bg-white pt-24 md:pt-28 pb-20 md:pb-[80px] px-6 overflow-hidden scroll-mt-16 md:scroll-mt-20"
     >
       <div className="max-w-[1200px] mx-auto">
         {/* Heading */}

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { addDays, format, setHours, setMinutes, parseISO } from 'date-fns';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import { Calendar, Clock, Droplet, FlaskConical, HelpCircle, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import { ensureLeafletIcon } from '../utils/mapDefaults';
 import { supabase } from '../lib/supabase';
@@ -940,7 +941,7 @@ const BookingFlow = () => {
             width: '32px',
             height: '32px',
             borderRadius: '50%',
-            backgroundColor: '#dc2626',
+            backgroundColor: '#D97757',
             color: 'white',
             fontWeight: 'bold',
             fontSize: '0.875rem',
@@ -1054,7 +1055,7 @@ const BookingFlow = () => {
                   >
                     <div className="center-card-body">
                       {isDefault && (
-                        <span className="default-badge" style={{ fontSize: '0.875rem', color: '#dc2626', fontWeight: 600, marginBottom: '0.5rem', display: 'block' }}>
+                        <span className="default-badge" style={{ fontSize: '0.875rem', color: '#D97757', fontWeight: 600, marginBottom: '0.5rem', display: 'block' }}>
                           {t('booking.step1.yourDefaultCenter')}
                         </span>
                       )}
@@ -1096,56 +1097,61 @@ const BookingFlow = () => {
 
   const renderStepTwo = () => (
     <section className="wizard-step">
-      {/* Step Header with Progress Indicator */}
+      {/* Step Indicator Card */}
       <div style={{
         marginBottom: '2rem',
         padding: '1rem',
-        backgroundColor: '#f9fafb',
+        backgroundColor: '#FDF6E9',
         borderRadius: '0.5rem',
-        border: '1px solid #e5e7eb',
+        borderLeft: '4px solid #D97757',
       }}>
         <div style={{
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-start',
           gap: '0.75rem',
         }}>
-          <span style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '32px',
-            height: '32px',
-            borderRadius: '50%',
-            backgroundColor: '#dc2626',
-            color: 'white',
-            fontWeight: 'bold',
-            fontSize: '0.875rem',
-          }}>
-            2
-          </span>
+          <Calendar size={24} color="#D97757" style={{ marginTop: '2px' }} />
           <div>
-            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
-              {t('booking.step2.stepTitle')}
+            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#3E2723' }}>
+              Step 2: Date & Time
             </h3>
-            <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>
-              {t('booking.step2.stepDescription')}
+            <p style={{ margin: 0, fontSize: '0.875rem', color: '#A1887F', marginTop: '0.25rem' }}>
+              Select your preferred appointment date and time
             </p>
           </div>
         </div>
       </div>
 
-      {renderStepTitle(
-        t('booking.step2.title'),
-        t('booking.step2.subtitle'),
-      )}
+      {/* Main Heading */}
+      <header style={{ marginBottom: '2rem' }}>
+        <h1 style={{ fontSize: '32px', fontWeight: 700, color: '#3E2723', margin: '0 0 0.5rem 0' }}>
+          When can you donate?
+        </h1>
+        <p style={{ fontSize: '16px', color: '#A1887F', margin: 0 }}>
+          Pick the date and time that fits your schedule.
+        </p>
+      </header>
 
       {/* Donation Type Selection */}
       <div style={{ marginBottom: '2rem' }}>
-        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
-          {t('booking.step2.donationType')} <span aria-label="required">*</span>
+        <label style={{ display: 'block', marginBottom: '0.75rem', fontSize: '16px', fontWeight: 600, color: '#3E2723' }}>
+          Donation Type <span aria-label="required" style={{ color: '#D97757' }}>*</span>
         </label>
-        <div className="choice-group donation-type-group" role="radiogroup">
-          <label>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }} role="radiogroup">
+          <label style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.75rem 1.25rem',
+            borderRadius: '8px',
+            border: selectedDonationType === 'Blood' ? '2px solid #5B9BD5' : '2px solid #A1887F',
+            backgroundColor: selectedDonationType === 'Blood' ? '#5B9BD5' : '#ffffff',
+            color: selectedDonationType === 'Blood' ? '#ffffff' : '#3E2723',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            fontSize: '16px',
+            fontWeight: 500,
+          }}>
             <input
               type="radio"
               name="donationType"
@@ -1156,10 +1162,25 @@ const BookingFlow = () => {
                 setSelectedDateIso(null);
                 setSelectedSlotId(null);
               }}
+              style={{ display: 'none' }}
             />
-            {t('booking.step2.bloodDonation')}
+            <Droplet size={20} />
+            Blood Donation
           </label>
-          <label>
+          <label style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.75rem 1.25rem',
+            borderRadius: '8px',
+            border: selectedDonationType === 'Plasma' ? '2px solid #5B9BD5' : '2px solid #A1887F',
+            backgroundColor: selectedDonationType === 'Plasma' ? '#5B9BD5' : '#ffffff',
+            color: selectedDonationType === 'Plasma' ? '#ffffff' : '#3E2723',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            fontSize: '16px',
+            fontWeight: 500,
+          }}>
             <input
               type="radio"
               name="donationType"
@@ -1170,8 +1191,10 @@ const BookingFlow = () => {
                 setSelectedDateIso(null);
                 setSelectedSlotId(null);
               }}
+              style={{ display: 'none' }}
             />
-            {t('booking.step2.plasmaDonation')}
+            <FlaskConical size={20} />
+            Plasma Donation
           </label>
         </div>
       </div>
@@ -1223,10 +1246,10 @@ const BookingFlow = () => {
           borderRadius: '0.5rem',
           marginBottom: '1.5rem',
         }}>
-          <h3 style={{ marginTop: 0, marginBottom: '0.75rem', color: '#dc2626', fontSize: '1.125rem' }}>
+          <h3 style={{ marginTop: 0, marginBottom: '0.75rem', color: '#D97757', fontSize: '1.125rem' }}>
             {t('booking.step2.noAvailableSlots')}
           </h3>
-          <p style={{ marginBottom: '1rem', color: '#991b1b' }}>
+          <p style={{ marginBottom: '1rem', color: '#C5694A' }}>
             {t('booking.step2.noSlotsFound', { type: selectedDonationType })}
           </p>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -1235,8 +1258,8 @@ const BookingFlow = () => {
               className="button primary"
               onClick={() => setCurrentStep(1)}
               style={{
-                backgroundColor: '#dc2626',
-                borderColor: '#dc2626',
+                backgroundColor: '#D97757',
+                borderColor: '#D97757',
               }}
             >
               {t('booking.step2.tryDifferentCenter')}
@@ -1340,7 +1363,7 @@ const BookingFlow = () => {
           const startDayOfWeek = firstDay.getDay(); // 0 = Sunday, 1 = Monday, etc.
           const totalDays = lastDay.getDate();
           
-          const grid: Array<{ date: Date | null; isoDate: string | null; hasAvailability: boolean; availability?: CenterAvailability; slotCount?: number }> = [];
+          const grid: Array<{ date: Date | null; isoDate: string | null; hasAvailability: boolean; availability?: CenterAvailability; slotCount?: number; hasHighDemand?: boolean }> = [];
           
           // Add empty cells for days before the first day of the month
           for (let i = 0; i < startDayOfWeek; i++) {
@@ -1353,6 +1376,7 @@ const BookingFlow = () => {
             const isoDate = format(date, 'yyyy-MM-dd');
             const dayData = days.find(d => d.isoDate === isoDate);
             const slotCount = dayData?.availability?.slots.length || 0;
+            const hasHighDemand = dayData?.availability?.slots.some(slot => slot.riskLevel === 'high') || false;
             
             grid.push({
               date,
@@ -1360,6 +1384,7 @@ const BookingFlow = () => {
               hasAvailability: dayData?.hasAvailability || false,
               availability: dayData?.availability,
               slotCount,
+              hasHighDemand,
             });
           }
           
@@ -1379,7 +1404,7 @@ const BookingFlow = () => {
               backgroundColor: '#ffffff',
               padding: '1.5rem',
               borderRadius: '0.75rem',
-              border: '2px solid #e5e7eb',
+              border: '1px solid #FDF6E9',
               marginBottom: '2rem',
             }}>
               {/* Month Navigation */}
@@ -1388,6 +1413,9 @@ const BookingFlow = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 marginBottom: '1.5rem',
+                padding: '0.75rem',
+                backgroundColor: '#FDF6E9',
+                borderRadius: '8px',
               }}>
                 <button
                   type="button"
@@ -1396,12 +1424,16 @@ const BookingFlow = () => {
                     padding: '0.5rem 1rem',
                     backgroundColor: 'transparent',
                     border: 'none',
-                    color: '#2563eb',
+                    color: '#5B9BD5',
                     cursor: 'pointer',
                     fontSize: '0.875rem',
                     fontWeight: 500,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
                   }}
                 >
+                  <ChevronLeft size={16} />
                   {t('booking.step2.prevMonth')}
                 </button>
                 <button
@@ -1411,13 +1443,17 @@ const BookingFlow = () => {
                     padding: '0.5rem 1rem',
                     backgroundColor: 'transparent',
                     border: 'none',
-                    color: '#2563eb',
+                    color: '#5B9BD5',
                     cursor: 'pointer',
                     fontSize: '0.875rem',
                     fontWeight: 500,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
                   }}
                 >
                   {t('booking.step2.nextMonth')}
+                  <ChevronRight size={16} />
                 </button>
               </div>
 
@@ -1434,9 +1470,20 @@ const BookingFlow = () => {
                     {format(new Date(currentYear, currentMonth, 1), 'MMMM yyyy')}
                   </h3>
                   {/* Day of week headers */}
-                  <div className="calendar-day-header">
+                  <div className="calendar-day-header" style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(7, 1fr)',
+                    gap: '0.5rem',
+                    marginBottom: '0.5rem',
+                  }}>
                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                      <div key={day} className="calendar-day-header-item">
+                      <div key={day} style={{
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        color: '#A1887F',
+                        textAlign: 'center',
+                        padding: '0.5rem',
+                      }}>
                         {day}
                       </div>
                     ))}
@@ -1466,13 +1513,23 @@ const BookingFlow = () => {
                           }}
                           disabled={!isAvailable}
                           style={{
-                            border: isSelected ? '2px solid #2563eb' : '1px solid #e5e7eb',
-                            backgroundColor: isSelected ? '#eff6ff' : isAvailable ? '#ffffff' : '#f9fafb',
-                            color: isAvailable ? '#1f2937' : '#9ca3af',
+                            width: '40px',
+                            height: '40px',
+                            border: isTodayDate && !isSelected ? '2px solid #5B9BD5' : isSelected ? '2px solid #D97757' : '1px solid #FDF6E9',
+                            backgroundColor: isSelected ? '#D97757' : isAvailable ? '#ffffff' : '#f9fafb',
+                            color: isSelected ? '#ffffff' : isAvailable ? '#3E2723' : '#A1887F',
+                            borderRadius: '8px',
+                            position: 'relative',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: isAvailable ? 'pointer' : 'not-allowed',
+                            textDecoration: !isAvailable ? 'line-through' : 'none',
                           }}
                           onMouseEnter={(e) => {
                             if (isAvailable && !isSelected) {
-                              e.currentTarget.style.backgroundColor = '#f3f4f6';
+                              e.currentTarget.style.backgroundColor = '#FDF6E9';
                             }
                           }}
                           onMouseLeave={(e) => {
@@ -1487,35 +1544,23 @@ const BookingFlow = () => {
                             {format(day.date, 'd')}
                           </span>
                           {isAvailable && (
-                            <>
-                              <span
-                                style={{
-                                  position: 'absolute',
-                                  top: '4px',
-                                  right: '4px',
-                                  width: '8px',
-                                  height: '8px',
-                                  borderRadius: '50%',
-                                  backgroundColor: '#10b981',
-                                }}
-                                aria-label="Available"
-                              />
-                              {day.slotCount && day.slotCount > 0 && (
-                                <span style={{
-                                  fontSize: '0.75rem',
-                                  color: '#10b981',
-                                  fontWeight: 600,
-                                  marginTop: '0.125rem',
-                                }}>
-                                  {day.slotCount}
-                                </span>
-                              )}
-                            </>
+                            <span
+                              style={{
+                                position: 'absolute',
+                                top: '4px',
+                                right: '4px',
+                                width: '6px',
+                                height: '6px',
+                                borderRadius: '50%',
+                                backgroundColor: day.hasHighDemand ? '#E67E22' : '#9CAF88',
+                              }}
+                              aria-label={day.hasHighDemand ? 'High demand' : 'Available'}
+                            />
                           )}
                           {isTodayDate && (
                             <span style={{
                               fontSize: '0.625rem',
-                              color: isSelected ? '#2563eb' : '#6b7280',
+                              color: isSelected ? '#ffffff' : '#5B9BD5',
                               fontWeight: 500,
                               marginTop: '0.0625rem',
                             }}>
@@ -1540,9 +1585,20 @@ const BookingFlow = () => {
                       {format(new Date(nextYear, nextMonth, 1), 'MMMM yyyy')}
                     </h3>
                     {/* Day of week headers */}
-                    <div className="calendar-day-header">
+                    <div className="calendar-day-header" style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(7, 1fr)',
+                      gap: '0.5rem',
+                      marginBottom: '0.5rem',
+                    }}>
                       {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                        <div key={day} className="calendar-day-header-item">
+                        <div key={day} style={{
+                          fontSize: '14px',
+                          fontWeight: 600,
+                          color: '#A1887F',
+                          textAlign: 'center',
+                          padding: '0.5rem',
+                        }}>
                           {day}
                         </div>
                       ))}
@@ -1572,13 +1628,23 @@ const BookingFlow = () => {
                             }}
                             disabled={!isAvailable}
                             style={{
-                              border: isSelected ? '2px solid #2563eb' : '1px solid #e5e7eb',
-                              backgroundColor: isSelected ? '#eff6ff' : isAvailable ? '#ffffff' : '#f9fafb',
-                              color: isAvailable ? '#1f2937' : '#9ca3af',
+                              width: '40px',
+                              height: '40px',
+                              border: isTodayDate && !isSelected ? '2px solid #5B9BD5' : isSelected ? '2px solid #D97757' : '1px solid #FDF6E9',
+                              backgroundColor: isSelected ? '#D97757' : isAvailable ? '#ffffff' : '#f9fafb',
+                              color: isSelected ? '#ffffff' : isAvailable ? '#3E2723' : '#A1887F',
+                              borderRadius: '8px',
+                              position: 'relative',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              cursor: isAvailable ? 'pointer' : 'not-allowed',
+                              textDecoration: !isAvailable ? 'line-through' : 'none',
                             }}
                             onMouseEnter={(e) => {
                               if (isAvailable && !isSelected) {
-                                e.currentTarget.style.backgroundColor = '#f3f4f6';
+                                e.currentTarget.style.backgroundColor = '#FDF6E9';
                               }
                             }}
                             onMouseLeave={(e) => {
@@ -1593,35 +1659,23 @@ const BookingFlow = () => {
                               {format(day.date, 'd')}
                             </span>
                             {isAvailable && (
-                              <>
-                                <span
-                                  style={{
-                                    position: 'absolute',
-                                    top: '4px',
-                                    right: '4px',
-                                    width: '8px',
-                                    height: '8px',
-                                    borderRadius: '50%',
-                                    backgroundColor: '#10b981',
-                                  }}
-                                  aria-label="Available"
-                                />
-                                {day.slotCount && day.slotCount > 0 && (
-                                  <span style={{
-                                    fontSize: '0.75rem',
-                                    color: '#10b981',
-                                    fontWeight: 600,
-                                    marginTop: '0.125rem',
-                                  }}>
-                                    {day.slotCount}
-                                  </span>
-                                )}
-                              </>
+                              <span
+                                style={{
+                                  position: 'absolute',
+                                  top: '4px',
+                                  right: '4px',
+                                  width: '8px',
+                                  height: '8px',
+                                  borderRadius: '50%',
+                                  backgroundColor: '#9CAF88',
+                                }}
+                                aria-label="Available"
+                              />
                             )}
                             {isTodayDate && (
                               <span style={{
                                 fontSize: '0.625rem',
-                                color: isSelected ? '#2563eb' : '#6b7280',
+                                color: isSelected ? '#ffffff' : '#5B9BD5',
                                 fontWeight: 500,
                                 marginTop: '0.0625rem',
                               }}>
@@ -1634,6 +1688,46 @@ const BookingFlow = () => {
                     </div>
                   </div>
                 )}
+              </div>
+              
+              {/* Availability Legend */}
+              <div style={{
+                marginTop: '1.5rem',
+                padding: '1rem',
+                backgroundColor: '#FDF6E9',
+                borderRadius: '8px',
+                display: 'flex',
+                gap: '1.5rem',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: '#9CAF88',
+                  }} />
+                  <span style={{ fontSize: '14px', color: '#3E2723' }}>Available</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: '#E67E22',
+                  }} />
+                  <span style={{ fontSize: '14px', color: '#3E2723' }}>High Demand</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: '#A1887F',
+                  }} />
+                  <span style={{ fontSize: '14px', color: '#3E2723' }}>Full</span>
+                </div>
               </div>
             </div>
 
@@ -1661,18 +1755,11 @@ const BookingFlow = () => {
                   gap: '0.75rem',
                   marginBottom: '1.5rem',
                   paddingBottom: '0.75rem',
-                  borderBottom: '2px solid #dc2626',
+                  borderBottom: '2px solid #D97757',
                 }}>
-                  <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' }}>
-                    {t('booking.step2.selectTime')}
+                  <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 700, color: '#3E2723' }}>
+                    Select a time for {format(selectedDateAvailability?.date || new Date(selectedDateIso), 'EEEE, MMMM d')}
                   </h2>
-                  <span style={{
-                    fontSize: '0.875rem',
-                    color: '#6b7280',
-                    fontStyle: 'italic',
-                  }}>
-                    {t('booking.step2.forDate', { date: format(selectedDateAvailability?.date || new Date(selectedDateIso), 'EEEE, MMMM d') })}
-                  </span>
                 </div>
                 {selectedDateAvailability?.slots.length === 0 ? (
                   <div className="inline-alert" style={{
@@ -1681,10 +1768,10 @@ const BookingFlow = () => {
                     border: '2px solid #fecaca',
                     borderRadius: '0.5rem',
                   }}>
-                    <h3 style={{ marginTop: 0, marginBottom: '0.75rem', color: '#dc2626', fontSize: '1.125rem' }}>
+                    <h3 style={{ marginTop: 0, marginBottom: '0.75rem', color: '#D97757', fontSize: '1.125rem' }}>
                       {t('booking.step2.noTimeSlots')}
                     </h3>
-                    <p style={{ marginBottom: '1rem', color: '#991b1b' }}>
+                    <p style={{ marginBottom: '1rem', color: '#C5694A' }}>
                       {t('booking.step2.noTimeSlotsMessage')}
                     </p>
                     <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -1693,8 +1780,8 @@ const BookingFlow = () => {
                         className="button primary"
                         onClick={() => setSelectedDateIso(null)}
                         style={{
-                          backgroundColor: '#dc2626',
-                          borderColor: '#dc2626',
+                          backgroundColor: '#D97757',
+                          borderColor: '#D97757',
                         }}
                       >
                         {t('booking.step2.selectDifferentDate')}
@@ -1777,101 +1864,71 @@ const BookingFlow = () => {
                               disabled={!isAvailable || isBooked}
                               style={{
                                 position: 'relative',
-                                padding: '0.75rem 1rem',
+                                height: '52px',
+                                minWidth: '120px',
+                                padding: '0.65rem 0.75rem',
                                 border: isSelected
-                                  ? '2px solid #dc2626'
+                                  ? '2px solid #D97757'
                                   : isAvailable && !isBooked
-                                  ? '2px solid #10b981'
-                                  : '2px solid #e5e7eb',
+                                  ? '2px solid #9CAF88'
+                                  : '2px solid #A1887F',
                                 backgroundColor: isSelected
-                                  ? '#fef2f2'
+                                  ? '#D97757'
                                   : isAvailable && !isBooked
-                                  ? '#f0fdf4'
-                                  : '#f9fafb',
-                                borderRadius: '0.5rem',
+                                  ? '#ffffff'
+                                  : '#FDF6E9',
+                                borderRadius: '8px',
                                 cursor: isAvailable && !isBooked ? 'pointer' : 'not-allowed',
                                 opacity: isBooked ? 0.5 : 1,
-                                transition: 'all 0.2s ease',
+                                transition: 'all 0.3s ease',
                                 textDecoration: isBooked ? 'line-through' : 'none',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
+                                justifyContent: 'center',
                                 gap: '0.25rem',
+                                color: isSelected ? '#ffffff' : isAvailable && !isBooked ? '#9CAF88' : '#A1887F',
+                                textAlign: 'center',
                               }}
                               onMouseEnter={(e) => {
                                 if (isAvailable && !isBooked && !isSelected) {
-                                  e.currentTarget.style.backgroundColor = '#dcfce7';
-                                  e.currentTarget.style.borderColor = '#10b981';
+                                  e.currentTarget.style.backgroundColor = '#FDF6E9';
+                                  e.currentTarget.style.borderColor = '#5B9BD5';
                                 }
                               }}
                               onMouseLeave={(e) => {
                                 if (isAvailable && !isBooked && !isSelected) {
-                                  e.currentTarget.style.backgroundColor = '#f0fdf4';
-                                  e.currentTarget.style.borderColor = '#10b981';
+                                  e.currentTarget.style.backgroundColor = '#ffffff';
+                                  e.currentTarget.style.borderColor = '#9CAF88';
                                 }
                               }}
                             >
-                              {isSelected && (
+                              <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', lineHeight: 1 }}>
+                                {isSelected ? (
+                                  <CheckCircle2 size={16} style={{ color: '#ffffff' }} />
+                                ) : (
+                                  <Clock size={16} style={{ color: isAvailable && !isBooked ? '#9CAF88' : '#A1887F' }} />
+                                )}
                                 <span
+                                  className="slot-time"
                                   style={{
-                                    position: 'absolute',
-                                    top: '4px',
-                                    right: '4px',
-                                    width: '18px',
-                                    height: '18px',
-                                    borderRadius: '50%',
-                                    backgroundColor: '#dc2626',
-                                    color: 'white',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    fontSize: '12px',
-                                    fontWeight: 'bold',
+                                    fontSize: '1rem',
+                                    fontWeight: isSelected ? 700 : 600,
+                                    color: isSelected ? '#ffffff' : isAvailable && !isBooked ? '#3E2723' : '#A1887F',
                                   }}
-                                  aria-label="Selected"
                                 >
-                                  ✓
+                                  {slot.time}
                                 </span>
-                              )}
-                              <span
-                                className="slot-time"
-                                style={{
-                                  fontSize: '1rem',
-                                  fontWeight: isSelected ? 700 : 600,
-                                  color: isBooked ? '#9ca3af' : isSelected ? '#dc2626' : '#1f2937',
-                                }}
-                              >
-                                {slot.time}
                               </span>
-                              {isBooked ? (
+                              {!isSelected && (
                                 <span
                                   style={{
-                                    fontSize: '0.75rem',
-                                    color: '#9ca3af',
-                                    textTransform: 'uppercase',
-                                  }}
-                                >
-                                  {t('booking.step2.booked')}
-                                </span>
-                              ) : slot.status === 'filling' ? (
-                                <span
-                                  style={{
-                                    fontSize: '0.75rem',
-                                    color: '#f59e0b',
+                                    fontSize: '0.8rem',
+                                    color: isBooked ? '#A1887F' : slot.status === 'filling' ? '#E67E22' : '#9CAF88',
                                     fontWeight: 600,
                                   }}
                                 >
-                                  {t('booking.step2.left', { count: slot.spotsLeft })}
-                                </span>
-                              ) : (
-                                <span
-                                  style={{
-                                    fontSize: '0.75rem',
-                                    color: '#10b981',
-                                    fontWeight: 600,
-                                  }}
-                                >
-                                  {t('booking.step2.available')}
+                                  {isBooked ? t('booking.step2.booked') : slot.status === 'filling' ? t('booking.step2.left', { count: slot.spotsLeft }) : 'Available'}
                                 </span>
                               )}
                             </button>
@@ -1891,27 +1948,22 @@ const BookingFlow = () => {
                 );
               })()}
                 {selectedDateAvailability?.slots.length > 0 && (
-                  <div style={{ marginTop: '1.5rem', padding: '1rem', backgroundColor: '#eff6ff', borderRadius: '0.5rem', border: '1px solid #bfdbfe' }}>
-                    <p style={{ margin: 0, fontSize: '0.875rem', color: '#1e40af' }}>
-                      <strong>{t('booking.step2.needDifferentTime')}</strong> You can{' '}
-                      <a
-                        href="https://vitalita.com/callback"
-                        target="_blank"
-                        rel="noreferrer"
-                        style={{ color: '#2563eb', textDecoration: 'underline', fontWeight: 600 }}
-                      >
-                        {t('booking.step2.requestCallbackLink')}
-                      </a>
-                      {' '}or{' '}
-                      <a
-                        href="https://vitalita.com/waitlist"
-                        target="_blank"
-                        rel="noreferrer"
-                        style={{ color: '#2563eb', textDecoration: 'underline', fontWeight: 600 }}
-                      >
-                        {t('booking.step2.joinWaitlistLink')}
-                      </a>
-                      {' '}{t('booking.step2.forPreferredTimes')}
+                  <div style={{ marginTop: '1.5rem', padding: '1rem', backgroundColor: '#FDF6E9', borderRadius: '0.5rem', border: '1px solid #A1887F' }}>
+                    <p style={{ margin: 0, fontSize: '14px', color: '#3E2723', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <HelpCircle size={18} color="#5B9BD5" />
+                      <span>
+                        <strong>Need a different time?</strong> Request a callback or join our waitlist{' '}
+                        <a
+                          href="https://vitalita.com/callback"
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ color: '#5B9BD5', textDecoration: 'none', fontWeight: 600 }}
+                          onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                          onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                        >
+                          here
+                        </a>
+                      </span>
                     </p>
                   </div>
                 )}
@@ -1945,7 +1997,7 @@ const BookingFlow = () => {
             width: '32px',
             height: '32px',
             borderRadius: '50%',
-            backgroundColor: '#dc2626',
+            backgroundColor: '#D97757',
             color: 'white',
             fontWeight: 'bold',
             fontSize: '0.875rem',
@@ -2197,7 +2249,7 @@ const BookingFlow = () => {
               width: '32px',
               height: '32px',
               borderRadius: '50%',
-              backgroundColor: '#dc2626',
+              backgroundColor: '#D97757',
               color: 'white',
               fontWeight: 'bold',
               fontSize: '0.875rem',
@@ -2326,32 +2378,48 @@ const BookingFlow = () => {
     <div className="booking-flow">
       <div className="wizard-main">
         <nav className="wizard-progress" aria-label="Booking progress">
-          <ol>
-            {stepKeys.map((step) => {
+          <ol style={{ display: 'flex', alignItems: 'center', width: '100%', position: 'relative' }}>
+            {stepKeys.map((step, index) => {
               const isCompleted = currentStep > step.id;
               const isCurrent = currentStep === step.id;
+              const nextStep = stepKeys[index + 1];
+              const isConnectorActive = isCurrent || isCompleted;
+              
               return (
-                <li
-                  key={step.id}
-                  className={`progress-step ${isCompleted ? 'completed' : ''} ${
-                    isCurrent ? 'current' : ''
-                  }`}
-                >
-                  <span className="progress-index" aria-hidden="true">
-                    {step.id}
-                  </span>
-                  <span className="progress-label">{t(step.labelKey)}</span>
-                </li>
+                <>
+                  <li
+                    key={step.id}
+                    className={`progress-step ${isCompleted ? 'completed' : ''} ${
+                      isCurrent ? 'current' : ''
+                    }`}
+                    style={{ position: 'relative', zIndex: 2 }}
+                  >
+                    <span className="progress-index" aria-hidden="true">
+                      {isCompleted ? <CheckCircle2 size={20} strokeWidth={2.5} /> : step.id}
+                    </span>
+                    <span className="progress-label">{t(step.labelKey)}</span>
+                  </li>
+                  {nextStep && (
+                    <div
+                      key={`connector-${step.id}`}
+                      className="progress-connector"
+                      style={{
+                        flex: 1,
+                        height: '3px',
+                        margin: '0 8px',
+                        borderRadius: '999px',
+                        backgroundColor: isConnectorActive ? '#D97757' : '#A1887F',
+                        transition: 'background-color 0.3s ease',
+                        position: 'relative',
+                        zIndex: 1,
+                      }}
+                      role="presentation"
+                    />
+                  )}
+                </>
               );
             })}
           </ol>
-          <div
-            className="progress-bar"
-            style={{
-              width: `${((currentStep - 1) / (stepKeys.length - 1)) * 100}%`,
-            }}
-            role="presentation"
-          />
         </nav>
 
         {validationMessage && (
@@ -2362,42 +2430,71 @@ const BookingFlow = () => {
 
         {renderStepContent()}
 
-        <div className="wizard-controls">
+        <div className="wizard-controls" style={{ display: 'flex', gap: '1rem', justifyContent: 'space-between', marginTop: '2rem' }}>
           <button
             type="button"
-            className="button secondary"
             onClick={handleBack}
             disabled={currentStep === 1}
+            style={{
+              height: '48px',
+              padding: '0 1.5rem',
+              borderRadius: '8px',
+              border: '2px solid #A1887F',
+              backgroundColor: 'transparent',
+              color: '#A1887F',
+              fontSize: '16px',
+              fontWeight: 600,
+              cursor: currentStep === 1 ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              if (currentStep !== 1) {
+                e.currentTarget.style.borderColor = '#3E2723';
+                e.currentTarget.style.color = '#3E2723';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (currentStep !== 1) {
+                e.currentTarget.style.borderColor = '#A1887F';
+                e.currentTarget.style.color = '#A1887F';
+              }
+            }}
           >
-            {t('booking.buttons.back')}
+            <ChevronLeft size={18} />
+            Back
           </button>
           {currentStep < stepKeys.length && (
             <button
               type="button"
               className={`button primary ${isSubmitting ? 'loading' : ''}`}
               onClick={handleNext}
-              disabled={isSubmitting}
+              disabled={isSubmitting || (currentStep === 2 && (!selectedDateIso || !selectedSlotId))}
               aria-busy={isSubmitting}
               style={{
-                backgroundColor: '#e11d48',
-                borderColor: '#e11d48',
+                backgroundColor: (currentStep === 2 && (!selectedDateIso || !selectedSlotId)) ? '#A1887F' : '#D97757',
+                borderColor: (currentStep === 2 && (!selectedDateIso || !selectedSlotId)) ? '#A1887F' : '#D97757',
                 color: '#ffffff',
                 minWidth: '150px',
-                boxShadow: '0 2px 8px rgba(225, 29, 72, 0.2)',
+                boxShadow: (currentStep === 2 && (!selectedDateIso || !selectedSlotId)) ? 'none' : '0 2px 8px rgba(217, 119, 87, 0.2)',
                 transition: 'all 0.2s ease',
+                opacity: (currentStep === 2 && (!selectedDateIso || !selectedSlotId)) ? 0.6 : 1,
+                cursor: (currentStep === 2 && (!selectedDateIso || !selectedSlotId)) ? 'not-allowed' : 'pointer',
               }}
               onMouseEnter={(e) => {
-                if (!isSubmitting) {
-                  e.currentTarget.style.backgroundColor = '#be123c';
-                  e.currentTarget.style.borderColor = '#be123c';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(225, 29, 72, 0.3)';
+                if (!isSubmitting && !(currentStep === 2 && (!selectedDateIso || !selectedSlotId))) {
+                  e.currentTarget.style.backgroundColor = '#C5694A';
+                  e.currentTarget.style.borderColor = '#C5694A';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(217, 119, 87, 0.3)';
                 }
               }}
               onMouseLeave={(e) => {
-                if (!isSubmitting) {
-                  e.currentTarget.style.backgroundColor = '#e11d48';
-                  e.currentTarget.style.borderColor = '#e11d48';
-                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(225, 29, 72, 0.2)';
+                if (!isSubmitting && !(currentStep === 2 && (!selectedDateIso || !selectedSlotId))) {
+                  e.currentTarget.style.backgroundColor = '#D97757';
+                  e.currentTarget.style.borderColor = '#D97757';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(217, 119, 87, 0.2)';
                 }
               }}
             >
@@ -2406,7 +2503,7 @@ const BookingFlow = () => {
               ) : currentStep === 1 ? (
                 t('booking.buttons.continueToDateTime')
               ) : currentStep === 2 ? (
-                selectedDateIso && selectedSlotId ? t('booking.buttons.reviewAppointment') : t('booking.buttons.selectDateTime')
+                'Select Date & Continue'
               ) : currentStep === 3 ? (
                 t('booking.buttons.continueToHealthCheck')
               ) : currentStep === 4 ? (

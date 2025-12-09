@@ -205,7 +205,7 @@ const ComprehensiveFAQ = () => {
 
         {/* Category Tabs */}
         <div className="mb-8">
-          <div className="flex flex-wrap gap-2 border-b-2 border-taupe/20 pb-2">
+          <div className="flex flex-wrap gap-2 sm:gap-3 justify-center sm:justify-start overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {categories.map((category) => {
               const isActive = activeCategory === category.id;
               return (
@@ -215,90 +215,22 @@ const ComprehensiveFAQ = () => {
                   role="tab"
                   aria-selected={isActive}
                   onClick={() => handleCategoryChange(category.id)}
-                  className={`flex items-center gap-2 px-6 py-3 rounded-t-lg font-semibold transition-all duration-200 ${
+                  className={`flex items-center gap-2 px-4 sm:px-6 py-3 rounded-lg sm:rounded-t-lg font-semibold transition-all duration-200 min-h-[44px] touch-manipulation ${
                     isActive
                       ? 'bg-terracotta text-white shadow-md'
                       : 'bg-white text-taupe hover:bg-cream hover:text-espresso'
                   }`}
                 >
                   {category.icon}
-                  <span>{t(category.labelKey)}</span>
+                  <span className="whitespace-nowrap">{t(category.labelKey)}</span>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Two Column Layout: Sidebar + Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Sidebar - Quick Links */}
-          <aside className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-md p-6 sticky top-4">
-              <h2 className="text-lg font-bold text-espresso mb-4">
-                Quick Links
-              </h2>
-              <nav className="space-y-2">
-                {categories.map((category) => {
-                  const isActive = activeCategory === category.id;
-                  return (
-                    <button
-                      key={category.id}
-                      type="button"
-                      onClick={() => handleCategoryChange(category.id)}
-                      className={`w-full text-left px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2 ${
-                        isActive
-                          ? 'bg-terracotta text-white'
-                          : 'text-taupe hover:bg-cream hover:text-espresso'
-                      }`}
-                    >
-                      {category.icon}
-                      <span className="text-sm font-medium">
-                        {t(category.labelKey)}
-                      </span>
-                    </button>
-                  );
-                })}
-              </nav>
-
-              {/* Contact Section in Sidebar */}
-              <div className="mt-8 pt-6 border-t border-taupe/20">
-                <h3 className="text-base font-bold text-espresso mb-4">
-                  Still Need Help?
-                </h3>
-                <div className="space-y-3">
-                  <a
-                    href="tel:+391800123456"
-                    className="flex items-center gap-3 text-taupe hover:text-terracotta transition-colors"
-                  >
-                    <Phone className="w-5 h-5" />
-                    <span className="text-sm">+39 1800 123 456</span>
-                  </a>
-                  <a
-                    href="mailto:donations@vitalita.com"
-                    className="flex items-center gap-3 text-taupe hover:text-terracotta transition-colors"
-                  >
-                    <Mail className="w-5 h-5" />
-                    <span className="text-sm">Email Us</span>
-                  </a>
-                  <a
-                    href="https://t.me/vitalita_support"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-3 text-taupe hover:text-terracotta transition-colors"
-                  >
-                    <MessageCircle className="w-5 h-5" />
-                    <span className="text-sm">Chat on Telegram</span>
-                  </a>
-                </div>
-                <p className="text-xs text-taupe mt-4">
-                  Support hours: 8 AM – 8 PM, every day
-                </p>
-              </div>
-            </div>
-          </aside>
-
-          {/* Main Content - Questions Accordion */}
-          <div className="lg:col-span-3">
+        {/* Main Content - Questions Accordion */}
+        <div>
             {activeQuestions.length > 0 ? (
               <div className="space-y-4">
                 {activeQuestions.map((question) => {
@@ -368,25 +300,25 @@ const ComprehensiveFAQ = () => {
               </div>
             )}
 
-            {/* Contact Section at Bottom (Mobile) */}
-            <div className="lg:hidden mt-8 bg-white rounded-xl shadow-md p-6">
+            {/* Contact Section at Bottom */}
+            <div className="mt-8 bg-white rounded-xl shadow-md p-6 sm:p-8">
               <h2 className="text-xl font-bold text-espresso mb-4">
                 Can't find what you're looking for?
               </h2>
               <p className="text-base text-taupe mb-6">
                 We're here to help. Reach out to us using any of these methods:
               </p>
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <a
                   href="tel:+391800123456"
-                  className="flex items-center gap-4 p-4 bg-cream rounded-lg hover:bg-terracotta hover:text-white transition-all duration-200 group"
+                  className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 sm:p-6 bg-cream rounded-lg hover:bg-terracotta hover:text-white transition-all duration-200 group text-center sm:text-left"
                 >
-                  <div className="w-12 h-12 bg-terracotta/10 group-hover:bg-white/20 rounded-full flex items-center justify-center">
-                    <Phone className="w-6 h-6 text-terracotta group-hover:text-white" />
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-terracotta/10 group-hover:bg-white/20 rounded-full flex items-center justify-center mx-auto sm:mx-0">
+                    <Phone className="w-6 h-6 sm:w-8 sm:h-8 text-terracotta group-hover:text-white" />
                   </div>
                   <div>
-                    <p className="font-semibold text-espresso group-hover:text-white">
-                      Call Us
+                    <p className="font-semibold text-espresso group-hover:text-white mb-1">
+                      Call for Help
                     </p>
                     <p className="text-sm text-taupe group-hover:text-white/80">
                       +39 1800 123 456
@@ -397,95 +329,30 @@ const ComprehensiveFAQ = () => {
                   href="https://t.me/vitalita_support"
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-4 p-4 bg-cream rounded-lg hover:bg-mediterranean-blue hover:text-white transition-all duration-200 group"
+                  className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 sm:p-6 bg-cream rounded-lg hover:bg-mediterranean-blue hover:text-white transition-all duration-200 group text-center sm:text-left"
                 >
-                  <div className="w-12 h-12 bg-mediterranean-blue/10 group-hover:bg-white/20 rounded-full flex items-center justify-center">
-                    <MessageCircle className="w-6 h-6 text-mediterranean-blue group-hover:text-white" />
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-mediterranean-blue/10 group-hover:bg-white/20 rounded-full flex items-center justify-center mx-auto sm:mx-0">
+                    <MessageCircle className="w-6 h-6 sm:w-8 sm:h-8 text-mediterranean-blue group-hover:text-white" />
                   </div>
                   <div>
-                    <p className="font-semibold text-espresso group-hover:text-white">
-                      Telegram
+                    <p className="font-semibold text-espresso group-hover:text-white mb-1">
+                      Chat with Us
                     </p>
                     <p className="text-sm text-taupe group-hover:text-white/80">
-                      Chat with us
+                      Chat on Telegram
                     </p>
                   </div>
                 </a>
                 <a
                   href="mailto:donations@vitalita.com"
-                  className="flex items-center gap-4 p-4 bg-cream rounded-lg hover:bg-olive-green hover:text-white transition-all duration-200 group"
+                  className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 sm:p-6 bg-cream rounded-lg hover:bg-olive-green hover:text-white transition-all duration-200 group text-center sm:text-left"
                 >
-                  <div className="w-12 h-12 bg-olive-green/10 group-hover:bg-white/20 rounded-full flex items-center justify-center">
-                    <Mail className="w-6 h-6 text-olive-green group-hover:text-white" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-espresso group-hover:text-white">
-                      Email
-                    </p>
-                    <p className="text-sm text-taupe group-hover:text-white/80">
-                      donations@vitalita.com
-                    </p>
-                  </div>
-                </a>
-              </div>
-              <p className="text-sm text-taupe mt-6 text-center">
-                We usually respond within 1 hour
-              </p>
-            </div>
-
-            {/* Contact Section at Bottom (Desktop) */}
-            <div className="hidden lg:block mt-8 bg-white rounded-xl shadow-md p-8">
-              <h2 className="text-xl font-bold text-espresso mb-4">
-                Can't find what you're looking for?
-              </h2>
-              <p className="text-base text-taupe mb-6">
-                We're here to help. Reach out to us using any of these methods:
-              </p>
-              <div className="grid grid-cols-3 gap-4">
-                <a
-                  href="tel:+391800123456"
-                  className="flex flex-col items-center gap-3 p-6 bg-cream rounded-lg hover:bg-terracotta hover:text-white transition-all duration-200 group text-center"
-                >
-                  <div className="w-16 h-16 bg-terracotta/10 group-hover:bg-white/20 rounded-full flex items-center justify-center">
-                    <Phone className="w-8 h-8 text-terracotta group-hover:text-white" />
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-olive-green/10 group-hover:bg-white/20 rounded-full flex items-center justify-center mx-auto sm:mx-0">
+                    <Mail className="w-6 h-6 sm:w-8 sm:h-8 text-olive-green group-hover:text-white" />
                   </div>
                   <div>
                     <p className="font-semibold text-espresso group-hover:text-white mb-1">
-                      Call Us
-                    </p>
-                    <p className="text-sm text-taupe group-hover:text-white/80">
-                      +39 1800 123 456
-                    </p>
-                  </div>
-                </a>
-                <a
-                  href="https://t.me/vitalita_support"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex flex-col items-center gap-3 p-6 bg-cream rounded-lg hover:bg-mediterranean-blue hover:text-white transition-all duration-200 group text-center"
-                >
-                  <div className="w-16 h-16 bg-mediterranean-blue/10 group-hover:bg-white/20 rounded-full flex items-center justify-center">
-                    <MessageCircle className="w-8 h-8 text-mediterranean-blue group-hover:text-white" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-espresso group-hover:text-white mb-1">
-                      Telegram
-                    </p>
-                    <p className="text-sm text-taupe group-hover:text-white/80">
-                      Chat with us
-                    </p>
-                  </div>
-                </a>
-                <a
-                  href="mailto:donations@vitalita.com"
-                  className="flex flex-col items-center gap-3 p-6 bg-cream rounded-lg hover:bg-olive-green hover:text-white transition-all duration-200 group text-center"
-                >
-                  <div className="w-16 h-16 bg-olive-green/10 group-hover:bg-white/20 rounded-full flex items-center justify-center">
-                    <Mail className="w-8 h-8 text-olive-green group-hover:text-white" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-espresso group-hover:text-white mb-1">
-                      Email
+                      Send an Inquiry
                     </p>
                     <p className="text-sm text-taupe group-hover:text-white/80">
                       donations@vitalita.com
@@ -498,7 +365,6 @@ const ComprehensiveFAQ = () => {
               </p>
             </div>
           </div>
-        </div>
       </div>
     </div>
   );
