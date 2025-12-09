@@ -172,7 +172,7 @@ const MyAppointments = () => {
           // Only set error message if we actually failed to get any data
           if (upcomingError && (!upcomingData || upcomingData.length === 0)) {
             console.error('Failed to fetch appointments:', upcomingError);
-            setActionMessage(`Failed to load appointments: ${upcomingError.message || 'Unknown error'}. Please refresh the page.`);
+            setActionMessage(t('myAppointments.loading.title') + ': ' + (upcomingError.message || t('common.error')) + '. ' + t('myAppointments.loading.subtitle'));
             upcomingData = [];
           } else if (upcomingData && upcomingData.length > 0) {
             // Clear any previous error messages if we successfully loaded data
@@ -273,7 +273,7 @@ const MyAppointments = () => {
             }
 
             // Use center name, or fallback to donor's default center, or "Unknown Center"
-            const locationName = center?.name || donorDefaultCenterName || 'Unknown Center';
+            const locationName = center?.name || donorDefaultCenterName || t('myAppointments.unknownCenter');
 
             console.log('Processing appointment:', apt.appointment_id, {
               hasCenter: !!center,
@@ -301,7 +301,7 @@ const MyAppointments = () => {
               : record.donation_centers;
 
             // Use center name, or fallback to donor's default center, or "Unknown Center"
-            const locationName = center?.name || donorDefaultCenterName || 'Unknown Center';
+            const locationName = center?.name || donorDefaultCenterName || t('myAppointments.unknownCenter');
 
             return {
               id: record.history_id,
@@ -312,7 +312,7 @@ const MyAppointments = () => {
 
           const profileData = {
             id: donorHashId,
-            name: donorId || 'Donor',
+            name: donorId || t('myAppointments.defaultDonorName'),
             email: donorEmail || '',
             phone: '',
             upcoming,
@@ -334,10 +334,10 @@ const MyAppointments = () => {
           console.error('Error fetching appointments:', error);
           // Only set error message if we didn't successfully load any data
           if (!hasSuccessfullyLoadedData) {
-            setActionMessage('Failed to load appointments. Please refresh the page.');
+            setActionMessage(t('myAppointments.loading.title') + '. ' + t('myAppointments.loading.subtitle'));
             setProfile({
               id: donorHashId,
-              name: donorId || 'Donor',
+              name: donorId || t('myAppointments.defaultDonorName'),
               email: donorEmail || '',
               phone: '',
               upcoming: [],
@@ -399,10 +399,10 @@ const MyAppointments = () => {
     const today = new Date();
     const days = differenceInCalendarDays(appointmentDate, today);
 
-    if (days < 0) return 'Past';
-    if (days === 0) return 'Today';
-    if (days === 1) return 'Your appointment is in 1 day';
-    return `Your appointment is in ${days} days`;
+    if (days < 0) return t('myAppointments.upcoming.countdown.passed');
+    if (days === 0) return t('myAppointments.upcoming.countdown.today');
+    if (days === 1) return t('myAppointments.upcoming.countdown.oneDay');
+    return t('myAppointments.upcoming.countdown.days', { days });
   };
 
   const getUrgencyColor = (appointment: Appointment) => {
@@ -439,9 +439,9 @@ const MyAppointments = () => {
       `DTSTAMP:${format(new Date(), "yyyyMMdd'T'HHmmss'Z'")}`,
       `DTSTART:${formatICS(start)}`,
       `DTEND:${formatICS(end)}`,
-      `SUMMARY:Blood Donation Appointment - ${appointment.locationName}`,
+      `SUMMARY:${t('myAppointments.calendar.summary', { location: appointment.locationName })}`,
       `LOCATION:${appointment.address}`,
-      'DESCRIPTION:Your blood donation appointment with Vitalita',
+      `DESCRIPTION:${t('myAppointments.calendar.description')}`,
       'END:VEVENT',
       'END:VCALENDAR',
     ].join('\r\n');
@@ -471,25 +471,25 @@ const MyAppointments = () => {
         .eq('appointment_id', cancelConfirmationId)
         .eq('donor_hash_id', profile.id);
 
-      if (updateError) {
-        console.error('Error cancelling appointment:', updateError);
-        setActionMessage('Failed to cancel appointment. Please try again.');
-        setCancelConfirmationId(null);
-        return;
-      }
+          if (updateError) {
+            console.error('Error cancelling appointment:', updateError);
+            setActionMessage(t('myAppointments.upcoming.cancelError'));
+            setCancelConfirmationId(null);
+            return;
+          }
 
-      const filtered = profile.upcoming.filter(
-        (appointment) => appointment.id !== cancelConfirmationId,
-      );
+          const filtered = profile.upcoming.filter(
+            (appointment) => appointment.id !== cancelConfirmationId,
+          );
 
-      setProfile({ ...profile, upcoming: filtered });
-      setCancelConfirmationId(null);
-      setActionMessage('Appointment cancelled successfully.');
-    } catch (error) {
-      console.error('Error cancelling appointment:', error);
-      setActionMessage('Failed to cancel appointment. Please try again.');
-      setCancelConfirmationId(null);
-    }
+          setProfile({ ...profile, upcoming: filtered });
+          setCancelConfirmationId(null);
+          setActionMessage(t('myAppointments.upcoming.cancelSuccess'));
+        } catch (error) {
+          console.error('Error cancelling appointment:', error);
+          setActionMessage(t('myAppointments.upcoming.cancelError'));
+          setCancelConfirmationId(null);
+        }
   };
 
   const requireAuth = () => {
@@ -510,7 +510,7 @@ const MyAppointments = () => {
       <div className="min-h-screen bg-cream pt-24 pb-12">
         <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8">
           <div className="text-center py-12">
-            <p className="text-xl text-espresso">Loading your appointments...</p>
+            <p className="text-xl text-espresso">{t('myAppointments.loading.title')}</p>
           </div>
         </div>
       </div>
@@ -525,10 +525,10 @@ const MyAppointments = () => {
         {/* Header Section */}
         <div className="bg-white rounded-[12px] shadow-sm p-8 mb-8">
           <h1 className="text-[32px] font-bold text-espresso mb-2">
-            Welcome back, {donorId}! 👋
+            {t('myAppointments.welcome.title', { name: donorId })} 👋
           </h1>
           <p className="text-base text-taupe">
-            Here's a quick look at your donations and what's coming up next.
+            {t('myAppointments.welcome.subtitle')}
           </p>
         </div>
 
@@ -542,18 +542,18 @@ const MyAppointments = () => {
                 <Heart className="w-12 h-12 text-terracotta flex-shrink-0" />
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold text-espresso mb-2">
-                    You've helped save up to {impactLivesSaved} lives
+                    {t('myAppointments.impact.livesSaved', { count: impactLivesSaved })}
                   </h2>
                   <p className="text-base text-taupe mb-4">
-                    Thank you for being a hero in your community
+                    {t('myAppointments.impact.thankYouHero')}
                   </p>
                   <div className="flex flex-wrap gap-3">
                     <span className="inline-flex items-center px-3 py-1 rounded-full bg-olive-green/20 text-olive-green text-sm font-medium">
-                      {donationsThisYear} donations this year
+                      {t('myAppointments.impact.donationsThisYear', { count: donationsThisYear })}
                     </span>
                     {nextEligibleDate && (
                       <span className="inline-flex items-center px-3 py-1 rounded-full bg-mediterranean-blue/20 text-mediterranean-blue text-sm font-medium">
-                        Next eligible: {nextEligibleDate}
+                        {t('myAppointments.impact.nextEligible', { date: nextEligibleDate })}
                       </span>
                     )}
                   </div>
@@ -564,20 +564,20 @@ const MyAppointments = () => {
             {/* Upcoming Appointments Section */}
             <div>
               <h2 className="text-2xl font-bold text-espresso mb-2">
-                Upcoming appointments
+                {t('myAppointments.upcoming.title')}
               </h2>
               <p className="text-sm text-taupe mb-6">
-                Need to make a change? You can manage everything here.
+                {t('myAppointments.upcoming.subtitle')}
               </p>
 
               {formattedUpcoming.length === 0 ? (
                 <div className="bg-white rounded-[12px] p-8 text-center">
-                  <p className="text-lg text-espresso mb-4">No upcoming appointments</p>
+                  <p className="text-lg text-espresso mb-4">{t('myAppointments.upcoming.empty.title')}</p>
                   <button
                     onClick={() => navigate('/book')}
                     className="px-6 py-3 bg-terracotta text-white rounded-lg font-medium hover:bg-[#C5694A] transition-colors"
                   >
-                    Book an Appointment
+                    {t('myAppointments.upcoming.empty.bookNow')}
                   </button>
                 </div>
               ) : (
@@ -662,14 +662,14 @@ const MyAppointments = () => {
                                 className="h-10 px-4 rounded-lg border-2 border-mediterranean-blue text-mediterranean-blue font-medium text-sm flex items-center justify-center gap-2 hover:bg-mediterranean-blue hover:text-white transition-all duration-200"
                               >
                                 <Navigation className="w-4 h-4" />
-                                Get Directions
+                                {t('myAppointments.upcoming.actions.getDirections')}
                               </a>
                               <button
                                 onClick={() => handleAddToCalendar(appointment)}
                                 className="h-10 px-4 rounded-lg border-2 border-olive-green text-olive-green font-medium text-sm flex items-center justify-center gap-2 hover:bg-olive-green hover:text-white transition-all duration-200"
                               >
                                 <CalendarPlus className="w-4 h-4" />
-                                Add to Calendar
+                                {t('myAppointments.upcoming.actions.addToCalendar')}
                               </button>
                             </div>
 
@@ -680,14 +680,14 @@ const MyAppointments = () => {
                                 className="h-10 px-4 rounded-lg border-2 border-terracotta text-terracotta font-medium text-sm flex items-center justify-center gap-2 hover:bg-terracotta hover:text-white transition-all duration-200"
                               >
                                 <Edit className="w-4 h-4" />
-                                Change Appointment
+                                {t('myAppointments.upcoming.actions.changeAppointment')}
                               </button>
                               <button
                                 onClick={() => handleCancelAppointment(appointment.id)}
                                 className="h-10 px-4 rounded-lg bg-cream text-taupe font-medium text-sm flex items-center justify-center gap-2 hover:border-2 hover:border-burnt-orange transition-all duration-200"
                               >
                                 <X className="w-4 h-4" />
-                                Cancel
+                                {t('myAppointments.upcoming.actions.cancel')}
                               </button>
                             </div>
                           </div>
@@ -700,27 +700,27 @@ const MyAppointments = () => {
                           rel="noreferrer"
                           className="text-sm text-mediterranean-blue hover:underline inline-block"
                         >
-                          View larger map
+                          {t('myAppointments.upcoming.viewLargerMap')}
                         </a>
 
                         {/* Cancel Confirmation */}
                         {cancelConfirmationId === appointment.id && (
                           <div className="mt-4 p-4 bg-cream rounded-lg border border-taupe/20">
                             <p className="text-sm text-espresso mb-3">
-                              Are you sure you want to cancel this appointment?
+                              {t('myAppointments.upcoming.cancelConfirmation.message')}
                             </p>
                             <div className="flex gap-3">
                               <button
                                 onClick={confirmCancelAppointment}
                                 className="px-4 py-2 bg-terracotta text-white rounded-lg text-sm font-medium hover:bg-[#C5694A] transition-colors"
                               >
-                                Yes, Cancel
+                                {t('myAppointments.upcoming.cancelConfirmation.yesCancel')}
                               </button>
                               <button
                                 onClick={() => setCancelConfirmationId(null)}
                                 className="px-4 py-2 bg-white border-2 border-taupe text-taupe rounded-lg text-sm font-medium hover:bg-cream transition-colors"
                               >
-                                Keep It
+                                {t('myAppointments.upcoming.cancelConfirmation.keepIt')}
                               </button>
                             </div>
                           </div>
@@ -735,12 +735,12 @@ const MyAppointments = () => {
             {/* Donation History Section */}
             <div>
               <h2 className="text-2xl font-bold text-espresso mb-2">
-                Donation History
+                {t('myAppointments.history.title')}
               </h2>
               {formattedHistory.length === 0 ? (
                 <div className="bg-white rounded-[12px] p-8 text-center">
                   <p className="text-base text-taupe">
-                    You haven't made any donations yet. Book your first appointment to get started!
+                    {t('myAppointments.history.empty.description')}
                   </p>
                 </div>
               ) : (
@@ -770,24 +770,24 @@ const MyAppointments = () => {
           <div className="space-y-6">
             {/* Quick Stats Card */}
             <div className="bg-white rounded-[12px] shadow-sm p-6">
-              <h3 className="text-lg font-bold text-espresso mb-4">Quick Stats</h3>
+              <h3 className="text-lg font-bold text-espresso mb-4">{t('myAppointments.stats.quickStats')}</h3>
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-taupe mb-1">Total Donations</p>
+                  <p className="text-sm text-taupe mb-1">{t('myAppointments.stats.totalDonations')}</p>
                   <p className="text-2xl font-bold text-terracotta">
                     {profile.history.length}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-taupe mb-1">This Year</p>
+                  <p className="text-sm text-taupe mb-1">{t('myAppointments.stats.thisYear')}</p>
                   <p className="text-2xl font-bold text-olive-green">
                     {donationsThisYear}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-taupe mb-1">Lives Saved</p>
+                  <p className="text-sm text-taupe mb-1">{t('myAppointments.stats.livesSaved')}</p>
                   <p className="text-2xl font-bold text-mediterranean-blue">
-                    Up to {impactLivesSaved}
+                    {t('myAppointments.stats.upTo', { count: impactLivesSaved })}
                   </p>
                 </div>
               </div>
@@ -803,13 +803,13 @@ const MyAppointments = () => {
             {/* CTA Card */}
             <div className="bg-white rounded-[12px] shadow-sm p-6">
               <h3 className="text-lg font-bold text-espresso mb-3">
-                Ready to Donate Again?
+                {t('myAppointments.cta.readyToDonate')}
               </h3>
               <button
                 onClick={() => navigate('/book')}
                 className="w-full px-6 py-3 bg-terracotta text-white rounded-lg font-medium hover:bg-[#C5694A] transition-colors"
               >
-                Book New Appointment
+                {t('myAppointments.cta.bookNewAppointment')}
               </button>
             </div>
           </div>

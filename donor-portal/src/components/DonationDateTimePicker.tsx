@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -107,6 +108,7 @@ const DonationDateTimePicker: React.FC<DonationDateTimePickerProps> = ({
   initialSelectedTime = null,
   initialDonationType = 'blood',
 }) => {
+  const { t } = useTranslation();
   const [selectedDonationType, setSelectedDonationType] = useState<'blood' | 'plasma'>(initialDonationType);
   const [selectedDate, setSelectedDate] = useState<Date | null>(initialSelectedDate);
   const [selectedTime, setSelectedTime] = useState<string | null>(initialSelectedTime);
@@ -171,11 +173,11 @@ const DonationDateTimePicker: React.FC<DonationDateTimePickerProps> = ({
   const canContinue = selectedDate !== null && selectedTime !== null;
   
   const steps = [
-    { id: 1, label: 'Center', current: false, completed: true },
-    { id: 2, label: 'Date & Time', current: true, completed: false },
-    { id: 3, label: 'Your Details', current: false, completed: false },
-    { id: 4, label: 'Health Check', current: false, completed: false },
-    { id: 5, label: 'Confirmation', current: false, completed: false },
+    { id: 1, label: t('booking.steps.selectCenter'), current: false, completed: true },
+    { id: 2, label: t('booking.steps.dateTime'), current: true, completed: false },
+    { id: 3, label: t('booking.steps.yourDetails'), current: false, completed: false },
+    { id: 4, label: t('booking.steps.healthCheck'), current: false, completed: false },
+    { id: 5, label: t('booking.steps.confirmation'), current: false, completed: false },
   ];
   
   const currentStepIndex = steps.findIndex((s) => s.current);
@@ -334,9 +336,9 @@ const DonationDateTimePicker: React.FC<DonationDateTimePickerProps> = ({
                 {format(currentMonth, 'MMMM yyyy')}
               </h3>
               <div className="grid grid-cols-7 gap-1 mb-2">
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                {['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map(day => (
                   <div key={day} className="text-xs font-semibold text-taupe text-center py-2">
-                    {day}
+                    {t(`booking.step2.days.${day}`)}
                   </div>
                 ))}
               </div>
@@ -391,9 +393,9 @@ const DonationDateTimePicker: React.FC<DonationDateTimePickerProps> = ({
                 {format(addMonths(currentMonth, 1), 'MMMM yyyy')}
               </h3>
               <div className="grid grid-cols-7 gap-1 mb-2">
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                {['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map(day => (
                   <div key={day} className="text-xs font-semibold text-taupe text-center py-2">
-                    {day}
+                    {t(`booking.step2.days.${day}`)}
                   </div>
                 ))}
               </div>
@@ -495,7 +497,7 @@ const DonationDateTimePicker: React.FC<DonationDateTimePickerProps> = ({
                   >
                     <div className="flex items-center justify-between">
                       <div className="font-semibold text-base">
-                        {slot.time} {slot.period && !isFull ? slot.period : isFull ? 'Full' : isHighDemand ? 'High Demand' : 'Available'}
+                        {slot.time} {slot.period && !isFull ? (slot.period === 'Morning' ? t('booking.step2.morning') : slot.period === 'Afternoon' ? t('booking.step2.afternoon') : t('booking.step2.evening')) : isFull ? t('booking.step2.full') : isHighDemand ? t('booking.step2.highDemand') : t('booking.step2.available')}
                       </div>
                     </div>
                   </button>

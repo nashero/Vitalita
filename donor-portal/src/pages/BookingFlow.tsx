@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { addDays, format, setHours, setMinutes, parseISO } from 'date-fns';
+import { it, enUS } from 'date-fns/locale';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import { Calendar, Clock, Droplet, FlaskConical, HelpCircle, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
@@ -250,7 +251,10 @@ const findSlotById = (day: CenterAvailability | null, slotId: string | null) => 
 
 const BookingFlow = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  
+  // Get date-fns locale based on current language
+  const dateLocale = i18n.language === 'it' ? it : enUS;
   const [currentStep, setCurrentStep] = useState(1);
   const [postalCodeQuery, setPostalCodeQuery] = useState('');
   const [centers, setCenters] = useState<DonationCenter[]>([]);
@@ -866,7 +870,7 @@ const BookingFlow = () => {
       return;
     }
 
-    const friendlyDate = format(selectedDateAvailability.date, 'EEEE d MMMM');
+    const friendlyDate = format(selectedDateAvailability.date, 'EEEE d MMMM', { locale: dateLocale });
     const message = t('booking.step5.shareMessage', { 
       date: friendlyDate, 
       time: selectedSlot.time, 
@@ -1073,7 +1077,7 @@ const BookingFlow = () => {
                       )}
                       {center.availability.length > 0 && (
                         <p className="center-availability">
-                          {t('booking.step1.nextAvailable', { date: format(center.availability[0].date, 'EEEE d MMMM') })}
+                          {t('booking.step1.nextAvailable', { date: format(center.availability[0].date, 'EEEE d MMMM', { locale: dateLocale }) })}
                         </p>
                       )}
                     </div>
@@ -1113,10 +1117,10 @@ const BookingFlow = () => {
           <Calendar size={24} color="#D97757" style={{ marginTop: '2px' }} />
           <div>
             <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#3E2723' }}>
-              Step 2: Date & Time
+              {t('booking.step2.stepTitle')}
             </h3>
             <p style={{ margin: 0, fontSize: '0.875rem', color: '#A1887F', marginTop: '0.25rem' }}>
-              Select your preferred appointment date and time
+              {t('booking.step2.stepDescription')}
             </p>
           </div>
         </div>
@@ -1125,17 +1129,17 @@ const BookingFlow = () => {
       {/* Main Heading */}
       <header style={{ marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '32px', fontWeight: 700, color: '#3E2723', margin: '0 0 0.5rem 0' }}>
-          When can you donate?
+          {t('booking.step2.title')}
         </h1>
         <p style={{ fontSize: '16px', color: '#A1887F', margin: 0 }}>
-          Pick the date and time that fits your schedule.
+          {t('booking.step2.subtitle')}
         </p>
       </header>
 
       {/* Donation Type Selection */}
       <div style={{ marginBottom: '2rem' }}>
         <label style={{ display: 'block', marginBottom: '0.75rem', fontSize: '16px', fontWeight: 600, color: '#3E2723' }}>
-          Donation Type <span aria-label="required" style={{ color: '#D97757' }}>*</span>
+          {t('booking.step2.donationType')} <span aria-label={t('common.required')} style={{ color: '#D97757' }}>*</span>
         </label>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }} role="radiogroup">
           <label style={{
@@ -1165,7 +1169,7 @@ const BookingFlow = () => {
               style={{ display: 'none' }}
             />
             <Droplet size={20} />
-            Blood Donation
+            {t('booking.step2.bloodDonation')}
           </label>
           <label style={{
             display: 'flex',
@@ -1194,7 +1198,7 @@ const BookingFlow = () => {
               style={{ display: 'none' }}
             />
             <FlaskConical size={20} />
-            Plasma Donation
+            {t('booking.step2.plasmaDonation')}
           </label>
         </div>
       </div>
@@ -1219,6 +1223,7 @@ const BookingFlow = () => {
                         (findAvailabilityByDate(currentAvailability, slot.isoDate)?.date ??
                           new Date(slot.isoDate)),
                         'EEE d MMM',
+                        { locale: dateLocale }
                       )}
                     </span>
                     {slot.status === 'filling' && (
@@ -1467,7 +1472,7 @@ const BookingFlow = () => {
                     fontWeight: 600,
                     color: '#1f2937',
                   }}>
-                    {format(new Date(currentYear, currentMonth, 1), 'MMMM yyyy')}
+                    {format(new Date(currentYear, currentMonth, 1), 'MMMM yyyy', { locale: dateLocale })}
                   </h3>
                   {/* Day of week headers */}
                   <div className="calendar-day-header" style={{
@@ -1476,8 +1481,8 @@ const BookingFlow = () => {
                     gap: '0.5rem',
                     marginBottom: '0.5rem',
                   }}>
-                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                      <div key={day} style={{
+                    {[t('booking.step2.days.sun'), t('booking.step2.days.mon'), t('booking.step2.days.tue'), t('booking.step2.days.wed'), t('booking.step2.days.thu'), t('booking.step2.days.fri'), t('booking.step2.days.sat')].map((day, idx) => (
+                      <div key={idx} style={{
                         fontSize: '14px',
                         fontWeight: 600,
                         color: '#A1887F',
@@ -1554,7 +1559,7 @@ const BookingFlow = () => {
                                 borderRadius: '50%',
                                 backgroundColor: day.hasHighDemand ? '#E67E22' : '#9CAF88',
                               }}
-                              aria-label={day.hasHighDemand ? 'High demand' : 'Available'}
+                              aria-label={day.hasHighDemand ? t('booking.step2.highDemand') : t('booking.step2.available')}
                             />
                           )}
                           {isTodayDate && (
@@ -1582,7 +1587,7 @@ const BookingFlow = () => {
                       fontWeight: 600,
                       color: '#1f2937',
                     }}>
-                      {format(new Date(nextYear, nextMonth, 1), 'MMMM yyyy')}
+                      {format(new Date(nextYear, nextMonth, 1), 'MMMM yyyy', { locale: dateLocale })}
                     </h3>
                     {/* Day of week headers */}
                     <div className="calendar-day-header" style={{
@@ -1591,8 +1596,8 @@ const BookingFlow = () => {
                       gap: '0.5rem',
                       marginBottom: '0.5rem',
                     }}>
-                      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                        <div key={day} style={{
+                      {[t('booking.step2.days.sun'), t('booking.step2.days.mon'), t('booking.step2.days.tue'), t('booking.step2.days.wed'), t('booking.step2.days.thu'), t('booking.step2.days.fri'), t('booking.step2.days.sat')].map((day, idx) => (
+                        <div key={idx} style={{
                           fontSize: '14px',
                           fontWeight: 600,
                           color: '#A1887F',
@@ -1669,7 +1674,7 @@ const BookingFlow = () => {
                                   borderRadius: '50%',
                                   backgroundColor: '#9CAF88',
                                 }}
-                                aria-label="Available"
+                                aria-label={t('booking.step2.available')}
                               />
                             )}
                             {isTodayDate && (
@@ -1708,7 +1713,7 @@ const BookingFlow = () => {
                     borderRadius: '50%',
                     backgroundColor: '#9CAF88',
                   }} />
-                  <span style={{ fontSize: '14px', color: '#3E2723' }}>Available</span>
+                  <span style={{ fontSize: '14px', color: '#3E2723' }}>{t('booking.step2.available')}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <span style={{
@@ -1717,7 +1722,7 @@ const BookingFlow = () => {
                     borderRadius: '50%',
                     backgroundColor: '#E67E22',
                   }} />
-                  <span style={{ fontSize: '14px', color: '#3E2723' }}>High Demand</span>
+                  <span style={{ fontSize: '14px', color: '#3E2723' }}>{t('booking.step2.highDemand')}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <span style={{
@@ -1726,7 +1731,7 @@ const BookingFlow = () => {
                     borderRadius: '50%',
                     backgroundColor: '#A1887F',
                   }} />
-                  <span style={{ fontSize: '14px', color: '#3E2723' }}>Full</span>
+                  <span style={{ fontSize: '14px', color: '#3E2723' }}>{t('booking.step2.full')}</span>
                 </div>
               </div>
             </div>
@@ -1758,7 +1763,7 @@ const BookingFlow = () => {
                   borderBottom: '2px solid #D97757',
                 }}>
                   <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 700, color: '#3E2723' }}>
-                    Select a time for {format(selectedDateAvailability?.date || new Date(selectedDateIso), 'EEEE, MMMM d')}
+                    {t('booking.step2.selectTime')} {t('booking.step2.forDate', { date: format(selectedDateAvailability?.date || new Date(selectedDateIso), 'EEEE, d MMMM', { locale: dateLocale }) })}
                   </h2>
                 </div>
                 {selectedDateAvailability?.slots.length === 0 ? (
@@ -1928,7 +1933,7 @@ const BookingFlow = () => {
                                     fontWeight: 600,
                                   }}
                                 >
-                                  {isBooked ? t('booking.step2.booked') : slot.status === 'filling' ? t('booking.step2.left', { count: slot.spotsLeft }) : 'Available'}
+                                  {isBooked ? t('booking.step2.booked') : slot.status === 'filling' ? t('booking.step2.left', { count: slot.spotsLeft }) : t('booking.step2.available')}
                                 </span>
                               )}
                             </button>
@@ -1952,17 +1957,7 @@ const BookingFlow = () => {
                     <p style={{ margin: 0, fontSize: '14px', color: '#3E2723', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <HelpCircle size={18} color="#5B9BD5" />
                       <span>
-                        <strong>Need a different time?</strong> Request a callback or join our waitlist{' '}
-                        <a
-                          href="https://vitalita.com/callback"
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{ color: '#5B9BD5', textDecoration: 'none', fontWeight: 600 }}
-                          onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
-                          onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
-                        >
-                          here
-                        </a>
+                        <strong>{t('booking.step2.needDifferentTime')}</strong> {t('booking.step2.requestCallbackLink')} {t('common.or')} {t('booking.step2.joinWaitlistLink')} {t('booking.step2.forPreferredTimes')}
                       </span>
                     </p>
                   </div>
@@ -2464,7 +2459,7 @@ const BookingFlow = () => {
             }}
           >
             <ChevronLeft size={18} />
-            Back
+            {t('booking.buttons.back')}
           </button>
           {currentStep < stepKeys.length && (
             <button
@@ -2503,7 +2498,7 @@ const BookingFlow = () => {
               ) : currentStep === 1 ? (
                 t('booking.buttons.continueToDateTime')
               ) : currentStep === 2 ? (
-                'Select Date & Continue'
+                t('booking.buttons.selectDateTime')
               ) : currentStep === 3 ? (
                 t('booking.buttons.continueToHealthCheck')
               ) : currentStep === 4 ? (

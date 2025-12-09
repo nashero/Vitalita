@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Users, Heart, MapPin } from 'lucide-react';
 
 interface StatCard {
@@ -10,6 +11,7 @@ interface StatCard {
 }
 
 function TrustImpactSection() {
+  const { t } = useTranslation();
   const [visibleCards, setVisibleCards] = useState<boolean[]>([false, false, false]);
   const [counts, setCounts] = useState({ donors: 0, lives: 0, centers: 0 });
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -18,21 +20,21 @@ function TrustImpactSection() {
   const stats: StatCard[] = [
     {
       number: '50,000+',
-      text: 'Active Donors',
+      text: t('landing.trustImpact.stats.activeDonors'),
       icon: <Users className="w-12 h-12" />,
       color: 'terracotta',
       iconColor: 'text-olive-green',
     },
     {
       number: '150,000+',
-      text: 'Lives Saved This Year',
+      text: t('landing.trustImpact.stats.livesSaved'),
       icon: <Heart className="w-12 h-12" />,
       color: 'mediterranean-blue',
       iconColor: 'text-terracotta',
     },
     {
       number: '200+',
-      text: 'AVIS Centers Connected',
+      text: t('landing.trustImpact.stats.centers'),
       icon: <MapPin className="w-12 h-12" />,
       color: 'olive-green',
       iconColor: 'text-mediterranean-blue',
@@ -127,7 +129,7 @@ function TrustImpactSection() {
       <div className="max-w-[1200px] mx-auto">
         {/* Heading */}
         <h2 className="text-[28px] md:text-[36px] font-bold text-espresso text-center mb-12 md:mb-16">
-          Trusted Across Italy
+          {t('landing.trustImpact.title')}
         </h2>
 
         {/* Statistics Cards */}
@@ -168,24 +170,36 @@ function TrustImpactSection() {
           {/* AVIS Logo */}
           <div className="bg-white border border-taupe/30 rounded-lg p-6 hover:shadow-md transition-all hover:-translate-y-1">
             <div className="text-center">
-              <div className="text-2xl font-bold text-olive-green mb-2">AVIS</div>
-              <div className="text-sm text-taupe">Official Partner</div>
+              <div className="text-2xl font-bold text-olive-green mb-2">
+                {t('landing.trustImpact.badges.avis.title')}
+              </div>
+              <div className="text-sm text-taupe">
+                {t('landing.trustImpact.badges.avis.subtitle')}
+              </div>
             </div>
           </div>
 
           {/* ISO Certification */}
           <div className="bg-white border border-taupe/30 rounded-lg p-6 hover:shadow-md transition-all hover:-translate-y-1">
             <div className="text-center">
-              <div className="text-xl font-bold text-espresso mb-2">ISO 27001</div>
-              <div className="text-sm text-taupe">Certified</div>
+              <div className="text-xl font-bold text-espresso mb-2">
+                {t('landing.trustImpact.badges.iso.title')}
+              </div>
+              <div className="text-sm text-taupe">
+                {t('landing.trustImpact.badges.iso.subtitle')}
+              </div>
             </div>
           </div>
 
           {/* GDPR Compliance */}
           <div className="bg-white border border-taupe/30 rounded-lg p-6 hover:shadow-md transition-all hover:-translate-y-1">
             <div className="text-center">
-              <div className="text-xl font-bold text-espresso mb-2">GDPR</div>
-              <div className="text-sm text-taupe">Compliant</div>
+              <div className="text-xl font-bold text-espresso mb-2">
+                {t('landing.trustImpact.badges.gdpr.title')}
+              </div>
+              <div className="text-sm text-taupe">
+                {t('landing.trustImpact.badges.gdpr.subtitle')}
+              </div>
             </div>
           </div>
         </div>

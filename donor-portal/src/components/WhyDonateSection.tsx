@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Heart, Activity, Users } from 'lucide-react';
 
 interface BenefitCard {
@@ -11,6 +12,7 @@ interface BenefitCard {
 
 function WhyDonateSection() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [visibleCards, setVisibleCards] = useState<boolean[]>([false, false, false]);
   const [ctaVisible, setCtaVisible] = useState(false);
   const [testimonialVisible, setTestimonialVisible] = useState(false);
@@ -22,20 +24,20 @@ function WhyDonateSection() {
   const benefits: BenefitCard[] = [
     {
       icon: <Heart className="w-[48px] h-[48px]" />,
-      title: 'Save Lives',
-      text: 'One donation helps up to three patients survive surgery, accidents, or chronic conditions.',
+      title: t('landing.whyDonate.cards.saveLives.title'),
+      text: t('landing.whyDonate.cards.saveLives.text'),
       iconColor: 'text-terracotta',
     },
     {
       icon: <Activity className="w-[48px] h-[48px]" />,
-      title: 'Stay Healthy',
-      text: 'Regular donors benefit from free health screenings and reduced cardiovascular risk.',
+      title: t('landing.whyDonate.cards.stayHealthy.title'),
+      text: t('landing.whyDonate.cards.stayHealthy.text'),
       iconColor: 'text-mediterranean-blue',
     },
     {
       icon: <Users className="w-[48px] h-[48px]" />,
-      title: 'Join a Community',
-      text: "Become part of Italy's lifesaving network of 50,000+ donors.",
+      title: t('landing.whyDonate.cards.community.title'),
+      text: t('landing.whyDonate.cards.community.text'),
       iconColor: 'text-olive-green',
     },
   ];
@@ -142,7 +144,7 @@ function WhyDonateSection() {
       <div className="max-w-[1200px] mx-auto relative z-10">
         {/* Heading */}
         <h2 className="text-[28px] md:text-[36px] font-bold text-espresso text-center mb-6 md:mb-[24px]">
-          Why Your Donation Matters
+          {t('landing.whyDonate.title')}
         </h2>
 
         {/* Benefits Grid */}
@@ -192,7 +194,7 @@ function WhyDonateSection() {
             onClick={handleEligibilityClick}
             className="border-2 border-mediterranean-blue text-mediterranean-blue hover:bg-mediterranean-blue hover:text-white font-bold text-base px-8 py-4 rounded-lg transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-mediterranean-blue focus:ring-opacity-50"
           >
-            See If You're Eligible →
+            {t('landing.whyDonate.cta')}
           </button>
         </div>
 
@@ -216,13 +218,14 @@ function WhyDonateSection() {
             {/* Quote and info */}
             <div className="flex-1">
               <blockquote className="text-lg md:text-xl text-espresso italic mb-4 leading-relaxed">
-                "Donating blood makes me feel like I'm making a real difference. It's the
-                easiest way to be a hero."
+                "{t('landing.whyDonate.testimonial.quote')}"
               </blockquote>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                <p className="text-base font-semibold text-espresso">Marco R., Milan</p>
+                <p className="text-base font-semibold text-espresso">
+                  {t('landing.whyDonate.testimonial.name')}
+                </p>
                 <span className="text-sm text-olive-green font-medium">
-                  32 donations
+                  {t('landing.whyDonate.testimonial.donations')}
                 </span>
               </div>
             </div>

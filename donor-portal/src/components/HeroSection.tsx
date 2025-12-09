@@ -135,21 +135,20 @@ function HeroSection() {
                 {count.toLocaleString()}
               </span>
               <span className="text-base md:text-lg text-taupe">
-                lives saved this year
+                {t('landing.hero.counterLabel')}
               </span>
             </div>
 
             {/* Headline */}
             <h1 className="text-[36px] md:text-5xl lg:text-[48px] font-bold text-espresso leading-tight">
-              Your Blood Saves{' '}
-              <span className="text-terracotta">Three</span> Lives
+              {t('landing.hero.title')}{' '}
+              <span className="text-terracotta">{t('landing.hero.titleHighlight')}</span>{' '}
+              {t('landing.hero.titleSuffix')}
             </h1>
 
             {/* Subheadline */}
             <p className="text-lg md:text-xl text-taupe leading-relaxed max-w-xl">
-              Schedule your donation in 3 minutes. Every pint creates hope for
-              patients across Italy.{' '}
-              
+              {t('landing.hero.description')}
             </p>
 
             {/* CTAs */}
@@ -158,34 +157,34 @@ function HeroSection() {
                 onClick={handlePrimaryCTA}
                 className="w-full sm:w-auto bg-terracotta hover:bg-[#C5694A] text-white font-bold text-base px-8 py-4 rounded-[8px] transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-terracotta focus:ring-opacity-50"
               >
-                Start Saving Lives
+                {t('landing.hero.primaryCta')}
               </button>
               <button
                 onClick={handleSecondaryCTA}
                 className="w-full sm:w-auto border-2 border-mediterranean-blue text-mediterranean-blue hover:bg-mediterranean-blue hover:text-white font-bold text-base px-8 py-4 rounded-[8px] transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-mediterranean-blue focus:ring-opacity-50"
               >
-                I'm Already a Donor
+                {t('landing.hero.secondaryCta')}
               </button>
             </div>
 
             {/* Trust Line */}
             <p className="text-sm text-taupe pt-2">
-              Trusted by 50,000+ donors • Verified by AVIS • GDPR Protected
+              {t('landing.hero.trustLine')}
             </p>
 
             {/* Trust Badges */}
             <div className="flex flex-wrap gap-4 md:gap-6 pt-4">
               <div className="flex items-center gap-2 text-taupe">
                 <Shield className="w-5 h-5" />
-                <span className="text-sm font-medium">GDPR Compliant</span>
+                <span className="text-sm font-medium">{t('landing.hero.badgeGdpr')}</span>
               </div>
               <div className="flex items-center gap-2 text-taupe">
                 <CheckCircle2 className="w-5 h-5" />
-                <span className="text-sm font-medium">Verified by AVIS</span>
+                <span className="text-sm font-medium">{t('landing.hero.badgeAvis')}</span>
               </div>
               <div className="flex items-center gap-2 text-taupe">
                 <Award className="w-5 h-5" />
-                <span className="text-sm font-medium">ISO 27001 Certified</span>
+                <span className="text-sm font-medium">{t('landing.hero.badgeIso')}</span>
               </div>
             </div>
           </div>
@@ -201,7 +200,7 @@ function HeroSection() {
               {/* Hero image */}
               <img
                 src={volunteerImage}
-                alt="Smiling volunteer donor - diverse, warm lighting"
+                alt={t('landing.hero.imageAlt')}
                 className="w-full h-full object-cover"
               />
               {/* Warm overlay filter */}

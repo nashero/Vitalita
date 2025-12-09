@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ClipboardCheck,
   Info,
@@ -20,34 +21,7 @@ interface Question {
   warningTrigger?: 'yes' | 'no';
 }
 
-const questions: Question[] = [
-  {
-    id: 'recentDonation',
-    text: 'Have you donated blood in the last 8 weeks?',
-    helper: 'You need to wait 8 weeks between blood donations.',
-    tooltip: 'This waiting period allows your body to fully replenish blood cells.',
-    warningTrigger: 'yes',
-  },
-  {
-    id: 'feelsHealthy',
-    text: 'Do you feel healthy today?',
-    helper: "Feeling unwell? No problem—just reschedule when you're better.",
-    tooltip: 'Donating while sick can affect donation quality.',
-    warningTrigger: 'no',
-  },
-  {
-    id: 'medications',
-    text: 'Are you currently taking any medications?',
-    helper: 'Some medicines are okay—we can confirm.',
-    tooltip: 'Certain medications may temporarily affect eligibility.',
-  },
-  {
-    id: 'travel',
-    text: 'Have you traveled outside Italy recently?',
-    helper: 'Certain destinations may require a short waiting period.',
-    tooltip: 'Travel to some regions may pose infection risk.',
-  },
-];
+// Questions will be created inside component to use translations
 
 interface HealthScreeningProps {
   onComplete?: (answers: Record<string, Answer>) => void;
@@ -60,10 +34,40 @@ export default function HealthScreening({
   onBack,
   initialAnswers = {},
 }: HealthScreeningProps) {
+  const { t } = useTranslation();
   const [answers, setAnswers] = useState<Record<string, Answer>>(initialAnswers);
   const [tooltipVisible, setTooltipVisible] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const tooltipRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  const questions: Question[] = [
+    {
+      id: 'recentDonation',
+      text: t('booking.step4.recentDonation'),
+      helper: t('booking.step4.recentDonationHelp'),
+      tooltip: 'This waiting period allows your body to fully replenish blood cells.',
+      warningTrigger: 'yes',
+    },
+    {
+      id: 'feelsHealthy',
+      text: t('booking.step4.feelsHealthy'),
+      helper: t('booking.step4.feelsHealthyHelp'),
+      tooltip: 'Donating while sick can affect donation quality.',
+      warningTrigger: 'no',
+    },
+    {
+      id: 'medications',
+      text: t('booking.step4.medications'),
+      helper: t('booking.step4.medicationsHelp'),
+      tooltip: 'Certain medications may temporarily affect eligibility.',
+    },
+    {
+      id: 'travel',
+      text: t('booking.step4.travel'),
+      helper: t('booking.step4.travelHelp'),
+      tooltip: 'Travel to some regions may pose infection risk.',
+    },
+  ];
 
   // Calculate current question number (first unanswered question, or last if all answered)
   const answeredCount = Object.values(answers).filter((a) => a !== '').length;
@@ -276,7 +280,7 @@ export default function HealthScreening({
                         }`}
                       >
                         {isWarning
-                          ? "You may need to wait before donating. We'll confirm at your appointment."
+                          ? t('booking.step4.warningMessage')
                           : question.helper}
                       </p>
                     </div>
@@ -431,10 +435,10 @@ export default function HealthScreening({
             {isSubmitting ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin text-olive-green" aria-hidden="true" />
-                Processing...
+                {t('booking.buttons.processing')}
               </>
             ) : (
-              'Confirm Appointment'
+              t('booking.buttons.confirmAppointment')
             )}
           </button>
         </section>

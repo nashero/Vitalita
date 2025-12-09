@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Star } from 'lucide-react';
 
 interface Testimonial {
@@ -11,40 +12,39 @@ interface Testimonial {
 }
 
 function TestimonialsSection() {
+  const { t } = useTranslation();
   const [visibleTestimonials, setVisibleTestimonials] = useState<boolean[]>([false, false, false]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const sectionRef = useRef<HTMLDivElement>(null);
   const testimonialsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  const testimonials: Testimonial[] = [
-    {
-      quote:
-        "Donating blood is the easiest way I've found to make a real difference. The Vitalita platform makes it so simple.",
-      name: 'Marco R.',
-      location: 'Milan',
-      donations: '32 donations',
-      accentColor: 'terracotta',
-      avatarInitials: 'MR',
-    },
-    {
-      quote:
-        "I've been donating for 5 years now, and Vitalita has made scheduling so much easier. The staff at my local center are wonderful.",
-      name: 'Sofia M.',
-      location: 'Rome',
-      donations: '28 donations',
-      accentColor: 'mediterranean-blue',
-      avatarInitials: 'SM',
-    },
-    {
-      quote:
-        'Knowing that my donation helps three people makes every appointment meaningful. The tracking feature shows my impact clearly.',
-      name: 'Giuseppe L.',
-      location: 'Naples',
-      donations: '45 donations',
-      accentColor: 'olive-green',
-      avatarInitials: 'GL',
-    },
+  const translatedTestimonials = t('landing.testimonials.items', {
+    returnObjects: true,
+  }) as Array<Omit<Testimonial, 'accentColor' | 'avatarInitials'>>;
+
+  const accentPalette: Array<Testimonial['accentColor']> = [
+    'terracotta',
+    'mediterranean-blue',
+    'olive-green',
   ];
+
+  const testimonials: Testimonial[] = translatedTestimonials.map((item, index) => {
+    const initials =
+      item.name
+        .replace(/[^A-Za-zÀ-ÖØ-öø-ÿ\s]/g, '')
+        .split(' ')
+        .filter(Boolean)
+        .map((part) => part[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase() || 'DV';
+
+    return {
+      ...item,
+      accentColor: accentPalette[index % accentPalette.length],
+      avatarInitials: initials,
+    };
+  });
 
   // Intersection Observer for scroll animations
   useEffect(() => {
@@ -98,7 +98,7 @@ function TestimonialsSection() {
       <div className="max-w-[1200px] mx-auto">
         {/* Heading */}
         <h2 className="text-[28px] md:text-[36px] font-bold text-espresso text-center mb-12 md:mb-16">
-          Stories from Our Donor Community
+          {t('landing.testimonials.title')}
         </h2>
 
         {/* Testimonials Grid/Carousel */}
@@ -185,7 +185,7 @@ function TestimonialsSection() {
               className={`w-2 h-2 rounded-full transition-all ${
                 currentIndex === index ? 'bg-terracotta w-8' : 'bg-taupe/30'
               }`}
-              aria-label={`Go to testimonial ${index + 1}`}
+              aria-label={t('landing.testimonials.goTo', { index: index + 1 })}
             />
           ))}
         </div>
