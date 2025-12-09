@@ -104,6 +104,7 @@ function HowItWorksSection() {
 
   return (
     <section
+      id="how-it-works"
       ref={sectionRef}
       className="relative w-full bg-white py-20 md:py-[80px] px-6 overflow-hidden"
     >

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Calendar,
@@ -27,7 +27,6 @@ import {
   MessageCircle,
   Shield,
 } from 'lucide-react';
-import Footer from '../components/Footer';
 
 interface QuickCheckAnswers {
   age: boolean | null;
@@ -53,6 +52,11 @@ const Eligibility = () => {
   });
   const [expandedAccordions, setExpandedAccordions] = useState<Set<string>>(new Set());
   const [expandedFAQ, setExpandedFAQ] = useState<Set<string>>(new Set());
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   const toggleAccordion = (id: string) => {
     const newExpanded = new Set(expandedAccordions);
@@ -954,7 +958,6 @@ const Eligibility = () => {
           </div>
         </section>
       </div>
-      <Footer />
     </>
   );
 };

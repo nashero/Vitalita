@@ -42,6 +42,11 @@ function About() {
   const timelineRefs = useRef<HTMLDivElement[]>([]);
   const statsRef = useRef<HTMLDivElement>(null);
 
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   // Set document title and meta description
   useEffect(() => {
     document.title = 'About Vitalita | Italian Blood Donation Platform Serving Europe';
@@ -725,7 +730,7 @@ function About() {
               Schedule Your First Donation
             </button>
             <button
-              onClick={() => navigate('/help')}
+              onClick={() => navigate('/eligibility')}
               className="px-8 py-4 border-2 border-white text-white font-semibold text-lg rounded-lg hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
             >
               Learn About Eligibility

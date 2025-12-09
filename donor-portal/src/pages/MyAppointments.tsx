@@ -73,6 +73,11 @@ const MyAppointments = () => {
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [loadingAppointments, setLoadingAppointments] = useState(true);
 
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   // Check authentication on mount and fetch appointments
   useEffect(() => {
     const donorHashId = sessionStorage.getItem('donor_hash_id');

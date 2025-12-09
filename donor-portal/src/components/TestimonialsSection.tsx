@@ -91,6 +91,7 @@ function TestimonialsSection() {
 
   return (
     <section
+      id="testimonials"
       ref={sectionRef}
       className="relative w-full bg-white py-20 md:py-[80px] px-6 overflow-hidden"
     >

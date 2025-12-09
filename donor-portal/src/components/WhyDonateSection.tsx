@@ -115,12 +115,7 @@ function WhyDonateSection() {
   }, []);
 
   const handleEligibilityClick = () => {
-    const eligibilitySection = document.getElementById('eligibility');
-    if (eligibilitySection) {
-      eligibilitySection.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      navigate('/book');
-    }
+    navigate('/eligibility');
   };
 
   return (

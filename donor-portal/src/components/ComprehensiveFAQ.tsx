@@ -177,7 +177,7 @@ const ComprehensiveFAQ = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cream py-8 px-4">
+    <div className="min-h-screen bg-cream pt-24 pb-8 px-4">
       <div className="max-w-[1000px] mx-auto">
         {/* Header */}
         <div className="text-center mb-8">

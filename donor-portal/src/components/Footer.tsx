@@ -55,7 +55,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  to="/book"
+                  to="/eligibility"
                   className="text-cream hover:text-mediterranean-blue transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-1"
                 >
                   Eligibility Check
@@ -70,19 +70,19 @@ function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  to="/help"
+                  to="/#how-it-works"
                   className="text-cream hover:text-mediterranean-blue transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-1"
                 >
                   How It Works
                 </Link>
               </li>
               <li>
-                <a
-                  href="#testimonials"
+                <Link
+                  to="/#testimonials"
                   className="text-cream hover:text-mediterranean-blue transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-1"
                 >
                   Donor Stories
-                </a>
+                </Link>
               </li>
               <li>
                 <Link
@@ -93,14 +93,12 @@ function Footer() {
                 </Link>
               </li>
               <li>
-                <a
-                  href="https://www.vitalita.com/contact"
-                  target="_blank"
-                  rel="noreferrer"
+                <Link
+                  to="/help"
                   className="text-cream hover:text-mediterranean-blue transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-1"
                 >
                   Contact Us
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
