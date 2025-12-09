@@ -82,14 +82,27 @@ const MyAppointments = () => {
       const donorId = sessionStorage.getItem('donor_id');
       
       const fetchAppointments = async () => {
+        let hasSuccessfullyLoadedData = false;
         try {
           setLoadingAppointments(true);
           
-          // Fetch upcoming appointments - try without join first, then with join
+          // Fetch upcoming appointments with center join
           let upcomingData: any[] = [];
           let upcomingError: any = null;
 
-          // First, try with the join using inner syntax
+          // Fetch donor's default center name as fallback
+          let donorDefaultCenterName: string | null = null;
+          const { data: donorData } = await supabase
+            .from('donors')
+            .select('avis_donor_center')
+            .eq('donor_hash_id', donorHashId)
+            .single();
+          
+          if (donorData?.avis_donor_center) {
+            donorDefaultCenterName = donorData.avis_donor_center;
+          }
+
+          // Try with the join using the foreign key relationship
           const { data: joinedData, error: joinError } = await supabase
             .from('appointments')
             .select(`
@@ -98,7 +111,7 @@ const MyAppointments = () => {
               donation_type,
               status,
               donation_center_id,
-              donation_centers!inner(
+              donation_centers(
                 name,
                 address,
                 city,
@@ -129,17 +142,21 @@ const MyAppointments = () => {
               // Fetch center data separately for each appointment
               const centerIds = [...new Set(upcomingData.map(apt => apt.donation_center_id).filter(Boolean))];
               if (centerIds.length > 0) {
-                const { data: centersData } = await supabase
+                const { data: centersData, error: centersError } = await supabase
                   .from('donation_centers')
                   .select('center_id, name, address, city, latitude, longitude')
                   .in('center_id', centerIds);
 
-                // Map centers to appointments
-                const centersMap = new Map((centersData || []).map(c => [c.center_id, c]));
-                upcomingData = upcomingData.map(apt => ({
-                  ...apt,
-                  donation_centers: centersMap.get(apt.donation_center_id) || null
-                }));
+                if (centersError) {
+                  console.error('Error fetching centers:', centersError);
+                } else {
+                  // Map centers to appointments
+                  const centersMap = new Map((centersData || []).map(c => [c.center_id, c]));
+                  upcomingData = upcomingData.map(apt => ({
+                    ...apt,
+                    donation_centers: centersMap.get(apt.donation_center_id) || null
+                  }));
+                }
               }
             }
           } else {
@@ -147,15 +164,19 @@ const MyAppointments = () => {
             console.log('Fetched appointments with join:', upcomingData);
           }
 
-          if (upcomingError) {
+          // Only set error message if we actually failed to get any data
+          if (upcomingError && (!upcomingData || upcomingData.length === 0)) {
             console.error('Failed to fetch appointments:', upcomingError);
             setActionMessage(`Failed to load appointments: ${upcomingError.message || 'Unknown error'}. Please refresh the page.`);
             upcomingData = [];
+          } else if (upcomingData && upcomingData.length > 0) {
+            // Clear any previous error messages if we successfully loaded data
+            setActionMessage(null);
           }
 
           // Filter client-side: future appointments that are not cancelled
           const now = new Date();
-          const filteredUpcoming = (upcomingData || []).filter((apt: any) => {
+          let filteredUpcoming = (upcomingData || []).filter((apt: any) => {
             const appointmentDate = new Date(apt.appointment_datetime);
             const status = apt.status?.toUpperCase();
             const isCancelled = status === 'CANCELLED' || status === 'CANCELED';
@@ -173,7 +194,7 @@ const MyAppointments = () => {
               history_id,
               donation_date,
               donation_type,
-              donation_centers!donation_center_id (
+              donation_centers(
                 name
               )
             `)
@@ -185,12 +206,57 @@ const MyAppointments = () => {
             console.error('Error fetching donation history:', historyError);
           }
 
+          // Check if any appointments are missing center data and fetch them individually
+          const appointmentsMissingCenters = filteredUpcoming.filter((apt: any) => {
+            if (!apt.donation_centers && apt.donation_center_id) {
+              return true;
+            }
+            if (apt.donation_centers) {
+              const center = Array.isArray(apt.donation_centers) 
+                ? apt.donation_centers[0] 
+                : apt.donation_centers;
+              return !center || !center.name;
+            }
+            return false;
+          });
+
+          // Fetch missing centers individually
+          if (appointmentsMissingCenters.length > 0) {
+            const missingCenterIds = [...new Set(
+              appointmentsMissingCenters
+                .map((apt: any) => apt.donation_center_id)
+                .filter(Boolean)
+            )];
+            
+            if (missingCenterIds.length > 0) {
+              const { data: missingCentersData } = await supabase
+                .from('donation_centers')
+                .select('center_id, name, address, city, latitude, longitude')
+                .in('center_id', missingCenterIds);
+
+              const missingCentersMap = new Map(
+                (missingCentersData || []).map(c => [c.center_id, c])
+              );
+
+              // Update appointments with missing center data
+              filteredUpcoming = filteredUpcoming.map((apt: any) => {
+                if (!apt.donation_centers && apt.donation_center_id) {
+                  const center = missingCentersMap.get(apt.donation_center_id);
+                  if (center) {
+                    return { ...apt, donation_centers: center };
+                  }
+                }
+                return apt;
+              });
+            }
+          }
+
           // Transform upcoming appointments
           const upcoming: Appointment[] = filteredUpcoming.map((apt: any) => {
             const appointmentDate = new Date(apt.appointment_datetime);
             
             // Handle donation_centers data structure - could be object, array, or null
-            // When using !inner join, it returns as an object
+            // When using join, it returns as an object
             // When fetched separately, it's already an object
             let center = null;
             if (apt.donation_centers) {
@@ -201,9 +267,14 @@ const MyAppointments = () => {
               }
             }
 
+            // Use center name, or fallback to donor's default center, or "Unknown Center"
+            const locationName = center?.name || donorDefaultCenterName || 'Unknown Center';
+
             console.log('Processing appointment:', apt.appointment_id, {
               hasCenter: !!center,
               centerName: center?.name,
+              defaultCenterName: donorDefaultCenterName,
+              finalLocationName: locationName,
               appointmentDate: apt.appointment_datetime
             });
 
@@ -211,7 +282,7 @@ const MyAppointments = () => {
               id: apt.appointment_id,
               isoDate: format(appointmentDate, 'yyyy-MM-dd'),
               time: format(appointmentDate, 'HH:mm'),
-              locationName: center?.name || 'Unknown Center',
+              locationName: locationName,
               address: center?.address || center?.city || '',
               lat: center?.latitude || 45.4642,
               lng: center?.longitude || 9.1900,
@@ -224,10 +295,13 @@ const MyAppointments = () => {
               ? record.donation_centers[0]
               : record.donation_centers;
 
+            // Use center name, or fallback to donor's default center, or "Unknown Center"
+            const locationName = center?.name || donorDefaultCenterName || 'Unknown Center';
+
             return {
               id: record.history_id,
               isoDate: format(new Date(record.donation_date), 'yyyy-MM-dd'),
-              locationName: center?.name || 'Unknown Center',
+              locationName: locationName,
             };
           });
 
@@ -247,17 +321,27 @@ const MyAppointments = () => {
           });
 
           setProfile(profileData);
+          hasSuccessfullyLoadedData = true;
+          
+          // Clear any error messages if we successfully loaded appointments
+          setActionMessage(null);
         } catch (error) {
           console.error('Error fetching appointments:', error);
-          setActionMessage('Failed to load appointments. Please refresh the page.');
-          setProfile({
-            id: donorHashId,
-            name: donorId || 'Donor',
-            email: donorEmail || '',
-            phone: '',
-            upcoming: [],
-            history: [],
-          });
+          // Only set error message if we didn't successfully load any data
+          if (!hasSuccessfullyLoadedData) {
+            setActionMessage('Failed to load appointments. Please refresh the page.');
+            setProfile({
+              id: donorHashId,
+              name: donorId || 'Donor',
+              email: donorEmail || '',
+              phone: '',
+              upcoming: [],
+              history: [],
+            });
+          } else {
+            // If we successfully loaded data before the error, just clear error message
+            setActionMessage(null);
+          }
         } finally {
           setLoadingAppointments(false);
         }
