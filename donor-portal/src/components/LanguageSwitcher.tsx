@@ -114,23 +114,23 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
       <div className={`relative ${className}`} ref={dropdownRef}>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-red-300 transition-all focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50"
+          className="flex items-center space-x-2 px-3 py-2 text-sm text-espresso bg-white border border-taupe/30 rounded-lg hover:bg-cream/50 hover:border-mediterranean-blue transition-all focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50"
           aria-label={t('language.selectLanguage')}
         >
-          <Globe className="w-4 h-4" />
+          <Globe className="w-4 h-4 text-mediterranean-blue" />
           <span>{currentLanguage.flag}</span>
           <span className="hidden sm:inline">{currentLanguage.name}</span>
-          <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`w-4 h-4 transition-transform text-mediterranean-blue ${isOpen ? 'rotate-180' : ''}`} />
         </button>
         
         {isOpen && (
-          <div className={`absolute ${dropdownPosition === 'right' ? 'right-0 left-auto' : 'left-0 right-auto'} mt-2 w-48 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[100]`}>
+          <div className={`absolute ${dropdownPosition === 'right' ? 'right-0 left-auto' : 'left-0 right-auto'} mt-2 w-48 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-lg border border-taupe/30 py-2 z-[100]`}>
             {languages.map((language) => (
               <button
                 key={language.code}
                 onClick={() => handleLanguageChange(language.code)}
-                className={`w-full flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${
-                  language.code === i18n.language ? 'bg-red-50 text-red-600' : 'text-gray-700'
+                className={`w-full flex items-center justify-between px-4 py-2 text-sm hover:bg-cream/50 transition-colors ${
+                  language.code === i18n.language ? 'bg-mediterranean-blue/10 text-mediterranean-blue' : 'text-espresso'
                 }`}
               >
                 <div className="flex items-center space-x-3">
@@ -138,7 +138,7 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                   <span>{language.name}</span>
                 </div>
                 {language.code === i18n.language && (
-                  <Check className="w-4 h-4 text-red-600" />
+                  <Check className="w-4 h-4 text-mediterranean-blue" />
                 )}
               </button>
             ))}

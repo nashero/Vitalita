@@ -2979,3 +2979,186 @@ textarea:focus-visible {
   }
 }
 
+/* Mediterranean Health - Center Selection Styles */
+
+/* Warm map styling with earth tones */
+.warm-map {
+  filter: sepia(15%) saturate(120%) hue-rotate(5deg);
+}
+
+.mediterranean-map-container {
+  position: relative;
+}
+
+.mediterranean-map-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(253, 246, 233, 0.1) 0%,
+    rgba(217, 119, 87, 0.05) 50%,
+    rgba(156, 175, 136, 0.05) 100%
+  );
+  pointer-events: none;
+  z-index: 1000;
+  border-radius: 0.5rem;
+}
+
+/* Mediterranean pattern for cards */
+.mediterranean-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.mediterranean-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(156, 175, 136, 0.03) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.mediterranean-card:hover::before {
+  opacity: 1;
+}
+
+.mediterranean-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(217, 119, 87, 0.2) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mediterranean-card:hover::after {
+  opacity: 1;
+}
+
+/* Smooth color transitions */
+.mediterranean-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom marker animations */
+.custom-marker,
+.custom-marker-selected {
+  transition: transform 0.3s ease;
+}
+
+.custom-marker:hover {
+  transform: scale(1.1);
+}
+
+.custom-marker-selected {
+  animation: pulse-marker 2s ease-in-out infinite;
+}
+
+@keyframes pulse-marker {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Leaflet popup styling */
+.leaflet-popup-content-wrapper {
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(62, 39, 35, 0.15);
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure map tiles have warm tones */
+.leaflet-container {
+  background-color: #FDF6E9;
+}
+
+/* Responsive map height adjustments */
+@media (max-width: 768px) {
+  .mediterranean-map-container {
+    height: 300px !important;
+  }
+}
+
+/* Date & Time Picker Animations */
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-down {
+  animation: slide-down 0.4s ease-out;
+}
+
+/* Calendar month transition */
+.calendar-month-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Fade in up animation for About page timeline */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+/* Eligibility page accordion animations */
+@keyframes accordion-slide-down {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+    transform: translateY(0);
+  }
+}
+
+.accordion-content {
+  animation: accordion-slide-down 0.3s ease-out;
+}
+

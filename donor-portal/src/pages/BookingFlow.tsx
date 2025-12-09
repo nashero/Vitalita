@@ -7,6 +7,7 @@ import 'leaflet/dist/leaflet.css';
 import { ensureLeafletIcon } from '../utils/mapDefaults';
 import { supabase } from '../lib/supabase';
 import { isAuthenticated } from '../utils/auth';
+import AppointmentConfirmation from '../components/AppointmentConfirmation';
 
 type RiskLevel = 'normal' | 'high';
 
@@ -2285,170 +2286,16 @@ const BookingFlow = () => {
       return null;
     }
 
-    const formattedDate = format(selectedDateAvailability.date, 'EEEE d MMMM');
-
     return (
       <section className="wizard-step">
-        {/* Step Header with Progress Indicator */}
-        <div style={{
-          marginBottom: '2rem',
-          padding: '1rem',
-          backgroundColor: '#f9fafb',
-          borderRadius: '0.5rem',
-          border: '1px solid #e5e7eb',
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-          }}>
-            <span style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              backgroundColor: '#dc2626',
-              color: 'white',
-              fontWeight: 'bold',
-              fontSize: '0.875rem',
-            }}>
-              5
-            </span>
-            <div>
-              <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
-                {t('booking.step5.stepTitle')}
-              </h3>
-              <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>
-                {t('booking.step5.stepDescription')}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {renderStepTitle(
-          t('booking.step5.title'),
-          t('booking.step5.subtitle'),
-        )}
-
-        <div className="confirmation-details">
-          <div className="confirmation-card">
-            <h2>{t('booking.step5.appointmentDetails')}</h2>
-            <p className="confirmation-highlight">{formattedDate}</p>
-            <p className="confirmation-highlight">{selectedSlot.time}</p>
-            <p className="confirmation-location">
-              {selectedCenter.name}
-              <br />
-              {selectedCenter.address}
-            </p>
-            <a
-              href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-                selectedCenter.address,
-              )}`}
-              target="_blank"
-              rel="noreferrer"
-              className="text-link"
-            >
-              {t('booking.step5.getDirections')}
-            </a>
-          </div>
-
-          <div className="confirmation-actions">
-            <button
-              type="button"
-              className="button primary"
-              onClick={handleAddToCalendar}
-              style={{
-                backgroundColor: '#dc2626',
-                borderColor: '#dc2626',
-                color: '#ffffff',
-                fontWeight: 'bold',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <span style={{ marginRight: '0.5rem' }}>📅</span>
-              {t('booking.step5.addToCalendar')}
-            </button>
-            <button
-              type="button"
-              className="button secondary"
-              onClick={handleShare}
-              style={{
-                backgroundColor: '#ffffff',
-                borderColor: '#dc2626',
-                color: '#dc2626',
-                fontWeight: 'normal',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              {t('booking.step5.share')}
-            </button>
-            {shareMenuOpen && (
-              <div className="share-menu">
-                <a
-                  href={`https://t.me/share/url?url=&text=${encodeURIComponent(
-                    t('booking.step5.shareMessage', { date: formattedDate, time: selectedSlot.time, center: selectedCenter.name }),
-                  )}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {t('booking.step5.shareOnTelegram')}
-                </a>
-                <a
-                  href={`mailto:?subject=Join me at Vitalita&body=${encodeURIComponent(
-                    t('booking.step5.shareMessage', { date: formattedDate, time: selectedSlot.time, center: selectedCenter.name }),
-                  )}`}
-                >
-                  {t('booking.step5.shareViaEmail')}
-                </a>
-              </div>
-            )}
-            <p className="confirmation-reminder">
-              {t('booking.step5.reminderMessage')}
-            </p>
-          </div>
-
-          <div className="confirmation-extras">
-            <div>
-              <h3>{t('booking.step5.whatToBring')}</h3>
-              <ul>
-                <li>{t('booking.step5.whatToBring1')}</li>
-                <li>{t('booking.step5.whatToBring2')}</li>
-                <li>{t('booking.step5.whatToBring3')}</li>
-              </ul>
-            </div>
-            <div>
-              <h3>{t('booking.step5.whatToExpect')}</h3>
-              <p>
-                {t('booking.step5.whatToExpectText')}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="done-action">
-          <button
-            type="button"
-            className="button secondary"
-            onClick={resetAndExit}
-            style={{
-              backgroundColor: '#ffffff',
-              borderColor: '#dc2626',
-              color: '#dc2626',
-              fontWeight: 'normal',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            {t('booking.step5.done')}
-          </button>
-        </div>
+        <AppointmentConfirmation
+          centerName={selectedCenter.name}
+          centerAddress={selectedCenter.address}
+          appointmentDate={selectedDateAvailability.date}
+          appointmentTime={selectedSlot.time}
+          donationType={selectedDonationType}
+          patientsHelped={3}
+        />
       </section>
     );
   };

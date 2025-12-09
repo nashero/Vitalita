@@ -1,13 +1,41 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { addWeeks, differenceInCalendarDays, format, isBefore } from 'date-fns';
+import { addWeeks, differenceInCalendarDays, format } from 'date-fns';
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
+import L from 'leaflet';
+import {
+  Heart,
+  Clock,
+  Calendar,
+  MapPin,
+  Navigation,
+  CalendarPlus,
+  Edit,
+  X,
+} from 'lucide-react';
 import { ensureLeafletIcon } from '../utils/mapDefaults';
 import { supabase } from '../lib/supabase';
 import 'leaflet/dist/leaflet.css';
 
 ensureLeafletIcon();
+
+// Create Mediterranean Blue marker icon
+const createMediterraneanBlueIcon = () => {
+  return L.divIcon({
+    className: 'custom-marker-appointment',
+    html: `<div style="
+      width: 24px;
+      height: 24px;
+      background-color: #5B9BD5;
+      border: 3px solid white;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(91, 155, 213, 0.5);
+    "></div>`,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+  });
+};
 
 interface Appointment {
   id: string;
@@ -34,76 +62,14 @@ interface DonorProfile {
   history: DonationRecord[];
 }
 
-const mockProfiles: DonorProfile[] = [
-  {
-    id: 'donor-giulia',
-    name: 'Giulia Rossi',
-    email: 'giulia.rossi@email.com',
-    phone: '3335551212',
-    upcoming: [
-      {
-        id: 'upcoming-1',
-        isoDate: format(addWeeks(new Date(), 1), 'yyyy-MM-dd'),
-        time: '09:15',
-        locationName: 'Centro Donazioni Duomo',
-        address: 'Via Torino 18, Milano',
-        lat: 45.4627,
-        lng: 9.1856,
-      },
-      {
-        id: 'upcoming-2',
-        isoDate: format(addWeeks(new Date(), 5), 'yyyy-MM-dd'),
-        time: '10:45',
-        locationName: 'Vitalita Monza',
-        address: 'Via Vittorio Emanuele 8, Monza',
-        lat: 45.5845,
-        lng: 9.2744,
-      },
-    ],
-    history: [
-      {
-        id: 'history-1',
-        isoDate: format(addWeeks(new Date(), -10), 'yyyy-MM-dd'),
-        locationName: 'Sala Donatori Navigli',
-      },
-      {
-        id: 'history-2',
-        isoDate: format(addWeeks(new Date(), -30), 'yyyy-MM-dd'),
-        locationName: 'Centro Donazioni Duomo',
-      },
-    ],
-  },
-  {
-    id: 'donor-marco',
-    name: 'Marco Bianchi',
-    email: 'marco.bianchi@email.com',
-    phone: '3471118899',
-    upcoming: [],
-    history: [],
-  },
-];
-
-const MOCK_OTP = '123456';
-
-type LoginStage = 'enter' | 'verify';
-
 const MyAppointments = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [loginStage, setLoginStage] = useState<LoginStage>('enter');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
-  const [loginError, setLoginError] = useState<string | null>(null);
-  const [otpSent, setOtpSent] = useState(false);
   const [profile, setProfile] = useState<DonorProfile | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    // Check if user is authenticated via sessionStorage
     return !!sessionStorage.getItem('donor_hash_id');
   });
-  const [cancelConfirmationId, setCancelConfirmationId] = useState<string | null>(
-    null,
-  );
+  const [cancelConfirmationId, setCancelConfirmationId] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [loadingAppointments, setLoadingAppointments] = useState(true);
 
@@ -112,41 +78,95 @@ const MyAppointments = () => {
     const donorHashId = sessionStorage.getItem('donor_hash_id');
     if (donorHashId) {
       setIsAuthenticated(true);
-      // Load profile data if needed
       const donorEmail = sessionStorage.getItem('donor_email');
       const donorId = sessionStorage.getItem('donor_id');
       
-      // Fetch appointments from database
       const fetchAppointments = async () => {
         try {
           setLoadingAppointments(true);
           
-          // Fetch upcoming appointments (future dates, excluding cancelled)
-          const { data: upcomingData, error: upcomingError } = await supabase
+          // Fetch upcoming appointments - try without join first, then with join
+          let upcomingData: any[] = [];
+          let upcomingError: any = null;
+
+          // First, try with the join using inner syntax
+          const { data: joinedData, error: joinError } = await supabase
             .from('appointments')
             .select(`
               appointment_id,
               appointment_datetime,
               donation_type,
               status,
-              donation_centers!donation_center_id (
+              donation_center_id,
+              donation_centers!inner(
                 name,
                 address,
                 city,
-                center_id
+                center_id,
+                latitude,
+                longitude
               )
             `)
             .eq('donor_hash_id', donorHashId)
-            .gte('appointment_datetime', new Date().toISOString())
-            .not('status', 'eq', 'CANCELLED')
-            .not('status', 'eq', 'cancelled')
             .order('appointment_datetime', { ascending: true });
 
-          if (upcomingError) {
-            console.error('Error fetching upcoming appointments:', upcomingError);
+          if (joinError) {
+            console.error('Error with join query, trying without join:', joinError);
+            
+            // Fallback: fetch appointments without join
+            const { data: simpleData, error: simpleError } = await supabase
+              .from('appointments')
+              .select('appointment_id, appointment_datetime, donation_type, status, donation_center_id')
+              .eq('donor_hash_id', donorHashId)
+              .order('appointment_datetime', { ascending: true });
+
+            if (simpleError) {
+              console.error('Error fetching appointments (simple query):', simpleError);
+              upcomingError = simpleError;
+            } else {
+              upcomingData = simpleData || [];
+              
+              // Fetch center data separately for each appointment
+              const centerIds = [...new Set(upcomingData.map(apt => apt.donation_center_id).filter(Boolean))];
+              if (centerIds.length > 0) {
+                const { data: centersData } = await supabase
+                  .from('donation_centers')
+                  .select('center_id, name, address, city, latitude, longitude')
+                  .in('center_id', centerIds);
+
+                // Map centers to appointments
+                const centersMap = new Map((centersData || []).map(c => [c.center_id, c]));
+                upcomingData = upcomingData.map(apt => ({
+                  ...apt,
+                  donation_centers: centersMap.get(apt.donation_center_id) || null
+                }));
+              }
+            }
+          } else {
+            upcomingData = joinedData || [];
+            console.log('Fetched appointments with join:', upcomingData);
           }
 
-          // Fetch donation history (completed donations)
+          if (upcomingError) {
+            console.error('Failed to fetch appointments:', upcomingError);
+            setActionMessage(`Failed to load appointments: ${upcomingError.message || 'Unknown error'}. Please refresh the page.`);
+            upcomingData = [];
+          }
+
+          // Filter client-side: future appointments that are not cancelled
+          const now = new Date();
+          const filteredUpcoming = (upcomingData || []).filter((apt: any) => {
+            const appointmentDate = new Date(apt.appointment_datetime);
+            const status = apt.status?.toUpperCase();
+            const isCancelled = status === 'CANCELLED' || status === 'CANCELED';
+            const isFuture = appointmentDate >= now;
+            return isFuture && !isCancelled;
+          });
+
+          console.log('Filtered upcoming appointments:', filteredUpcoming);
+          console.log('Total fetched:', upcomingData?.length || 0, 'After filtering:', filteredUpcoming.length);
+
+          // Fetch donation history
           const { data: historyData, error: historyError } = await supabase
             .from('donation_history')
             .select(`
@@ -165,25 +185,40 @@ const MyAppointments = () => {
             console.error('Error fetching donation history:', historyError);
           }
 
-          // Transform upcoming appointments to match the interface
-          const upcoming: Appointment[] = (upcomingData || []).map((apt: any) => {
+          // Transform upcoming appointments
+          const upcoming: Appointment[] = filteredUpcoming.map((apt: any) => {
             const appointmentDate = new Date(apt.appointment_datetime);
-            const center = Array.isArray(apt.donation_centers) 
-              ? apt.donation_centers[0] 
-              : apt.donation_centers;
+            
+            // Handle donation_centers data structure - could be object, array, or null
+            // When using !inner join, it returns as an object
+            // When fetched separately, it's already an object
+            let center = null;
+            if (apt.donation_centers) {
+              if (Array.isArray(apt.donation_centers)) {
+                center = apt.donation_centers[0] || null;
+              } else if (typeof apt.donation_centers === 'object') {
+                center = apt.donation_centers;
+              }
+            }
+
+            console.log('Processing appointment:', apt.appointment_id, {
+              hasCenter: !!center,
+              centerName: center?.name,
+              appointmentDate: apt.appointment_datetime
+            });
 
             return {
               id: apt.appointment_id,
               isoDate: format(appointmentDate, 'yyyy-MM-dd'),
               time: format(appointmentDate, 'HH:mm'),
-              locationName: center?.name || t('myAppointments.unknownCenter'),
-              address: center?.address || '',
-              lat: center?.latitude || 45.4642, // Default to Milan if not set
-              lng: center?.longitude || 9.1900, // Default to Milan if not set
+              locationName: center?.name || 'Unknown Center',
+              address: center?.address || center?.city || '',
+              lat: center?.latitude || 45.4642,
+              lng: center?.longitude || 9.1900,
             };
           });
 
-          // Transform donation history to match the interface
+          // Transform donation history
           const history: DonationRecord[] = (historyData || []).map((record: any) => {
             const center = Array.isArray(record.donation_centers)
               ? record.donation_centers[0]
@@ -192,25 +227,32 @@ const MyAppointments = () => {
             return {
               id: record.history_id,
               isoDate: format(new Date(record.donation_date), 'yyyy-MM-dd'),
-              locationName: center?.name || t('myAppointments.unknownCenter'),
+              locationName: center?.name || 'Unknown Center',
             };
           });
 
-          // Set profile with fetched data
-          setProfile({
+          const profileData = {
             id: donorHashId,
-            name: donorId || t('myAppointments.defaultDonorName'),
+            name: donorId || 'Donor',
             email: donorEmail || '',
             phone: '',
             upcoming,
             history,
+          };
+
+          console.log('Setting profile with appointments:', {
+            upcomingCount: upcoming.length,
+            historyCount: history.length,
+            upcoming: upcoming,
           });
+
+          setProfile(profileData);
         } catch (error) {
           console.error('Error fetching appointments:', error);
-          // Set profile with empty arrays on error
+          setActionMessage('Failed to load appointments. Please refresh the page.');
           setProfile({
             id: donorHashId,
-            name: donorId || t('myAppointments.defaultDonorName'),
+            name: donorId || 'Donor',
             email: donorEmail || '',
             phone: '',
             upcoming: [],
@@ -221,108 +263,74 @@ const MyAppointments = () => {
         }
       };
 
-      if (donorEmail || donorId) {
+      // Always fetch appointments if we have donorHashId
+      if (donorHashId) {
         fetchAppointments();
+      } else {
+        console.error('No donor_hash_id found in sessionStorage');
       }
     } else {
-      // Redirect to login if not authenticated
       navigate('/login');
     }
   }, [navigate]);
 
   const formattedUpcoming = useMemo(() => {
-    if (!profile) {
-      return [];
-    }
-
-    return [...profile.upcoming].sort((a, b) =>
-      a.isoDate.localeCompare(b.isoDate),
-    );
+    if (!profile) return [];
+    return [...profile.upcoming].sort((a, b) => a.isoDate.localeCompare(b.isoDate));
   }, [profile]);
 
   const formattedHistory = useMemo(() => {
-    if (!profile) {
-      return [];
-    }
-
+    if (!profile) return [];
     return [...profile.history].sort((a, b) => b.isoDate.localeCompare(a.isoDate));
   }, [profile]);
 
-  const nextAppointment = formattedUpcoming[0];
-
   const impactLivesSaved = useMemo(() => {
-    if (!profile) {
-      return 0;
-    }
-    return profile.history.length * 3;
+    if (!profile) return 0;
+    return Math.min(profile.history.length * 3, 9);
+  }, [profile]);
+
+  const donationsThisYear = useMemo(() => {
+    if (!profile) return 0;
+    const currentYear = new Date().getFullYear();
+    return profile.history.filter(record => {
+      const recordYear = new Date(record.isoDate).getFullYear();
+      return recordYear === currentYear;
+    }).length;
   }, [profile]);
 
   const nextEligibleDate = useMemo(() => {
-    if (!profile || formattedHistory.length === 0) {
-      return null;
-    }
+    if (!profile || formattedHistory.length === 0) return null;
     const lastDonation = formattedHistory[0];
     const eligible = addWeeks(new Date(lastDonation.isoDate), 8);
-    return format(eligible, 'EEEE d MMMM');
+    return format(eligible, 'MMMM d');
   }, [formattedHistory, profile]);
-
-  const handleSendOtp = () => {
-    const normalizedEmail = email.trim().toLowerCase();
-    const normalizedPhone = phone.replace(/\D/g, '');
-    const matchedProfile = mockProfiles.find(
-      (item) =>
-        (normalizedEmail && item.email.toLowerCase() === normalizedEmail) ||
-        (normalizedPhone && item.phone === normalizedPhone),
-    );
-
-    if (!matchedProfile) {
-      setLoginError(t('myAppointments.login.accountNotFound'));
-      return;
-    }
-
-    setProfile(matchedProfile);
-    setLoginError(null);
-    setOtpSent(true);
-    setLoginStage('verify');
-  };
-
-  const handleVerifyOtp = () => {
-    if (otp !== MOCK_OTP) {
-      setLoginError(t('myAppointments.login.incorrectCode'));
-      return;
-    }
-
-    setLoginError(null);
-    setActionMessage(t('myAppointments.login.signedIn'));
-    setIsAuthenticated(true);
-  };
-
-  const requireAuth = (render: () => JSX.Element) => {
-    // Check sessionStorage for authentication
-    const donorHashId = sessionStorage.getItem('donor_hash_id');
-    if (!donorHashId || !isAuthenticated) {
-      // Redirect to login page instead of showing login form
-      navigate('/login');
-      return null;
-    }
-    return render();
-  };
 
   const renderCountdown = (appointment: Appointment) => {
     const appointmentDate = new Date(`${appointment.isoDate}T${appointment.time}`);
     const today = new Date();
     const days = differenceInCalendarDays(appointmentDate, today);
 
-    if (days < 0) {
-      return t('myAppointments.upcoming.countdown.passed');
-    }
-    if (days === 0) {
-      return t('myAppointments.upcoming.countdown.today');
-    }
-    if (days === 1) {
-      return t('myAppointments.upcoming.countdown.oneDay');
-    }
-    return t('myAppointments.upcoming.countdown.days', { days });
+    if (days < 0) return 'Past';
+    if (days === 0) return 'Today';
+    if (days === 1) return 'Your appointment is in 1 day';
+    return `Your appointment is in ${days} days`;
+  };
+
+  const getUrgencyColor = (appointment: Appointment) => {
+    const appointmentDate = new Date(`${appointment.isoDate}T${appointment.time}`);
+    const today = new Date();
+    const days = differenceInCalendarDays(appointmentDate, today);
+
+    if (days < 3) return 'text-burnt-orange';
+    if (days < 7) return 'text-burnt-orange';
+    return 'text-terracotta';
+  };
+
+  const shouldPulse = (appointment: Appointment) => {
+    const appointmentDate = new Date(`${appointment.isoDate}T${appointment.time}`);
+    const today = new Date();
+    const days = differenceInCalendarDays(appointmentDate, today);
+    return days < 3;
   };
 
   const handleAddToCalendar = (appointment: Appointment) => {
@@ -342,9 +350,9 @@ const MyAppointments = () => {
       `DTSTAMP:${format(new Date(), "yyyyMMdd'T'HHmmss'Z'")}`,
       `DTSTART:${formatICS(start)}`,
       `DTEND:${formatICS(end)}`,
-      `SUMMARY:${t('myAppointments.calendar.summary', { location: appointment.locationName })}`,
+      `SUMMARY:Blood Donation Appointment - ${appointment.locationName}`,
       `LOCATION:${appointment.address}`,
-      `DESCRIPTION:${t('myAppointments.calendar.description')}`,
+      'DESCRIPTION:Your blood donation appointment with Vitalita',
       'END:VEVENT',
       'END:VCALENDAR',
     ].join('\r\n');
@@ -365,12 +373,9 @@ const MyAppointments = () => {
   };
 
   const confirmCancelAppointment = async () => {
-    if (!profile || !cancelConfirmationId) {
-      return;
-    }
+    if (!profile || !cancelConfirmationId) return;
 
     try {
-      // Update appointment status in database
       const { error: updateError } = await supabase
         .from('appointments')
         .update({ status: 'CANCELLED' })
@@ -379,378 +384,350 @@ const MyAppointments = () => {
 
       if (updateError) {
         console.error('Error cancelling appointment:', updateError);
-        setActionMessage(t('myAppointments.upcoming.cancelError'));
+        setActionMessage('Failed to cancel appointment. Please try again.');
         setCancelConfirmationId(null);
         return;
       }
 
-      // Remove from local state
       const filtered = profile.upcoming.filter(
         (appointment) => appointment.id !== cancelConfirmationId,
       );
 
       setProfile({ ...profile, upcoming: filtered });
       setCancelConfirmationId(null);
-      setActionMessage(t('myAppointments.upcoming.cancelSuccess'));
+      setActionMessage('Appointment cancelled successfully.');
     } catch (error) {
       console.error('Error cancelling appointment:', error);
-      setActionMessage(t('myAppointments.upcoming.cancelError'));
+      setActionMessage('Failed to cancel appointment. Please try again.');
       setCancelConfirmationId(null);
     }
   };
 
-  const renderLogin = () => (
-    <section className="wizard-step appointments-auth">
-      <header className="wizard-step-header">
-        <h1>{t('myAppointments.login.title')}</h1>
-        <p className="wizard-step-subtitle">
-          {t('myAppointments.login.subtitle')}
-        </p>
-      </header>
-      <form
-        className="info-form"
-        onSubmit={(event) => {
-          event.preventDefault();
-          loginStage === 'enter' ? handleSendOtp() : handleVerifyOtp();
-        }}
-      >
-        {loginStage === 'enter' && (
-          <>
-            <div className="form-field">
-              <label htmlFor="authEmail">{t('myAppointments.login.email')}</label>
-              <input
-                id="authEmail"
-                type="email"
-                placeholder="e.g. giulia.rossi@email.com"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                autoComplete="email"
-              />
-            </div>
-            <div className="form-field">
-              <label htmlFor="authPhone">{t('myAppointments.login.phoneNumber')}</label>
-              <input
-                id="authPhone"
-                type="tel"
-                placeholder="e.g. 333 555 1212"
-                value={phone}
-                onChange={(event) => setPhone(event.target.value)}
-                autoComplete="tel"
-              />
-              <small className="field-hint">
-                {t('myAppointments.login.phoneHint')}
-              </small>
-            </div>
-            <button type="submit" className="button primary">
-              {t('myAppointments.login.sendCode')}
-            </button>
-          </>
-        )}
-
-        {loginStage === 'verify' && (
-          <>
-            <div className="form-field">
-              <label htmlFor="otpCode">{t('myAppointments.login.enterCode')}</label>
-              <input
-                id="otpCode"
-                type="text"
-                inputMode="numeric"
-                maxLength={6}
-                placeholder={t('myAppointments.login.codePlaceholder')}
-                value={otp}
-                onChange={(event) => setOtp(event.target.value)}
-              />
-              <small className="field-hint">
-                {t('myAppointments.login.didntGetIt')}{' '}
-                <button
-                  type="button"
-                  className="text-button"
-                  onClick={() => {
-                    setOtpSent(false);
-                    setLoginStage('enter');
-                    setOtp('');
-                  }}
-                >
-                  {t('myAppointments.login.tryAgain')}
-                </button>
-              </small>
-            </div>
-            <button type="submit" className="button primary">
-              {t('myAppointments.login.verifyAndContinue')}
-            </button>
-          </>
-        )}
-
-        {loginError && (
-          <div className="inline-alert warning">
-            <p>{loginError}</p>
-          </div>
-        )}
-
-        {otpSent && loginStage === 'verify' && !loginError && (
-          <div className="inline-notice">
-            <p>
-              {profile?.email
-                ? t('myAppointments.login.codeSent', { email: profile.email })
-                : t('myAppointments.login.codeSentGeneric')}
-            </p>
-          </div>
-        )}
-      </form>
-    </section>
-  );
-
-  const renderUpcomingCards = () => {
-    if (!profile) {
-      return null;
+  const requireAuth = () => {
+    const donorHashId = sessionStorage.getItem('donor_hash_id');
+    if (!donorHashId || !isAuthenticated) {
+      navigate('/login');
+      return false;
     }
+    return true;
+  };
 
-    if (formattedUpcoming.length === 0) {
-      return (
-        <article className="appointments-empty">
-          <h2>{t('myAppointments.upcoming.empty.title')}</h2>
-          <p>{t('myAppointments.upcoming.empty.description')}</p>
-          <button
-            type="button"
-            className="button primary"
-            onClick={() => navigate('/book')}
-          >
-            {t('myAppointments.upcoming.empty.bookNow')}
-          </button>
-        </article>
-      );
-    }
+  if (!requireAuth()) {
+    return null;
+  }
 
+  if (loadingAppointments || !profile) {
     return (
-      <div className="appointments-list">
-        {formattedUpcoming.map((appointment) => {
-          const appointmentDate = new Date(`${appointment.isoDate}T${appointment.time}`);
-          const formattedDate = format(appointmentDate, 'EEEE d MMMM');
-          const isActive = nextAppointment?.id === appointment.id;
+      <div className="min-h-screen bg-cream pt-24 pb-12">
+        <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-xl text-espresso">Loading your appointments...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-          return (
-            <article
-              key={appointment.id}
-              className={`appointment-card ${isActive ? 'next' : ''}`}
-            >
-              <div className="appointment-card-header">
-                <div>
-                  <p className="appointment-date">{formattedDate}</p>
-                  <p className="appointment-time">{appointment.time}</p>
-                </div>
-                <span className="appointment-countdown">
-                  {renderCountdown(appointment)}
-                </span>
-              </div>
-              <p className="appointment-location">
-                {appointment.locationName}
-                <br />
-                {appointment.address}
-              </p>
-              <div className="appointment-map" style={{ width: '100%', overflow: 'hidden', borderRadius: '0.5rem' }}>
-                <MapContainer
-                  center={[appointment.lat, appointment.lng]}
-                  zoom={13}
-                  scrollWheelZoom={false}
-                  dragging={false}
-                  doubleClickZoom={false}
-                  style={{ height: '180px', width: '100%', minHeight: '150px' }}
-                >
-                  <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
-                  <Marker position={[appointment.lat, appointment.lng]} />
-                </MapContainer>
-              </div>
-              <div className="appointment-actions">
-                <a
-                  className="button secondary"
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-                    appointment.address,
-                  )}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {t('myAppointments.upcoming.actions.getDirections')}
-                </a>
-                <button
-                  type="button"
-                  className="button secondary"
-                  onClick={() => handleAddToCalendar(appointment)}
-                >
-                  {t('myAppointments.upcoming.actions.addToCalendar')}
-                </button>
-                <button
-                  type="button"
-                  className="button secondary"
-                  onClick={() => navigate('/book')}
-                >
-                  {t('myAppointments.upcoming.actions.changeAppointment')}
-                </button>
-                <button
-                  type="button"
-                  className="button secondary danger"
-                  onClick={() => handleCancelAppointment(appointment.id)}
-                >
-                  {t('myAppointments.upcoming.actions.cancel')}
-                </button>
-              </div>
-              {cancelConfirmationId === appointment.id && (
-                <div className="inline-alert warning">
-                  <p>
-                    {t('myAppointments.upcoming.cancelConfirmation.message')}
+  const donorId = sessionStorage.getItem('donor_id') || profile.name;
+
+  return (
+    <div className="min-h-screen bg-cream pt-24 pb-12">
+      <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8">
+        {/* Header Section */}
+        <div className="bg-white rounded-[12px] shadow-sm p-8 mb-8">
+          <h1 className="text-[32px] font-bold text-espresso mb-2">
+            Welcome back, {donorId}! 👋
+          </h1>
+          <p className="text-base text-taupe">
+            Here's a quick look at your donations and what's coming up next.
+          </p>
+        </div>
+
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-[70%_30%] gap-8">
+          {/* Main Content */}
+          <div className="space-y-8">
+            {/* Impact Summary Section */}
+            <div className="bg-cream rounded-[12px] p-6 border-l-4 border-terracotta">
+              <div className="flex items-start gap-4">
+                <Heart className="w-12 h-12 text-terracotta flex-shrink-0" />
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold text-espresso mb-2">
+                    You've helped save up to {impactLivesSaved} lives
+                  </h2>
+                  <p className="text-base text-taupe mb-4">
+                    Thank you for being a hero in your community
                   </p>
-                  <div className="confirmation-buttons">
-                    <button
-                      type="button"
-                      className="button primary"
-                      onClick={confirmCancelAppointment}
-                    >
-                      {t('myAppointments.upcoming.cancelConfirmation.yesCancel')}
-                    </button>
-                    <button
-                      type="button"
-                      className="button secondary"
-                      onClick={() => setCancelConfirmationId(null)}
-                    >
-                      {t('myAppointments.upcoming.cancelConfirmation.keepIt')}
-                    </button>
+                  <div className="flex flex-wrap gap-3">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-olive-green/20 text-olive-green text-sm font-medium">
+                      {donationsThisYear} donations this year
+                    </span>
+                    {nextEligibleDate && (
+                      <span className="inline-flex items-center px-3 py-1 rounded-full bg-mediterranean-blue/20 text-mediterranean-blue text-sm font-medium">
+                        Next eligible: {nextEligibleDate}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Upcoming Appointments Section */}
+            <div>
+              <h2 className="text-2xl font-bold text-espresso mb-2">
+                Upcoming appointments
+              </h2>
+              <p className="text-sm text-taupe mb-6">
+                Need to make a change? You can manage everything here.
+              </p>
+
+              {formattedUpcoming.length === 0 ? (
+                <div className="bg-white rounded-[12px] p-8 text-center">
+                  <p className="text-lg text-espresso mb-4">No upcoming appointments</p>
+                  <button
+                    onClick={() => navigate('/book')}
+                    className="px-6 py-3 bg-terracotta text-white rounded-lg font-medium hover:bg-[#C5694A] transition-colors"
+                  >
+                    Book an Appointment
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-5">
+                  {formattedUpcoming.map((appointment) => {
+                    const appointmentDate = new Date(`${appointment.isoDate}T${appointment.time}`);
+                    const formattedDate = format(appointmentDate, 'EEEE d MMMM');
+                    const countdown = renderCountdown(appointment);
+                    const urgencyColor = getUrgencyColor(appointment);
+                    const pulse = shouldPulse(appointment);
+
+                    return (
+                      <div
+                        key={appointment.id}
+                        className="bg-white rounded-[12px] shadow-sm p-6 border-l-4 border-terracotta hover:shadow-md transition-shadow"
+                      >
+                        {/* Card Header */}
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+                          <div>
+                            <p className="text-xl font-bold text-espresso mb-1">
+                              {formattedDate}
+                            </p>
+                            <div className="flex items-center gap-2 text-taupe">
+                              <Clock className="w-4 h-4 text-mediterranean-blue" />
+                              <span className="text-base">{appointment.time}</span>
+                            </div>
+                          </div>
+                          <div
+                            className={`flex items-center gap-2 ${urgencyColor} ${
+                              pulse ? 'animate-pulse' : ''
+                            }`}
+                          >
+                            <Calendar className="w-4 h-4" />
+                            <span className="text-sm font-medium">{countdown}</span>
+                          </div>
+                        </div>
+
+                        {/* Location Info */}
+                        <div className="mb-4">
+                          <div className="flex items-center gap-2 mb-1">
+                            <MapPin className="w-4 h-4 text-mediterranean-blue" />
+                            <p className="text-base font-bold text-espresso">
+                              {appointment.locationName}
+                            </p>
+                          </div>
+                          <p className="text-sm text-taupe ml-6">{appointment.address}</p>
+                        </div>
+
+                        {/* Map and Actions Layout */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                          {/* Map */}
+                          <div className="rounded-lg overflow-hidden h-[150px] md:h-[150px] md:w-[200px]">
+                            <MapContainer
+                              center={[appointment.lat, appointment.lng]}
+                              zoom={13}
+                              scrollWheelZoom={false}
+                              dragging={false}
+                              doubleClickZoom={false}
+                              style={{ height: '100%', width: '100%' }}
+                            >
+                              <TileLayer
+                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                              />
+                              <Marker 
+                                position={[appointment.lat, appointment.lng]} 
+                                icon={createMediterraneanBlueIcon()}
+                              />
+                            </MapContainer>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex flex-col gap-3">
+                            {/* Row 1 */}
+                            <div className="grid grid-cols-2 gap-3">
+                              <a
+                                href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+                                  appointment.address,
+                                )}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="h-10 px-4 rounded-lg border-2 border-mediterranean-blue text-mediterranean-blue font-medium text-sm flex items-center justify-center gap-2 hover:bg-mediterranean-blue hover:text-white transition-all duration-200"
+                              >
+                                <Navigation className="w-4 h-4" />
+                                Get Directions
+                              </a>
+                              <button
+                                onClick={() => handleAddToCalendar(appointment)}
+                                className="h-10 px-4 rounded-lg border-2 border-olive-green text-olive-green font-medium text-sm flex items-center justify-center gap-2 hover:bg-olive-green hover:text-white transition-all duration-200"
+                              >
+                                <CalendarPlus className="w-4 h-4" />
+                                Add to Calendar
+                              </button>
+                            </div>
+
+                            {/* Row 2 */}
+                            <div className="grid grid-cols-2 gap-3">
+                              <button
+                                onClick={() => navigate('/book')}
+                                className="h-10 px-4 rounded-lg border-2 border-terracotta text-terracotta font-medium text-sm flex items-center justify-center gap-2 hover:bg-terracotta hover:text-white transition-all duration-200"
+                              >
+                                <Edit className="w-4 h-4" />
+                                Change Appointment
+                              </button>
+                              <button
+                                onClick={() => handleCancelAppointment(appointment.id)}
+                                className="h-10 px-4 rounded-lg bg-cream text-taupe font-medium text-sm flex items-center justify-center gap-2 hover:border-2 hover:border-burnt-orange transition-all duration-200"
+                              >
+                                <X className="w-4 h-4" />
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* View Larger Map Link */}
+                        <a
+                          href={`https://www.google.com/maps?q=${appointment.lat},${appointment.lng}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-sm text-mediterranean-blue hover:underline inline-block"
+                        >
+                          View larger map
+                        </a>
+
+                        {/* Cancel Confirmation */}
+                        {cancelConfirmationId === appointment.id && (
+                          <div className="mt-4 p-4 bg-cream rounded-lg border border-taupe/20">
+                            <p className="text-sm text-espresso mb-3">
+                              Are you sure you want to cancel this appointment?
+                            </p>
+                            <div className="flex gap-3">
+                              <button
+                                onClick={confirmCancelAppointment}
+                                className="px-4 py-2 bg-terracotta text-white rounded-lg text-sm font-medium hover:bg-[#C5694A] transition-colors"
+                              >
+                                Yes, Cancel
+                              </button>
+                              <button
+                                onClick={() => setCancelConfirmationId(null)}
+                                className="px-4 py-2 bg-white border-2 border-taupe text-taupe rounded-lg text-sm font-medium hover:bg-cream transition-colors"
+                              >
+                                Keep It
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Donation History Section */}
+            <div>
+              <h2 className="text-2xl font-bold text-espresso mb-2">
+                Donation History
+              </h2>
+              {formattedHistory.length === 0 ? (
+                <div className="bg-white rounded-[12px] p-8 text-center">
+                  <p className="text-base text-taupe">
+                    You haven't made any donations yet. Book your first appointment to get started!
+                  </p>
+                </div>
+              ) : (
+                <div className="bg-white rounded-[12px] shadow-sm p-6">
+                  <div className="space-y-4">
+                    {formattedHistory.map((record) => {
+                      const recordDate = new Date(record.isoDate);
+                      return (
+                        <div
+                          key={record.id}
+                          className="pb-4 border-b border-cream last:border-b-0 last:pb-0"
+                        >
+                          <p className="text-base font-bold text-espresso mb-1">
+                            {format(recordDate, 'EEEE d MMMM yyyy')}
+                          </p>
+                          <p className="text-sm text-taupe">{record.locationName}</p>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
-            </article>
-          );
-        })}
-      </div>
-    );
-  };
-
-  const renderDonationHistory = () => {
-    if (!profile) {
-      return null;
-    }
-
-    if (formattedHistory.length === 0) {
-      return (
-        <div className="history-empty">
-          <h3>{t('myAppointments.history.empty.title')}</h3>
-          <p>{t('myAppointments.history.empty.description')}</p>
-        </div>
-      );
-    }
-
-    return (
-      <ol className="donation-timeline">
-        {formattedHistory.map((record) => {
-          const recordDate = new Date(record.isoDate);
-          return (
-            <li key={record.id} className="donation-timeline-item">
-              <div className="timeline-marker" />
-              <div className="timeline-card">
-                <p className="timeline-date">{format(recordDate, 'EEEE d MMMM')}</p>
-                <p className="timeline-location">{record.locationName}</p>
-                <p className="timeline-message">{t('myAppointments.history.thankYou')}</p>
-              </div>
-            </li>
-          );
-        })}
-      </ol>
-    );
-  };
-
-  const renderAuthedContent = () => {
-    if (!profile) {
-      return null;
-    }
-
-    if (loadingAppointments) {
-      return (
-        <section className="wizard-step appointments-welcome">
-          <header className="wizard-step-header">
-            <h1>{t('myAppointments.loading.title')}</h1>
-            <p className="wizard-step-subtitle">{t('myAppointments.loading.subtitle')}</p>
-          </header>
-        </section>
-      );
-    }
-
-    const lastDonation = formattedHistory[0];
-    const eligibleDate = lastDonation
-      ? addWeeks(new Date(lastDonation.isoDate), 8)
-      : null;
-    const canDonateAgain =
-      eligibleDate && !isBefore(eligibleDate, new Date()) ? eligibleDate : null;
-
-    return (
-      <>
-        <section className="wizard-step appointments-welcome">
-          <header className="wizard-step-header">
-            <h1>{t('myAppointments.welcome.title', { name: profile.name })}</h1>
-            <p className="wizard-step-subtitle">
-              {t('myAppointments.welcome.subtitle')}
-            </p>
-          </header>
-          {actionMessage && (
-            <div className="inline-notice">
-              <p>{actionMessage}</p>
             </div>
-          )}
-        </section>
-
-        <section className="wizard-step appointments-upcoming">
-          <header className="wizard-step-header">
-            <h2>{t('myAppointments.upcoming.title')}</h2>
-            <p className="wizard-step-subtitle">
-              {t('myAppointments.upcoming.subtitle')}
-            </p>
-          </header>
-          {renderUpcomingCards()}
-        </section>
-
-        <section className="wizard-step appointments-history">
-          <header className="wizard-step-header">
-            <h2>{t('myAppointments.history.title')}</h2>
-            <p className="wizard-step-subtitle">
-              {t('myAppointments.history.subtitle', { count: impactLivesSaved })}
-            </p>
-          </header>
-          {renderDonationHistory()}
-          {nextEligibleDate && (
-            <div className="eligibility-reminder">
-              <strong>{t('myAppointments.history.eligibilityReminder')}</strong>{' '}
-              {t('myAppointments.history.canDonateAgain', { date: nextEligibleDate })}
-            </div>
-          )}
-        </section>
-
-        <section className="wizard-step appointments-cta">
-          <div className="cta-actions">
-            <button
-              type="button"
-              className="button primary"
-              onClick={() => navigate('/book')}
-            >
-              {t('myAppointments.cta.readyToDonate')}
-            </button>
-            <a className="text-link" href="/profile">
-              {t('myAppointments.cta.updateInformation')}
-            </a>
           </div>
-        </section>
-      </>
-    );
-  };
 
-  return (
-    <div className="booking-flow appointments-page">
-      <div className="wizard-main">
-        {requireAuth(() => renderAuthedContent())}
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Quick Stats Card */}
+            <div className="bg-white rounded-[12px] shadow-sm p-6">
+              <h3 className="text-lg font-bold text-espresso mb-4">Quick Stats</h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-taupe mb-1">Total Donations</p>
+                  <p className="text-2xl font-bold text-terracotta">
+                    {profile.history.length}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-taupe mb-1">This Year</p>
+                  <p className="text-2xl font-bold text-olive-green">
+                    {donationsThisYear}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-taupe mb-1">Lives Saved</p>
+                  <p className="text-2xl font-bold text-mediterranean-blue">
+                    Up to {impactLivesSaved}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Message */}
+            {actionMessage && (
+              <div className="bg-mint-green/20 border border-mint-green/40 rounded-lg p-4">
+                <p className="text-sm text-espresso">{actionMessage}</p>
+              </div>
+            )}
+
+            {/* CTA Card */}
+            <div className="bg-white rounded-[12px] shadow-sm p-6">
+              <h3 className="text-lg font-bold text-espresso mb-3">
+                Ready to Donate Again?
+              </h3>
+              <button
+                onClick={() => navigate('/book')}
+                className="w-full px-6 py-3 bg-terracotta text-white rounded-lg font-medium hover:bg-[#C5694A] transition-colors"
+              >
+                Book New Appointment
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
 export default MyAppointments;
-
-

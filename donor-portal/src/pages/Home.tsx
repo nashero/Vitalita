@@ -1,14 +1,20 @@
 import HeroSection from '../components/HeroSection';
-import HelpSection from '../components/HelpSection';
-import VoiceAgent from '../components/VoiceAgent';
+import WhyDonateSection from '../components/WhyDonateSection';
+import HowItWorksSection from '../components/HowItWorksSection';
+import TrustImpactSection from '../components/TrustImpactSection';
+import TestimonialsSection from '../components/TestimonialsSection';
+import CallToActionSection from '../components/CallToActionSection';
 
 const HomePage = () => {
   return (
-    <>
+    <div className="pt-16 md:pt-20">
       <HeroSection />
-      <HelpSection />
-      <VoiceAgent />
-    </>
+      <WhyDonateSection />
+      <HowItWorksSection />
+      <TrustImpactSection />
+      <TestimonialsSection />
+      <CallToActionSection />
+    </div>
   );
 };
 

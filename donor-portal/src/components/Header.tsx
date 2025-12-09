@@ -1,14 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Heart } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { logout, isAuthenticated as checkAuth } from '../utils/auth';
 
-const navItems = [
-  { labelKey: 'navigation.home', to: '/' },
-  { labelKey: 'navigation.bookAppointment', to: '/book' },
-  { labelKey: 'navigation.myAppointments', to: '/appointments' },
-  { labelKey: 'navigation.help', to: '/help' },
+interface NavItem {
+  labelKey: string;
+  to: string;
+  label: string;
+  isAnchor?: boolean;
+}
+
+const navItems: NavItem[] = [
+  { labelKey: 'navigation.bookAppointment', to: '/book', label: 'Book Appointment' },
+  { labelKey: 'navigation.myAppointments', to: '/appointments', label: 'My Appointments' },
+  { labelKey: 'navigation.help', to: '/help', label: 'Help' },
+  { labelKey: 'navigation.about', to: '/about', label: 'About' },
 ];
 
 function Header() {
@@ -92,7 +100,16 @@ function Header() {
   };
 
   // Handle navigation with authentication check
-  const handleNavClick = (to: string, e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleNavClick = (to: string, e: React.MouseEvent<HTMLAnchorElement>, isAnchor?: boolean) => {
+    if (isAnchor && to.indexOf('#') === 0) {
+      e.preventDefault();
+      const element = document.querySelector(to);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+      closeMenu();
+      return;
+    }
     // Check if the route requires authentication
     if ((to === '/book' || to === '/appointments') && !checkAuth()) {
       e.preventDefault();
@@ -105,88 +122,149 @@ function Header() {
 
   return (
     <header
-      className={`header ${isSticky ? 'sticky' : ''}`}
+      className={`fixed top-0 left-0 right-0 bg-white shadow-md z-50 transition-shadow duration-300 ${
+        isSticky ? 'shadow-lg' : 'shadow-sm'
+      }`}
       aria-label="Top navigation"
     >
-      <div className="header-container">
-        <a
-          className="logo-link"
-          href="https://www.vitalita.com"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="Vitalita home"
-        >
-          <span aria-hidden="true" className="logo-mark">
-            ❤️
-          </span>
-          <span className="logo-text">Vitalita</span>
-        </a>
-
-        <button
-          type="button"
-          className="mobile-menu-toggle"
-          aria-label={t('navigation.toggleMenu')}
-          aria-expanded={isMenuOpen}
-          aria-controls="primary-navigation"
-          onClick={toggleMenu}
-        >
-          <span className="hamburger-icon" aria-hidden="true">
-            <span className={isMenuOpen ? 'open' : ''}></span>
-            <span className={isMenuOpen ? 'open' : ''}></span>
-            <span className={isMenuOpen ? 'open' : ''}></span>
-          </span>
-          <span className="sr-only">
-            {isMenuOpen ? t('navigation.closeMenu') : t('navigation.openMenu')}
-          </span>
-        </button>
-
-        <nav
-          id="primary-navigation"
-          className={`nav ${isMenuOpen ? 'nav-open' : ''}`}
-          aria-label="Primary"
-        >
-          <ul className="nav-list">
-            {getNavItems().map((item) => (
-              <li key={item.labelKey}>
-                <Link
-                  className="nav-link"
-                  to={item.to}
-                  onClick={(e) => handleNavClick(item.to, e)}
-                  aria-current={location.pathname === item.to ? 'page' : undefined}
-                >
-                  {t(item.labelKey)}
-                </Link>
-              </li>
-            ))}
-          </ul>
+      <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 md:h-20">
+          {/* Logo and AVIS Badge */}
           <div className="flex items-center gap-3">
-            <LanguageSwitcher variant="compact" />
+            <Link
+              to="/"
+              className="flex items-center gap-2 text-espresso hover:text-mediterranean-blue transition-colors"
+              aria-label="Vitalita home"
+            >
+              <Heart className="w-6 h-6 md:w-7 md:h-7 text-terracotta" />
+              <span className="text-xl md:text-2xl font-bold">Vitalita</span>
+            </Link>
+            <div className="hidden sm:flex items-center px-2 py-1 bg-olive-green/10 border border-olive-green/30 rounded text-xs font-medium text-olive-green">
+              AVIS
+            </div>
+          </div>
+
+          {/* Desktop Navigation */}
+          <nav
+            id="primary-navigation"
+            className="hidden lg:flex items-center gap-6 flex-1 justify-center"
+            aria-label="Primary"
+          >
+            <ul className="flex items-center gap-6">
+              {getNavItems().map((item) => (
+                <li key={item.labelKey}>
+                  {item.isAnchor ? (
+                    <a
+                      href={item.to}
+                      className="text-espresso hover:text-mediterranean-blue font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-2 py-1"
+                      onClick={(e) => handleNavClick(item.to, e, true)}
+                    >
+                      {item.label || t(item.labelKey)}
+                    </a>
+                  ) : (
+                    <Link
+                      className="text-espresso hover:text-mediterranean-blue font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-mediterranean-blue focus:ring-opacity-50 rounded px-2 py-1"
+                      to={item.to}
+                      onClick={(e) => handleNavClick(item.to, e)}
+                      aria-current={location.pathname === item.to ? 'page' : undefined}
+                    >
+                      {item.label || t(item.labelKey)}
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* Right Side: Language Selector and Login */}
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="hidden sm:block">
+              <LanguageSwitcher variant="compact" />
+            </div>
             {isAuthenticated ? (
               <button
                 type="button"
-                className="login-button"
+                className="px-4 py-2 text-mediterranean-blue border-2 border-mediterranean-blue rounded-lg hover:bg-mediterranean-blue hover:text-white font-medium transition-all focus:outline-none focus:ring-4 focus:ring-mediterranean-blue focus:ring-opacity-50"
                 onClick={handleLogout}
                 aria-label={t('navigation.logOut')}
               >
-                <span aria-hidden="true" className="icon-circle" role="presentation">
-                  🚪
-                </span>
-                <span>{t('navigation.logOut')}</span>
+                {t('navigation.logOut')}
               </button>
             ) : (
               <Link
-                className="login-button"
+                className="px-4 py-2 text-mediterranean-blue border-2 border-mediterranean-blue rounded-lg hover:bg-mediterranean-blue hover:text-white font-medium transition-all focus:outline-none focus:ring-4 focus:ring-mediterranean-blue focus:ring-opacity-50"
                 to="/login"
-                onClick={closeMenu}
                 aria-label={t('navigation.logIn')}
               >
-                <span aria-hidden="true" className="icon-circle" role="presentation">
-                  👤
-                </span>
-                <span>{t('navigation.logIn')}</span>
+                {t('navigation.logIn')}
               </Link>
             )}
+
+            {/* Mobile Menu Toggle */}
+            <button
+              type="button"
+              className="lg:hidden p-2 text-espresso hover:text-mediterranean-blue transition-colors"
+              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-navigation"
+              onClick={toggleMenu}
+            >
+              <div className="w-6 h-6 flex flex-col justify-center gap-1.5">
+                <span
+                  className={`block h-0.5 w-6 bg-current transition-all ${
+                    isMenuOpen ? 'rotate-45 translate-y-2' : ''
+                  }`}
+                />
+                <span
+                  className={`block h-0.5 w-6 bg-current transition-all ${
+                    isMenuOpen ? 'opacity-0' : ''
+                  }`}
+                />
+                <span
+                  className={`block h-0.5 w-6 bg-current transition-all ${
+                    isMenuOpen ? '-rotate-45 -translate-y-2' : ''
+                  }`}
+                />
+              </div>
+            </button>
           </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        <nav
+          id="mobile-navigation"
+          className={`lg:hidden overflow-hidden transition-all duration-300 ${
+            isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          }`}
+          aria-label="Mobile navigation"
+        >
+          <ul className="flex flex-col gap-2 py-4 border-t border-taupe/20">
+            {getNavItems().map((item) => (
+              <li key={item.labelKey}>
+                {item.isAnchor ? (
+                  <a
+                    href={item.to}
+                    className="block px-4 py-3 text-espresso hover:text-mediterranean-blue hover:bg-cream/50 font-medium transition-colors rounded-lg"
+                    onClick={(e) => handleNavClick(item.to, e, true)}
+                  >
+                    {item.label || t(item.labelKey)}
+                  </a>
+                ) : (
+                  <Link
+                    className="block px-4 py-3 text-espresso hover:text-mediterranean-blue hover:bg-cream/50 font-medium transition-colors rounded-lg"
+                    to={item.to}
+                    onClick={(e) => handleNavClick(item.to, e)}
+                    aria-current={location.pathname === item.to ? 'page' : undefined}
+                  >
+                    {item.label || t(item.labelKey)}
+                  </Link>
+                )}
+              </li>
+            ))}
+            <li className="px-4 py-2">
+              <LanguageSwitcher variant="compact" />
+            </li>
+          </ul>
         </nav>
       </div>
     </header>
