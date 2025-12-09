@@ -848,6 +848,268 @@
       "primary": "Prenota la tua Prima Donazione",
       "secondary": "Scopri l'Idoneità"
     }
+  },
+  "eligibility": {
+    "hero": {
+      "title": "Sono Idoneo a Donare Sangue?",
+      "subtitle": "La maggior parte degli adulti sani può donare. Scopriamo se sei pronto.",
+      "quickCheck": {
+        "title": "Controllo Rapido Idoneità",
+        "ageQuestion": "Hai tra 18-65 anni?",
+        "weightQuestion": "Pesi almeno 50 kg (110 libbre)?",
+        "healthQuestion": "Ti senti in salute oggi?",
+        "recentDonationQuestion": "Hai donato sangue nelle ultime 8 settimane?",
+        "recentDonationNote": "Dovrai aspettare fino a quando non saranno passate 8 settimane dalla tua ultima donazione.",
+        "yes": "Sì",
+        "no": "No",
+        "likelyEligible": {
+          "title": "Probabilmente sei idoneo a donare! 🎉",
+          "description": "In base alle tue risposte, soddisfi i requisiti di base. Lo confermeremo durante il tuo appuntamento.",
+          "button": "Prenota la Tua Donazione"
+        },
+        "mayNeedToWait": {
+          "title": "Potresti dover aspettare prima di donare",
+          "description": "In base alle tue risposte, potresti dover aspettare prima di donare. Contattaci per una guida specifica.",
+          "button": "Contattaci"
+        }
+      }
+    },
+    "basicRequirements": {
+      "title": "Requisiti Base di Idoneità",
+      "subtitle": "Queste sono le linee guida generali in Italia",
+      "age": {
+        "title": "Età 18-65",
+        "description": "Donatori per la prima volta: 18-60 anni. I donatori regolari possono continuare fino a 65 anni con approvazione medica."
+      },
+      "weight": {
+        "title": "Minimo 50 kg",
+        "description": "Devi pesare almeno 50 kg (110 libbre) per donare in sicurezza un'unità standard di sangue."
+      },
+      "health": {
+        "title": "Buona Salute",
+        "description": "Generalmente sano, ti senti bene il giorno della donazione e vivi uno stile di vita attivo."
+      },
+      "id": {
+        "title": "ID Valido",
+        "description": "Documento d'identità rilasciato dal governo e tessera donatore (se sei un donatore che ritorna)."
+      },
+      "frequency": {
+        "title": "Attesa tra le Donazioni",
+        "description": "Sangue: minimo 8 settimane. Plasma: minimo 2 settimane."
+      },
+      "bloodPressure": {
+        "title": "Pressione Sanguigna Normale",
+        "description": "Generalmente entro il range normale. Controlleremo durante il tuo screening."
+      }
+    },
+    "temporaryDeferrals": {
+      "title": "Motivi Temporanei per cui Potresti Dover Aspettare",
+      "subtitle": "Queste situazioni richiedono un breve periodo di attesa",
+      "illness": {
+        "heading": "Raffreddore, Influenza o Infezione",
+        "description": "Aspetta fino a quando non sei senza sintomi e hai completato eventuali antibiotici",
+        "waitingPeriod": "Periodo di attesa:",
+        "period": "1-2 settimane dopo la guarigione",
+        "note": "Vogliamo assicurarci che il tuo sistema immunitario sia forte e ti senta al meglio"
+      },
+      "medications": {
+        "heading": "Assunzione di Certi Farmaci",
+        "description": "La maggior parte dei farmaci va bene, ma alcuni richiedono periodi di attesa",
+        "antibiotics": "Antibiotici: Aspetta 7-14 giorni dopo aver finito il ciclo",
+        "bloodThinners": "Anticoagulanti: Potrebbero richiedere considerazione speciale",
+        "other": "Altri farmaci: Valutati caso per caso",
+        "note": "Sempre informaci di cosa stai assumendo durante lo screening"
+      },
+      "dental": {
+        "heading": "Procedure Dentistiche Recenti",
+        "simpleCleaning": "Pulizia semplice: 24 ore",
+        "fillings": "Otturazioni: 24 ore",
+        "extractions": "Estrazioni, devitalizzazioni: 7 giorni"
+      },
+      "tattoos": {
+        "heading": "Nuovi Tatuaggi o Piercing",
+        "licensedItaly": "Studio autorizzato in Italia: Di solito va bene immediatamente",
+        "unlicensed": "Non autorizzato o all'estero: 4 mesi",
+        "note": "Questo protegge dalle infezioni trasmesse per via ematica"
+      },
+      "travel": {
+        "heading": "Viaggi Internazionali Recenti",
+        "description": "Alcune destinazioni richiedono periodi di attesa",
+        "malaria": "Aree a rischio malaria: 3-12 mesi",
+        "other": "Altre regioni ad alto rischio: Varia in base alla località",
+        "note": "Ti chiederemo della tua storia di viaggi durante lo screening"
+      },
+      "vaccinations": {
+        "heading": "Vaccinazioni Recenti",
+        "covid": "Vaccino COVID-19: Nessun periodo di attesa",
+        "flu": "Vaccino antinfluenzale: 24 ore",
+        "live": "Vaccini vivi: 4 settimane"
+      },
+      "pregnancy": {
+        "heading": "Gravidanza o Allattamento",
+        "during": "Durante la gravidanza: Non puoi donare",
+        "after": "Dopo il parto: Aspetta 6 mesi",
+        "nursing": "Durante l'allattamento: Aspetta fino a quando il bambino è svezzato o 3 mesi dopo il parto"
+      }
+    },
+    "permanentDeferrals": {
+      "title": "Restrizioni Permanenti alla Donazione",
+      "subtitle": "Per la tua sicurezza e quella del ricevente",
+      "info": {
+        "text": "Alcune condizioni di salute impediscono permanentemente la donazione di sangue. Non si tratta di giudizio—si tratta di proteggere sia i donatori che i riceventi. Se hai domande sulla tua situazione specifica, contattaci in modo confidenziale."
+      },
+      "chronicIllnesses": {
+        "title": "Certi Disturbi Cronici",
+        "items": {
+          "hiv": "HIV/AIDS",
+          "hepatitis": "Epatite B o C (infezione attuale)",
+          "heart": "Certi disturbi cardiaci"
+        },
+        "note": "Molte condizioni croniche vanno bene—valutiamo individualmente"
+      },
+      "cancer": {
+        "title": "Storia di Cancro",
+        "active": "Cancro attivo o trattamento recente",
+        "waiting": "Alcuni tumori hanno periodi di attesa dopo il trattamento di successo",
+        "note": "Se sei un sopravvissuto al cancro, contattaci—potresti essere idoneo"
+      },
+      "riskFactors": {
+        "title": "Fattori di Rischio Specifici",
+        "description": "Presentati con sensibilità e razionale medico. Queste politiche sono regolarmente riviste man mano che le conoscenze mediche avanzano."
+      },
+      "alternativeWays": {
+        "title": "Non Puoi Donare? Puoi Ancora Fare la Differenza",
+        "volunteer": "Fai volontariato con AVIS",
+        "organize": "Organizza una raccolta di sangue",
+        "spread": "Diffondi la consapevolezza sui social media",
+        "donate": "Dona finanziariamente per supportare le operazioni",
+        "button": "Esplora Altri Modi per Aiutare"
+      }
+    },
+    "preparation": {
+      "title": "Come Prepararsi per la Tua Donazione",
+      "subtitle": "Rendi la tua donazione fluida e confortevole",
+      "24Hours": {
+        "title": "24 Ore Prima",
+        "hydrate": "Resta ben idratato (8-10 bicchieri d'acqua)",
+        "iron": "Mangia cibi ricchi di ferro (spinaci, carne rossa, lenticchie)",
+        "sleep": "Dormi bene (7-8 ore)",
+        "alcohol": "Evita l'alcol"
+      },
+      "dayOf": {
+        "title": "Giorno della Donazione",
+        "morning": "Mattina:",
+        "breakfast": "Fai una colazione sana",
+        "water": "Bevi acqua extra",
+        "fatty": "Evita cibi grassi",
+        "clothing": "Indossa abiti comodi",
+        "atCenter": "Al centro:",
+        "bringId": "Porta il tuo ID e tessera donatore",
+        "honest": "Sii onesto durante lo screening sanitario",
+        "nervous": "Dì al personale se ti senti nervoso",
+        "relax": "Rilassati—il personale ti guiderà"
+      },
+      "after": {
+        "title": "Dopo la Donazione",
+        "immediate": "Immediato (0-30 minuti):",
+        "rest": "Riposa per 10-15 minuti",
+        "snacks": "Goditi gli spuntini e le bevande forniti",
+        "stand": "Non affrettarti ad alzarti",
+        "next24": "Prossime 24 ore:",
+        "fluids": "Bevi liquidi extra",
+        "lifting": "Evita il sollevamento pesi",
+        "exercise": "Evita esercizi intensi",
+        "bandage": "Mantieni la benda per alcune ore"
+      }
+    },
+    "screening": {
+      "title": "Cosa Succede Durante lo Screening Sanitario?",
+      "subtitle": "Comprendere il processo riduce l'ansia",
+      "step1": {
+        "title": "Passo 1: Registrazione",
+        "time": "5 minuti",
+        "description": "Verifica la tua identità e rivedi il tuo questionario sanitario"
+      },
+      "step2": {
+        "title": "Passo 2: Storia Sanitaria",
+        "time": "10 minuti",
+        "description": "Discussione confidenziale sulla tua salute, viaggi e farmaci"
+      },
+      "step3": {
+        "title": "Passo 3: Mini Esame Fisico",
+        "time": "5 minuti",
+        "description": "Controllo temperatura, pressione sanguigna, polso ed emoglobina"
+      },
+      "step4": {
+        "title": "Passo 4: Revisione Finale",
+        "time": "2 minuti",
+        "description": "Il personale conferma che sei pronto a donare in sicurezza"
+      },
+      "reassurance": {
+        "text": "Le tue informazioni sanitarie sono completamente confidenziali e protette dal GDPR. Non le condivideremo mai senza il tuo permesso.",
+        "gdpr": "Protetto GDPR"
+      }
+    },
+    "faq": {
+      "title": "Domande Comuni sull'Idoneità",
+      "birthControl": {
+        "question": "Prendo la pillola anticoncezionale. Posso donare?",
+        "answer": "Sì! Le pillole anticoncezionali, i cerotti e le spirali non influenzano l'idoneità."
+      },
+      "tattoo": {
+        "question": "Ho un tatuaggio del mese scorso. Posso donare?",
+        "answer": "Se fatto in uno studio autorizzato in Italia con attrezzature sterili, sì. Altrimenti, aspetta 4 mesi."
+      },
+      "vegetarian": {
+        "question": "Sono vegetariano/vegano. Posso donare?",
+        "answer": "Assolutamente! Assicurati solo di mangiare cibi vegetali ricchi di ferro e potresti dover monitorare i livelli di ferro."
+      },
+      "needles": {
+        "question": "Sono nervoso per gli aghi. Posso ancora donare?",
+        "answer": "Sì! Dillo al nostro personale—abbiamo esperienza nell'aiutare i donatori nervosi a sentirsi a proprio agio."
+      },
+      "gender": {
+        "question": "Sia uomini che donne possono donare?",
+        "answer": "Sì, entrambi possono donare allo stesso modo, con gli stessi requisiti."
+      },
+      "firstTime": {
+        "question": "Non ho mai donato prima. È sicuro?",
+        "answer": "Completamente sicuro. Usiamo attrezzature sterili monouso e milioni di persone donano in sicurezza ogni anno."
+      },
+      "weak": {
+        "question": "Donare mi renderà debole?",
+        "answer": "Il tuo corpo sostituisce il fluido entro 24 ore e le cellule entro poche settimane. La maggior parte dei donatori si sente normale immediatamente dopo."
+      },
+      "vitamins": {
+        "question": "Posso donare se sto assumendo vitamine?",
+        "answer": "Sì, vitamine e integratori vanno bene."
+      }
+    },
+    "contact": {
+      "title": "Hai Bisogno di Guida Personale?",
+      "subtitle": "Ogni situazione è unica. Se non sei sicuro della tua idoneità, il nostro team è qui per aiutare con una guida confidenziale e personalizzata.",
+      "call": {
+        "title": "Chiamaci",
+        "phone": "+39 1800 123 456",
+        "hours": "Lun-Ven, 8:00 - 20:00"
+      },
+      "email": {
+        "title": "Scrivici",
+        "address": "eligibility@vitalita.com",
+        "response": "Risposta entro 24 ore"
+      },
+      "chat": {
+        "title": "Chat Live",
+        "button": "Chatta con noi",
+        "hours": "Disponibile durante gli orari di lavoro"
+      }
+    },
+    "cta": {
+      "title": "Pronto a Verificare la Tua Idoneità?",
+      "subtitle": "Il modo migliore per saperlo con certezza è iniziare il processo. Ti guideremo in ogni fase.",
+      "schedule": "Prenota la Tua Donazione",
+      "contact": "Contattaci con Domande"
+    }
   }
 }
 
