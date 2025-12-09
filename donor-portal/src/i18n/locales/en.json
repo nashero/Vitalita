@@ -848,6 +848,268 @@
       "primary": "Schedule Your First Donation",
       "secondary": "Learn About Eligibility"
     }
+  },
+  "eligibility": {
+    "hero": {
+      "title": "Am I Eligible to Donate Blood?",
+      "subtitle": "Most healthy adults can donate. Let's find out if you're ready.",
+      "quickCheck": {
+        "title": "Quick Eligibility Check",
+        "ageQuestion": "Are you between 18-65 years old?",
+        "weightQuestion": "Do you weigh at least 50 kg (110 lbs)?",
+        "healthQuestion": "Do you feel healthy today?",
+        "recentDonationQuestion": "Have you donated blood in the last 8 weeks?",
+        "recentDonationNote": "You'll need to wait until 8 weeks have passed since your last donation.",
+        "yes": "Yes",
+        "no": "No",
+        "likelyEligible": {
+          "title": "You're likely eligible to donate! 🎉",
+          "description": "Based on your answers, you meet the basic requirements. We'll confirm during your appointment.",
+          "button": "Schedule Your Donation"
+        },
+        "mayNeedToWait": {
+          "title": "You may need to wait before donating",
+          "description": "Based on your answers, you might need to wait before donating. Contact us for specific guidance.",
+          "button": "Contact Us"
+        }
+      }
+    },
+    "basicRequirements": {
+      "title": "Basic Eligibility Requirements",
+      "subtitle": "These are the general guidelines in Italy",
+      "age": {
+        "title": "Age 18-65",
+        "description": "First-time donors: 18-60 years. Regular donors can continue until 65 with medical approval."
+      },
+      "weight": {
+        "title": "Minimum 50 kg",
+        "description": "You must weigh at least 50 kg (110 lbs) to safely donate a standard unit of blood."
+      },
+      "health": {
+        "title": "Good Health",
+        "description": "Generally healthy, feeling well on donation day, and living an active lifestyle."
+      },
+      "id": {
+        "title": "Valid ID",
+        "description": "Government-issued ID and donor card (if you're a returning donor)."
+      },
+      "frequency": {
+        "title": "Wait Between Donations",
+        "description": "Blood: 8 weeks minimum. Plasma: 2 weeks minimum."
+      },
+      "bloodPressure": {
+        "title": "Normal Blood Pressure",
+        "description": "Generally within normal range. We'll check during your screening."
+      }
+    },
+    "temporaryDeferrals": {
+      "title": "Temporary Reasons You May Need to Wait",
+      "subtitle": "These situations require a short waiting period",
+      "illness": {
+        "heading": "Cold, Flu, or Infection",
+        "description": "Wait until you're symptom-free and have completed any antibiotics",
+        "waitingPeriod": "Waiting period:",
+        "period": "1-2 weeks after recovery",
+        "note": "We want to ensure your immune system is strong and you feel your best"
+      },
+      "medications": {
+        "heading": "Taking Certain Medications",
+        "description": "Most medications are fine, but some require waiting periods",
+        "antibiotics": "Antibiotics: Wait 7-14 days after finishing course",
+        "bloodThinners": "Blood thinners: May require special consideration",
+        "other": "Other medications: Evaluated case by case",
+        "note": "Always tell us what you're taking during screening"
+      },
+      "dental": {
+        "heading": "Recent Dental Procedures",
+        "simpleCleaning": "Simple cleaning: 24 hours",
+        "fillings": "Fillings: 24 hours",
+        "extractions": "Extractions, root canals: 7 days"
+      },
+      "tattoos": {
+        "heading": "New Tattoos or Piercings",
+        "licensedItaly": "Licensed studio in Italy: Usually okay immediately",
+        "unlicensed": "Unlicensed or abroad: 4 months",
+        "note": "This protects against bloodborne infections"
+      },
+      "travel": {
+        "heading": "Recent International Travel",
+        "description": "Some destinations require waiting periods",
+        "malaria": "Malaria-risk areas: 3-12 months",
+        "other": "Other high-risk regions: Varies by location",
+        "note": "We'll ask about your travel history during screening"
+      },
+      "vaccinations": {
+        "heading": "Recent Vaccinations",
+        "covid": "COVID-19 vaccine: No waiting period",
+        "flu": "Flu shot: 24 hours",
+        "live": "Live vaccines: 4 weeks"
+      },
+      "pregnancy": {
+        "heading": "Pregnancy or Breastfeeding",
+        "during": "During pregnancy: Cannot donate",
+        "after": "After delivery: Wait 6 months",
+        "nursing": "While nursing: Wait until baby is weaned or 3 months postpartum"
+      }
+    },
+    "permanentDeferrals": {
+      "title": "Permanent Donation Restrictions",
+      "subtitle": "For your safety and recipient safety",
+      "info": {
+        "text": "Some health conditions permanently prevent blood donation. This isn't about judgment—it's about protecting both donors and recipients. If you have questions about your specific situation, please contact us confidentially."
+      },
+      "chronicIllnesses": {
+        "title": "Certain Chronic Illnesses",
+        "items": {
+          "hiv": "HIV/AIDS",
+          "hepatitis": "Hepatitis B or C (current infection)",
+          "heart": "Certain heart conditions"
+        },
+        "note": "Many chronic conditions are fine—we evaluate individually"
+      },
+      "cancer": {
+        "title": "Cancer History",
+        "active": "Active cancer or recent treatment",
+        "waiting": "Some cancers have waiting periods after successful treatment",
+        "note": "If you're a cancer survivor, contact us—you may be eligible"
+      },
+      "riskFactors": {
+        "title": "Specific Risk Factors",
+        "description": "Presented sensitively with medical rationale. These policies are regularly reviewed as medical knowledge advances."
+      },
+      "alternativeWays": {
+        "title": "Can't Donate? You Can Still Make a Difference",
+        "volunteer": "Volunteer with AVIS",
+        "organize": "Organize a blood drive",
+        "spread": "Spread awareness on social media",
+        "donate": "Donate financially to support operations",
+        "button": "Explore Other Ways to Help"
+      }
+    },
+    "preparation": {
+      "title": "How to Prepare for Your Donation",
+      "subtitle": "Make your donation smooth and comfortable",
+      "24Hours": {
+        "title": "24 Hours Before",
+        "hydrate": "Stay well hydrated (8-10 glasses of water)",
+        "iron": "Eat iron-rich foods (spinach, red meat, lentils)",
+        "sleep": "Get good sleep (7-8 hours)",
+        "alcohol": "Avoid alcohol"
+      },
+      "dayOf": {
+        "title": "Day of Donation",
+        "morning": "Morning:",
+        "breakfast": "Eat a healthy breakfast",
+        "water": "Drink extra water",
+        "fatty": "Avoid fatty foods",
+        "clothing": "Wear comfortable clothing",
+        "atCenter": "At the center:",
+        "bringId": "Bring your ID and donor card",
+        "honest": "Be honest during health screening",
+        "nervous": "Tell staff if you feel nervous",
+        "relax": "Relax—the staff will guide you"
+      },
+      "after": {
+        "title": "After Donation",
+        "immediate": "Immediate (0-30 minutes):",
+        "rest": "Rest for 10-15 minutes",
+        "snacks": "Enjoy provided snacks and drinks",
+        "stand": "Don't rush to stand up",
+        "next24": "Next 24 hours:",
+        "fluids": "Drink extra fluids",
+        "lifting": "Avoid heavy lifting",
+        "exercise": "Avoid strenuous exercise",
+        "bandage": "Keep bandage on for a few hours"
+      }
+    },
+    "screening": {
+      "title": "What Happens During Health Screening?",
+      "subtitle": "Understanding the process reduces anxiety",
+      "step1": {
+        "title": "Step 1: Registration",
+        "time": "5 minutes",
+        "description": "Verify your identity and review your health questionnaire"
+      },
+      "step2": {
+        "title": "Step 2: Health History",
+        "time": "10 minutes",
+        "description": "Confidential discussion about your health, travel, and medications"
+      },
+      "step3": {
+        "title": "Step 3: Mini Physical",
+        "time": "5 minutes",
+        "description": "Temperature, blood pressure, pulse, and hemoglobin check"
+      },
+      "step4": {
+        "title": "Step 4: Final Review",
+        "time": "2 minutes",
+        "description": "Staff confirms you're ready to donate safely"
+      },
+      "reassurance": {
+        "text": "Your health information is completely confidential and protected by GDPR. We'll never share it without your permission.",
+        "gdpr": "GDPR Protected"
+      }
+    },
+    "faq": {
+      "title": "Common Eligibility Questions",
+      "birthControl": {
+        "question": "I'm on birth control. Can I donate?",
+        "answer": "Yes! Birth control pills, patches, and IUDs don't affect eligibility."
+      },
+      "tattoo": {
+        "question": "I have a tattoo from last month. Can I donate?",
+        "answer": "If done at a licensed studio in Italy with sterile equipment, yes. Otherwise, wait 4 months."
+      },
+      "vegetarian": {
+        "question": "I'm a vegetarian/vegan. Can I donate?",
+        "answer": "Absolutely! Just ensure you're eating iron-rich plant foods and may need to monitor iron levels."
+      },
+      "needles": {
+        "question": "I'm nervous about needles. Can I still donate?",
+        "answer": "Yes! Tell our staff—we're experienced in helping nervous donors feel comfortable."
+      },
+      "gender": {
+        "question": "Can men and women both donate?",
+        "answer": "Yes, both can donate equally, with the same requirements."
+      },
+      "firstTime": {
+        "question": "I've never donated before. Is it safe?",
+        "answer": "Completely safe. We use sterile, single-use equipment, and millions donate safely every year."
+      },
+      "weak": {
+        "question": "Will donating make me weak?",
+        "answer": "Your body replaces the fluid within 24 hours and cells within a few weeks. Most donors feel normal immediately after."
+      },
+      "vitamins": {
+        "question": "Can I donate if I'm taking vitamins?",
+        "answer": "Yes, vitamins and supplements are fine."
+      }
+    },
+    "contact": {
+      "title": "Need Personal Guidance?",
+      "subtitle": "Every situation is unique. If you're unsure about your eligibility, our team is here to help with confidential, personalized guidance.",
+      "call": {
+        "title": "Call Us",
+        "phone": "+39 1800 123 456",
+        "hours": "Mon-Fri, 8 AM - 8 PM"
+      },
+      "email": {
+        "title": "Email Us",
+        "address": "eligibility@vitalita.com",
+        "response": "Response within 24 hours"
+      },
+      "chat": {
+        "title": "Live Chat",
+        "button": "Chat with us",
+        "hours": "Available during business hours"
+      }
+    },
+    "cta": {
+      "title": "Ready to Check Your Eligibility?",
+      "subtitle": "The best way to know for sure is to start the process. We'll guide you every step of the way.",
+      "schedule": "Schedule Your Donation",
+      "contact": "Contact Us with Questions"
+    }
   }
 }
 
