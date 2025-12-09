@@ -19,17 +19,17 @@ const ProblemStatement = () => {
     },
   ];
   return (
-    <section className="section-container py-20">
-      <div className="mx-auto max-w-2xl text-center">
+    <section className="section-container py-12 md:py-20 px-5 md:px-0">
+      <div className="mx-auto max-w-2xl text-center px-5 md:px-0">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">{t('home.problemStatement.badge')}</p>
-        <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+        <h2 className="mt-3 text-2xl md:text-[32px] font-semibold tracking-tight text-slate-900">
         {t('home.problemStatement.title')}
         </h2>
         <p className="mt-4 text-base leading-relaxed text-slate-600">
           {t('home.problemStatement.description')}
         </p>
       </div>
-      <div className="mt-12 grid gap-6 md:grid-cols-3">
+      <div className="mt-8 md:mt-12 grid gap-6 md:grid-cols-3 px-5 md:px-0">
         {painPoints.map((pain) => {
           const painData = t(`home.problemStatement.painPoints.${pain.key}`, { returnObjects: true }) as { title: string; description: string };
           return (
@@ -40,8 +40,8 @@ const ProblemStatement = () => {
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-600">
               {pain.icon}
             </div>
-            <h3 className="mt-5 text-lg font-semibold text-slate-900">{painData.title}</h3>
-            <p className="mt-3 text-sm leading-relaxed text-slate-600">{painData.description}</p>
+            <h3 className="mt-5 text-xl md:text-2xl font-semibold text-slate-900">{painData.title}</h3>
+            <p className="mt-3 text-base md:text-sm leading-relaxed text-slate-600">{painData.description}</p>
           </div>
           );
         })}

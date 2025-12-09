@@ -1,3 +1,4 @@
+import ByTheNumbers from '../components/ByTheNumbers';
 import CTA from '../components/CTA';
 import Features from '../components/Features';
 import Hero from '../components/Hero';
@@ -10,6 +11,7 @@ const Home = () => {
     <div className="bg-slate-50">
       <Hero />
       <ProblemStatement />
+      <ByTheNumbers />
       <SolutionOverview />
       <Features />
       <SocialProof />
