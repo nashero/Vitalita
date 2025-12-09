@@ -54,7 +54,7 @@ const Header = () => {
           <LanguageSwitcher variant="compact" />
           <Link
             to="/contact"
-            className="rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-red-600/40 transition hover:bg-red-700 hover:shadow-red-600/50"
+            className="rounded-full bg-[#FF6B6B] px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-[#FF6B6B]/40 transition hover:bg-[#E65A5A] hover:shadow-[#FF6B6B]/50"
           >
             {t('navigation.talkToUs')}
           </Link>
@@ -63,7 +63,7 @@ const Header = () => {
         <button
           type="button"
           onClick={() => setOpen((prev) => !prev)}
-          className="inline-flex items-center justify-center rounded-full border border-slate-200 p-2 text-slate-700 transition hover:border-red-200 hover:text-red-600 lg:hidden"
+          className="inline-flex items-center justify-center rounded-full border border-slate-200 p-2 text-slate-700 transition hover:border-red-200 hover:text-red-600 lg:hidden min-w-[44px] min-h-[44px]"
           aria-label={t('navigation.toggleNavigation')}
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -71,15 +71,15 @@ const Header = () => {
       </div>
 
       {open && (
-        <div className="border-t border-slate-100 bg-white lg:hidden">
-          <nav className="section-container flex flex-col space-y-2 py-4 text-sm font-medium">
+        <div className="fixed inset-0 z-50 bg-white lg:hidden mt-16">
+          <nav className="flex flex-col space-y-2 py-6 px-5 text-lg font-medium h-full overflow-y-auto">
             {navItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
                   [
-                    'rounded-lg px-4 py-2 transition-colors',
+                    'rounded-lg px-4 py-3 transition-colors min-h-[44px] flex items-center',
                     isActive ? 'bg-red-50 text-red-600' : 'text-slate-600 hover:bg-slate-50',
                   ].join(' ')
                 }
@@ -92,7 +92,7 @@ const Header = () => {
             </div>
             <Link
               to="/contact"
-              className="rounded-lg bg-red-600 px-4 py-2 text-center text-white shadow-md shadow-red-600/30 transition hover:bg-red-700"
+              className="rounded-lg bg-[#FF6B6B] px-4 py-3 text-center text-white shadow-md shadow-[#FF6B6B]/30 transition hover:bg-[#E65A5A] min-h-[44px] flex items-center justify-center"
             >
               {t('navigation.talkToUs')}
             </Link>

@@ -19,15 +19,15 @@ const SolutionOverview = () => {
     },
   ];
   return (
-    <section className="section-container py-20">
-      <div className="overflow-hidden rounded-[40px] bg-gradient-to-r from-slate-900 via-slate-800 to-red-700 text-white shadow-2xl">
-        <div className="grid gap-12 p-12 lg:grid-cols-2">
+    <section className="section-container py-10 md:py-20 px-5 md:px-0">
+      <div className="overflow-hidden rounded-[40px] shadow-2xl" style={{ backgroundColor: '#1A2332' }}>
+        <div className="grid gap-8 md:gap-12 p-6 md:p-12 lg:grid-cols-2">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-200">{t('home.solutionOverview.badge')}</p>
-            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#F9FAFB]/70">{t('home.solutionOverview.badge')}</p>
+            <h2 className="mt-4 text-2xl md:text-[32px] font-semibold tracking-tight text-[#F9FAFB]">
             {t('home.solutionOverview.title')}
             </h2>
-            <p className="mt-5 text-base leading-relaxed text-white/80">
+            <p className="mt-5 text-base leading-relaxed text-[#F9FAFB]/80">
             {t('home.solutionOverview.description')}
             </p>
           </div>
@@ -37,13 +37,14 @@ const SolutionOverview = () => {
               return (
               <div
                 key={benefit.key}
-                className="scale-in rounded-3xl border border-white/10 bg-white/5 p-6 transition duration-300 hover:border-white/30 hover:bg-white/10"
+                className="scale-in rounded-3xl border border-[#FF6B6B] p-6 transition duration-300 hover:border-[#FF6B6B] hover:bg-white/10"
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-white">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl text-[#FF6B6B]" style={{ backgroundColor: 'rgba(255, 107, 107, 0.1)' }}>
                   {benefit.icon}
                 </div>
-                <h3 className="mt-4 text-lg font-semibold text-white">{benefitData.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-white/80">{benefitData.description}</p>
+                <h3 className="mt-4 text-xl md:text-2xl font-semibold text-[#F9FAFB]">{benefitData.title}</h3>
+                <p className="mt-3 text-base md:text-sm leading-relaxed text-[#F9FAFB]/80">{benefitData.description}</p>
               </div>
               );
             })}

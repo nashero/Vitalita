@@ -3,27 +3,76 @@ import { useTranslation } from 'react-i18next';
 const SocialProof = () => {
   const { t } = useTranslation();
   
-  const organizations = [
-    { key: 'avisNazionale' },
+  const orgData = t('home.socialProof.organizations.avisNazionale', { returnObjects: true }) as { name: string; description: string };
+  const testimonial = t('home.socialProof.testimonial', { returnObjects: true }) as { quote: string; author: string; role: string };
+  const stats = [
+    {
+      key: 'donorsConnected',
+    },
+    {
+      key: 'avgResponseTime',
+    },
+    {
+      key: 'donorRetention',
+    },
   ];
+
   return (
-    <section className="section-container py-16">
-      <div className="rounded-[36px] border border-slate-100 bg-white/90 p-10 shadow-xl shadow-slate-200/40 backdrop-blur">
-        <p className="text-center text-xs font-semibold uppercase tracking-[0.3em] text-red-500">
-          {t('home.socialProof.badge')}
-        </p>
-        <div className="mt-8 flex justify-center">
-          {organizations.map((org) => {
-            const orgData = t(`home.socialProof.organizations.${org.key}`, { returnObjects: true }) as { name: string; description: string; highlight: string };
-            return (
-            <div
-              key={org.key}
-              className="fade-in flex flex-col items-center rounded-2xl border border-transparent bg-slate-50/60 p-6 text-center transition hover:-translate-y-1 hover:border-red-100 hover:bg-red-50/70 max-w-md"
-            >
-              <span className="text-lg font-semibold text-slate-900">{orgData.name}</span>
-              <span className="mt-2 text-xs uppercase tracking-[0.2em] text-red-500">{orgData.highlight}</span>
-              <p className="mt-4 text-sm text-slate-600">{orgData.description}</p>
+    <section className="section-container py-12 md:py-20 bg-white px-5 md:px-0">
+      <div className="mx-auto max-w-6xl px-5 md:px-6">
+        {/* Heading */}
+        <h2 className="text-center text-2xl md:text-[32px] font-semibold text-slate-900 mb-8 md:mb-12">
+          {t('home.socialProof.title')}
+        </h2>
+
+        {/* Featured Partner Card */}
+        <div className="rounded-3xl border border-slate-200 bg-[#F9FAFB] p-6 md:p-8 lg:p-12 shadow-lg mb-8 md:mb-12">
+          <div className="flex flex-col items-center text-center">
+            {/* AVIS Logo Placeholder - You can replace this with actual logo */}
+            <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-2xl bg-white shadow-md">
+              <span className="text-4xl font-bold text-red-600">AVIS</span>
             </div>
+            
+            {/* Badge */}
+            <div className="mb-4 inline-flex items-center rounded-full px-4 py-2" style={{ backgroundColor: 'rgba(255, 107, 107, 0.2)' }}>
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#FF6B6B]">
+                {t('home.socialProof.badge')}
+              </span>
+            </div>
+            
+            {/* Description */}
+            <p className="text-base md:text-lg text-slate-700 max-w-2xl">
+              {orgData.description}
+            </p>
+          </div>
+        </div>
+
+        {/* Testimonial */}
+        <div className="mb-8 md:mb-12 text-center px-5 md:px-0">
+          <blockquote className="text-base md:text-lg italic leading-relaxed" style={{ color: '#6B7280' }}>
+            "{testimonial.quote}"
+          </blockquote>
+          <cite className="mt-4 block text-base font-medium text-slate-700 not-italic">
+            — {testimonial.author}, {testimonial.role}
+          </cite>
+        </div>
+
+        {/* Impact Stats */}
+        <div className="grid gap-6 md:gap-8 md:grid-cols-3">
+          {stats.map((stat) => {
+            const statData = t(`home.socialProof.impactStats.${stat.key}`, { returnObjects: true }) as { number: string; label: string };
+            return (
+              <div
+                key={stat.key}
+                className="text-center"
+              >
+                <div className="text-3xl md:text-4xl font-bold mb-2" style={{ color: '#1A2332' }}>
+                  {statData.number}
+                </div>
+                <div className="text-base font-medium" style={{ color: '#6B7280' }}>
+                  {statData.label}
+                </div>
+              </div>
             );
           })}
         </div>
@@ -33,4 +82,3 @@ const SocialProof = () => {
 };
 
 export default SocialProof;
-

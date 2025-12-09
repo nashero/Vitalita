@@ -1080,10 +1080,18 @@
   },
   "home": {
     "hero": {
+      "trustedByAvis": "TRUSTED BY AVIS NAZIONALE",
+      "heading": "The Operating System for Modern Blood Supply",
+      "subtitle": "AI-powered coordination that keeps Italy's donation network running 24/7—so every call for blood gets an answer.",
+      "avisLogo": {
+        "name": "AVIS Nazionale",
+        "description": "National coordination & regional integrations",
+        "highlight": "Partner Highlight"
+      },
+      "trustBadge": "Coordinating 487K+ Donors Across Italy",
       "costOfInefficiency": "The Cost of Inefficiency",
       "everyLifeMatters": "Every Life Matters.",
       "everySecondCounts": "Every Second Counts.",
-      "subtitle": "Without Vitalita, you lose time—and time is life.",
       "infographicAlt": "Vitalita Revolutionizing Blood Donation - Circular Infographic",
       "missionStory": {
         "title": "Our Mission, Our Story",
@@ -1101,30 +1109,31 @@
         "title": "What Your Organization Loses Without Vitalita",
         "losses": {
           "operationalWaste": {
-            "title": "Operational Waste",
-            "description": "Manual processes consume staff time and resources",
-            "stat": "40+ hours/week on coordination"
+            "title": "Operational Chaos",
+            "description": "Every minute on spreadsheets is a minute not saving lives. Manual coordination wastes 40+ hours per week—time your staff should spend with donors.",
+            "stat": "40+ HOURS/WEEK ON COORDINATION"
           },
           "capacityLoss": {
-            "title": "Capacity Loss",
-            "description": "Double bookings and gaps reduce collection efficiency",
-            "stat": "31% of slots underutilized"
+            "title": "Donor Dropout",
+            "description": "Poor follow-up loses 22% of donors after first visit. Disconnected systems mean donors slip through cracks, never to return.",
+            "stat": "22% OF DONORS NEVER RETURN"
           },
           "livesAtRisk": {
-            "title": "Lives at Risk",
-            "description": "Delayed responses cost precious minutes when every second counts",
-            "stat": "Avg. 2.3 hours to locate critical blood"
+            "title": "Inventory Blindness",
+            "description": "Can't plan for emergencies you don't see coming. Without live data, shortages appear after it's too late to mobilize donors.",
+            "stat": "AVG. 2.3 HOURS TO LOCATE CRITICAL BLOOD"
           },
           "donorAttrition": {
-            "title": "Donor Attrition",
-            "description": "Poor coordination leads to no-shows and lost trust",
-            "stat": "22% of donors never return"
+            "title": "Compliance Nightmares",
+            "description": "GDPR violations cost €10M–€20M per incident. Manual donor records create regulatory risk and erode trust.",
+            "stat": "€10M–€20M POTENTIAL FINES PER VIOLATION"
           }
         }
       },
       "cta": {
         "title": "Don't let another life be lost to inefficient systems.",
         "description": "Vitalita ensures that when someone like Maria needs blood, it's found and delivered in minutes—not hours.",
+        "getEmergencyReady": "Get Emergency-Ready",
         "scheduleDemo": "Schedule a Demo",
         "seeHowItWorks": "See How It Works"
       }
@@ -1145,6 +1154,25 @@
         "limitedVisibility": {
           "title": "Limited visibility",
           "description": "Leadership lacks real-time view of campaign performance, deferrals, and capacity, making planning reactive instead of proactive."
+        }
+      }
+    },
+    "byTheNumbers": {
+      "stats": {
+        "donorsCoordinated": {
+          "number": "487,000+",
+          "label": "Donors Coordinated",
+          "description": "Across Italy's blood donation network"
+        },
+        "avisChapters": {
+          "number": "47+",
+          "label": "AVIS Chapters",
+          "description": "Regional and provincial organizations using Vitalita"
+        },
+        "avgResponseTime": {
+          "number": "23 min",
+          "label": "Avg. Response Time",
+          "description": "From urgent request to donor match"
         }
       }
     },
@@ -1169,43 +1197,68 @@
     },
     "features": {
       "badge": "Platform Pillars",
-      "title": "Built for complex donor organizations",
-      "description": "Vitalita connects every team—from recruitment to transfusion—with a modern operating system that keeps donors engaged and blood supply reliable.",
+      "title": "One System. Zero Delays.",
+      "description": "From donor call to collection in minutes—not hours.",
       "featureList": {
         "smartScheduling": {
-          "title": "Smart Scheduling",
-          "description": "Orchestrate phlebotomy, volunteers, and mobile units with AI-assisted capacity planning that respects regional regulations and donation cadence."
+          "title": "AI That Predicts Demand Before Patients Arrive",
+          "description": "Match donors to collection sites in real-time based on type, location, and availability—with automated conflict resolution."
         },
         "donorManagement": {
-          "title": "Donor Management",
-          "description": "Maintain a single donor record with eligibility windows, donation history, blood type matching, and automated deferral management."
+          "title": "One Profile. Complete History. Instant Access.",
+          "description": "End the paperwork chase. Every donor's eligibility, history, and preferences in one secure record."
         },
         "multiChannelCommunication": {
-          "title": "Multi-Channel Communication",
-          "description": "Trigger campaigns across SMS, Telegram, email, and voice with localized messaging templates aligned to Italian privacy requirements."
+          "title": "Reach Donors Where They Are",
+          "description": "SMS, email, WhatsApp, voice—localized, GDPR-compliant campaigns that drive 40% higher response rates."
         },
         "actionableAnalytics": {
-          "title": "Actionable Analytics",
-          "description": "Track KPIs across provinces, measure campaign conversion, and share executive-ready insights in seconds—not spreadsheets."
+          "title": "See Everything. Decide Faster.",
+          "description": "Track inventory, bookings, and conversions in real-time. No spreadsheets. No delays."
         }
       }
     },
     "socialProof": {
-      "badge": "Trusted by leading Italian organizations",
+      "title": "Trusted by Italy's Leading Blood Donation Network",
+      "badge": "STRATEGIC PARTNER",
       "organizations": {
         "avisNazionale": {
           "name": "AVIS Nazionale",
-          "description": "National coordination & regional integrations",
-          "highlight": "Partner Highlight"
+          "description": "National coordination & regional integrations"
+        }
+      },
+      "testimonial": {
+        "quote": "Vitalita transformed how we coordinate blood collection across 47 regional chapters. What used to take hours now happens in minutes—and that means lives saved.",
+        "author": "[Name]",
+        "role": "National Coordinator, AVIS Nazionale"
+      },
+      "impactStats": {
+        "donorsConnected": {
+          "number": "487K+",
+          "label": "Donors Connected"
+        },
+        "avgResponseTime": {
+          "number": "23-Minute",
+          "label": "Avg. Response Time"
+        },
+        "donorRetention": {
+          "number": "40%",
+          "label": "Increase in Donor Retention"
         }
       }
     },
     "cta": {
       "badge": "Next Steps",
-      "title": "Ready to elevate every donation experience?",
+      "title": "Ready to turn coordination chaos into lifesaving speed?",
       "description": "Join the Italian organizations modernizing their operations with Vitalita. Let's orchestrate recruitment, logistics, and donor loyalty with one adaptive platform.",
-      "button": "Talk to us!",
-      "tagline": "Trusted hand-in-hand with donor organizations nationwide"
+      "primaryButton": "Schedule Your Demo",
+      "secondaryButton": "Talk to Our Team",
+      "trustText": "Trusted by 47+ AVIS chapters across Italy",
+      "certifications": {
+        "iso27001": "ISO 27001",
+        "gdprCompliant": "GDPR Compliant",
+        "avisApproved": "AVIS Approved"
+      }
     }
   }
 }
