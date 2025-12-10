@@ -47,7 +47,7 @@ const CTA = () => {
             {t('home.cta.primaryButton')}
           </Link>
           <Link
-            to="/contact"
+            to="/how-it-works"
             className="inline-flex items-center justify-center rounded-full border-2 border-[#6B7280] px-8 py-3 md:py-4 text-base font-semibold bg-transparent transition hover:border-[#9CA3AF] hover:text-[#9CA3AF] min-h-[48px] w-full sm:w-auto"
             style={{ color: '#6B7280' }}
           >
