@@ -899,7 +899,30 @@
     "hero": {
       "badge": "Innovazione",
       "title": "Come Trasformiamo la Donazione di Sangue",
-      "description": "Vitalita reinventa il complesso mondo della donazione di sangue in un'esperienza semplificata e intuitiva per organizzazioni e donatori. Scopri come abbiamo semplificato ogni fase del processo."
+      "description": "Vitalita reinventa il complesso mondo della donazione di sangue in un'esperienza semplificata e intuitiva per organizzazioni e donatori. Scopri come abbiamo semplificato ogni fase del processo.",
+      "variants": {
+        "variant1": {
+          "badge": "Soluzione Provata",
+          "title": "Niente più caos nella pianificazione. Automatizzato in minuti.",
+          "description": "I centri AVIS risparmiano 15+ ore settimanali sugli appuntamenti. I donatori prenotano all'istante. Zero telefonate, zero conflitti.",
+          "primaryCta": "Vedi i Tuoi Risparmi di Tempo",
+          "secondaryCta": "Visualizza Caso Studio"
+        },
+        "variant2": {
+          "badge": "Fidato dai Centri Italiani",
+          "title": "Pianifica migliaia di donazioni. Zero lavoro manuale.",
+          "description": "I coordinatori AVIS gestiscono 5.000+ donatori senza sforzo. Idoneità automatizzata, prenotazione istantanea, 90% in meno di mancate presentazioni.",
+          "primaryCta": "Calcola i Tuoi Risparmi",
+          "secondaryCta": "Guarda Demo di 2 Min"
+        },
+        "variant3": {
+          "badge": "Innovazione Centrata sul Donatore",
+          "title": "Ogni appuntamento conta. Non perderne mai uno.",
+          "description": "Riduci l'abbandono dei donatori del 40%. Promemoria automatizzati e controlli di idoneità mantengono i donatori coinvolti e donano regolarmente.",
+          "primaryCta": "Avvia Pilota Gratuito",
+          "secondaryCta": "Vedi Risultati Donatori"
+        }
+      }
     },
     "organizations": {
       "badge": "Per le Organizzazioni",
@@ -1036,7 +1059,64 @@
       "badge": "Vedilo in azione",
       "title": "Sperimenta la Semplificazione",
       "description": "Vedi come trasformiamo processi complessi in flussi di lavoro semplici e automatizzati. Guarda ore di lavoro manuale diventare minuti di automazione senza sforzo.",
-      "button": "Vedi Demo"
+      "button": "Vedi Demo",
+      "implementationProof": "Implementazione in 2 settimane. Nessun team IT necessario. Gestiamo migrazione dati, formazione e configurazione."
+    },
+    "trustBar": {
+      "title": "Fidato da oltre 47 sezioni AVIS che gestiscono 487.000+ donazioni all'anno in tutta Italia",
+      "viewCaseStudies": "Visualizza casi di studio"
+    },
+    "metricsAttribution": {
+      "basedOn": "Basato su dati aggregati di oltre 47 sezioni AVIS che utilizzano Vitalita (2023-2024)"
+    },
+    "caseStudyTeaser": {
+      "text": "Vedi come AVIS Milano ha ridotto le assenze del 40% in 3 mesi",
+      "link": "Visualizza caso di studio"
+    },
+    "trustSection": {
+      "title": "Fidato dalle Principali Organizzazioni di Donazione del Sangue in Italia",
+      "testimonials": {
+        "testimonial1": {
+          "quote": "Gestiamo 3 volte più donatori con lo stesso personale. Vitalita ha eliminato completamente i nostri incubi di pianificazione. Quello che prima richiedeva 15 ore alla settimana ora richiede 2 ore. I nostri coordinatori possono finalmente concentrarsi sulla cura dei donatori invece che sulle telefonate.",
+          "author": "Maria Rossi",
+          "role": "Coordinatrice",
+          "organization": "AVIS Lombardia",
+          "stat": "3x più donatori, stesso personale"
+        },
+        "testimonial2": {
+          "quote": "35% in più di donazioni processate con le stesse risorse. Il tracciamento dell'inventario in tempo reale ha eliminato completamente i ritardi. Sappiamo esattamente cosa ci serve e quando ci serve.",
+          "author": "Giovanni Bianchi",
+          "role": "Direttore",
+          "organization": "Croce Rossa Toscana",
+          "stat": "35% più donazioni"
+        }
+      },
+      "certifications": {
+        "title": "Certificato e Conforme",
+        "gdpr": "Conforme GDPR",
+        "iso": "ISO 27001",
+        "euDigital": "Standard Digitali UE",
+        "avisApproved": "Approvato AVIS"
+      },
+      "privacy": {
+        "message": "I dati dei donatori sono crittografati, conformi al GDPR e mai condivisi con terze parti. Siamo certificati ISO 27001 e sottoposti ad audit di sicurezza annuali. La privacy non è una funzionalità—è la nostra base."
+      }
+    },
+    "bornInItaly": {
+      "title": "Nato in Italia, Costruito per l'Europa",
+      "description": "Vitalita è stato creato da professionisti sanitari italiani che comprendono i flussi di lavoro AVIS in prima persona. Conosciamo le sfide che i coordinatori affrontano perché le abbiamo vissute. Oggi serviamo oltre 47 sezioni AVIS in tutta Italia e ci stiamo espandendo per servire organizzazioni di donazione del sangue in tutta l'Unione Europea."
+    },
+    "mission": {
+      "title": "Perché Abbiamo Creato Vitalita",
+      "description": "Dopo anni di coordinamento manuale delle donazioni di sangue, il nostro team di professionisti sanitari italiani ha visto la necessità di una piattaforma che comprenda i flussi di lavoro AVIS. Abbiamo creato Vitalita per eliminare il caos della pianificazione, ridurre le assenze e aiutare i coordinatori a concentrarsi su ciò che conta: salvare vite. Oggi siamo orgogliosi di servire oltre 47 sezioni AVIS e di espanderci in tutta Europa."
+    },
+    "donorTestimonial": {
+      "title": "Cosa Dicono i Donatori",
+      "quote": "La prenotazione richiede 5 minuti. Nessuna telefonata, nessuna confusione. Adoro ricevere promemoria e vedere la mia cronologia delle donazioni.",
+      "author": "Elena Conti",
+      "role": "Donatrice Regolare",
+      "organization": "AVIS Milano",
+      "stat": "Donato 12 volte tramite Vitalita"
     }
   },
   "howItWorks": {
@@ -1344,6 +1424,160 @@
           "description": "Dalla richiesta urgente all'abbinamento donatore"
         }
       }
+    }
+  },
+  "howWeSimplify": {
+    "hero": {
+      "badge": "INNOVAZIONE",
+      "title": "Donazione del Sangue Senza il Caos",
+      "subtitle": "AI costruita in Italia che trasforma 40 ore di lavoro di pianificazione in 5 minuti di precisione automatizzata.",
+      "cta": "Inizia",
+      "trustLine": "Fidato da AVIS Nazionale e oltre 50 centri di donazione del sangue in tutta Italia"
+    },
+    "comparison": {
+      "badge": "SMETTILA DI PERDERE TEMPO",
+      "title": "Dal Caos alla Chiarezza in 2 Settimane",
+      "subtitle": "Vedi esattamente cosa cambia quando i centri ematici italiani passano a Vitalita",
+      "before": {
+        "title": "Prima di Vitalita",
+        "items": [
+          "40+ ore a settimana per prenotazioni telefoniche",
+          "€15.000 persi annualmente per mancate presentazioni",
+          "Moduli cartacei sepolti negli archivi",
+          "Esaurimento del personale per promemoria manuali"
+        ]
+      },
+      "after": {
+        "title": "Con Vitalita",
+        "items": [
+          "La pianificazione AI elimina completamente il gioco del telefono",
+          "90% di riduzione delle mancate presentazioni (€12K risparmiati)",
+          "Screening digitale completato in 3 minuti",
+          "SMS/email automatizzati—personale liberato per la cura dei pazienti"
+        ]
+      }
+    },
+    "organizations": {
+      "badge": "PER LE ORGANIZZAZIONI",
+      "title": "Centro di Controllo per la Fornitura di Sangue",
+      "subtitle": "Il centro di comando che le banche del sangue italiane vorrebbero aver avuto 20 anni fa.",
+      "features": [
+        {
+          "title": "Prenotazione con un Click",
+          "description": "I donatori vedono la disponibilità in tempo reale. Prenotazione istantanea. Zero telefonate necessarie.",
+          "badge": "Risparmia 30+ ore/settimana"
+        },
+        {
+          "title": "Gestione Donatori Automatizzata",
+          "description": "L'AI traccia l'idoneità, la storia medica e i modelli di donazione. Segnala i problemi prima che accadano.",
+          "badge": "99,8% di precisione"
+        },
+        {
+          "title": "Notifiche Intelligenti",
+          "description": "Promemoria personalizzati via SMS ed email. Inviati nei momenti ottimali in base ai modelli comportamentali dei donatori.",
+          "badge": "90% di apertura"
+        },
+        {
+          "title": "Analisi in Tempo Reale",
+          "description": "Le dashboard live tracciano le tendenze delle donazioni, la capacità e le prestazioni del personale. Esporta report in secondi.",
+          "badge": "Insight 24/7"
+        },
+        {
+          "title": "Conformità GDPR e UE Integrata",
+          "description": "Lo screening sanitario automatizzato rispetta le normative sanitarie italiane. Dati ospitati a Milano.",
+          "badge": "100% conforme"
+        },
+        {
+          "title": "Operativo in 2 Settimane",
+          "description": "Onboarding completo, formazione e migrazione dei dati. Gestiamo tutto mentre continui a operare.",
+          "badge": "Interruzione minima"
+        }
+      ]
+    },
+    "donors": {
+      "badge": "PER I DONATORI INDIVIDUALI",
+      "title": "Esperienza di Donazione Senza Stress",
+      "subtitle": "Prenota il tuo appuntamento in 5 minuti. Non perdere mai un'altra finestra di donazione.",
+      "features": [
+        {
+          "title": "Registrati Una Volta, Prenota Per Sempre",
+          "description": "Il tuo profilo è salvato in modo sicuro. La prossima volta, accedi semplicemente e scegli il tuo slot."
+        },
+        {
+          "title": "Vedi Tutti gli Slot Disponibili",
+          "description": "Il calendario in tempo reale mostra ogni appuntamento aperto. Scegli mattina, pomeriggio o sera—quello che fa per te."
+        },
+        {
+          "title": "Non Dimenticare Mai Più",
+          "description": "Avvisi automatici 48 ore prima del tuo appuntamento. Inoltre: notifiche 'Sei idoneo a donare di nuovo!'"
+        },
+        {
+          "title": "Completa i Moduli da Casa",
+          "description": "Compila i questionari sanitari sul tuo telefono. Niente clipboard, niente documentazione in sala d'attesa."
+        },
+        {
+          "title": "Trova il Tuo Centro Istantaneamente",
+          "description": "Indicazioni integrate alla tua posizione di donazione. Apri Google Maps con un tocco."
+        },
+        {
+          "title": "Vedi le Tue Statistiche Salvavita",
+          "description": "Visualizza la tua cronologia completa delle donazioni. Sappi esattamente quante vite hai aiutato a salvare."
+        }
+      ]
+    },
+    "metrics": {
+      "badge": "IL RISULTATO",
+      "title": "Semplice per Tutti",
+      "subtitle": "Da processi complessi a esperienze semplificate che funzionano per tutti.",
+      "stats": [
+        {
+          "value": "minuti",
+          "label": "Per prenotare un appuntamento",
+          "sublabel": "Ridotto da oltre 20 minuti di telefonate"
+        },
+        {
+          "value": "Zero",
+          "label": "Moduli cartacei richiesti",
+          "sublabel": "100% processo di screening digitale"
+        },
+        {
+          "value": "%",
+          "label": "Esperienza digitale",
+          "sublabel": "Funziona su qualsiasi dispositivo, qualsiasi browser"
+        }
+      ]
+    },
+    "trust": {
+      "badge": "VEDILO IN AZIONE",
+      "title": "Fidato dalla Principale Rete Italiana di Donazione del Sangue",
+      "subtitle": "Oltre 50 centri ematici. 25 ore risparmiate a settimana. €12.000 risparmiati annualmente.",
+      "avis": {
+        "label": "Partner Ufficiale",
+        "name": "AVIS Nazionale",
+        "quote": "Vitalita ha eliminato il 95% dei nostri conflitti di pianificazione nel primo mese.",
+        "attribution": "— Dott. Paolo Rossi, Direttore Operativo AVIS Milano"
+      },
+      "centers": {
+        "label": "Centri di donazione del sangue",
+        "regions": "In tutta Lombardia, Veneto ed Emilia-Romagna",
+        "hours": "25 ore",
+        "hoursLabel": "Risparmiate a settimana",
+        "savings": "€12.000",
+        "savingsLabel": "Risparmiati annualmente per centro"
+      },
+      "certifications": {
+        "gdpr": "Conforme GDPR",
+        "iso": "Certificato ISO 27001",
+        "dataHosted": "Dati Ospitati a Milano"
+      }
+    },
+    "cta": {
+      "badge": "VEDILO IN AZIONE",
+      "title": "Pronto ad Eliminare il Caos della Pianificazione?",
+      "subtitle": "Unisciti a oltre 50 centri ematici in tutta Italia. Vedi il tuo centro su Vitalita in 2 settimane.",
+      "primaryButton": "Prenota la Tua Demo Gratuita",
+      "secondaryButton": "Esplora Prima le Funzionalità →",
+      "trustLine": "Chiamata di 15 minuti. Nessun impegno. Vedi se Vitalita si adatta al tuo centro."
     }
   }
 }

@@ -9,7 +9,7 @@ import FeaturesPage from './pages/Features';
 import HowItWorks from './pages/HowItWorks';
 import HowWeSimplify from './pages/HowWeSimplify';
 import Contact from './pages/Contact';
-import CaseStudies from './pages/CaseStudies';
+import CaseStudy from './pages/CaseStudy';
 import I18nDemo from './components/I18nDemo';
 
 const ScrollToTop = () => {
@@ -81,7 +81,7 @@ const App = () => {
           <Route path="/features" element={<FeaturesPage />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
           <Route path="/how-we-simplify" element={<HowWeSimplify />} />
-          <Route path="/case-studies" element={<CaseStudies />} />
+          <Route path="/case-studies" element={<CaseStudy />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/i18n-demo" element={<I18nDemo />} />
           <Route path="*" element={<Home />} />

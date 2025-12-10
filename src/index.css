@@ -105,17 +105,22 @@ body {
 
 /* Accessibility: Enhanced focus indicators for all interactive elements - Clinical Authority Palette */
 *:focus-visible {
-  outline: 3px solid #FF6B6B;
-  outline-offset: 3px;
+  outline: 2px solid #FF6B6B;
+  outline-offset: 2px;
   border-radius: 2px;
+}
+
+/* Remove default browser outline */
+*:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* Accessibility: Focus styles for buttons and links */
 button:focus-visible,
 a:focus-visible,
 [role="button"]:focus-visible {
-  outline: 3px solid #FF6B6B;
-  outline-offset: 3px;
+  outline: 2px solid #FF6B6B;
+  outline-offset: 2px;
   border-radius: 4px;
 }
 
@@ -123,8 +128,8 @@ a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 3px solid #FF6B6B;
-  outline-offset: 3px;
+  outline: 2px solid #FF6B6B;
+  outline-offset: 2px;
   border-color: #FF6B6B;
 }
 
@@ -135,6 +140,18 @@ select:focus-visible {
   width: 1px;
   height: 1px;
   overflow: hidden;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Optimize animations with GPU acceleration */
@@ -149,16 +166,54 @@ select:focus-visible {
     backface-visibility: hidden;
     perspective: 1000px;
   }
+
+  /* Fade-in animation for sections */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in-up {
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    opacity: 0;
+  }
+
+  .fade-in-up.visible {
+    opacity: 1;
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  /* Stagger animation delay utility */
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+  .stagger-6 { animation-delay: 0.6s; }
+
+  /* Pulse animation for skeleton loaders */
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .skeleton-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
 }
 
 .section-container {
   @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-}
-
-.fade-in-up {
-  animation: fadeInUp 0.8s ease-out forwards;
-  opacity: 0;
-  transform: translateY(20px);
 }
 
 .fade-in {
@@ -398,4 +453,30 @@ select:focus-visible {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Animated dotted line for hero illustration */
+.hero-dotted-line {
+  stroke: #FF6B6B;
+  stroke-width: 2;
+  stroke-dasharray: 4 4;
+  stroke-opacity: 0.6;
+  animation: dashMove 2s linear infinite;
+}
+
+@keyframes dashMove {
+  to {
+    stroke-dashoffset: -8;
+  }
+}
+
+/* Fade in animation for donor cards - using the same fadeInUp animation */
+.donor-card-fade-in {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .donor-card-fade-in {
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
 }
