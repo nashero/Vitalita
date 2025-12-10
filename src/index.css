@@ -207,9 +207,117 @@ select:focus-visible {
     }
   }
 
-  .skeleton-pulse {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.skeleton-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Features Page Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes progressBar {
+  from {
+    width: 0;
+  }
+}
+
+/* Scroll Animation Classes */
+.scroll-fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .scroll-fade-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Feature Page Specific Styles */
+.feature-checkmark {
+  transition: transform 300ms ease, rotate 300ms ease;
+}
+
+.feature-checkmark:hover {
+  transform: scale(1.1);
+  rotate: 5deg;
+}
+
+.outcome-callout {
+  transition: border-left-width 200ms ease, transform 200ms ease;
+}
+
+.outcome-callout:hover {
+  border-left-width: 6px;
+  transform: scale(1.01);
+}
+
+.primary-cta-button {
+  transition: background-color 200ms ease, transform 200ms ease;
+}
+
+.primary-cta-button:hover {
+  background-color: #E55555;
+  transform: scale(1.02);
+}
+
+.primary-cta-button:active {
+  transform: scale(0.98);
+}
+
+.secondary-cta-button {
+  transition: background-color 200ms ease;
+}
+
+.secondary-cta-button:hover {
+  background-color: #F9FAFB;
+}
+
+.status-badge-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.live-indicator {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.progress-bar-animate {
+  animation: progressBar 1s ease-out forwards;
+}
 }
 
 .section-container {

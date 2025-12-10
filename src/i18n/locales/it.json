@@ -734,130 +734,153 @@
   },
   "featuresPage": {
     "header": {
-      "badge": "Piattaforma",
-      "title": "Tutto Ciò di Cui Hai Bisogno per Gestire le Donazioni di Sangue in Modo Efficiente",
-      "description": "Vitalita unifica programmazione, coinvolgimento dei donatori e analisi in una singola piattaforma operativa su misura per AVIS e le reti sanitarie italiane. Offri a ogni coordinatore e volontario un ambiente di lavoro moderno progettato per decisioni più rapide e raccolte più sicure.",
+      "badge": "PIATTAFORMA",
+      "title": "Una Piattaforma. Zero Caos. Ogni Donatore Tracciato.",
+      "description": "Vitalita unifica programmazione, coinvolgimento dei donatori e analisi in una singola piattaforma operativa su misura per AVIS e le reti sanitarie italiane. Potenzia i coordinatori con intelligenza in tempo reale. Proteggi i donatori con controlli di sicurezza automatizzati.",
       "tags": {
         "enterpriseCloud": "Cloud enterprise-ready",
         "clinicalCompliance": "Costruito con conformità clinica",
         "trustedCenters": "Fidato dai principali centri donatori"
       }
     },
-    "features": {
-      "smartScheduling": {
-        "title": "Sistema di Programmazione Intelligente",
-        "description": "Offri ai coordinatori un centro di comando in tempo reale per bilanciare slot di donazione, personale e attrezzature in ogni sede con sicurezza.",
-        "bullets": {
-          "realTimeTracking": "Tracciamento disponibilità in tempo reale",
-          "capacityManagement": "Gestione automatica della capacità",
-          "multiLocation": "Coordinamento multi-sede",
-          "conflictDetection": "Rilevamento e prevenzione conflitti"
-        },
-        "benefits": "Riduci i conflitti di programmazione del 90%, risparmia 15 ore a settimana",
-        "mockup": {
-          "today": "Oggi",
-          "romeCenter": "Centro Raccolta Roma",
-          "full": "pieno",
-          "onTrack": "In Regola",
-          "noConflicts": "Nessun conflitto",
-          "staffShortage": "Carenza di personale rilevata"
-        }
+    "donorManagement": {
+      "label": "GESTIONE COMPLETA DEI DONATORI",
+      "title": "Intelligenza Completa sui Donatori a Portata di Mano",
+      "description": "Mantieni una visione completa di ogni donatore—dalla storia sanitaria alle finestre di idoneità—così i team possono concentrarsi sulle relazioni, non sui fogli di calcolo.",
+      "bullets": {
+        "completeProfiles": "Profili donatori completi",
+        "medicalHistory": "Tracciamento storia medica",
+        "eligibilityStatus": "Monitoraggio stato idoneità",
+        "healthScreening": "Screening sanitario automatizzato"
       },
-      "donorManagement": {
-        "title": "Gestione Completa dei Donatori",
-        "description": "Mantieni una visione completa di ogni donatore—dalla storia sanitaria alle finestre di idoneità—così i team possono concentrarsi sulle relazioni, non sui fogli di calcolo.",
-        "bullets": {
-          "completeProfiles": "Profili donatori completi",
-          "medicalHistory": "Tracciamento storia medica",
-          "eligibilityStatus": "Monitoraggio stato idoneità",
-          "healthScreening": "Screening sanitario automatizzato"
-        },
-        "benefits": "Traccia oltre 10.000 donatori senza sforzo, garantisci la conformità automaticamente",
-        "mockup": {
-          "donorProfile": "Profilo Donatore",
-          "donated": "Donato",
-          "times": "volte",
-          "eligible": "Idoneo",
-          "bloodType": "Gruppo Sanguigno",
-          "lastDonation": "Ultima Donazione",
-          "nextEligible": "Prossimo Idoneo",
-          "automatedScreening": "Screening Automatico",
-          "ok": "OK"
-        }
+      "benefits": "Traccia oltre 10.000 donatori senza sforzo, garantisci la conformità automaticamente",
+      "cta": "Vedi Gestione Donatori",
+      "mockup": {
+        "donorProfile": "PROFILO DONATORE",
+        "donorName": "Giulia Rossi",
+        "donorSubtitle": "Donato 11 volte • Roma",
+        "eligible": "Idoneo",
+        "bloodType": "Gruppo Sanguigno",
+        "lastDonation": "Ultima Donazione",
+        "nextEligible": "Prossimo Idoneo",
+        "automatedScreening": "SCREENING AUTOMATICO",
+        "hbCheck": "Controllo Hb • 13,8 g/dL",
+        "travelDeferment": "Differimento Viaggi • Autorizzato",
+        "ok": "OK"
+      }
+    },
+    "smartScheduling": {
+      "label": "SISTEMA DI PROGRAMMAZIONE INTELLIGENTE",
+      "title": "Elimina i Conflitti di Programmazione in Tempo Reale",
+      "description": "Offri ai coordinatori un centro di comando in tempo reale per bilanciare slot di donazione, personale e attrezzature in ogni sede con sicurezza.",
+      "bullets": {
+        "realTimeTracking": "Tracciamento disponibilità in tempo reale",
+        "capacityManagement": "Gestione automatica della capacità",
+        "multiLocation": "Coordinamento multi-sede",
+        "conflictDetection": "Rilevamento e prevenzione conflitti"
       },
-      "communicationTools": {
-        "title": "Strumenti di Comunicazione Intelligenti",
-        "description": "Lancia campagne multi-canale e personalizzate che mantengono i donatori coinvolti—senza aggiungere lavoro ai coordinatori.",
-        "bullets": {
-          "automatedReminders": "Promemoria appuntamenti automatizzati (Email, SMS, Calendario)",
-          "customizableTemplates": "Modelli notifiche personalizzabili",
-          "recallCampaigns": "Campagne di richiamo donatori",
-          "emergencyBroadcasts": "Trasmissioni richieste sangue di emergenza"
-        },
-        "benefits": "Aumenta i tassi di presenza del 40%, riduce drasticamente le assenze",
-        "mockup": {
-          "campaignComposer": "Compositore Campagne",
-          "channels": "Canali",
-          "reminderTemplate": "Modello promemoria",
-          "automatedFollowup": "Follow-up automatico abilitato",
-          "attendance": "presenza",
-          "liveDeliveryStatus": "Stato consegna in tempo reale",
-          "smsSent": "SMS inviati",
-          "donors": "donatori",
-          "emailsScheduled": "Email programmate",
-          "calendarInvitesConfirmed": "Inviti calendario confermati"
-        }
+      "benefits": "Riduci i conflitti di programmazione del 90%, risparmia 15 ore a settimana",
+      "cta": "Esplora Intelligenza di Programmazione",
+      "mockup": {
+        "today": "OGGI",
+        "romeCenter": "Centro Raccolta Roma",
+        "full": "92% pieno",
+        "onTrack": "In Regola",
+        "fiumicinoUnit": "Unità Mobile Fiumicino",
+        "noConflicts": "Nessun conflitto",
+        "trastevereClinic": "Clinica Trastevere",
+        "staffShortage": "Carenza di personale rilevata"
+      }
+    },
+    "communicationTools": {
+      "label": "STRUMENTI DI COMUNICAZIONE INTELLIGENTI",
+      "title": "Automatizza l'Outreach. Massimizza i Tassi di Presenza.",
+      "description": "Lancia campagne multi-canale e personalizzate che mantengono i donatori coinvolti—senza aggiungere lavoro ai coordinatori.",
+      "bullets": {
+        "automatedReminders": "Promemoria appuntamenti automatizzati (Email, SMS, Calendario)",
+        "customizableTemplates": "Modelli notifiche personalizzabili",
+        "recallCampaigns": "Campagne di richiamo donatori",
+        "emergencyBroadcasts": "Trasmissioni richieste sangue di emergenza"
       },
-      "analyticsDashboard": {
-        "title": "Dashboard Analisi Avanzata",
-        "description": "Misura le prestazioni delle donazioni, comprendi il comportamento dei donatori e prevedi la domanda con visualizzazioni chiare su misura per la tua rete.",
-        "bullets": {
-          "realTimeMetrics": "Metriche donazioni in tempo reale",
-          "demographicInsights": "Approfondimenti demografici donatori",
-          "centerPerformance": "Tracciamento prestazioni centri",
-          "inventoryForecasting": "Previsione inventario",
-          "customReports": "Generazione report personalizzati"
-        },
-        "benefits": "Prendi decisioni basate sui dati, ottimizza le operazioni",
-        "mockup": {
-          "dashboard": "Dashboard",
-          "nationalPerformance": "Prestazioni Nazionali",
-          "live": "In Diretta",
-          "donations": "Donazioni",
-          "vsPrevious": "rispetto ai 30 giorni precedenti",
-          "unitsCollected": "unità raccolte",
-          "forecast": "Previsione",
-          "inventoryForecast": "Previsione Inventario",
-          "safeFor": "Sicuro per",
-          "days": "giorni",
-          "customReportGeneration": "Generazione report personalizzati",
-          "exportDescription": "Esporta riepiloghi PDF pronti per dirigenti o programma push CSV al tuo stack BI—su misura per regioni, centri o campagne."
-        }
+      "benefits": "Aumenta i tassi di presenza del 40%, riduce drasticamente le assenze",
+      "cta": "Vedi Strumenti di Comunicazione",
+      "mockup": {
+        "campaignComposer": "COMPOSITORE CAMPAGNE",
+        "campaignTitle": "AVIS Roma - Richiamo Weekend",
+        "channels": "Email • SMS • Calendario",
+        "reminderTemplate": "MODELLO PROMEMORIA",
+        "templateText": "Ciao {donor_first_name}, ci vediamo sabato alle 09:30 presso AVIS Roma - Via Veneto.",
+        "automatedFollowup": "Follow-up automatico: +40% presenza abilitata",
+        "liveDeliveryStatus": "STATO CONSEGNA IN TEMPO REALE",
+        "smsSent": "SMS inviati - 1.248 donatori",
+        "emailsScheduled": "Email programmate - 1.248",
+        "calendarInvitesConfirmed": "Inviti calendario confermati - 842"
+      }
+    },
+    "analyticsDashboard": {
+      "label": "DASHBOARD ANALISI AVANZATA",
+      "title": "Trasforma i Dati in Decisioni in Secondi",
+      "description": "Misura le prestazioni delle donazioni, comprendi il comportamento dei donatori e prevedi la domanda con visualizzazioni chiare su misura per la tua rete.",
+      "bullets": {
+        "realTimeMetrics": "Metriche donazioni in tempo reale",
+        "demographicInsights": "Approfondimenti demografici donatori",
+        "centerPerformance": "Tracciamento prestazioni centri",
+        "inventoryForecasting": "Previsione inventario",
+        "customReports": "Generazione report personalizzati"
       },
-      "integrationSecurity": {
-        "title": "Integrazione e Sicurezza",
-        "description": "Connetti Vitalita con i sistemi clinici mantenendo i dati dei donatori sicuri con controlli di livello enterprise costruiti per l'assistenza sanitaria.",
-        "bullets": {
-          "medicalRecordIntegration": "Integrazione sistemi cartelle cliniche",
-          "gdprCompliant": "Gestione dati conforme GDPR",
-          "encryptedStorage": "Archiviazione crittografata sicura",
-          "roleBasedAccess": "Controllo accesso basato su ruoli"
-        },
-        "benefits": "Fiducia per scalare con protezioni di sicurezza ferree",
-        "mockup": {
-          "securityCenter": "Centro Sicurezza",
-          "accessOverview": "Panoramica Accessi",
-          "encryptedAtRest": "Crittografato a riposo",
-          "gdprProcessingLog": "Log elaborazione GDPR",
-          "compliant": "Conforme",
-          "roleMatrix": "Matrice ruoli",
-          "enforced": "applicato",
-          "hospitalEhrSync": "Sincronizzazione EHR ospedale"
-        }
+      "benefits": "Prendi decisioni basate sui dati, ottimizza le operazioni",
+      "cta": "Esplora Analisi",
+      "mockup": {
+        "dashboard": "DASHBOARD",
+        "nationalPerformance": "Prestazioni Nazionali",
+        "live": "In Diretta",
+        "donations": "DONAZIONI",
+        "vsPrevious": "rispetto ai 30 giorni precedenti",
+        "unitsCollected": "785 unità raccolte",
+        "forecast": "Previsione: 820",
+        "inventoryForecast": "PREVISIONE INVENTARIO",
+        "safeFor": "Sicuro per 8 giorni",
+        "customReportGeneration": "GENERAZIONE REPORT PERSONALIZZATI",
+        "exportDescription": "Esporta riepiloghi PDF pronti per dirigenti o programma push CSV al tuo stack BI—su misura per regioni, centri o campagne.",
+        "reportFile": "Q4_Riepilogo_Prestazioni.pdf"
+      }
+    },
+    "integrationSecurity": {
+      "label": "INTEGRAZIONE E SICUREZZA",
+      "title": "Sicurezza Enterprise. Conformità di Livello Sanitario.",
+      "description": "Connetti Vitalita con i sistemi clinici mantenendo i dati dei donatori sicuri con controlli di livello enterprise costruiti per l'assistenza sanitaria.",
+      "bullets": {
+        "medicalRecordIntegration": "Integrazione sistemi cartelle cliniche",
+        "gdprCompliant": "Gestione dati conforme GDPR",
+        "encryptedStorage": "Archiviazione crittografata sicura",
+        "roleBasedAccess": "Controllo accesso basato su ruoli"
+      },
+      "benefits": "Fiducia per scalare con protezioni di sicurezza ferree",
+      "cta": "Scopri la Sicurezza",
+      "trustBadges": {
+        "gdprCompliant": "Conforme GDPR",
+        "iso27001": "ISO 27001",
+        "aes256": "Crittografia AES-256",
+        "euHealthcare": "Standard Sanitari UE"
+      },
+      "mockup": {
+        "securityCenter": "CENTRO SICUREZZA",
+        "accessOverview": "Panoramica Accessi",
+        "encryptedAtRest": "Crittografato a riposo",
+        "aes256": "AES-256",
+        "gdprProcessingLog": "Log elaborazione GDPR",
+        "compliant": "Conforme",
+        "roleMatrix": "MATRICE RUOLI",
+        "admin": "Amministratore",
+        "coordinator": "Coordinatore",
+        "volunteer": "Volontario",
+        "samlSso": "SAML + SSO applicato",
+        "hospitalEhrSync": "Sincronizzazione EHR ospedale",
+        "live": "In Diretta"
       }
     },
     "cta": {
-      "badge": "Esplora la piattaforma",
+      "badge": "ESPLORA LA PIATTAFORMA",
       "title": "Sperimenta Ogni Funzionalità dal Vivo",
       "description": "Vedi come tutte le funzionalità lavorano insieme in una piattaforma unificata con scenari reali dai tuoi centri donazione.",
       "tags": {

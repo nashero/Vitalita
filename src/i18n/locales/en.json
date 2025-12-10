@@ -868,130 +868,153 @@
   },
   "featuresPage": {
     "header": {
-      "badge": "Platform",
-      "title": "Everything You Need to Manage Blood Donations Efficiently",
-      "description": "Vitalita unifies scheduling, donor engagement, and analytics into a single operating platform tailored for AVIS and Italian healthcare networks. Give every coordinator and volunteer a modern workspace designed for faster decisions and safer collections.",
+      "badge": "PLATFORM",
+      "title": "One Platform. Zero Chaos. Every Donor Tracked.",
+      "description": "Vitalita unifies scheduling, donor engagement, and analytics into a single operating platform tailored for AVIS and Italian healthcare networks. Empower coordinators with real-time intelligence. Protect donors with automated safety checks.",
       "tags": {
         "enterpriseCloud": "Enterprise-ready cloud",
         "clinicalCompliance": "Built with clinical compliance",
         "trustedCenters": "Trusted by leading donor centers"
       }
     },
-    "features": {
-      "smartScheduling": {
-        "title": "Smart Scheduling System",
-        "description": "Give coordinators a live command center to balance donation slots, staff, and equipment across every location with confidence.",
-        "bullets": {
-          "realTimeTracking": "Real-time availability tracking",
-          "capacityManagement": "Automated capacity management",
-          "multiLocation": "Multi-location coordination",
-          "conflictDetection": "Conflict detection and prevention"
-        },
-        "benefits": "Reduce scheduling conflicts by 90%, save 15 hours per week",
-        "mockup": {
-          "today": "Today",
-          "romeCenter": "Rome Collection Center",
-          "full": "full",
-          "onTrack": "On Track",
-          "noConflicts": "No conflicts",
-          "staffShortage": "Staff shortage detected"
-        }
+    "donorManagement": {
+      "label": "COMPREHENSIVE DONOR MANAGEMENT",
+      "title": "Complete Donor Intelligence at Your Fingertips",
+      "description": "Maintain a complete view of every donor—from health history to eligibility windows—so teams can focus on relationships, not spreadsheets.",
+      "bullets": {
+        "completeProfiles": "Complete donor profiles",
+        "medicalHistory": "Medical history tracking",
+        "eligibilityStatus": "Eligibility status monitoring",
+        "healthScreening": "Automated health screening"
       },
-      "donorManagement": {
-        "title": "Comprehensive Donor Management",
-        "description": "Maintain a complete view of every donor—from health history to eligibility windows—so teams can focus on relationships, not spreadsheets.",
-        "bullets": {
-          "completeProfiles": "Complete donor profiles",
-          "medicalHistory": "Medical history tracking",
-          "eligibilityStatus": "Eligibility status monitoring",
-          "healthScreening": "Automated health screening"
-        },
-        "benefits": "Track 10,000+ donors effortlessly, ensure compliance automatically",
-        "mockup": {
-          "donorProfile": "Donor Profile",
-          "donated": "Donated",
-          "times": "times",
-          "eligible": "Eligible",
-          "bloodType": "Blood Type",
-          "lastDonation": "Last Donation",
-          "nextEligible": "Next Eligible",
-          "automatedScreening": "Automated Screening",
-          "ok": "OK"
-        }
+      "benefits": "Track 10,000+ donors effortlessly, ensure compliance automatically",
+      "cta": "See Donor Management",
+      "mockup": {
+        "donorProfile": "DONOR PROFILE",
+        "donorName": "Giulia Rossi",
+        "donorSubtitle": "Donated 11 times • Rome",
+        "eligible": "Eligible",
+        "bloodType": "Blood Type",
+        "lastDonation": "Last Donation",
+        "nextEligible": "Next Eligible",
+        "automatedScreening": "AUTOMATED SCREENING",
+        "hbCheck": "Hb Check • 13.8 g/dL",
+        "travelDeferment": "Travel Deferment • Cleared",
+        "ok": "OK"
+      }
+    },
+    "smartScheduling": {
+      "label": "SMART SCHEDULING SYSTEM",
+      "title": "Eliminate Scheduling Conflicts in Real-Time",
+      "description": "Give coordinators a live command center to balance donation slots, staff, and equipment across every location with confidence.",
+      "bullets": {
+        "realTimeTracking": "Real-time availability tracking",
+        "capacityManagement": "Automated capacity management",
+        "multiLocation": "Multi-location coordination",
+        "conflictDetection": "Conflict detection and prevention"
       },
-      "communicationTools": {
-        "title": "Intelligent Communication Tools",
-        "description": "Launch multi-channel, personalized outreach that keeps donors engaged—without adding work for coordinators.",
-        "bullets": {
-          "automatedReminders": "Automated appointment reminders (Email, SMS, Calendar)",
-          "customizableTemplates": "Customizable notification templates",
-          "recallCampaigns": "Donor recall campaigns",
-          "emergencyBroadcasts": "Emergency blood request broadcasts"
-        },
-        "benefits": "Increase show-up rates by 40%, reduce no-shows dramatically",
-        "mockup": {
-          "campaignComposer": "Campaign Composer",
-          "channels": "Channels",
-          "reminderTemplate": "Reminder template",
-          "automatedFollowup": "Automated follow-up enabled",
-          "attendance": "attendance",
-          "liveDeliveryStatus": "Live delivery status",
-          "smsSent": "SMS sent",
-          "donors": "donors",
-          "emailsScheduled": "Emails scheduled",
-          "calendarInvitesConfirmed": "Calendar invites confirmed"
-        }
+      "benefits": "Reduce scheduling conflicts by 90%, save 15 hours per week",
+      "cta": "Explore Scheduling Intelligence",
+      "mockup": {
+        "today": "TODAY",
+        "romeCenter": "Rome Collection Center",
+        "full": "92% full",
+        "onTrack": "On Track",
+        "fiumicinoUnit": "Fiumicino Mobile Unit",
+        "noConflicts": "No conflicts",
+        "trastevereClinic": "Trastevere Clinic",
+        "staffShortage": "Staff shortage detected"
+      }
+    },
+    "communicationTools": {
+      "label": "INTELLIGENT COMMUNICATION TOOLS",
+      "title": "Automate Outreach. Maximize Show-Up Rates.",
+      "description": "Launch multi-channel, personalized outreach that keeps donors engaged—without adding work for coordinators.",
+      "bullets": {
+        "automatedReminders": "Automated appointment reminders (Email, SMS, Calendar)",
+        "customizableTemplates": "Customizable notification templates",
+        "recallCampaigns": "Donor recall campaigns",
+        "emergencyBroadcasts": "Emergency blood request broadcasts"
       },
-      "analyticsDashboard": {
-        "title": "Advanced Analytics Dashboard",
-        "description": "Measure donation performance, understand donor behavior, and forecast demand with clear visualizations tailored to your network.",
-        "bullets": {
-          "realTimeMetrics": "Real-time donation metrics",
-          "demographicInsights": "Donor demographic insights",
-          "centerPerformance": "Center performance tracking",
-          "inventoryForecasting": "Inventory forecasting",
-          "customReports": "Custom report generation"
-        },
-        "benefits": "Make data-driven decisions, optimize operations",
-        "mockup": {
-          "dashboard": "Dashboard",
-          "nationalPerformance": "National Performance",
-          "live": "Live",
-          "donations": "Donations",
-          "vsPrevious": "vs. previous 30 days",
-          "unitsCollected": "units collected",
-          "forecast": "Forecast",
-          "inventoryForecast": "Inventory Forecast",
-          "safeFor": "Safe for",
-          "days": "days",
-          "customReportGeneration": "Custom report generation",
-          "exportDescription": "Export executive-ready PDF summaries or schedule CSV pushes to your BI stack—tailored to regions, centers, or campaigns."
-        }
+      "benefits": "Increase show-up rates by 40%, reduce no-shows dramatically",
+      "cta": "See Communication Tools",
+      "mockup": {
+        "campaignComposer": "CAMPAIGN COMPOSER",
+        "campaignTitle": "AVIS Rome - Weekend Recall",
+        "channels": "Email • SMS • Calendar",
+        "reminderTemplate": "REMINDER TEMPLATE",
+        "templateText": "Ciao {donor_first_name}, ci vediamo sabato alle 09:30 presso AVIS Roma - Via Veneto.",
+        "automatedFollowup": "Automated follow-up: +40% enabled attendance",
+        "liveDeliveryStatus": "LIVE DELIVERY STATUS",
+        "smsSent": "SMS sent - 1,248 donors",
+        "emailsScheduled": "Emails scheduled - 1,248",
+        "calendarInvitesConfirmed": "Calendar invites confirmed - 842"
+      }
+    },
+    "analyticsDashboard": {
+      "label": "ADVANCED ANALYTICS DASHBOARD",
+      "title": "Turn Data Into Decisions in Seconds",
+      "description": "Measure donation performance, understand donor behavior, and forecast demand with clear visualizations tailored to your network.",
+      "bullets": {
+        "realTimeMetrics": "Real-time donation metrics",
+        "demographicInsights": "Donor demographic insights",
+        "centerPerformance": "Center performance tracking",
+        "inventoryForecasting": "Inventory forecasting",
+        "customReports": "Custom report generation"
       },
-      "integrationSecurity": {
-        "title": "Integration & Security",
-        "description": "Connect Vitalita with clinical systems while keeping donor data secure with enterprise-grade controls built for healthcare.",
-        "bullets": {
-          "medicalRecordIntegration": "Medical record system integration",
-          "gdprCompliant": "GDPR compliant data handling",
-          "encryptedStorage": "Secure encrypted storage",
-          "roleBasedAccess": "Role-based access control"
-        },
-        "benefits": "Confidence to scale with ironclad security guardrails",
-        "mockup": {
-          "securityCenter": "Security Center",
-          "accessOverview": "Access Overview",
-          "encryptedAtRest": "Encrypted at rest",
-          "gdprProcessingLog": "GDPR processing log",
-          "compliant": "Compliant",
-          "roleMatrix": "Role matrix",
-          "enforced": "enforced",
-          "hospitalEhrSync": "Hospital EHR sync"
-        }
+      "benefits": "Make data-driven decisions, optimize operations",
+      "cta": "Explore Analytics",
+      "mockup": {
+        "dashboard": "DASHBOARD",
+        "nationalPerformance": "National Performance",
+        "live": "Live",
+        "donations": "DONATIONS",
+        "vsPrevious": "vs. previous 30 days",
+        "unitsCollected": "785 units collected",
+        "forecast": "Forecast: 820",
+        "inventoryForecast": "INVENTORY FORECAST",
+        "safeFor": "Safe for 8 days",
+        "customReportGeneration": "CUSTOM REPORT GENERATION",
+        "exportDescription": "Export executive-ready PDF summaries or schedule CSV pushes to your BI stack—tailored to regions, centers, or campaigns.",
+        "reportFile": "Q4_Performance_Summary.pdf"
+      }
+    },
+    "integrationSecurity": {
+      "label": "INTEGRATION & SECURITY",
+      "title": "Enterprise Security. Healthcare-Grade Compliance.",
+      "description": "Connect Vitalita with clinical systems while keeping donor data secure with enterprise-grade controls built for healthcare.",
+      "bullets": {
+        "medicalRecordIntegration": "Medical record system integration",
+        "gdprCompliant": "GDPR compliant data handling",
+        "encryptedStorage": "Secure encrypted storage",
+        "roleBasedAccess": "Role-based access control"
+      },
+      "benefits": "Confidence to scale with ironclad security guardrails",
+      "cta": "Learn About Security",
+      "trustBadges": {
+        "gdprCompliant": "GDPR Compliant",
+        "iso27001": "ISO 27001",
+        "aes256": "AES-256 Encryption",
+        "euHealthcare": "EU Healthcare Standards"
+      },
+      "mockup": {
+        "securityCenter": "SECURITY CENTER",
+        "accessOverview": "Access Overview",
+        "encryptedAtRest": "Encrypted at rest",
+        "aes256": "AES-256",
+        "gdprProcessingLog": "GDPR processing log",
+        "compliant": "Compliant",
+        "roleMatrix": "ROLE MATRIX",
+        "admin": "Admin",
+        "coordinator": "Coordinator",
+        "volunteer": "Volunteer",
+        "samlSso": "SAML + SSO enforced",
+        "hospitalEhrSync": "Hospital EHR sync",
+        "live": "Live"
       }
     },
     "cta": {
-      "badge": "Explore the platform",
+      "badge": "EXPLORE THE PLATFORM",
       "title": "Experience Every Feature Live",
       "description": "See how all features work together in one unified platform with real scenarios from your donation centers.",
       "tags": {
