@@ -267,7 +267,7 @@ const HowWeSimplify = () => {
               borderRadius: '20px'
             }}
           >
-            {t('simplicityDelivered.hero.badge') || 'INNOVATION'}
+            {t('howWeSimplify.hero.badge')}
           </p>
           
           {/* Headline */}
@@ -280,7 +280,7 @@ const HowWeSimplify = () => {
               fontWeight: 'bold'
             }}
           >
-            Blood Donation Without the Chaos
+            {t('howWeSimplify.hero.title')}
           </h1>
           
           {/* Subtitle */}
@@ -294,7 +294,7 @@ const HowWeSimplify = () => {
               fontSize: '16px'
             }}
           >
-            Italian-built AI that turns 40 hours of scheduling work into 5 minutes of automated precision.
+            {t('howWeSimplify.hero.subtitle')}
           </p>
           
           {/* Icon Illustration */}
@@ -403,7 +403,7 @@ const HowWeSimplify = () => {
                 e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 107, 107, 0.3)';
               }}
             >
-              Get Started
+              {t('howWeSimplify.hero.cta')}
             </Link>
           </div>
           
@@ -423,7 +423,7 @@ const HowWeSimplify = () => {
                   fontSize: '12px'
                 }}
               >
-                Trusted by AVIS Nazionale and 50+ blood donation centers across Italy
+                {t('howWeSimplify.hero.trustLine')}
               </p>
             </div>
           </div>
@@ -448,7 +448,7 @@ const HowWeSimplify = () => {
                 letterSpacing: '1.5px'
               }}
             >
-              STOP WASTING TIME
+              {t('howWeSimplify.comparison.badge')}
             </p>
             
             {/* Main Heading */}
@@ -462,7 +462,7 @@ const HowWeSimplify = () => {
                 fontWeight: 'bold'
               }}
             >
-              From Chaos to Clarity in 2 Weeks
+              {t('howWeSimplify.comparison.title')}
             </h2>
             
             {/* Subtitle */}
@@ -475,7 +475,7 @@ const HowWeSimplify = () => {
                 fontSize: '16px'
               }}
             >
-              See exactly what changes when Italian blood centers switch to Vitalita
+              {t('howWeSimplify.comparison.subtitle')}
             </p>
           </div>
 
@@ -518,18 +518,13 @@ const HowWeSimplify = () => {
                     fontWeight: '600'
                   }}
                 >
-                  Before Vitalita
+                  {t('howWeSimplify.comparison.before.title')}
                 </h3>
               </div>
               
               {/* List Items */}
               <ul className="space-y-4">
-                {[
-                  '40+ hours per week on phone scheduling',
-                  '€15,000 lost annually to no-shows',
-                  'Paper forms buried in filing cabinets',
-                  'Staff burnout from manual reminders'
-                ].map((item, index) => (
+                {(t('howWeSimplify.comparison.before.items', { returnObjects: true }) as string[]).map((item, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <X 
                       className="mt-0.5 h-5 w-5 flex-shrink-0 rounded-full" 
@@ -594,18 +589,13 @@ const HowWeSimplify = () => {
                     fontWeight: '600'
                   }}
                 >
-                  With Vitalita
+                  {t('howWeSimplify.comparison.after.title')}
                 </h3>
               </div>
               
               {/* List Items */}
               <ul className="space-y-4">
-                {[
-                  'AI scheduling eliminates phone tag completely',
-                  '90% reduction in no-shows (€12K saved)',
-                  'Digital screening completed in 3 minutes',
-                  'Automated SMS/email—staff freed for patient care'
-                ].map((item, index) => (
+                {(t('howWeSimplify.comparison.after.items', { returnObjects: true }) as string[]).map((item, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <CheckCircle2 
                       className="mt-0.5 h-5 w-5 flex-shrink-0 rounded-full" 
@@ -656,7 +646,7 @@ const HowWeSimplify = () => {
                 fontSize: '12px'
               }}
             >
-              FOR ORGANIZATIONS
+              {t('howWeSimplify.organizations.badge')}
             </p>
             
             <h2 
@@ -669,7 +659,7 @@ const HowWeSimplify = () => {
                 fontWeight: 'bold'
               }}
             >
-              Control Center for Blood Supply
+              {t('howWeSimplify.organizations.title')}
             </h2>
             <p 
               className="mx-auto text-base md:text-lg"
@@ -680,60 +670,23 @@ const HowWeSimplify = () => {
                 fontSize: '16px'
               }}
             >
-              The command center that Italian blood banks wish they had 20 years ago.
+              {t('howWeSimplify.organizations.subtitle')}
             </p>
           </div>
 
           {/* Feature Cards Grid */}
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {[
-              {
-                icon: CalendarCheck,
-                title: 'One-Click Scheduling',
-                description: 'Donors see real-time availability. Book instantly. Zero phone calls needed.',
-                badge: 'Save 30+ hours/week',
-                badgeBg: '#14B8A6'
-              },
-              {
-                icon: Users,
-                iconSecondary: Settings,
-                title: 'Automated Donor Management',
-                description: 'AI tracks eligibility, medical history, and donation patterns. Flags issues before they happen.',
-                badge: '99.8% accuracy rate',
-                badgeBg: '#14B8A6'
-              },
-              {
-                icon: Bell,
-                iconSecondary: Sparkles,
-                title: 'Smart Notifications',
-                description: 'Personalized SMS and email reminders. Sent at optimal times based on donor behavior patterns.',
-                badge: '90% open rate',
-                badgeBg: '#14B8A6'
-              },
-              {
-                icon: TrendingUp,
-                title: 'Real-Time Analytics',
-                description: 'Live dashboards track donation trends, capacity, and staff performance. Export reports in seconds.',
-                badge: '24/7 insights',
-                badgeBg: '#14B8A6'
-              },
-              {
-                icon: ShieldCheck,
-                title: 'GDPR & EU Compliance Built-In',
-                description: 'Automated health screening meets Italian healthcare regulations. Data hosted in Milan.',
-                badge: '100% compliant',
-                badgeBg: '#14B8A6'
-              },
-              {
-                icon: Rocket,
-                title: 'Live in 2 Weeks',
-                description: 'Full onboarding, training, and data migration. We handle everything while you keep operating.',
-                badge: 'Minimal disruption',
-                badgeBg: '#14B8A6'
-              },
-            ].map((feature, index) => {
-              const IconComponent = feature.icon;
-              const IconSecondary = feature.iconSecondary;
+              { icon: CalendarCheck },
+              { icon: Users, iconSecondary: Settings },
+              { icon: Bell, iconSecondary: Sparkles },
+              { icon: TrendingUp },
+              { icon: ShieldCheck },
+              { icon: Rocket },
+            ].map((iconConfig, index) => {
+              const feature = (t('howWeSimplify.organizations.features', { returnObjects: true }) as any[])[index];
+              const IconComponent = iconConfig.icon;
+              const IconSecondary = iconConfig.iconSecondary;
               return (
                 <article
                   key={index}
@@ -889,7 +842,7 @@ const HowWeSimplify = () => {
                 letterSpacing: '1.5px'
               }}
             >
-              FOR INDIVIDUAL DONORS
+              {t('howWeSimplify.donors.badge')}
             </p>
             
             {/* Heading */}
@@ -903,7 +856,7 @@ const HowWeSimplify = () => {
                 fontWeight: 'bold'
               }}
             >
-              Stress-Free Donation Experience
+              {t('howWeSimplify.donors.title')}
             </h2>
             
             {/* Subtitle */}
@@ -917,45 +870,22 @@ const HowWeSimplify = () => {
                 fontSize: '16px'
               }}
             >
-              Book your appointment in 5 minutes. Never miss another donation window.
+              {t('howWeSimplify.donors.subtitle')}
             </p>
           </div>
 
           {/* Donor Journey Cards */}
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {[
-              {
-                icon: UserPlus,
-                title: 'Register Once, Book Forever',
-                description: 'Your profile is saved securely. Next time, just log in and pick your slot.',
-              },
-              {
-                icon: Clock,
-                title: 'See All Available Slots',
-                description: 'Real-time calendar shows every open appointment. Pick morning, afternoon, or evening—whatever works for you.',
-              },
-              {
-                icon: Bell,
-                title: 'Never Forget Again',
-                description: 'Automatic alerts 48 hours before your appointment. Plus: \'You\'re eligible to donate again!\' notifications.',
-              },
-              {
-                icon: ClipboardCheck,
-                title: 'Complete Forms from Home',
-                description: 'Fill out health questionnaires on your phone. No clipboards, no waiting room paperwork.',
-              },
-              {
-                icon: MapPin,
-                title: 'Find Your Center Instantly',
-                description: 'Built-in directions to your donation location. Open Google Maps with one tap.',
-              },
-              {
-                icon: Activity,
-                title: 'See Your Lifesaving Stats',
-                description: 'View your complete donation history. Know exactly how many lives you\'ve helped save.',
-              },
-            ].map((feature, index) => {
-              const IconComponent = feature.icon;
+              { icon: UserPlus },
+              { icon: Clock },
+              { icon: Bell },
+              { icon: ClipboardCheck },
+              { icon: MapPin },
+              { icon: Activity },
+            ].map((iconConfig, index) => {
+              const feature = (t('howWeSimplify.donors.features', { returnObjects: true }) as any[])[index];
+              const IconComponent = iconConfig.icon;
               return (
                 <article
                   key={index}
@@ -1056,7 +986,7 @@ const HowWeSimplify = () => {
                 fontSize: '12px'
               }}
             >
-              THE RESULT
+              {t('howWeSimplify.metrics.badge')}
             </p>
             
             {/* Heading */}
@@ -1071,7 +1001,7 @@ const HowWeSimplify = () => {
                 marginBottom: '16px'
               }}
             >
-              Simple for Everyone
+              {t('howWeSimplify.metrics.title')}
             </h2>
             
             {/* Subtitle */}
@@ -1085,7 +1015,7 @@ const HowWeSimplify = () => {
                 marginBottom: '48px'
               }}
             >
-              From complex processes to streamlined experiences that work for everyone.
+              {t('howWeSimplify.metrics.subtitle')}
             </p>
           </div>
 
@@ -1115,7 +1045,7 @@ const HowWeSimplify = () => {
                   fontWeight: 'bold'
                 }}
               >
-                {statCounts.time} minutes
+                {statCounts.time} {t('howWeSimplify.metrics.stats.0.value')}
             </div>
               <div 
                 className="text-sm md:text-base mb-2"
@@ -1125,7 +1055,7 @@ const HowWeSimplify = () => {
                   fontSize: '16px'
                 }}
               >
-                To book an appointment
+                {t('howWeSimplify.metrics.stats.0.label')}
                     </div>
               <div 
                 className="text-xs md:text-sm"
@@ -1136,7 +1066,7 @@ const HowWeSimplify = () => {
                   fontSize: '14px'
                 }}
               >
-                Down from 20+ minutes of phone calls
+                {t('howWeSimplify.metrics.stats.0.sublabel')}
                   </div>
             </div>
 
@@ -1171,7 +1101,7 @@ const HowWeSimplify = () => {
                   fontWeight: 'bold'
                 }}
               >
-                Zero
+                {t('howWeSimplify.metrics.stats.1.value')}
               </div>
               <div 
                 className="text-sm md:text-base mb-2"
@@ -1181,7 +1111,7 @@ const HowWeSimplify = () => {
                   fontSize: '16px'
                 }}
               >
-                Paper forms required
+                {t('howWeSimplify.metrics.stats.1.label')}
               </div>
               <div 
                 className="text-xs md:text-sm"
@@ -1192,7 +1122,7 @@ const HowWeSimplify = () => {
                   fontSize: '14px'
                 }}
               >
-                100% digital screening process
+                {t('howWeSimplify.metrics.stats.1.sublabel')}
               </div>
             </div>
 
@@ -1227,7 +1157,7 @@ const HowWeSimplify = () => {
                   fontWeight: 'bold'
                 }}
               >
-                {statCounts.digital}%
+                {statCounts.digital}{t('howWeSimplify.metrics.stats.2.value')}
               </div>
               <div 
                 className="text-sm md:text-base mb-2"
@@ -1237,7 +1167,7 @@ const HowWeSimplify = () => {
                   fontSize: '16px'
                 }}
               >
-                Digital experience
+                {t('howWeSimplify.metrics.stats.2.label')}
               </div>
               <div 
                 className="text-xs md:text-sm"
@@ -1248,7 +1178,7 @@ const HowWeSimplify = () => {
                   fontSize: '14px'
                 }}
               >
-                Works on any device, any browser
+                {t('howWeSimplify.metrics.stats.2.sublabel')}
               </div>
             </div>
           </div>
@@ -1276,7 +1206,7 @@ const HowWeSimplify = () => {
               fontSize: '12px'
             }}
           >
-            SEE IT IN ACTION
+            {t('howWeSimplify.trust.badge')}
           </p>
           <h2 
             id="trusted-heading"
@@ -1290,7 +1220,7 @@ const HowWeSimplify = () => {
               lineHeight: '1.3'
             }}
           >
-            Trusted by Italy's Leading Blood Donation Network
+            {t('howWeSimplify.trust.title')}
             </h2>
           
           {/* Subheading with key results */}
@@ -1304,7 +1234,7 @@ const HowWeSimplify = () => {
               fontSize: '18px'
             }}
           >
-            50+ blood centers. 25 hours saved per week. €12,000 saved annually.
+            {t('howWeSimplify.trust.subtitle')}
           </p>
 
           {/* Content Grid */}
@@ -1329,7 +1259,7 @@ const HowWeSimplify = () => {
                   marginBottom: '12px'
                 }}
               >
-                Official Partner
+                {t('howWeSimplify.trust.avis.label')}
               </div>
               <div 
                 className="mb-6 text-2xl font-bold"
@@ -1338,7 +1268,7 @@ const HowWeSimplify = () => {
                   marginBottom: '24px'
                 }}
               >
-                AVIS Nazionale
+                {t('howWeSimplify.trust.avis.name')}
               </div>
               <blockquote 
                 className="mb-4 italic text-base md:text-lg"
@@ -1349,7 +1279,7 @@ const HowWeSimplify = () => {
                   fontSize: '16px'
                 }}
               >
-                "Vitalita eliminated 95% of our scheduling conflicts in the first month."
+                "{t('howWeSimplify.trust.avis.quote')}"
               </blockquote>
               <div 
                 className="text-sm"
@@ -1360,7 +1290,7 @@ const HowWeSimplify = () => {
                   fontSize: '14px'
                 }}
               >
-                — Dr. Paolo Rossi, AVIS Milano Operations Director
+                {t('howWeSimplify.trust.avis.attribution')}
               </div>
           </div>
 
@@ -1394,7 +1324,7 @@ const HowWeSimplify = () => {
                   fontSize: '16px'
                 }}
               >
-                Blood donation centers
+                {t('howWeSimplify.trust.centers.label')}
                 </div>
               
               {/* Divider */}
@@ -1416,7 +1346,7 @@ const HowWeSimplify = () => {
                       fontWeight: 'bold'
                     }}
                   >
-                    25 hours
+                    {t('howWeSimplify.trust.centers.hours')}
                   </div>
                   <div 
                     className="text-xs md:text-sm"
@@ -1426,7 +1356,7 @@ const HowWeSimplify = () => {
                       fontSize: '14px'
                     }}
                   >
-                    Saved per week
+                    {t('howWeSimplify.trust.centers.hoursLabel')}
                   </div>
                 </div>
                 
@@ -1438,7 +1368,7 @@ const HowWeSimplify = () => {
                       fontWeight: 'bold'
                     }}
                   >
-                    €12,000
+                    {t('howWeSimplify.trust.centers.savings')}
                   </div>
                   <div 
                     className="text-xs md:text-sm"
@@ -1448,7 +1378,7 @@ const HowWeSimplify = () => {
                       fontSize: '14px'
                     }}
                   >
-                    Saved annually per center
+                    {t('howWeSimplify.trust.centers.savingsLabel')}
                   </div>
                 </div>
               </div>
@@ -1462,7 +1392,7 @@ const HowWeSimplify = () => {
                   fontSize: '14px'
                 }}
               >
-                Across Lombardy, Veneto, and Emilia-Romagna
+                {t('howWeSimplify.trust.centers.regions')}
               </div>
             </div>
 
@@ -1492,7 +1422,7 @@ const HowWeSimplify = () => {
                     fontSize: '14px'
                   }}
                 >
-                  GDPR Compliant
+                  {t('howWeSimplify.trust.certifications.gdpr')}
                 </span>
               </div>
 
@@ -1520,7 +1450,7 @@ const HowWeSimplify = () => {
                     fontSize: '14px'
                   }}
                 >
-                  ISO 27001 Certified
+                  {t('howWeSimplify.trust.certifications.iso')}
                 </span>
               </div>
 
@@ -1557,7 +1487,7 @@ const HowWeSimplify = () => {
                       fontWeight: '600'
                     }}
                   >
-                    Data Hosted in Milan
+                    {t('howWeSimplify.trust.certifications.dataHosted')}
                   </span>
                   <span 
                     className="cert-flag inline-flex items-center justify-center"
@@ -1614,7 +1544,7 @@ const HowWeSimplify = () => {
               fontSize: '12px'
             }}
           >
-            SEE IT IN ACTION
+            {t('howWeSimplify.cta.badge')}
           </p>
 
           {/* Heading */}
@@ -1630,7 +1560,7 @@ const HowWeSimplify = () => {
               lineHeight: '1.2'
             }}
           >
-            Ready to Eliminate Scheduling Chaos?
+            {t('howWeSimplify.cta.title')}
           </h2>
 
           {/* Subtitle */}
@@ -1644,7 +1574,7 @@ const HowWeSimplify = () => {
               fontSize: '16px'
             }}
           >
-            Join 50+ blood centers across Italy. See your center on Vitalita in 2 weeks.
+            {t('howWeSimplify.cta.subtitle')}
           </p>
 
           {/* CTA Button Group */}
@@ -1677,7 +1607,7 @@ const HowWeSimplify = () => {
                 e.currentTarget.style.boxShadow = '0 4px 16px rgba(255, 107, 107, 0.3)';
               }}
             >
-              Schedule Your Free Demo
+              {t('howWeSimplify.cta.primaryButton')}
             </Link>
 
             {/* Secondary Button */}
@@ -1710,7 +1640,7 @@ const HowWeSimplify = () => {
                 e.currentTarget.style.transform = 'scale(1)';
               }}
             >
-              Explore Features First →
+              {t('howWeSimplify.cta.secondaryButton')}
               </Link>
             </div>
 
@@ -1729,7 +1659,7 @@ const HowWeSimplify = () => {
                 lineHeight: '1.5'
               }}
             >
-              15-minute call. No commitment. See if Vitalita fits your center.
+              {t('howWeSimplify.cta.trustLine')}
             </p>
           </div>
         </div>
