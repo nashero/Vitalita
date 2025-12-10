@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Mail, MapPin, Phone, Clock, CheckCircle2, Shield, Lock, FileCheck, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface FormData {
   organizationName: string;
@@ -10,16 +11,8 @@ interface FormData {
   referralSource: string;
 }
 
-const testimonials = [
-  {
-    quote: "Vitalita transformed our donation management. We've seen a 40% increase in donor engagement and streamlined our entire operation.",
-    author: "Marco Rossi",
-    position: "Operations Manager",
-    organization: "AVIS Milano"
-  }
-];
-
 const Contact = () => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<FormData>({
     organizationName: '',
     name: '',
@@ -30,6 +23,15 @@ const Contact = () => {
   });
   const [submitted, setSubmitted] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+
+  const testimonials = [
+    {
+      quote: t('contactPage.testimonials.quote'),
+      author: t('contactPage.testimonials.author'),
+      position: t('contactPage.testimonials.position'),
+      organization: t('contactPage.testimonials.organization')
+    }
+  ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -47,7 +49,7 @@ const Contact = () => {
       setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [testimonials.length]);
 
   const nextTestimonial = () => {
     setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
@@ -58,41 +60,45 @@ const Contact = () => {
   };
 
   return (
-    <div className="bg-white">
+    <div style={{ backgroundColor: '#F9FAFB' }}>
       {/* Header Section */}
-      <section className="section-container py-8">
+      <section className="section-container py-6 sm:py-8 px-4 sm:px-6">
         <div className="text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">Contact Us</p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
-            Request Your Personalized Demo
+          <p className="text-xs font-semibold uppercase tracking-[0.3em]" style={{ color: '#FF6B6B' }}>{t('contactPage.title')}</p>
+          <h1 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight" style={{ color: '#1A2332' }}>
+            {t('contactPage.heading')}
           </h1>
-          <p className="mt-3 text-lg text-slate-600">
-            See how Vitalita can transform your donation management
+          <p className="mt-3 text-base sm:text-lg px-4" style={{ color: '#6B7280' }}>
+            {t('contactPage.subtitle')}
           </p>
         </div>
       </section>
 
       {/* Main Content - Two Column Layout */}
-      <section className="section-container pb-8">
-        <div className="grid gap-8 lg:grid-cols-2">
+      <section className="section-container pb-8 px-4 sm:px-6">
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
           {/* Left Column - Contact Form */}
           <div className="order-2 lg:order-1">
-            <div className="rounded-[32px] border border-slate-100 bg-white/90 p-6 shadow-2xl shadow-slate-200/50 lg:p-8">
+            <div className="rounded-2xl sm:rounded-[32px] p-4 sm:p-6 lg:p-8 shadow-2xl" style={{ 
+              border: '1px solid rgba(107, 114, 128, 0.2)',
+              backgroundColor: '#FFFFFF',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+            }}>
               {submitted ? (
                 <div className="text-center py-6">
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-600">
-                    <CheckCircle2 className="h-8 w-8" />
+                  <div className="mx-auto flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full" style={{ backgroundColor: 'rgba(255, 107, 107, 0.1)' }}>
+                    <CheckCircle2 className="h-6 w-6 sm:h-8 sm:w-8" style={{ color: '#FF6B6B' }} />
                   </div>
-                  <h2 className="mt-4 text-2xl font-semibold text-slate-900">Thank you!</h2>
-                  <p className="mt-2 text-sm text-slate-600">
-                    A Vitalita expert will reach out within the next business day to coordinate a tailored demo.
+                  <h2 className="mt-4 text-xl sm:text-2xl font-semibold" style={{ color: '#1A2332' }}>{t('contactPage.form.thankYou')}</h2>
+                  <p className="mt-2 text-xs sm:text-sm px-4" style={{ color: '#6B7280' }}>
+                    {t('contactPage.form.thankYouMessage')}
                   </p>
                 </div>
               ) : (
                 <form className="space-y-4" onSubmit={handleSubmit}>
                   <div>
-                    <label htmlFor="organizationName" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Organization Name <span className="text-red-500">*</span>
+                    <label htmlFor="organizationName" className="block text-sm font-semibold mb-2" style={{ color: '#1A2332' }}>
+                      {t('contactPage.form.organizationName')} <span style={{ color: '#FF6B6B' }}>*</span>
                     </label>
                     <input
                       id="organizationName"
@@ -101,14 +107,26 @@ const Contact = () => {
                       required
                       value={formData.organizationName}
                       onChange={handleChange}
-                      placeholder="e.g. AVIS Milano"
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100"
+                      placeholder={t('contactPage.form.organizationNamePlaceholder')}
+                      className="w-full rounded-xl bg-white px-4 py-3 text-sm shadow-sm transition focus:outline-none focus:ring-2"
+                      style={{ 
+                        border: '1px solid rgba(107, 114, 128, 0.2)',
+                        color: '#1A2332'
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#FF6B6B';
+                        e.target.style.boxShadow = '0 0 0 2px rgba(255, 107, 107, 0.1)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = 'rgba(107, 114, 128, 0.2)';
+                        e.target.style.boxShadow = 'none';
+                      }}
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Your Name <span className="text-red-500">*</span>
+                    <label htmlFor="name" className="block text-sm font-semibold mb-2" style={{ color: '#1A2332' }}>
+                      {t('contactPage.form.yourName')} <span style={{ color: '#FF6B6B' }}>*</span>
                     </label>
                     <input
                       id="name"
@@ -117,14 +135,26 @@ const Contact = () => {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="Your full name"
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100"
+                      placeholder={t('contactPage.form.yourNamePlaceholder')}
+                      className="w-full rounded-xl bg-white px-4 py-3 text-sm shadow-sm transition focus:outline-none focus:ring-2"
+                      style={{ 
+                        border: '1px solid rgba(107, 114, 128, 0.2)',
+                        color: '#1A2332'
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#FF6B6B';
+                        e.target.style.boxShadow = '0 0 0 2px rgba(255, 107, 107, 0.1)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = 'rgba(107, 114, 128, 0.2)';
+                        e.target.style.boxShadow = 'none';
+                      }}
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="role" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Your Role/Position <span className="text-red-500">*</span>
+                    <label htmlFor="role" className="block text-sm font-semibold mb-2" style={{ color: '#1A2332' }}>
+                      {t('contactPage.form.yourRole')} <span style={{ color: '#FF6B6B' }}>*</span>
                     </label>
                     <select
                       id="role"
@@ -132,19 +162,31 @@ const Contact = () => {
                       required
                       value={formData.role}
                       onChange={handleChange}
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100"
+                      className="w-full rounded-xl bg-white px-4 py-3 text-sm shadow-sm transition focus:outline-none focus:ring-2"
+                      style={{ 
+                        border: '1px solid rgba(107, 114, 128, 0.2)',
+                        color: '#1A2332'
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#FF6B6B';
+                        e.target.style.boxShadow = '0 0 0 2px rgba(255, 107, 107, 0.1)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = 'rgba(107, 114, 128, 0.2)';
+                        e.target.style.boxShadow = 'none';
+                      }}
                     >
-                      <option value="">Select your role</option>
-                      <option value="Manager">Manager</option>
-                      <option value="Director">Director</option>
-                      <option value="IT Administrator">IT Administrator</option>
-                      <option value="Other">Other</option>
+                      <option value="">{t('contactPage.form.selectRole')}</option>
+                      <option value="Manager">{t('contactPage.roles.manager')}</option>
+                      <option value="Director">{t('contactPage.roles.director')}</option>
+                      <option value="IT Administrator">{t('contactPage.roles.itAdministrator')}</option>
+                      <option value="Other">{t('contactPage.roles.other')}</option>
                     </select>
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Email Address <span className="text-red-500">*</span>
+                    <label htmlFor="email" className="block text-sm font-semibold mb-2" style={{ color: '#1A2332' }}>
+                      {t('contactPage.form.emailAddress')} <span style={{ color: '#FF6B6B' }}>*</span>
                     </label>
                     <input
                       id="email"
@@ -153,14 +195,26 @@ const Contact = () => {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="you@organization.it"
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100"
+                      placeholder={t('contactPage.form.emailPlaceholder')}
+                      className="w-full rounded-xl bg-white px-4 py-3 text-sm shadow-sm transition focus:outline-none focus:ring-2"
+                      style={{ 
+                        border: '1px solid rgba(107, 114, 128, 0.2)',
+                        color: '#1A2332'
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#FF6B6B';
+                        e.target.style.boxShadow = '0 0 0 2px rgba(255, 107, 107, 0.1)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = 'rgba(107, 114, 128, 0.2)';
+                        e.target.style.boxShadow = 'none';
+                      }}
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="challenges" className="block text-sm font-semibold text-slate-700 mb-2">
-                      Current Challenges
+                    <label htmlFor="challenges" className="block text-sm font-semibold mb-2" style={{ color: '#1A2332' }}>
+                      {t('contactPage.form.currentChallenges')}
                     </label>
                     <textarea
                       id="challenges"
@@ -168,39 +222,75 @@ const Contact = () => {
                       rows={4}
                       value={formData.challenges}
                       onChange={handleChange}
-                      placeholder="Tell us about your biggest operational challenges"
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100 resize-none"
+                      placeholder={t('contactPage.form.challengesPlaceholder')}
+                      className="w-full rounded-xl bg-white px-4 py-3 text-sm shadow-sm transition focus:outline-none focus:ring-2 resize-none"
+                      style={{ 
+                        border: '1px solid rgba(107, 114, 128, 0.2)',
+                        color: '#1A2332'
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#FF6B6B';
+                        e.target.style.boxShadow = '0 0 0 2px rgba(255, 107, 107, 0.1)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = 'rgba(107, 114, 128, 0.2)';
+                        e.target.style.boxShadow = 'none';
+                      }}
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="referralSource" className="block text-sm font-semibold text-slate-700 mb-2">
-                      How did you hear about us?
+                    <label htmlFor="referralSource" className="block text-sm font-semibold mb-2" style={{ color: '#1A2332' }}>
+                      {t('contactPage.form.howDidYouHear')}
                     </label>
                     <select
                       id="referralSource"
                       name="referralSource"
                       value={formData.referralSource}
                       onChange={handleChange}
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-100"
+                      className="w-full rounded-xl bg-white px-4 py-3 text-sm shadow-sm transition focus:outline-none focus:ring-2"
+                      style={{ 
+                        border: '1px solid rgba(107, 114, 128, 0.2)',
+                        color: '#1A2332'
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = '#FF6B6B';
+                        e.target.style.boxShadow = '0 0 0 2px rgba(255, 107, 107, 0.1)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor = 'rgba(107, 114, 128, 0.2)';
+                        e.target.style.boxShadow = 'none';
+                      }}
                     >
-                      <option value="">Select an option</option>
-                      <option value="Web Search">Web Search</option>
-                      <option value="Referral">Referral</option>
-                      <option value="Conference">Conference</option>
-                      <option value="Other">Other</option>
+                      <option value="">{t('contactPage.form.selectOption')}</option>
+                      <option value="Web Search">{t('contactPage.form.webSearch')}</option>
+                      <option value="Referral">{t('contactPage.form.referral')}</option>
+                      <option value="Conference">{t('contactPage.form.conference')}</option>
+                      <option value="Other">{t('contactPage.form.other')}</option>
                     </select>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full inline-flex items-center justify-center rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-red-600/40 transition hover:bg-red-700"
+                    className="w-full inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold text-white transition"
+                    style={{ 
+                      backgroundColor: '#FF6B6B',
+                      boxShadow: '0 20px 25px -5px rgba(255, 107, 107, 0.4)'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#E65A5A';
+                      e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(255, 107, 107, 0.5)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#FF6B6B';
+                      e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(255, 107, 107, 0.4)';
+                    }}
                   >
-                    Request Demo
+                    {t('contactPage.form.requestDemo')}
                   </button>
 
-                  <p className="text-xs text-slate-500 text-center">
-                    By submitting this form you agree to Vitalita contacting you about our platform. View our Privacy Policy for details.
+                  <p className="text-xs text-center px-2" style={{ color: '#6B7280' }}>
+                    {t('contactPage.form.privacyNotice')}
                   </p>
                 </form>
               )}
@@ -210,74 +300,91 @@ const Contact = () => {
           {/* Right Column - Information Cards */}
           <div className="order-1 space-y-4 lg:order-2">
             {/* What to Expect Card */}
-            <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-5 shadow-sm">
-              <h3 className="text-lg font-semibold text-slate-900 mb-3">What to Expect</h3>
-              <ul className="space-y-2.5 text-sm text-slate-600">
+            <div className="rounded-2xl p-4 sm:p-5 shadow-sm" style={{ 
+              border: '1px solid rgba(107, 114, 128, 0.2)',
+              backgroundColor: '#FFFFFF'
+            }}>
+              <h3 className="text-base sm:text-lg font-semibold mb-3" style={{ color: '#1A2332' }}>{t('contactPage.whatToExpect.title')}</h3>
+              <ul className="space-y-2.5 text-sm" style={{ color: '#6B7280' }}>
                 <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <span>30-minute personalized demo</span>
+                  <CheckCircle2 className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#FF6B6B' }} />
+                  <span>{t('contactPage.whatToExpect.item1')}</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <span>Live Q&A with product specialist</span>
+                  <CheckCircle2 className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#FF6B6B' }} />
+                  <span>{t('contactPage.whatToExpect.item2')}</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <span>Custom use case discussion</span>
+                  <CheckCircle2 className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#FF6B6B' }} />
+                  <span>{t('contactPage.whatToExpect.item3')}</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <span>No obligation, no pressure</span>
+                  <CheckCircle2 className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: '#FF6B6B' }} />
+                  <span>{t('contactPage.whatToExpect.item4')}</span>
                 </li>
               </ul>
             </div>
 
             {/* Contact Information Card */}
-            <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-5 shadow-sm">
-              <h3 className="text-lg font-semibold text-slate-900 mb-3">Contact Information</h3>
-              <div className="space-y-3 text-sm text-slate-600">
+            <div className="rounded-2xl p-4 sm:p-5 shadow-sm" style={{ 
+              border: '1px solid rgba(107, 114, 128, 0.2)',
+              backgroundColor: '#FFFFFF'
+            }}>
+              <h3 className="text-base sm:text-lg font-semibold mb-3" style={{ color: '#1A2332' }}>{t('contactPage.contactInfo.title')}</h3>
+              <div className="space-y-3 text-sm" style={{ color: '#6B7280' }}>
                 <div className="flex items-center gap-3">
-                  <Mail className="h-5 w-5 text-red-500 flex-shrink-0" />
-                  <a href="mailto:info@vitalita.com" className="transition hover:text-red-600">
-                    info@vitalita.com
+                  <Mail className="h-5 w-5 flex-shrink-0" style={{ color: '#FF6B6B' }} />
+                  <a href="mailto:info@vitalita.com" className="transition break-all" 
+                    style={{ color: '#6B7280' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = '#FF6B6B'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = '#6B7280'}
+                  >
+                    {t('contactPage.contactInfo.email')}
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Phone className="h-5 w-5 text-red-500 flex-shrink-0" />
-                  <a href="tel:+390212345678" className="transition hover:text-red-600">
-                    +39 02 1234 5678
+                  <Phone className="h-5 w-5 flex-shrink-0" style={{ color: '#FF6B6B' }} />
+                  <a href="tel:+390212345678" className="transition"
+                    style={{ color: '#6B7280' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = '#FF6B6B'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = '#6B7280'}
+                  >
+                    {t('contactPage.contactInfo.phone')}
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Clock className="h-5 w-5 text-red-500 flex-shrink-0" />
-                  <span>Mon-Fri, 9:00-18:00 CET</span>
+                  <Clock className="h-5 w-5 flex-shrink-0" style={{ color: '#FF6B6B' }} />
+                  <span>{t('contactPage.contactInfo.hours')}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <MapPin className="h-5 w-5 text-red-500 flex-shrink-0" />
-                  <span>Milan, Italy</span>
+                  <MapPin className="h-5 w-5 flex-shrink-0" style={{ color: '#FF6B6B' }} />
+                  <span>{t('contactPage.contactInfo.location')}</span>
                 </div>
               </div>
             </div>
 
             {/* Quick Stats Card */}
-            <div className="rounded-2xl border border-slate-100 bg-gradient-to-br from-red-50 to-slate-50 p-5 shadow-sm">
-              <h3 className="text-lg font-semibold text-slate-900 mb-3">Quick Stats</h3>
+            <div className="rounded-2xl p-4 sm:p-5 shadow-sm" style={{ 
+              border: '1px solid rgba(107, 114, 128, 0.2)',
+              background: 'linear-gradient(to bottom right, rgba(255, 107, 107, 0.1), #F9FAFB)'
+            }}>
+              <h3 className="text-base sm:text-lg font-semibold mb-3" style={{ color: '#1A2332' }}>{t('contactPage.quickStats.title')}</h3>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-2xl font-bold text-red-600">150+</p>
-                  <p className="text-xs text-slate-600 mt-1">Organizations Trust Vitalita</p>
+                  <p className="text-xl sm:text-2xl font-bold" style={{ color: '#FF6B6B' }}>150+</p>
+                  <p className="text-xs mt-1" style={{ color: '#6B7280' }}>{t('contactPage.quickStats.organizations')}</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-red-600">500K+</p>
-                  <p className="text-xs text-slate-600 mt-1">Donations Managed</p>
+                  <p className="text-xl sm:text-2xl font-bold" style={{ color: '#FF6B6B' }}>500K+</p>
+                  <p className="text-xs mt-1" style={{ color: '#6B7280' }}>{t('contactPage.quickStats.donationsManaged')}</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-red-600">1M+</p>
-                  <p className="text-xs text-slate-600 mt-1">Lives Saved</p>
+                  <p className="text-xl sm:text-2xl font-bold" style={{ color: '#FF6B6B' }}>1M+</p>
+                  <p className="text-xs mt-1" style={{ color: '#6B7280' }}>{t('contactPage.quickStats.livesSaved')}</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-red-600">24/7</p>
-                  <p className="text-xs text-slate-600 mt-1">Platform Uptime</p>
+                  <p className="text-xl sm:text-2xl font-bold" style={{ color: '#FF6B6B' }}>24/7</p>
+                  <p className="text-xs mt-1" style={{ color: '#6B7280' }}>{t('contactPage.quickStats.platformUptime')}</p>
                 </div>
               </div>
             </div>
@@ -286,34 +393,37 @@ const Contact = () => {
       </section>
 
       {/* Trust Badges */}
-      <section className="section-container py-6 border-t border-slate-100">
-        <div className="flex flex-wrap items-center justify-center gap-8">
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <Shield className="h-5 w-5 text-red-500" />
-            <span className="font-medium">GDPR Compliant</span>
+      <section className="section-container py-4 sm:py-6 px-4 sm:px-6" style={{ borderTop: '1px solid rgba(107, 114, 128, 0.2)' }}>
+        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8">
+          <div className="flex items-center gap-2 text-xs sm:text-sm" style={{ color: '#6B7280' }}>
+            <Shield className="h-4 w-4 sm:h-5 sm:w-5" style={{ color: '#FF6B6B' }} />
+            <span className="font-medium">{t('contactPage.trustBadges.gdprCompliant')}</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <FileCheck className="h-5 w-5 text-red-500" />
-            <span className="font-medium">ISO Certified</span>
+          <div className="flex items-center gap-2 text-xs sm:text-sm" style={{ color: '#6B7280' }}>
+            <FileCheck className="h-4 w-4 sm:h-5 sm:w-5" style={{ color: '#FF6B6B' }} />
+            <span className="font-medium">{t('contactPage.trustBadges.isoCertified')}</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <Lock className="h-5 w-5 text-red-500" />
-            <span className="font-medium">Secure Encryption</span>
+          <div className="flex items-center gap-2 text-xs sm:text-sm" style={{ color: '#6B7280' }}>
+            <Lock className="h-4 w-4 sm:h-5 sm:w-5" style={{ color: '#FF6B6B' }} />
+            <span className="font-medium">{t('contactPage.trustBadges.secureEncryption')}</span>
           </div>
         </div>
       </section>
 
       {/* Testimonial Carousel */}
-      <section className="section-container py-8 bg-slate-50/50">
+      <section className="section-container py-6 sm:py-8 px-4 sm:px-6" style={{ backgroundColor: '#F9FAFB' }}>
         <div className="text-center mb-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-red-500">Testimonials</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900">
-            What Our Partners Say
+          <p className="text-xs font-semibold uppercase tracking-[0.3em]" style={{ color: '#FF6B6B' }}>{t('contactPage.testimonials.title')}</p>
+          <h2 className="mt-3 text-2xl sm:text-3xl font-semibold tracking-tight" style={{ color: '#1A2332' }}>
+            {t('contactPage.testimonials.heading')}
           </h2>
         </div>
 
         <div className="relative max-w-4xl mx-auto">
-          <div className="rounded-[32px] border border-slate-100 bg-white p-6 md:p-8 shadow-xl">
+          <div className="rounded-2xl sm:rounded-[32px] p-4 sm:p-6 md:p-8 shadow-xl" style={{ 
+            border: '1px solid rgba(107, 114, 128, 0.2)',
+            backgroundColor: '#FFFFFF'
+          }}>
             <div className="relative min-h-[150px]">
               {testimonials.map((testimonial, index) => (
                 <div
@@ -323,14 +433,14 @@ const Contact = () => {
                   }`}
                 >
                   <div className="text-center">
-                    <Quote className="h-6 w-6 text-red-500 mx-auto mb-3 opacity-50" />
-                    <p className="text-lg text-slate-700 mb-4 leading-relaxed">
+                    <Quote className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-3 opacity-50" style={{ color: '#FF6B6B' }} />
+                    <p className="text-base sm:text-lg mb-4 leading-relaxed px-2" style={{ color: '#6B7280' }}>
                       "{testimonial.quote}"
                     </p>
                     <div>
-                      <p className="font-semibold text-slate-900">{testimonial.author}</p>
-                      <p className="text-sm text-slate-500">{testimonial.position}</p>
-                      <p className="text-sm text-red-600 font-medium mt-1">{testimonial.organization}</p>
+                      <p className="font-semibold" style={{ color: '#1A2332' }}>{testimonial.author}</p>
+                      <p className="text-xs sm:text-sm" style={{ color: '#6B7280' }}>{testimonial.position}</p>
+                      <p className="text-xs sm:text-sm font-medium mt-1" style={{ color: '#FF6B6B' }}>{testimonial.organization}</p>
                     </div>
                   </div>
                 </div>
@@ -341,8 +451,22 @@ const Contact = () => {
             <div className="flex items-center justify-center gap-4 mt-6">
               <button
                 onClick={prevTestimonial}
-                className="p-2 rounded-full border border-slate-200 text-slate-600 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition"
-                aria-label="Previous testimonial"
+                className="p-2 rounded-full transition min-w-[44px] min-h-[44px] flex items-center justify-center"
+                style={{ 
+                  border: '1px solid rgba(107, 114, 128, 0.2)',
+                  color: '#6B7280'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 107, 107, 0.1)';
+                  e.currentTarget.style.borderColor = '#FF6B6B';
+                  e.currentTarget.style.color = '#FF6B6B';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.2)';
+                  e.currentTarget.style.color = '#6B7280';
+                }}
+                aria-label={t('common.previous')}
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>
@@ -351,19 +475,43 @@ const Contact = () => {
                   <button
                     key={index}
                     onClick={() => setCurrentTestimonial(index)}
-                    className={`h-2 rounded-full transition-all ${
-                      index === currentTestimonial
-                        ? 'w-8 bg-red-600'
-                        : 'w-2 bg-slate-300 hover:bg-slate-400'
-                    }`}
-                    aria-label={`Go to testimonial ${index + 1}`}
+                    className="h-2 rounded-full transition-all"
+                    style={{
+                      width: index === currentTestimonial ? '32px' : '8px',
+                      backgroundColor: index === currentTestimonial ? '#FF6B6B' : 'rgba(107, 114, 128, 0.3)'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (index !== currentTestimonial) {
+                        e.currentTarget.style.backgroundColor = 'rgba(107, 114, 128, 0.5)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (index !== currentTestimonial) {
+                        e.currentTarget.style.backgroundColor = 'rgba(107, 114, 128, 0.3)';
+                      }
+                    }}
+                    aria-label={`${t('common.next')} ${index + 1}`}
                   />
                 ))}
               </div>
               <button
                 onClick={nextTestimonial}
-                className="p-2 rounded-full border border-slate-200 text-slate-600 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition"
-                aria-label="Next testimonial"
+                className="p-2 rounded-full transition min-w-[44px] min-h-[44px] flex items-center justify-center"
+                style={{ 
+                  border: '1px solid rgba(107, 114, 128, 0.2)',
+                  color: '#6B7280'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 107, 107, 0.1)';
+                  e.currentTarget.style.borderColor = '#FF6B6B';
+                  e.currentTarget.style.color = '#FF6B6B';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.2)';
+                  e.currentTarget.style.color = '#6B7280';
+                }}
+                aria-label={t('common.next')}
               >
                 <ChevronRight className="h-5 w-5" />
               </button>

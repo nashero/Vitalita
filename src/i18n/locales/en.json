@@ -1052,6 +1052,73 @@
     },
     "copyright": "All rights reserved."
   },
+  "contactPage": {
+    "title": "CONTACT US",
+    "heading": "Request Your Personalized Demo",
+    "subtitle": "See how Vitalita can transform your donation management",
+    "form": {
+      "organizationName": "Organization Name",
+      "organizationNamePlaceholder": "e.g. AVIS Milano",
+      "yourName": "Your Name",
+      "yourNamePlaceholder": "Your full name",
+      "yourRole": "Your Role/Position",
+      "selectRole": "Select your role",
+      "emailAddress": "Email Address",
+      "emailPlaceholder": "you@organization.it",
+      "currentChallenges": "Current Challenges",
+      "challengesPlaceholder": "Tell us about your biggest operational challenges",
+      "howDidYouHear": "How did you hear about us?",
+      "selectOption": "Select an option",
+      "webSearch": "Web Search",
+      "referral": "Referral",
+      "conference": "Conference",
+      "other": "Other",
+      "requestDemo": "Request Demo",
+      "privacyNotice": "By submitting this form you agree to Vitalita contacting you about our platform. View our Privacy Policy for details.",
+      "thankYou": "Thank you!",
+      "thankYouMessage": "A Vitalita expert will reach out within the next business day to coordinate a tailored demo."
+    },
+    "whatToExpect": {
+      "title": "What to Expect",
+      "item1": "30-minute personalized demo",
+      "item2": "Live Q&A with product specialist",
+      "item3": "Custom use case discussion",
+      "item4": "No obligation, no pressure"
+    },
+    "contactInfo": {
+      "title": "Contact Information",
+      "email": "info@vitalita.com",
+      "phone": "+39 02 1234 5678",
+      "hours": "Mon-Fri, 9:00-18:00 CET",
+      "location": "Milan, Italy"
+    },
+    "quickStats": {
+      "title": "Quick Stats",
+      "organizations": "Organizations Trust Vitalita",
+      "donationsManaged": "Donations Managed",
+      "livesSaved": "Lives Saved",
+      "platformUptime": "Platform Uptime"
+    },
+    "trustBadges": {
+      "gdprCompliant": "GDPR Compliant",
+      "isoCertified": "ISO Certified",
+      "secureEncryption": "Secure Encryption"
+    },
+    "testimonials": {
+      "title": "TESTIMONIALS",
+      "heading": "What Our Partners Say",
+      "quote": "Vitalita transformed our donation management. We've seen a 40% increase in donor engagement and streamlined our entire operation.",
+      "author": "Marco Rossi",
+      "position": "Operations Manager",
+      "organization": "AVIS Milano"
+    },
+    "roles": {
+      "manager": "Manager",
+      "director": "Director",
+      "itAdministrator": "IT Administrator",
+      "other": "Other"
+    }
+  },
   "simplicityDelivered": {
     "hero": {
       "badge": "Innovation",

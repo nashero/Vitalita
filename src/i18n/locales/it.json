@@ -918,6 +918,73 @@
     },
     "copyright": "Tutti i diritti riservati."
   },
+  "contactPage": {
+    "title": "CONTATTACI",
+    "heading": "Richiedi la Tua Demo Personalizzata",
+    "subtitle": "Scopri come Vitalita può trasformare la gestione delle donazioni",
+    "form": {
+      "organizationName": "Nome Organizzazione",
+      "organizationNamePlaceholder": "es. AVIS Milano",
+      "yourName": "Il Tuo Nome",
+      "yourNamePlaceholder": "Il tuo nome completo",
+      "yourRole": "Il Tuo Ruolo/Posizione",
+      "selectRole": "Seleziona il tuo ruolo",
+      "emailAddress": "Indirizzo Email",
+      "emailPlaceholder": "tu@organizzazione.it",
+      "currentChallenges": "Sfide Attuali",
+      "challengesPlaceholder": "Raccontaci delle tue maggiori sfide operative",
+      "howDidYouHear": "Come hai saputo di noi?",
+      "selectOption": "Seleziona un'opzione",
+      "webSearch": "Ricerca Web",
+      "referral": "Raccomandazione",
+      "conference": "Conferenza",
+      "other": "Altro",
+      "requestDemo": "Richiedi Demo",
+      "privacyNotice": "Inviando questo modulo accetti che Vitalita ti contatti riguardo alla nostra piattaforma. Visualizza la nostra Politica sulla Privacy per i dettagli.",
+      "thankYou": "Grazie!",
+      "thankYouMessage": "Un esperto Vitalita ti contatterà entro il prossimo giorno lavorativo per coordinare una demo su misura."
+    },
+    "whatToExpect": {
+      "title": "Cosa Aspettarsi",
+      "item1": "Demo personalizzata di 30 minuti",
+      "item2": "Domande e risposte dal vivo con specialista prodotto",
+      "item3": "Discussione caso d'uso personalizzato",
+      "item4": "Nessun obbligo, nessuna pressione"
+    },
+    "contactInfo": {
+      "title": "Informazioni di Contatto",
+      "email": "info@vitalita.com",
+      "phone": "+39 02 1234 5678",
+      "hours": "Lun-Ven, 9:00-18:00 CET",
+      "location": "Milano, Italia"
+    },
+    "quickStats": {
+      "title": "Statistiche Rapide",
+      "organizations": "Organizzazioni si Fidano di Vitalita",
+      "donationsManaged": "Donazioni Gestite",
+      "livesSaved": "Vite Salvate",
+      "platformUptime": "Tempo di Attività Piattaforma"
+    },
+    "trustBadges": {
+      "gdprCompliant": "Conforme GDPR",
+      "isoCertified": "Certificato ISO",
+      "secureEncryption": "Crittografia Sicura"
+    },
+    "testimonials": {
+      "title": "TESTIMONIANZE",
+      "heading": "Cosa Dicono i Nostri Partner",
+      "quote": "Vitalita ha trasformato la nostra gestione delle donazioni. Abbiamo visto un aumento del 40% nell'impegno dei donatori e abbiamo semplificato tutta la nostra operazione.",
+      "author": "Marco Rossi",
+      "position": "Responsabile Operativo",
+      "organization": "AVIS Milano"
+    },
+    "roles": {
+      "manager": "Manager",
+      "director": "Direttore",
+      "itAdministrator": "Amministratore IT",
+      "other": "Altro"
+    }
+  },
   "simplicityDelivered": {
     "hero": {
       "badge": "Innovazione",

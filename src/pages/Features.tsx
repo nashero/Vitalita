@@ -129,14 +129,6 @@ const FeaturesPage = () => {
                   </p>
                 </div>
               </div>
-
-              {/* CTA Button */}
-              <button 
-                type="button"
-                className="secondary-cta-button px-6 py-3 border border-[#6B7280] text-[#6B7280] bg-transparent rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-[#FF6B6B] focus:ring-offset-2"
-              >
-                {t('featuresPage.donorManagement.cta')}
-              </button>
             </div>
 
             {/* Right Column - Dashboard Mockup */}
@@ -325,14 +317,6 @@ const FeaturesPage = () => {
                   </p>
                 </div>
               </div>
-
-              {/* CTA Button */}
-              <button 
-                type="button"
-                className="secondary-cta-button px-6 py-3 border border-[#6B7280] text-[#6B7280] bg-transparent rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-[#FF6B6B] focus:ring-offset-2"
-              >
-                {t('featuresPage.smartScheduling.cta')}
-              </button>
             </div>
           </div>
         </div>
@@ -405,14 +389,6 @@ const FeaturesPage = () => {
                   </p>
                 </div>
               </div>
-
-              {/* CTA Button */}
-              <button 
-                type="button"
-                className="px-6 py-3 border border-[#6B7280] text-[#6B7280] bg-transparent rounded-lg font-medium hover:bg-[#F9FAFB] transition-colors"
-              >
-                {t('featuresPage.communicationTools.cta')}
-              </button>
             </div>
 
             {/* Right Column - Communication Composer Mockup */}
@@ -664,14 +640,6 @@ const FeaturesPage = () => {
                   </p>
                 </div>
               </div>
-
-              {/* CTA Button */}
-              <button 
-                type="button"
-                className="px-6 py-3 border border-[#6B7280] text-[#6B7280] bg-transparent rounded-lg font-medium hover:bg-white transition-colors"
-              >
-                {t('featuresPage.analyticsDashboard.cta')}
-              </button>
             </div>
           </div>
         </div>
@@ -760,14 +728,6 @@ const FeaturesPage = () => {
                   {t('featuresPage.integrationSecurity.trustBadges.euHealthcare')}
                 </div>
               </div>
-
-              {/* CTA Button */}
-              <button 
-                type="button"
-                className="px-6 py-3 border border-[#6B7280] text-[#6B7280] bg-transparent rounded-lg font-medium hover:bg-[#F9FAFB] transition-colors"
-              >
-                {t('featuresPage.integrationSecurity.cta')}
-              </button>
             </div>
 
             {/* Right Column - Security Dashboard */}
