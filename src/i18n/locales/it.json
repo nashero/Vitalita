@@ -636,30 +636,100 @@
   },
   "caseStudies": {
     "title": "Casi di Studio",
-    "heading": "Trasformare l'impegno dei donatori in tutta Italia",
-    "subtitle": "Vitalita collabora con organizzazioni di donazione del sangue per creare un impatto misurabile rapidamente. Esplora le iniziative selezionate dalla nostra comunità.",
-    "seeInAction": "Vedi Vitalita in azione",
-    "demoDescription": "Richiedi una demo personalizzata per esplorare come possiamo replicare questi risultati nella tua organizzazione.",
-    "requestDemo": "Richiedi una Demo",
+    "trustBadge": "Fidato dalla Rete di Donazione del Sangue Leader in Italia",
+    "seoHeading": "Casi di Studio: Storie di Successo nella Gestione delle Donazioni di Sangue",
+    "heading": "Organizzazioni Reali. Risultati Misurabili. Zero Ritardi.",
+    "subheadline": "Scopri come Vitalita offre un impatto immediato per i centri di donazione del sangue in tutta Italia",
+    "subtitle": "Ogni caso di studio rappresenta un'organizzazione reale che ottiene risultati misurabili. Nessuna promessa—solo risultati.",
+    "introduction": "La metodologia di impatto di Vitalita si concentra su risultati misurabili e basati sui dati per le organizzazioni di donazione del sangue in tutta Italia. Il nostro software di coinvolgimento dei donatori si integra perfettamente con i flussi di lavoro esistenti, consentendo ai coordinatori di monitorare gli indicatori chiave di prestazione in tempo reale. Attraverso sistemi di programmazione automatizzati, comunicazione multi-canale e analisi complete, aiutiamo le organizzazioni a ridurre le mancate presentazioni dei donatori, migliorare l'efficienza del coordinamento delle campagne di donazione e semplificare i processi amministrativi. Ogni caso di studio qui sotto dimostra come le banche del sangue italiane—dalle reti regionali come AVIS Lombardia alle organizzazioni nazionali come Croce Rossa Toscana—hanno ottenuto miglioramenti significativi nella gestione dei donatori, nell'efficienza operativa e nell'allocazione delle risorse utilizzando il nostro sistema di programmazione per banche del sangue italiane.",
+    "metrics": {
+      "noShows": "Meno Mancate Presentazioni",
+      "efficiency": "Aumento Efficienza",
+      "adminTime": "Meno Tempo Amministrativo"
+    },
+    "filters": {
+      "title": "Filtra e Ordina",
+      "all": "Tutti i Casi",
+      "organizationType": "Reti Regionali",
+      "region": "Per Regione"
+    },
+    "sort": {
+      "label": "Ordina per",
+      "impact": "Impatto Maggiore",
+      "organization": "Nome Organizzazione"
+    },
+    "before": "Prima",
+    "after": "Dopo",
+    "showMore": "Visualizza Dettagli",
+    "showLess": "Mostra Meno",
+    "downloadFull": "Scarica Caso di Studio Completo",
+    "testimonials": {
+      "title": "Ascolta i Nostri Partner",
+      "subtitle": "I coordinatori reali condividono come Vitalita ha trasformato le loro operazioni",
+      "testimonial1": {
+        "title": "Testimonianza Coordinatore",
+        "organization": "AVIS Lombardia"
+      },
+      "testimonial2": {
+        "title": "Storia di Impatto",
+        "organization": "Croce Rossa Toscana"
+      },
+      "testimonial3": {
+        "title": "Caso di Successo",
+        "organization": "FIDAS Veneto"
+      }
+    },
+    "cta": {
+      "title": "Pronto a Vedere Questi Risultati nella Tua Organizzazione?",
+      "description": "Richiedi una demo personalizzata per esplorare come possiamo replicare questi risultati nella tua rete di donazione del sangue.",
+      "button": "Richiedi una Demo"
+    },
     "studies": {
       "avisLombardia": {
         "organization": "AVIS LOMBARDIA",
-        "summary": "CRM donatori unificato e programmazione dinamica in 12 province, riducendo le mancate presentazioni del 22% e migliorando l'utilizzo del personale.",
-        "highlight": "22% MENO MANCATE PRESENTAZIONI",
-        "detail": "I promemoria automatizzati tramite Telegram e SMS hanno sostituito le chiamate manuali, liberando i coordinatori per l'outreach."
+        "h2": "Come AVIS Lombardia ha Ridotto le Mancate Presentazioni del 22%",
+        "outcome": "22% meno mancate presentazioni, 12 province unificate",
+        "detail": "I promemoria automatizzati tramite Telegram e SMS hanno sostituito le chiamate manuali, liberando i coordinatori per l'outreach. Il sistema CRM unificato ha consentito una visibilità in tempo reale in tutte le 12 province, riducendo il sovraccarico di coordinamento del 60%.",
+        "before": "Chiamate manuali, dati frammentati tra province, tasso di mancate presentazioni del 18%",
+        "after": "Promemoria automatizzati multi-canale, dashboard unificata, tasso di mancate presentazioni del 14%"
       },
       "croceRossaToscana": {
         "organization": "CROCE ROSSA TOSCANA",
-        "summary": "Coordinamento semplificato delle campagne mobili di donazione con tracciamento inventario in tempo reale, aumentando l'efficienza della raccolta del 35% nelle campagne regionali.",
-        "highlight": "35% AUMENTO EFFICIENZA",
-        "detail": "Il sistema di programmazione integrato ha consentito una migliore allocazione delle risorse e tempi di attesa ridotti, risultando in maggiore soddisfazione e fidelizzazione dei donatori."
+        "h2": "Come Croce Rossa Toscana ha Aumentato l'Efficienza del 35%",
+        "outcome": "35% aumento efficienza, tracciamento inventario in tempo reale",
+        "detail": "Il sistema di programmazione integrato ha consentito una migliore allocazione delle risorse e tempi di attesa ridotti, risultando in maggiore soddisfazione e fidelizzazione dei donatori. Il coordinamento delle campagne mobili è diventato fluido con aggiornamenti inventario in tempo reale.",
+        "before": "Programmazione manuale, ritardi inventario, tempi di attesa medi di 45 minuti",
+        "after": "Programmazione automatizzata, tracciamento in tempo reale, tempi di attesa medi di 18 minuti"
       },
       "fidasVeneto": {
         "organization": "FIDAS VENETO",
-        "summary": "Trasformazione digitale della registrazione dei donatori e della gestione dell'idoneità, riducendo il carico amministrativo del 40% migliorando al contempo l'accuratezza dei dati.",
-        "highlight": "40% MENO TEMPO AMMINISTRATIVO",
-        "detail": "I controlli di idoneità automatizzati e i moduli digitali hanno eliminato i processi cartacei, permettendo al personale di concentrarsi sull'impegno dei donatori e sull'outreach della comunità."
+        "h2": "Come FIDAS Veneto ha Ridotto il Tempo Amministrativo del 40%",
+        "outcome": "40% meno tempo amministrativo, trasformazione digitale completata",
+        "detail": "I controlli di idoneità automatizzati e i moduli digitali hanno eliminato i processi cartacei, permettendo al personale di concentrarsi sull'impegno dei donatori e sull'outreach della comunità. L'accuratezza dei dati è migliorata dal 78% al 96%.",
+        "before": "Moduli cartacei, controlli idoneità manuali, 12 ore/settimana tempo amministrativo",
+        "after": "Moduli digitali, controlli automatizzati, 7 ore/settimana tempo amministrativo"
       }
+    },
+    "faq": {
+      "title": "Domande Frequenti",
+      "measureSuccess": {
+        "question": "Come le organizzazioni misurano il successo con Vitalita?",
+        "answer": "Le organizzazioni misurano il successo attraverso indicatori chiave di prestazione monitorati in tempo reale: tassi di mancate presentazioni dei donatori, efficienza della programmazione degli appuntamenti, riduzione del tempo amministrativo, punteggi di soddisfazione dei donatori e metriche di utilizzo delle risorse. Vitalita fornisce dashboard analitiche complete che mostrano confronti prima e dopo, consentendo ai coordinatori di quantificare i miglioramenti nel coinvolgimento dei donatori, nell'efficienza operativa e nel risparmio sui costi."
+      },
+      "implementationTime": {
+        "question": "Quanto tempo ci vuole per vedere i risultati?",
+        "answer": "La maggior parte delle organizzazioni inizia a vedere miglioramenti misurabili entro il primo mese di implementazione. La configurazione iniziale richiede tipicamente 2-4 settimane, inclusa la configurazione del sistema, la formazione del personale e l'integrazione del flusso di lavoro. Entro il terzo mese, le organizzazioni riportano tipicamente miglioramenti del 15-25% nelle metriche chiave, con l'ottimizzazione completa raggiunta entro 6 mesi."
+      },
+      "roi": {
+        "question": "Qual è il ritorno sull'investimento per il software di gestione delle donazioni di sangue?",
+        "answer": "Il ROI varia in base alle dimensioni dell'organizzazione e ai processi attuali, ma i rendimenti tipici includono: riduzione del 20-40% del sovraccarico amministrativo, miglioramento del 15-30% nella fidelizzazione dei donatori, riduzione del 25-50% dei tassi di mancate presentazioni e significativo risparmio di tempo per i coordinatori. Molte organizzazioni riportano un ROI completo entro 12-18 mesi attraverso la riduzione dei costi operativi e l'aumento della capacità di donazione."
+      }
+    },
+    "relatedLinks": {
+      "title": "Scopri di Più su Vitalita",
+      "description": "Scopri di più sul nostro software di coinvolgimento dei donatori, sistema di programmazione e su come aiutiamo le organizzazioni italiane di donazione del sangue a ottenere risultati misurabili.",
+      "features": "Visualizza Funzionalità",
+      "howItWorks": "Come Funziona"
     }
   },
   "featuresPage": {
@@ -803,9 +873,9 @@
     "platformDescription": "Piattaforma di Gestione Donazioni di Sangue",
     "description": "Progettata specificamente per le organizzazioni per orchestrare l'impegno dei donatori, semplificare la programmazione e dare a ogni coordinatore un centro di comando unificato.",
     "sections": {
-      "product": "Prodotto",
-      "company": "Azienda",
-      "portals": "Portali"
+      "product": "PRODOTTO",
+      "company": "AZIENDA",
+      "portals": "PORTALI"
     },
     "links": {
       "features": "Caratteristiche",
@@ -1093,10 +1163,15 @@
   },
   "home": {
     "hero": {
+      "trustedByAvis": "AFFIDATO DA AVIS NAZIONALE",
+      "heading": "Il Sistema Operativo per la Moderna Donazione di Sangue",
+      "subtitle": "Coordinamento alimentato da AI che mantiene la rete di donazioni italiana attiva 24/7—così ogni richiesta di sangue riceve una risposta.",
+      "getEmergencyReady": "Preparati per le Emergenze",
+      "exploreFeatures": "Esplora Funzionalità",
+      "trustBadge": "Coordinamento di 487K+ Donatori in tutta Italia",
       "costOfInefficiency": "Il Costo dell'Inefficienza",
       "everyLifeMatters": "Ogni Vita Conta.",
       "everySecondCounts": "Ogni Secondo Conta.",
-      "subtitle": "Senza Vitalita, perdi tempo—e il tempo è vita.",
       "infographicAlt": "Vitalita Rivoluziona la Donazione di Sangue - Infografica Circolare",
       "missionStory": {
         "title": "La Nostra Missione, La Nostra Storia",
@@ -1114,50 +1189,56 @@
         "title": "Cosa Perde la Tua Organizzazione Senza Vitalita",
         "losses": {
           "operationalWaste": {
-            "title": "Spreco Operativo",
-            "description": "I processi manuali consumano tempo e risorse del personale",
-            "stat": "40+ ore/settimana in coordinamento"
+            "title": "Chaos Operativo",
+            "description": "Ogni minuto sui fogli di calcolo è un minuto che non salva vite. Il coordinamento manuale spreca oltre 40 ore a settimana—tempo che il tuo staff dovrebbe dedicare ai donatori.",
+            "stat": "40+ ORE/SETTIMANA SU COORDINAMENTO"
           },
           "capacityLoss": {
-            "title": "Perdita di Capacità",
-            "description": "Doppie prenotazioni e gap riducono l'efficienza della raccolta",
-            "stat": "31% degli slot sottoutilizzati"
+            "title": "Abbandono Donatori",
+            "description": "Un follow-up inadeguato perde il 22% dei donatori dopo la prima visita. I sistemi disconnessi fanno sì che i donatori scivolino via, per non tornare mai più.",
+            "stat": "22% DEI DONATORI NON TORNA MAI"
           },
           "livesAtRisk": {
-            "title": "Vite a Rischio",
-            "description": "Le risposte ritardate costano minuti preziosi quando ogni secondo conta",
-            "stat": "Media 2,3 ore per localizzare sangue critico"
+            "title": "Cecità Inventariale",
+            "description": "Non puoi pianificare per emergenze che non vedi arrivare. Senza dati in tempo reale, le carenze appaiono quando è troppo tardi per mobilitare i donatori.",
+            "stat": "MEDIA 2,3 ORE PER LOCALIZZARE SANGUE CRITICO"
           },
           "donorAttrition": {
-            "title": "Attrito dei Donatori",
-            "description": "Il coordinamento scadente porta a mancate presentazioni e perdita di fiducia",
-            "stat": "22% dei donatori non torna mai"
+            "title": "Incubi di Conformità",
+            "description": "Le violazioni GDPR costano €10M–€20M per incidente. I registri manuali dei donatori creano rischio normativo ed erodono la fiducia.",
+            "stat": "€10M–€20M MULTE POTENZIALI PER VIOLAZIONE"
           }
         }
       },
       "cta": {
         "title": "Non lasciare che un'altra vita venga persa a causa di sistemi inefficienti.",
         "description": "Vitalita garantisce che quando qualcuno come Maria ha bisogno di sangue, venga trovato e consegnato in minuti—non ore.",
+        "getEmergencyReady": "Preparati per le Emergenze",
         "scheduleDemo": "Prenota una Demo",
         "seeHowItWorks": "Vedi Come Funziona"
+      },
+      "avisLogo": {
+        "name": "AVIS Nazionale",
+        "description": "Coordinamento nazionale e integrazioni regionali",
+        "highlight": "Partner Strategico"
       }
     },
     "problemStatement": {
       "badge": "La Sfida",
-      "title": "Addio Fogli di Calcolo, Ciao Intelligenza",
-      "description": "Le organizzazioni italiane di sangue gestiscono migliaia di donatori, team medici rotanti e unità mobili—spesso con sistemi disconnessi. Vitalita unifica persone, processi e dati in un unico centro di comando.",
+      "title": "Addio Fogli di Calcolo, Benvenuta Intelligenza",
+      "description": "Le organizzazioni italiane del sangue gestiscono migliaia di donatori, team medici a rotazione e unità mobili—spesso con sistemi disconnessi. Vitalita unifica persone, processi e dati in un unico centro di comando.",
       "painPoints": {
         "compliancePressure": {
-          "title": "Pressione normativa",
-          "description": "GDPR, standard ISO e normative sanitarie regionali richiedono tracciabilità e gestione sicura dei dati dei donatori."
+          "title": "Pressione di conformità",
+          "description": "GDPR, standard ISO e regolamenti sanitari regionali richiedono tracciabilità e gestione sicura dei dati dei donatori."
         },
         "fragmentedWorkflows": {
-          "title": "Flussi di lavoro frammentati",
-          "description": "I capitoli regionali gestiscono fogli di calcolo, moduli cartacei e strumenti di prenotazione legacy, portando a doppie prenotazioni e abbandoni dei donatori."
+          "title": "Flussi frammentati",
+          "description": "Le sezioni regionali gestiscono fogli di calcolo, moduli cartacei e strumenti di prenotazione obsoleti, portando a doppie prenotazioni e perdita di donatori."
         },
         "limitedVisibility": {
           "title": "Visibilità limitata",
-          "description": "La leadership manca di una visione in tempo reale delle prestazioni della campagna, dei rinvii e della capacità, rendendo la pianificazione reattiva invece che proattiva."
+          "description": "La leadership manca di una visione in tempo reale delle prestazioni delle campagne, dei differimenti e della capacità, rendendo la pianificazione reattiva invece che proattiva."
         }
       }
     },
@@ -1182,43 +1263,87 @@
     },
     "features": {
       "badge": "Pilastri della Piattaforma",
-      "title": "Costruito per organizzazioni complesse di donatori",
-      "description": "Vitalita collega ogni team—dal reclutamento alla trasfusione—con un sistema operativo moderno che mantiene i donatori coinvolti e l'approvvigionamento di sangue affidabile.",
+      "title": "Un Sistema. Zero Ritardi.",
+      "description": "Dalla chiamata del donatore alla raccolta in minuti—non ore.",
       "featureList": {
         "smartScheduling": {
-          "title": "Programmazione Intelligente",
-          "description": "Orchestrare flebotomia, volontari e unità mobili con pianificazione della capacità assistita dall'IA che rispetta le normative regionali e il ritmo delle donazioni."
+          "title": "AI che Prevede la Domanda Prima dell'Arrivo dei Pazienti",
+          "description": "Abbina i donatori ai centri di raccolta in tempo reale in base a tipo, posizione e disponibilità—con risoluzione automatica dei conflitti."
         },
         "donorManagement": {
-          "title": "Gestione Donatori",
-          "description": "Mantenere un unico record del donatore con finestre di idoneità, storia delle donazioni, corrispondenza del gruppo sanguigno e gestione automatizzata dei rinvii."
+          "title": "Un Profilo. Storico Completo. Accesso Istantaneo.",
+          "description": "Finisci la caccia alla documentazione. Idoneità, storico e preferenze di ogni donatore in un unico record sicuro."
         },
         "multiChannelCommunication": {
-          "title": "Comunicazione Multi-Canale",
-          "description": "Attivare campagne su SMS, Telegram, email e voce con modelli di messaggistica localizzati allineati ai requisiti di privacy italiani."
+          "title": "Raggiungi i Donatori Dove Sono",
+          "description": "SMS, email, WhatsApp, voce—campagne localizzate e conformi al GDPR che generano il 40% in più di risposte."
         },
         "actionableAnalytics": {
-          "title": "Analisi Azionabili",
-          "description": "Monitorare i KPI tra le province, misurare la conversione delle campagne e condividere insight pronti per i dirigenti in secondi—non fogli di calcolo."
+          "title": "Vedi Tutto. Decidi Più Velocemente.",
+          "description": "Traccia inventario, prenotazioni e conversioni in tempo reale. Niente fogli di calcolo. Nessun ritardo."
         }
       }
     },
     "socialProof": {
-      "badge": "Fidato dalle principali organizzazioni italiane",
+      "title": "Affidato dalla Principale Rete Italiana di Donazione di Sangue",
+      "badge": "PARTNER STRATEGICO",
       "organizations": {
         "avisNazionale": {
           "name": "AVIS Nazionale",
-          "description": "Coordinamento nazionale e integrazioni regionali",
-          "highlight": "In evidenza Partner"
+          "description": "Coordinamento nazionale e integrazioni regionali"
+        }
+      },
+      "testimonial": {
+        "quote": "Vitalita ha trasformato il modo in cui coordiniamo la raccolta di sangue in 47 sezioni regionali. Quello che richiedeva ore ora avviene in minuti—e questo significa vite salvate.",
+        "author": "Coordinatore Nazionale, AVIS Nazionale",
+        "role": "Coordinatore Nazionale, AVIS Nazionale"
+      },
+      "impactStats": {
+        "donorsConnected": {
+          "number": "487K+",
+          "label": "Donatori Connessi"
+        },
+        "avgResponseTime": {
+          "number": "23 Minuti",
+          "label": "Tempo di Risposta Medio"
+        },
+        "donorRetention": {
+          "number": "40%",
+          "label": "Aumento Retention Donatori"
         }
       }
     },
     "cta": {
       "badge": "Prossimi Passi",
-      "title": "Pronto per elevare ogni esperienza di donazione?",
-      "description": "Unisciti alle organizzazioni italiane che modernizzano le loro operazioni con Vitalita. Orchestriamo reclutamento, logistica e fedeltà dei donatori con una piattaforma adattiva.",
-      "button": "Parlaci!",
-      "tagline": "Fidato mano nella mano con organizzazioni di donatori in tutta Italia"
+      "title": "Pronto a trasformare il caos di coordinamento in velocità salvavita?",
+      "description": "Unisciti alle organizzazioni italiane che stanno modernizzando le loro operazioni con Vitalita. Orchestriamo reclutamento, logistica e fedeltà dei donatori con un'unica piattaforma adattiva.",
+      "primaryButton": "Prenota la Tua Demo",
+      "secondaryButton": "Parla con il Nostro Team",
+      "trustText": "Affidato da oltre 47 sezioni AVIS in tutta Italia",
+      "certifications": {
+        "iso27001": "ISO 27001",
+        "gdprCompliant": "Conforme GDPR",
+        "avisApproved": "Approvato AVIS"
+      }
+    },
+    "byTheNumbers": {
+      "stats": {
+        "donorsCoordinated": {
+          "number": "487.000+",
+          "label": "Donatori Coordinati",
+          "description": "Attraverso la rete di donazione italiana"
+        },
+        "avisChapters": {
+          "number": "47+",
+          "label": "Sezioni AVIS",
+          "description": "Organizzazioni regionali e provinciali che usano Vitalita"
+        },
+        "avgResponseTime": {
+          "number": "23 min",
+          "label": "Tempo di Risposta Medio",
+          "description": "Dalla richiesta urgente all'abbinamento donatore"
+        }
+      }
     }
   }
 }

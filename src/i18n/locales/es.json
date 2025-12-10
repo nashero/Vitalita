@@ -587,29 +587,73 @@
   },
   "caseStudies": {
     "title": "Casos de Estudio",
-    "heading": "Transformando el compromiso de donantes en toda Italia",
-    "subtitle": "Vitalita se asocia con organizaciones de donación de sangre para crear un impacto medible rápidamente. Explora iniciativas seleccionadas de nuestra comunidad.",
-    "seeInAction": "Ver Vitalita en acción",
-    "demoDescription": "Solicita una demo personalizada para explorar cómo podemos replicar estos resultados en tu organización.",
-    "requestDemo": "Solicitar una Demo",
+    "trustBadge": "Confiado por la Red de Donación de Sangue Líder en Italia",
+    "heading": "Organizaciones Reales. Resultados Medibles. Cero Retrasos.",
+    "subheadline": "Descubre cómo Vitalita ofrece un impacto inmediato para los centros de donación de sangre en toda Italia",
+    "subtitle": "Cada caso de estudio representa una organización real que logra resultados medibles. Sin promesas—solo resultados.",
+    "metrics": {
+      "noShows": "Menos Ausencias",
+      "efficiency": "Aumento de Eficiencia",
+      "adminTime": "Menos Tiempo Administrativo"
+    },
+    "filters": {
+      "title": "Filtrar y Ordenar",
+      "all": "Todos los Casos",
+      "organizationType": "Redes Regionales",
+      "region": "Por Región"
+    },
+    "sort": {
+      "label": "Ordenar por",
+      "impact": "Mayor Impacto",
+      "organization": "Nombre de Organización"
+    },
+    "before": "Antes",
+    "after": "Después",
+    "showMore": "Ver Detalles",
+    "showLess": "Mostrar Menos",
+    "downloadFull": "Descargar Caso de Estudio Completo",
+    "testimonials": {
+      "title": "Escucha a Nuestros Socios",
+      "subtitle": "Coordinadores reales comparten cómo Vitalita transformó sus operaciones",
+      "testimonial1": {
+        "title": "Testimonio del Coordinador",
+        "organization": "AVIS Lombardia"
+      },
+      "testimonial2": {
+        "title": "Historia de Impacto",
+        "organization": "Croce Rossa Toscana"
+      },
+      "testimonial3": {
+        "title": "Caso de Éxito",
+        "organization": "FIDAS Veneto"
+      }
+    },
+    "cta": {
+      "title": "¿Listo para Ver Estos Resultados en Tu Organización?",
+      "description": "Solicita una demo personalizada para explorar cómo podemos replicar estos resultados en tu red de donación de sangre.",
+      "button": "Solicitar una Demo"
+    },
     "studies": {
       "avisLombardia": {
         "organization": "AVIS LOMBARDIA",
-        "summary": "CRM de donantes unificado y programación dinámica en 12 provincias, reduciendo las ausencias en un 22% y mejorando la utilización del personal.",
-        "highlight": "22% MENOS AUSENCIAS",
-        "detail": "Los recordatorios automatizados vía Telegram y SMS reemplazaron los árboles telefónicos manuales, liberando a los coordinadores para alcance comunitario."
+        "outcome": "22% menos ausencias, 12 provincias unificadas",
+        "detail": "Los recordatorios automatizados vía Telegram y SMS reemplazaron los árboles telefónicos manuales, liberando a los coordinadores para alcance comunitario. El sistema CRM unificado permitió visibilidad en tiempo real en las 12 provincias, reduciendo la sobrecarga de coordinación en un 60%.",
+        "before": "Árboles telefónicos manuales, datos fragmentados entre provincias, tasa de ausencias del 18%",
+        "after": "Recordatorios automatizados multicanal, panel unificado, tasa de ausencias del 14%"
       },
       "croceRossaToscana": {
         "organization": "CROCE ROSSA TOSCANA",
-        "summary": "Coordinación simplificada de campañas móviles de donación con seguimiento de inventario en tiempo real, aumentando la eficiencia de recolección en un 35% en campañas regionales.",
-        "highlight": "35% AUMENTO DE EFICIENCIA",
-        "detail": "El sistema de programación integrado permitió una mejor asignación de recursos y tiempos de espera reducidos, resultando en mayor satisfacción y retención de donantes."
+        "outcome": "35% aumento de eficiencia, seguimiento de inventario en tiempo real",
+        "detail": "El sistema de programación integrado permitió una mejor asignación de recursos y tiempos de espera reducidos, resultando en mayor satisfacción y retención de donantes. La coordinación de campañas móviles se volvió fluida con actualizaciones de inventario en tiempo real.",
+        "before": "Programación manual, retrasos de inventario, tiempos de espera promedio de 45 minutos",
+        "after": "Programación automatizada, seguimiento en tiempo real, tiempos de espera promedio de 18 minutos"
       },
       "fidasVeneto": {
         "organization": "FIDAS VENETO",
-        "summary": "Transformación digital del registro de donantes y gestión de elegibilidad, reduciendo la sobrecarga administrativa en un 40% mientras mejora la precisión de los datos.",
-        "highlight": "40% MENOS TIEMPO ADMINISTRATIVO",
-        "detail": "Las verificaciones de elegibilidad automatizadas y los formularios digitales eliminaron los procesos basados en papel, permitiendo al personal enfocarse en el compromiso de donantes y alcance comunitario."
+        "outcome": "40% menos tiempo administrativo, transformación digital completada",
+        "detail": "Las verificaciones de elegibilidad automatizadas y los formularios digitales eliminaron los procesos basados en papel, permitiendo al personal enfocarse en el compromiso de donantes y alcance comunitario. La precisión de los datos mejoró del 78% al 96%.",
+        "before": "Formularios en papel, verificaciones de elegibilidad manuales, 12 horas/semana tiempo administrativo",
+        "after": "Formularios digitales, verificaciones automatizadas, 7 horas/semana tiempo administrativo"
       }
     }
   },
