@@ -1669,5 +1669,223 @@
       "secondaryButton": "Esplora Prima le Funzionalità →",
       "trustLine": "Chiamata di 15 minuti. Nessun impegno. Vedi se Vitalita si adatta al tuo centro."
     }
+  },
+  "caseStudyPage": {
+    "hero": {
+      "badge": "FIDATO DA 47+ SEZIONI AVIS",
+      "headline": "47+ Organizzazioni. 487.000+ Vite Salvate. Zero Fogli di Calcolo.",
+      "subheadline": "Scopri esattamente come le reti di donazione del sangue italiane hanno eliminato il caos e aumentato l'impatto con Vitalita.",
+      "statCard1": {
+        "value": "487.000+",
+        "label": "Donazioni Gestite Annualmente"
+      },
+      "statCard2": {
+        "value": "3-6 mesi",
+        "label": "Tempo Medio per i Risultati"
+      },
+      "statCard3": {
+        "value": "2 settimane",
+        "label": "Implementazione Tipica"
+      },
+      "cta": "Calcola il ROI della Tua Organizzazione"
+    },
+    "trustBar": {
+      "heading": "Organizzazioni che Utilizzano Vitalita per la Gestione dei Donatori",
+      "subtext": "Unisciti a 47+ organizzazioni che già risparmiano tempo"
+    },
+    "videoTestimonials": {
+      "heading": "Guarda Come i Coordinatori Hanno Risparmiato 16 Ore a Settimana",
+      "card1": {
+        "title": "Come Maria ha Eliminato 3 Fogli di Calcolo",
+        "organization": "AVIS Lombardia"
+      },
+      "card2": {
+        "title": "Tracciamento in Tempo Reale in 12 Province",
+        "organization": "Croce Rossa Toscana"
+      },
+      "card3": {
+        "title": "Timeline di Trasformazione Digitale di 2 Mesi",
+        "organization": "FIDAS Veneto"
+      }
+    },
+    "impactMetrics": {
+      "heading": "Impatto Misurato nelle Reti di Donazione del Sangue Italiane",
+      "card1": {
+        "badge": "22%",
+        "headline": "Riduzione dei Tassi di Mancate Presentazioni",
+        "description": "I centri di donazione del sangue che utilizzano Vitalita hanno ridotto gli appuntamenti mancati dal 30% all'8% entro 3 mesi attraverso promemoria SMS automatizzati e programmazione delle preferenze dei donatori.",
+        "ministat": "Dal 30% → 8% in 3 mesi"
+      },
+      "card2": {
+        "badge": "35%",
+        "headline": "Aumento dell'Efficienza dei Coordinatori",
+        "description": "Il tracciamento dell'inventario in tempo reale e la programmazione alimentata dall'IA hanno permesso ai coordinatori di gestire 3 volte più donatori senza personale aggiuntivo.",
+        "ministat": "3x donatori per coordinatore"
+      },
+      "card3": {
+        "badge": "40%",
+        "headline": "Meno Tempo Amministrativo",
+        "description": "Le conferme degli appuntamenti automatizzate, il riprogrammazione e la creazione di report hanno liberato 16 ore a settimana per coordinatore per l'assistenza ai pazienti e l'impegno dei donatori.",
+        "ministat": "16 ore risparmiate settimanalmente"
+      }
+    },
+    "caseStudyGrid": {
+      "heading": "Storie di Successo nella Gestione delle Donazioni di Sangue per Organizzazione",
+      "subheading": "Implementazioni reali, risultati misurabili, timeline documentate",
+      "filters": {
+        "all": "Tutti gli Studi",
+        "avis": "AVIS",
+        "croceRossa": "Croce Rossa",
+        "fidas": "FIDAS",
+        "more": "+44 Altri"
+      },
+      "card1": {
+        "badge": "40%",
+        "organization": "FIDAS VENETO",
+        "headline": "FIDAS Veneto ha Eliminato la Carta in 60 Giorni—Ora Gestisce 3x Donatori a Settimana",
+        "challenge": "Gestione di oltre 15.000 donatori in 12 province utilizzando fogli di calcolo disconnessi e chiamate telefoniche",
+        "solution": "Piattaforma Vitalita unificata con programmazione automatizzata, promemoria SMS e tracciamento inventario in tempo reale",
+        "result1": "40% di riduzione del tempo amministrativo",
+        "result2": "22% in meno di mancate presentazioni",
+        "result3": "100% digitale in 2 mesi",
+        "timeline": "Risultati raggiunti in 3 mesi"
+      },
+      "card2": {
+        "badge": "35%",
+        "organization": "CROCE ROSSA TOSCANA",
+        "headline": "Croce Rossa Toscana Traccia 487K Donazioni in Tempo Reale—Zero Esaurimenti",
+        "challenge": "Nessuna visibilità sull'inventario in 8 centri regionali, frequenti carenze di emergenza",
+        "solution": "Tracciamento inventario in tempo reale e programmazione alimentata dall'IA in tutti i siti di raccolta",
+        "result1": "Tracciamento in tempo reale in tutti i centri",
+        "result2": "35% di aumento dell'efficienza",
+        "result3": "Zero esaurimenti in 4 mesi",
+        "timeline": "Risultati raggiunti in 4 mesi"
+      },
+      "card3": {
+        "badge": "22%",
+        "organization": "AVIS LOMBARDIA",
+        "headline": "AVIS Lombardia ha Unificato 12 Province—22% in Meno Mancate Presentazioni in 3 Mesi",
+        "challenge": "Comunicazione frammentata tra sezioni, tasso di mancate presentazioni del 30%",
+        "solution": "Piattaforma di programmazione unificata con promemoria SMS automatizzati e gestione delle preferenze dei donatori",
+        "result1": "22% di riduzione delle mancate presentazioni",
+        "result2": "Programmazione unificata",
+        "result3": "Automazione SMS",
+        "timeline": "Risultati raggiunti in 3 mesi"
+      },
+      "labels": {
+        "challenge": "Sfida:",
+        "solution": "Soluzione:"
+      }
+    },
+    "testimonials": {
+      "heading": "Cosa Dicono i Coordinatori di Donazione del Sangue su Vitalita",
+      "subheading": "Coordinatori verificati da organizzazioni leader",
+      "testimonial1": {
+        "name": "Maria Rossi",
+        "title": "Coordinatrice, AVIS Lombardia",
+        "quote": "Vitalita ha trasformato la nostra coordinazione. Ora gestiamo 3 volte più donatori con lo stesso personale. Il tracciamento dell'inventario in tempo reale ha eliminato il nostro problema più grande.",
+        "organization": "AVIS LOMBARDIA"
+      },
+      "testimonial2": {
+        "name": "Giovanni Bianchi",
+        "title": "Direttore, Croce Rossa Toscana",
+        "quote": "Processiamo il 35% in più di donazioni con le stesse risorse. Il tracciamento dell'inventario in tempo reale ha eliminato i ritardi. I nostri coordinatori finalmente hanno tempo per concentrarsi sui donatori, non sulla carta.",
+        "organization": "CROCE ROSSA TOSCANA"
+      },
+      "testimonial3": {
+        "name": "Laura Conti",
+        "title": "Responsabile Operazioni, FIDAS Veneto",
+        "quote": "Trasformazione digitale completata in 2 mesi. Il personale ora si concentra sull'impegno dei donatori invece che sulla carta. Il ROI è stato immediato—abbiamo visto risultati nella prima settimana.",
+        "organization": "FIDAS VENETO"
+      },
+      "verified": "Verificato su LinkedIn"
+    },
+    "compliance": {
+      "heading": "Conformità Normativa e Certificazioni",
+      "subheading": "Costruito per soddisfare gli standard dei dati sanitari italiani ed europei",
+      "card1": {
+        "name": "Conforme al GDPR",
+        "description": "Piena conformità con il Regolamento Generale sulla Protezione dei Dati dell'UE. I dati dei donatori sono crittografati, con controllo degli accessi e archiviati all'interno dei confini dell'UE."
+      },
+      "card2": {
+        "name": "ISO 27001",
+        "description": "Standard internazionale per la gestione della sicurezza delle informazioni. Audit di terze parti regolari garantiscono che i tuoi dati siano protetti al massimo livello."
+      },
+      "card3": {
+        "name": "Standard Digitali UE",
+        "description": "Soddisfa i requisiti del Quadro di Interoperabilità Europeo. Integrazione senza soluzione di continuità con i sistemi sanitari nazionali e i registri dei donatori."
+      },
+      "card4": {
+        "name": "Approvato dal Ministero della Salute",
+        "description": "Certificato dal Ministero della Salute italiano per la gestione delle donazioni di sangue. Soddisfa tutti i requisiti nazionali per la gestione dei dati sanitari."
+      },
+      "trustSignals": {
+        "breaches": "Zero violazioni dei dati dal lancio",
+        "infrastructure": "Infrastruttura ospitata in UE",
+        "uptime": "Garanzia di uptime del 99,9%"
+      }
+    },
+    "faq": {
+      "heading": "Domande Frequenti",
+      "q1": {
+        "question": "Come le organizzazioni misurano il successo con Vitalita?",
+        "answer": "Le organizzazioni monitorano tre metriche principali: riduzione del tasso di mancate presentazioni (diminuzione media del 22%), efficienza del coordinatore (3 volte più donatori gestiti per membro del personale) e risparmio di tempo amministrativo (riduzione del 40%). Forniamo un calcolatore ROI personalizzato e una dashboard analitica in tempo reale che mostra i tuoi risultati specifici rispetto alla baseline."
+      },
+      "q2": {
+        "question": "Quanto tempo ci vuole per vedere i risultati?",
+        "answer": "La maggior parte delle organizzazioni vede miglioramenti misurabili entro 2-4 settimane dall'implementazione. La configurazione iniziale richiede in media 2 settimane, inclusa la migrazione dei dati, la formazione del personale e la configurazione del sistema. I coordinatori riferiscono risparmio di tempo immediato, mentre i miglioramenti rivolti ai donatori (riduzione delle mancate presentazioni, migliore programmazione) mostrano generalmente un impatto entro il primo mese."
+      },
+      "q3": {
+        "question": "Qual è il ritorno sull'investimento per il software di gestione delle donazioni di sangue?",
+        "answer": "L'organizzazione media recupera il proprio investimento entro 3-6 mesi attraverso costi amministrativi ridotti, meno appuntamenti mancati e migliore utilizzo delle risorse. Le sezioni AVIS riferiscono di risparmiare 16 ore a settimana per coordinatore, mentre le regioni Croce Rossa gestiscono il 35% in più di donazioni con il personale esistente. Forniamo un calcolatore ROI personalizzato basato sulle dimensioni della tua organizzazione e sui processi attuali."
+      },
+      "q4": {
+        "question": "Vitalita è compatibile con i sistemi e i flussi di lavoro esistenti?",
+        "answer": "Sì. Vitalita si integra con i database dei donatori esistenti, i registri nazionali e i sistemi di programmazione utilizzati da AVIS, Croce Rossa e FIDAS. Gestiamo la migrazione dei dati da fogli di calcolo, software legacy e record cartacei. La nostra API si connette a sistemi di laboratorio, gestione dell'inventario e piattaforme di comunicazione già in uso."
+      },
+      "q5": {
+        "question": "Quale supporto viene fornito durante e dopo l'implementazione?",
+        "answer": "Il supporto completo per l'implementazione include: specialista di onboarding dedicato, assistenza per la migrazione dei dati, formazione del personale (in presenza o virtuale), configurazione del flusso di lavoro personalizzato e supporto tecnico 24/7. Dopo il lancio, ricevi formazione continua, aggiornamenti delle funzionalità, supporto prioritario e revisioni di ottimizzazione trimestrali."
+      }
+    },
+    "trustFooter": {
+      "column1": {
+        "heading": "Nato in Italia, provato in tutta Europa",
+        "text": "Sviluppato in collaborazione con le reti di donazione del sangue italiane. Conforme al GDPR e certificato UE fin dal primo giorno."
+      },
+      "column2": {
+        "heading": "97% di tasso di soddisfazione dei coordinatori",
+        "text": "I coordinatori di donazione del sangue riferiscono risparmio di tempo significativo, migliore coinvolgimento dei donatori e stress ridotto dopo aver implementato Vitalita."
+      },
+      "column3": {
+        "heading": "Zero violazioni dei dati dal lancio",
+        "text": "Certificato ISO 27001, conforme al GDPR, approvato dal Ministero della Salute. I dati dei donatori sono protetti ai massimi standard di sicurezza."
+      }
+    },
+    "finalCta": {
+      "heading": "Pronto a Vedere Questi Risultati?",
+      "subheading": "Unisciti a 47+ organizzazioni che già risparmiano tempo",
+      "button": "Ottieni la Tua Analisi ROI Personalizzata",
+      "microcopy": "Demo gratuita. Nessuna carta di credito. Configurazione in 2 settimane."
+    },
+    "roiCalculator": {
+      "title": "Calcola il ROI della Tua Organizzazione",
+      "subtitle": "Scopri quanto tempo e denaro risparmierai con Vitalita",
+      "orgSize": "Dimensione dell'Organizzazione",
+      "orgSizeSmall": "Piccola (<100 donazioni/mese)",
+      "orgSizeMedium": "Media (100-500 donazioni/mese)",
+      "orgSizeLarge": "Grande (>500 donazioni/mese)",
+      "noShowRate": "Tasso Attuale di Mancate Presentazioni (%)",
+      "monthlyDonations": "Donazioni Mensili",
+      "coordinators": "Numero di Coordinatori",
+      "calculate": "Calcola ROI",
+      "calculated": "ROI Calcolato",
+      "resultsTitle": "Il Tuo Impatto Stimato con Vitalita",
+      "hoursSaved": "Ore risparmiate a settimana",
+      "noShowReduction": "Riduzione delle mancate presentazioni",
+      "additionalDonations": "Più donazioni al mese",
+      "roiTimeline": "Timeline ROI stimata",
+      "cta": "Ottieni il Tuo Piano di Implementazione Personalizzato"
+    }
   }
 }

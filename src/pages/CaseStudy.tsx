@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   ArrowRight, 
   Play, 
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 
 const CaseStudy = () => {
+  const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState('all');
   const [openFaq, setOpenFaq] = useState<number | null>(0); // First question open by default
   const [showRoiCalculator, setShowRoiCalculator] = useState(false);
@@ -34,56 +36,62 @@ const CaseStudy = () => {
   } | null>(null);
 
   const filters = ['all', 'avis', 'croce-rossa', 'fidas', 'more'];
-  const filterLabels = ['All Studies', 'AVIS', 'Croce Rossa', 'FIDAS', '+44 More'];
+  const filterLabels = [
+    t('caseStudyPage.caseStudyGrid.filters.all'),
+    t('caseStudyPage.caseStudyGrid.filters.avis'),
+    t('caseStudyPage.caseStudyGrid.filters.croceRossa'),
+    t('caseStudyPage.caseStudyGrid.filters.fidas'),
+    t('caseStudyPage.caseStudyGrid.filters.more')
+  ];
 
   const caseStudies = [
     {
       id: 1,
       filter: 'fidas',
-      badge: '40%',
+      badge: t('caseStudyPage.caseStudyGrid.card1.badge'),
       color: '#F59E0B',
-      organization: 'FIDAS VENETO',
-      headline: 'FIDAS Veneto Eliminated Paperwork in 60 Days—Now Manages 3x Donors Per Week',
-      challenge: 'Managing 15,000+ donors across 12 provinces using disconnected spreadsheets and phone calls',
-      solution: 'Unified Vitalita platform with automated scheduling, SMS reminders, and real-time inventory tracking',
+      organization: t('caseStudyPage.caseStudyGrid.card1.organization'),
+      headline: t('caseStudyPage.caseStudyGrid.card1.headline'),
+      challenge: t('caseStudyPage.caseStudyGrid.card1.challenge'),
+      solution: t('caseStudyPage.caseStudyGrid.card1.solution'),
       results: [
-        '40% reduction in admin time',
-        '22% fewer no-shows',
-        '100% digital in 2 months'
+        t('caseStudyPage.caseStudyGrid.card1.result1'),
+        t('caseStudyPage.caseStudyGrid.card1.result2'),
+        t('caseStudyPage.caseStudyGrid.card1.result3')
       ],
-      timeline: 'Results achieved in 3 months'
+      timeline: t('caseStudyPage.caseStudyGrid.card1.timeline')
     },
     {
       id: 2,
       filter: 'croce-rossa',
-      badge: '35%',
+      badge: t('caseStudyPage.caseStudyGrid.card2.badge'),
       color: '#0EA5E9',
-      organization: 'CROCE ROSSA TOSCANA',
-      headline: 'Croce Rossa Toscana Tracks 487K Donations in Real-Time—Zero Stock-Outs',
-      challenge: 'No visibility into inventory across 8 regional centers, frequent emergency shortages',
-      solution: 'Real-time inventory tracking and AI-powered scheduling across all collection sites',
+      organization: t('caseStudyPage.caseStudyGrid.card2.organization'),
+      headline: t('caseStudyPage.caseStudyGrid.card2.headline'),
+      challenge: t('caseStudyPage.caseStudyGrid.card2.challenge'),
+      solution: t('caseStudyPage.caseStudyGrid.card2.solution'),
       results: [
-        'Real-time tracking across all centers',
-        '35% efficiency increase',
-        'Zero stock-outs in 4 months'
+        t('caseStudyPage.caseStudyGrid.card2.result1'),
+        t('caseStudyPage.caseStudyGrid.card2.result2'),
+        t('caseStudyPage.caseStudyGrid.card2.result3')
       ],
-      timeline: 'Results achieved in 4 months'
+      timeline: t('caseStudyPage.caseStudyGrid.card2.timeline')
     },
     {
       id: 3,
       filter: 'avis',
-      badge: '22%',
+      badge: t('caseStudyPage.caseStudyGrid.card3.badge'),
       color: '#14B8A6',
-      organization: 'AVIS LOMBARDIA',
-      headline: 'AVIS Lombardia Unified 12 Provinces—22% Fewer No-Shows in 3 Months',
-      challenge: 'Fragmented communication across chapters, 30% no-show rate',
-      solution: 'Unified scheduling platform with automated SMS reminders and donor preference management',
+      organization: t('caseStudyPage.caseStudyGrid.card3.organization'),
+      headline: t('caseStudyPage.caseStudyGrid.card3.headline'),
+      challenge: t('caseStudyPage.caseStudyGrid.card3.challenge'),
+      solution: t('caseStudyPage.caseStudyGrid.card3.solution'),
       results: [
-        '22% no-show reduction',
-        'Unified scheduling',
-        'SMS automation'
+        t('caseStudyPage.caseStudyGrid.card3.result1'),
+        t('caseStudyPage.caseStudyGrid.card3.result2'),
+        t('caseStudyPage.caseStudyGrid.card3.result3')
       ],
-      timeline: 'Results achieved in 3 months'
+      timeline: t('caseStudyPage.caseStudyGrid.card3.timeline')
     }
   ];
 
@@ -93,24 +101,24 @@ const CaseStudy = () => {
 
   const faqs = [
     {
-      question: 'How do organizations measure success with Vitalita?',
-      answer: 'Organizations track three primary metrics: no-show rate reduction (average 22% decrease), coordinator efficiency (3x more donors managed per staff member), and administrative time savings (40% reduction). We provide a custom ROI calculator and real-time analytics dashboard showing your specific results compared to baseline.'
+      question: t('caseStudyPage.faq.q1.question'),
+      answer: t('caseStudyPage.faq.q1.answer')
     },
     {
-      question: 'How long does it take to see results?',
-      answer: 'Most organizations see measurable improvements within 2-4 weeks of implementation. Initial setup takes 2 weeks on average, including data migration, staff training, and system configuration. Coordinators report time savings immediately, while donor-facing improvements (reduced no-shows, better scheduling) typically show impact within the first month.'
+      question: t('caseStudyPage.faq.q2.question'),
+      answer: t('caseStudyPage.faq.q2.answer')
     },
     {
-      question: 'What is the return on investment for blood donation management software?',
-      answer: 'The average organization recoups their investment within 3-6 months through reduced administrative costs, fewer missed appointments, and better resource utilization. AVIS chapters report saving 16 hours per week per coordinator, while Croce Rossa regions handle 35% more donations with existing staff. We provide a custom ROI calculator based on your organization\'s size and current processes.'
+      question: t('caseStudyPage.faq.q3.question'),
+      answer: t('caseStudyPage.faq.q3.answer')
     },
     {
-      question: 'Is Vitalita compatible with existing systems and workflows?',
-      answer: 'Yes. Vitalita integrates with existing donor databases, national registries, and scheduling systems used by AVIS, Croce Rossa, and FIDAS. We handle data migration from spreadsheets, legacy software, and paper records. Our API connects to laboratory systems, inventory management, and communication platforms already in use.'
+      question: t('caseStudyPage.faq.q4.question'),
+      answer: t('caseStudyPage.faq.q4.answer')
     },
     {
-      question: 'What support is provided during and after implementation?',
-      answer: 'Full implementation support includes: dedicated onboarding specialist, data migration assistance, staff training (in-person or virtual), customized workflow setup, and 24/7 technical support. Post-launch, you get ongoing training, feature updates, priority support, and quarterly optimization reviews.'
+      question: t('caseStudyPage.faq.q5.question'),
+      answer: t('caseStudyPage.faq.q5.answer')
     }
   ];
 
@@ -229,12 +237,14 @@ const CaseStudy = () => {
           className="w-full case-study-hero"
           style={{
             background: 'linear-gradient(180deg, #1A2332 0%, #111827 100%)',
+            paddingTop: '40px',
+            paddingBottom: '60px',
             paddingLeft: '16px',
             paddingRight: '16px'
           }}
         >
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col items-center text-center gap-8" style={{ gap: '32px' }}>
+          <div className="flex flex-col items-center text-center gap-8" style={{ gap: '24px' }}>
             {/* Badge */}
             <div
               className="inline-flex items-center justify-center px-4 py-2 rounded"
@@ -249,13 +259,13 @@ const CaseStudy = () => {
                 borderRadius: '4px'
               }}
             >
-              TRUSTED BY 47+ AVIS CHAPTERS
+              {t('caseStudyPage.hero.badge')}
             </div>
 
             {/* Main Headline with accent line */}
             <div className="w-full max-w-[800px]">
               <h1
-                className="font-bold text-center text-[32px] md:text-[48px]"
+                className="font-bold text-center text-[24px] sm:text-[28px] md:text-[36px] lg:text-[48px]"
                 style={{
                   color: '#F9FAFB',
                   lineHeight: 1.2,
@@ -265,26 +275,26 @@ const CaseStudy = () => {
                   paddingBottom: '16px'
                 }}
               >
-                47+ Organizations. 487,000+ Lives Saved. Zero Spreadsheets.
+                {t('caseStudyPage.hero.headline')}
               </h1>
             </div>
 
             {/* Subheadline */}
             <p
-              className="text-center max-w-[700px] text-lg md:text-xl"
+              className="text-center max-w-[700px] text-base sm:text-lg md:text-xl px-4"
               style={{
                 color: 'rgba(249, 250, 251, 0.8)',
                 lineHeight: 1.5,
                 fontWeight: 400
               }}
             >
-              See exactly how Italian blood networks eliminated chaos and scaled impact with Vitalita.
+              {t('caseStudyPage.hero.subheadline')}
             </p>
 
             {/* Statistics Row */}
             <div 
-              className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3"
-              style={{ gap: '24px' }}
+              className="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 px-4"
+              style={{ gap: '16px' }}
             >
               {/* Card 1 */}
               <div
@@ -304,7 +314,7 @@ const CaseStudy = () => {
                     color: '#F9FAFB'
                   }}
                 >
-                  487,000+
+                  {t('caseStudyPage.hero.statCard1.value')}
                 </div>
                 <div
                   className="text-sm"
@@ -314,7 +324,7 @@ const CaseStudy = () => {
                     fontWeight: 400
                   }}
                 >
-                  Donations Managed Annually
+                  {t('caseStudyPage.hero.statCard1.label')}
                 </div>
               </div>
 
@@ -336,7 +346,7 @@ const CaseStudy = () => {
                     color: '#F9FAFB'
                   }}
                 >
-                  3-6 months
+                  {t('caseStudyPage.hero.statCard2.value')}
                 </div>
                 <div
                   className="text-sm"
@@ -346,7 +356,7 @@ const CaseStudy = () => {
                     fontWeight: 400
                   }}
                 >
-                  Average Results Timeline
+                  {t('caseStudyPage.hero.statCard2.label')}
                 </div>
               </div>
 
@@ -368,7 +378,7 @@ const CaseStudy = () => {
                     color: '#F9FAFB'
                   }}
                 >
-                  2 weeks
+                  {t('caseStudyPage.hero.statCard3.value')}
                 </div>
                 <div
                   className="text-sm"
@@ -378,7 +388,7 @@ const CaseStudy = () => {
                     fontWeight: 400
                   }}
                 >
-                  Typical Implementation
+                  {t('caseStudyPage.hero.statCard3.label')}
                 </div>
               </div>
             </div>
@@ -386,13 +396,12 @@ const CaseStudy = () => {
             {/* Primary CTA Button */}
             <button
               onClick={() => setShowRoiCalculator(true)}
-              className="inline-flex items-center gap-2 rounded-lg font-bold transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg font-bold transition-colors px-6 py-3 sm:px-8 sm:py-4"
               style={{
                 backgroundColor: '#FF6B6B',
                 color: '#FFFFFF',
-                padding: '16px 32px',
                 borderRadius: '8px',
-                fontSize: '16px',
+                fontSize: '14px',
                 fontWeight: 700,
                 border: 'none',
                 cursor: 'pointer'
@@ -404,7 +413,7 @@ const CaseStudy = () => {
                 e.currentTarget.style.backgroundColor = '#FF6B6B';
               }}
             >
-              Calculate Your Organization's ROI
+              {t('caseStudyPage.hero.cta')}
               <ArrowRight className="h-5 w-5" />
             </button>
           </div>
@@ -416,8 +425,8 @@ const CaseStudy = () => {
         className="w-full"
         style={{
           backgroundColor: '#FFFFFF',
-          paddingTop: '60px',
-          paddingBottom: '60px',
+          paddingTop: '40px',
+          paddingBottom: '40px',
           paddingLeft: '16px',
           paddingRight: '16px'
         }}
@@ -425,23 +434,18 @@ const CaseStudy = () => {
         <div className="max-w-7xl mx-auto">
           {/* Heading */}
           <h2
-            className="text-center font-bold mb-10"
+            className="text-center font-bold mb-6 sm:mb-10 text-xl sm:text-2xl md:text-3xl px-4"
             style={{
-              fontSize: '24px',
               fontWeight: 700,
-              color: '#111827',
-              marginBottom: '40px'
+              color: '#111827'
             }}
           >
-            Organizations Using Vitalita for Donor Management
+            {t('caseStudyPage.trustBar.heading')}
           </h2>
 
           {/* Logo Grid */}
           <div 
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-8"
-            style={{
-              gap: '32px'
-            }}
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8 px-4"
           >
             {/* AVIS Logo */}
             <div className="flex items-center justify-center">
@@ -643,7 +647,7 @@ const CaseStudy = () => {
               fontWeight: 400
             }}
           >
-            Join 47+ organizations already saving time
+            {t('caseStudyPage.trustBar.subtext')}
           </p>
         </div>
       </section>
@@ -653,8 +657,8 @@ const CaseStudy = () => {
         className="w-full"
         style={{
           backgroundColor: '#F9FAFB',
-          paddingTop: '80px',
-          paddingBottom: '80px',
+          paddingTop: '40px',
+          paddingBottom: '40px',
           paddingLeft: '16px',
           paddingRight: '16px'
         }}
@@ -662,22 +666,18 @@ const CaseStudy = () => {
         <div className="max-w-7xl mx-auto">
           {/* Heading */}
           <h2
-            className="text-center font-bold mb-12 text-[28px] md:text-[36px]"
+            className="text-center font-bold mb-8 sm:mb-12 text-xl sm:text-2xl md:text-3xl px-4"
             style={{
               fontWeight: 700,
-              color: '#111827',
-              marginBottom: '48px'
+              color: '#111827'
             }}
           >
-            Watch How Coordinators Saved 16 Hours Per Week
+            {t('caseStudyPage.videoTestimonials.heading')}
           </h2>
 
           {/* Video Cards Grid */}
           <div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-            style={{
-              gap: '32px'
-            }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 px-4"
           >
             {/* Video Card 1 */}
             <div
@@ -759,7 +759,7 @@ const CaseStudy = () => {
                     marginBottom: '8px'
                   }}
                 >
-                  How Maria Eliminated 3 Spreadsheets
+                  {t('caseStudyPage.videoTestimonials.card1.title')}
                 </h3>
                 <p
                   style={{
@@ -768,7 +768,7 @@ const CaseStudy = () => {
                     fontWeight: 400
                   }}
                 >
-                  AVIS Lombardia
+                  {t('caseStudyPage.videoTestimonials.card1.organization')}
                 </p>
               </div>
             </div>
@@ -853,7 +853,7 @@ const CaseStudy = () => {
                     marginBottom: '8px'
                   }}
                 >
-                  Real-Time Tracking Across 12 Provinces
+                  {t('caseStudyPage.videoTestimonials.card2.title')}
                 </h3>
                 <p
                   style={{
@@ -862,7 +862,7 @@ const CaseStudy = () => {
                     fontWeight: 400
                   }}
                 >
-                  Croce Rossa Toscana
+                  {t('caseStudyPage.videoTestimonials.card2.organization')}
                 </p>
               </div>
             </div>
@@ -947,7 +947,7 @@ const CaseStudy = () => {
                     marginBottom: '8px'
                   }}
                 >
-                  2-Month Digital Transformation Timeline
+                  {t('caseStudyPage.videoTestimonials.card3.title')}
                 </h3>
                 <p
                   style={{
@@ -956,7 +956,7 @@ const CaseStudy = () => {
                     fontWeight: 400
                   }}
                 >
-                  FIDAS Veneto
+                  {t('caseStudyPage.videoTestimonials.card3.organization')}
                 </p>
               </div>
             </div>
@@ -985,7 +985,7 @@ const CaseStudy = () => {
               marginBottom: '56px'
             }}
           >
-            Measured Impact Across Italian Blood Networks
+            {t('caseStudyPage.impactMetrics.heading')}
           </h2>
 
           {/* Metric Cards Grid */}
@@ -1023,7 +1023,7 @@ const CaseStudy = () => {
                     color: '#14B8A6'
                   }}
                 >
-                  22%
+                  {t('caseStudyPage.impactMetrics.card1.badge')}
                 </span>
               </div>
 
@@ -1037,7 +1037,7 @@ const CaseStudy = () => {
                   marginBottom: '12px'
                 }}
               >
-                Reduction in No-Show Rates
+                {t('caseStudyPage.impactMetrics.card1.headline')}
               </h3>
 
               {/* Context Paragraph */}
@@ -1049,7 +1049,7 @@ const CaseStudy = () => {
                   marginBottom: '16px'
                 }}
               >
-                Blood donation centers using Vitalita reduced missed appointments from 30% to 8% within 3 months through automated SMS reminders and donor preference scheduling.
+                {t('caseStudyPage.impactMetrics.card1.description')}
               </p>
 
               {/* Mini-stat */}
@@ -1061,7 +1061,7 @@ const CaseStudy = () => {
                   marginTop: '16px'
                 }}
               >
-                From 30% → 8% in 3 months
+                {t('caseStudyPage.impactMetrics.card1.ministat')}
               </p>
             </div>
 
@@ -1093,7 +1093,7 @@ const CaseStudy = () => {
                     color: '#0EA5E9'
                   }}
                 >
-                  35%
+                  {t('caseStudyPage.impactMetrics.card2.badge')}
                 </span>
               </div>
 
@@ -1107,7 +1107,7 @@ const CaseStudy = () => {
                   marginBottom: '12px'
                 }}
               >
-                Increase in Coordinator Efficiency
+                {t('caseStudyPage.impactMetrics.card2.headline')}
               </h3>
 
               {/* Context Paragraph */}
@@ -1119,7 +1119,7 @@ const CaseStudy = () => {
                   marginBottom: '16px'
                 }}
               >
-                Real-time inventory tracking and AI-powered scheduling allowed coordinators to manage 3x more donors without additional staff.
+                {t('caseStudyPage.impactMetrics.card2.description')}
               </p>
 
               {/* Mini-stat */}
@@ -1131,7 +1131,7 @@ const CaseStudy = () => {
                   marginTop: '16px'
                 }}
               >
-                3x donors per coordinator
+                {t('caseStudyPage.impactMetrics.card2.ministat')}
               </p>
             </div>
 
@@ -1164,7 +1164,7 @@ const CaseStudy = () => {
                     color: '#F59E0B'
                   }}
                 >
-                  40%
+                  {t('caseStudyPage.impactMetrics.card3.badge')}
                 </span>
               </div>
 
@@ -1178,7 +1178,7 @@ const CaseStudy = () => {
                   marginBottom: '12px'
                 }}
               >
-                Less Administrative Time
+                {t('caseStudyPage.impactMetrics.card3.headline')}
               </h3>
 
               {/* Context Paragraph */}
@@ -1190,7 +1190,7 @@ const CaseStudy = () => {
                   marginBottom: '16px'
                 }}
               >
-                Automated appointment confirmations, rescheduling, and reporting freed up 16 hours per week per coordinator for patient care and donor engagement.
+                {t('caseStudyPage.impactMetrics.card3.description')}
               </p>
 
               {/* Mini-stat */}
@@ -1202,7 +1202,7 @@ const CaseStudy = () => {
                   marginTop: '16px'
                 }}
               >
-                16 hours saved weekly
+                {t('caseStudyPage.impactMetrics.card3.ministat')}
               </p>
             </div>
           </div>
@@ -1230,7 +1230,7 @@ const CaseStudy = () => {
               marginBottom: '16px'
             }}
           >
-            Blood Donation Management Success Stories by Organization
+            {t('caseStudyPage.caseStudyGrid.heading')}
           </h2>
 
           {/* Subheading */}
@@ -1242,7 +1242,7 @@ const CaseStudy = () => {
               marginBottom: '48px'
             }}
           >
-            Real implementations, measurable outcomes, documented timelines
+            {t('caseStudyPage.caseStudyGrid.subheading')}
           </p>
 
           {/* Filter Tabs */}
@@ -1359,13 +1359,13 @@ const CaseStudy = () => {
 
                 {/* Challenge */}
                 <div style={{ marginBottom: '12px' }}>
-                  <span style={{ fontSize: '14px', fontWeight: 700, color: '#6B7280' }}>Challenge: </span>
+                  <span style={{ fontSize: '14px', fontWeight: 700, color: '#6B7280' }}>{t('caseStudyPage.caseStudyGrid.labels.challenge')} </span>
                   <span style={{ fontSize: '14px', color: '#6B7280' }}>{study.challenge}</span>
                 </div>
 
                 {/* Solution */}
                 <div style={{ marginBottom: '16px' }}>
-                  <span style={{ fontSize: '14px', fontWeight: 700, color: '#6B7280' }}>Solution: </span>
+                  <span style={{ fontSize: '14px', fontWeight: 700, color: '#6B7280' }}>{t('caseStudyPage.caseStudyGrid.labels.solution')} </span>
                   <span style={{ fontSize: '14px', color: '#6B7280' }}>{study.solution}</span>
                 </div>
 
@@ -1420,7 +1420,7 @@ const CaseStudy = () => {
               marginBottom: '16px'
             }}
           >
-            What Blood Donation Coordinators Say About Vitalita
+            {t('caseStudyPage.testimonials.heading')}
           </h2>
 
           {/* Subheading */}
@@ -1432,7 +1432,7 @@ const CaseStudy = () => {
               marginBottom: '56px'
             }}
           >
-            Verified coordinators from leading organizations
+            {t('caseStudyPage.testimonials.subheading')}
           </p>
 
           {/* Testimonial Cards Grid */}
@@ -1483,14 +1483,14 @@ const CaseStudy = () => {
                 {/* Info */}
                 <div className="flex-1">
                   <h4 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', marginBottom: '4px' }}>
-                    Maria Rossi
+                    {t('caseStudyPage.testimonials.testimonial1.name')}
                   </h4>
                   <p style={{ fontSize: '14px', color: '#6B7280', marginBottom: '8px' }}>
-                    Coordinator, AVIS Lombardia
+                    {t('caseStudyPage.testimonials.testimonial1.title')}
                   </p>
                   <div className="flex items-center gap-1">
                     <Linkedin style={{ width: '14px', height: '14px', color: '#14B8A6' }} />
-                    <span style={{ fontSize: '12px', color: '#14B8A6' }}>Verified on LinkedIn</span>
+                    <span style={{ fontSize: '12px', color: '#14B8A6' }}>{t('caseStudyPage.testimonials.verified')}</span>
                   </div>
                 </div>
               </div>
@@ -1508,7 +1508,7 @@ const CaseStudy = () => {
                 }}
               >
                 <span style={{ position: 'absolute', left: 0, fontSize: '32px', lineHeight: 1, color: '#FF6B6B', opacity: 0.3 }}>"</span>
-                Vitalita transformed our coordination. We now handle 3x more donors with the same staff. Real-time inventory tracking eliminated our biggest headache.
+                {t('caseStudyPage.testimonials.testimonial1.quote')}
                 <span style={{ fontSize: '32px', lineHeight: 1, color: '#FF6B6B', opacity: 0.3 }}>"</span>
               </p>
 
@@ -1525,7 +1525,7 @@ const CaseStudy = () => {
                   fontWeight: 600
                 }}
               >
-                AVIS LOMBARDIA
+                {t('caseStudyPage.testimonials.testimonial1.organization')}
               </div>
             </div>
 
@@ -1571,14 +1571,14 @@ const CaseStudy = () => {
                 </div>
                 <div className="flex-1">
                   <h4 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', marginBottom: '4px' }}>
-                    Giovanni Bianchi
+                    {t('caseStudyPage.testimonials.testimonial2.name')}
                   </h4>
                   <p style={{ fontSize: '14px', color: '#6B7280', marginBottom: '8px' }}>
-                    Director, Croce Rossa Toscana
+                    {t('caseStudyPage.testimonials.testimonial2.title')}
                   </p>
                   <div className="flex items-center gap-1">
                     <Linkedin style={{ width: '14px', height: '14px', color: '#14B8A6' }} />
-                    <span style={{ fontSize: '12px', color: '#14B8A6' }}>Verified on LinkedIn</span>
+                    <span style={{ fontSize: '12px', color: '#14B8A6' }}>{t('caseStudyPage.testimonials.verified')}</span>
                   </div>
                 </div>
               </div>
@@ -1594,7 +1594,7 @@ const CaseStudy = () => {
                 }}
               >
                 <span style={{ position: 'absolute', left: 0, fontSize: '32px', lineHeight: 1, color: '#FF6B6B', opacity: 0.3 }}>"</span>
-                We process 35% more donations with the same resources. Real-time inventory tracking eliminated delays. Our coordinators finally have time to focus on donors, not paperwork.
+                {t('caseStudyPage.testimonials.testimonial2.quote')}
                 <span style={{ fontSize: '32px', lineHeight: 1, color: '#FF6B6B', opacity: 0.3 }}>"</span>
               </p>
               <div
@@ -1609,7 +1609,7 @@ const CaseStudy = () => {
                   fontWeight: 600
                 }}
               >
-                CROCE ROSSA TOSCANA
+                {t('caseStudyPage.testimonials.testimonial2.organization')}
               </div>
             </div>
 
@@ -1655,14 +1655,14 @@ const CaseStudy = () => {
                 </div>
                 <div className="flex-1">
                   <h4 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', marginBottom: '4px' }}>
-                    Laura Conti
+                    {t('caseStudyPage.testimonials.testimonial3.name')}
                   </h4>
                   <p style={{ fontSize: '14px', color: '#6B7280', marginBottom: '8px' }}>
-                    Operations Manager, FIDAS Veneto
+                    {t('caseStudyPage.testimonials.testimonial3.title')}
                   </p>
                   <div className="flex items-center gap-1">
                     <Linkedin style={{ width: '14px', height: '14px', color: '#14B8A6' }} />
-                    <span style={{ fontSize: '12px', color: '#14B8A6' }}>Verified on LinkedIn</span>
+                    <span style={{ fontSize: '12px', color: '#14B8A6' }}>{t('caseStudyPage.testimonials.verified')}</span>
                   </div>
                 </div>
               </div>
@@ -1678,7 +1678,7 @@ const CaseStudy = () => {
                 }}
               >
                 <span style={{ position: 'absolute', left: 0, fontSize: '32px', lineHeight: 1, color: '#FF6B6B', opacity: 0.3 }}>"</span>
-                Digital transformation completed in 2 months. Staff now focuses on donor engagement instead of paperwork. The ROI was immediate—we saw results in week one.
+                {t('caseStudyPage.testimonials.testimonial3.quote')}
                 <span style={{ fontSize: '32px', lineHeight: 1, color: '#FF6B6B', opacity: 0.3 }}>"</span>
               </p>
               <div
@@ -1693,7 +1693,7 @@ const CaseStudy = () => {
                   fontWeight: 600
                 }}
               >
-                FIDAS VENETO
+                {t('caseStudyPage.testimonials.testimonial3.organization')}
               </div>
             </div>
           </div>
@@ -1721,7 +1721,7 @@ const CaseStudy = () => {
               marginBottom: '16px'
             }}
           >
-            Regulatory Compliance & Certifications
+            {t('caseStudyPage.compliance.heading')}
           </h2>
 
           {/* Subheading */}
@@ -1733,7 +1733,7 @@ const CaseStudy = () => {
               marginBottom: '56px'
             }}
           >
-            Built to meet Italian and EU healthcare data standards
+            {t('caseStudyPage.compliance.subheading')}
           </p>
 
           {/* Certification Cards Grid */}
@@ -1770,10 +1770,10 @@ const CaseStudy = () => {
                 }}
               />
               <h4 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', marginBottom: '12px' }}>
-                GDPR Compliant
+                {t('caseStudyPage.compliance.card1.name')}
               </h4>
               <p style={{ fontSize: '14px', color: '#6B7280', lineHeight: 1.6 }}>
-                Full compliance with EU General Data Protection Regulation. Your donor data is encrypted, access-controlled, and stored within EU borders.
+                {t('caseStudyPage.compliance.card1.description')}
               </p>
             </div>
 
@@ -1809,10 +1809,10 @@ const CaseStudy = () => {
                 }}
               />
               <h4 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', marginBottom: '12px' }}>
-                ISO 27001
+                {t('caseStudyPage.compliance.card2.name')}
               </h4>
               <p style={{ fontSize: '14px', color: '#6B7280', lineHeight: 1.6 }}>
-                International standard for information security management. Regular third-party audits ensure your data is protected at the highest level.
+                {t('caseStudyPage.compliance.card2.description')}
               </p>
             </div>
 
@@ -1848,10 +1848,10 @@ const CaseStudy = () => {
                 }}
               />
               <h4 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', marginBottom: '12px' }}>
-                EU Digital Standards
+                {t('caseStudyPage.compliance.card3.name')}
               </h4>
               <p style={{ fontSize: '14px', color: '#6B7280', lineHeight: 1.6 }}>
-                Meets European Interoperability Framework requirements. Seamless integration with national healthcare systems and donor registries.
+                {t('caseStudyPage.compliance.card3.description')}
               </p>
             </div>
 
@@ -1887,10 +1887,10 @@ const CaseStudy = () => {
                 }}
               />
               <h4 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', marginBottom: '12px' }}>
-                Ministry of Health Approved
+                {t('caseStudyPage.compliance.card4.name')}
               </h4>
               <p style={{ fontSize: '14px', color: '#6B7280', lineHeight: 1.6 }}>
-                Certified by Italian Ministry of Health for blood donation management. Meets all national healthcare data handling requirements.
+                {t('caseStudyPage.compliance.card4.description')}
               </p>
             </div>
           </div>
@@ -1899,15 +1899,15 @@ const CaseStudy = () => {
           <div className="flex flex-wrap justify-center items-center gap-10" style={{ gap: '40px' }}>
             <div className="flex items-center gap-2">
               <Lock style={{ width: '18px', height: '18px', color: '#6B7280' }} />
-              <span style={{ fontSize: '14px', color: '#6B7280' }}>Zero data breaches since launch</span>
+              <span style={{ fontSize: '14px', color: '#6B7280' }}>{t('caseStudyPage.compliance.trustSignals.breaches')}</span>
             </div>
             <div className="flex items-center gap-2">
               <Server style={{ width: '18px', height: '18px', color: '#6B7280' }} />
-              <span style={{ fontSize: '14px', color: '#6B7280' }}>EU-hosted infrastructure</span>
+              <span style={{ fontSize: '14px', color: '#6B7280' }}>{t('caseStudyPage.compliance.trustSignals.infrastructure')}</span>
             </div>
             <div className="flex items-center gap-2">
               <Clock style={{ width: '18px', height: '18px', color: '#6B7280' }} />
-              <span style={{ fontSize: '14px', color: '#6B7280' }}>99.9% uptime guarantee</span>
+              <span style={{ fontSize: '14px', color: '#6B7280' }}>{t('caseStudyPage.compliance.trustSignals.uptime')}</span>
             </div>
           </div>
         </div>
@@ -1934,7 +1934,7 @@ const CaseStudy = () => {
               marginBottom: '56px'
             }}
           >
-            Frequently Asked Questions
+            {t('caseStudyPage.faq.heading')}
           </h2>
 
           {/* Accordion */}
@@ -2020,10 +2020,10 @@ const CaseStudy = () => {
                 }}
               />
               <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', marginBottom: '12px' }}>
-                Born in Italy, proven across Europe
+                {t('caseStudyPage.trustFooter.column1.heading')}
               </h3>
               <p style={{ fontSize: '14px', color: '#6B7280', lineHeight: 1.6 }}>
-                Developed in collaboration with Italian blood donation networks. GDPR-compliant and EU-certified from day one.
+                {t('caseStudyPage.trustFooter.column1.text')}
               </p>
             </div>
 
@@ -2039,10 +2039,10 @@ const CaseStudy = () => {
                 }}
               />
               <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', marginBottom: '12px' }}>
-                97% coordinator satisfaction rate
+                {t('caseStudyPage.trustFooter.column2.heading')}
               </h3>
               <p style={{ fontSize: '14px', color: '#6B7280', lineHeight: 1.6 }}>
-                Blood donation coordinators report significant time savings, better donor engagement, and reduced stress after implementing Vitalita.
+                {t('caseStudyPage.trustFooter.column2.text')}
               </p>
             </div>
 
@@ -2059,10 +2059,10 @@ const CaseStudy = () => {
                 }}
               />
               <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', marginBottom: '12px' }}>
-                Zero data breaches since launch
+                {t('caseStudyPage.trustFooter.column3.heading')}
               </h3>
               <p style={{ fontSize: '14px', color: '#6B7280', lineHeight: 1.6 }}>
-                ISO 27001 certified, GDPR compliant, Ministry of Health approved. Your donor data is protected at the highest security standards.
+                {t('caseStudyPage.trustFooter.column3.text')}
               </p>
             </div>
           </div>
@@ -2074,48 +2074,45 @@ const CaseStudy = () => {
         className="w-full"
         style={{
           background: 'linear-gradient(180deg, #1A2332 0%, #111827 100%)',
-          paddingTop: '100px',
-          paddingBottom: '100px',
+          paddingTop: '60px',
+          paddingBottom: '60px',
           paddingLeft: '16px',
           paddingRight: '16px',
           textAlign: 'center'
         }}
       >
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto px-4">
           {/* Heading */}
           <h2
-            className="font-bold mb-4 text-[30px] md:text-[40px]"
+            className="font-bold mb-4 text-2xl sm:text-3xl md:text-4xl"
             style={{
               fontWeight: 700,
               color: '#F9FAFB',
               marginBottom: '16px'
             }}
           >
-            Ready to See These Results?
+            {t('caseStudyPage.finalCta.heading')}
           </h2>
 
           {/* Subheading */}
           <p
-            className="mb-10"
+            className="mb-6 sm:mb-10 text-base sm:text-lg"
             style={{
-              fontSize: '18px',
-              color: 'rgba(249, 250, 251, 0.8)',
-              marginBottom: '40px'
+              color: 'rgba(249, 250, 251, 0.8)'
             }}
           >
-            Join 47+ organizations already saving time
+            {t('caseStudyPage.finalCta.subheading')}
           </p>
 
           {/* CTA Button */}
-          <div className="flex justify-center items-center mb-6">
+          <div className="flex justify-center items-center mb-4 sm:mb-6">
             {/* Primary Button */}
             <button
               onClick={() => setShowRoiCalculator(true)}
-              className="inline-flex items-center gap-2 px-9 py-4 rounded-lg font-bold transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 sm:px-9 sm:py-4 rounded-lg font-bold transition-all text-sm sm:text-base"
               style={{
                 backgroundColor: '#FF6B6B',
                 color: '#FFFFFF',
-                fontSize: '16px',
                 fontWeight: 700,
                 border: 'none',
                 cursor: 'pointer'
@@ -2129,7 +2126,7 @@ const CaseStudy = () => {
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
-              Get Your Custom ROI Analysis
+              {t('caseStudyPage.finalCta.button')}
               <ArrowRight style={{ width: '20px', height: '20px' }} />
             </button>
 
@@ -2143,7 +2140,7 @@ const CaseStudy = () => {
               marginTop: '24px'
             }}
           >
-            Free demo. No credit card. Setup in 2 weeks.
+            {t('caseStudyPage.finalCta.microcopy')}
           </p>
         </div>
       </section>
@@ -2169,7 +2166,7 @@ const CaseStudy = () => {
           }}
         >
           <div
-            className="relative w-full max-w-2xl rounded-2xl p-8"
+            className="relative w-full max-w-2xl rounded-2xl p-4 sm:p-6 md:p-8 my-4"
             style={{
               backgroundColor: '#FFFFFF',
               maxHeight: '90vh',
@@ -2183,7 +2180,7 @@ const CaseStudy = () => {
                 setShowRoiCalculator(false);
                 setRoiResults(null);
               }}
-              className="absolute top-4 right-4 p-2 rounded-lg transition-colors"
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 p-2 rounded-lg transition-colors"
               style={{
                 color: '#6B7280',
                 backgroundColor: 'transparent',
@@ -2204,19 +2201,19 @@ const CaseStudy = () => {
             </button>
 
             {/* Modal Header */}
-            <div className="mb-8">
+            <div className="mb-6 sm:mb-8">
               <h2
+                className="text-xl sm:text-2xl md:text-3xl"
                 style={{
-                  fontSize: '28px',
                   fontWeight: 700,
                   color: '#111827',
                   marginBottom: '8px'
                 }}
               >
-                Calculate Your Organization's ROI
+                {t('caseStudyPage.roiCalculator.title')}
               </h2>
               <p style={{ fontSize: '16px', color: '#6B7280' }}>
-                See how much time and money you'll save with Vitalita
+                {t('caseStudyPage.roiCalculator.subtitle')}
               </p>
             </div>
 
@@ -2233,7 +2230,7 @@ const CaseStudy = () => {
                     marginBottom: '8px'
                   }}
                 >
-                  Organization Size
+                  {t('caseStudyPage.roiCalculator.orgSize')}
                 </label>
                 <select
                   value={roiInputs.orgSize}
@@ -2246,9 +2243,9 @@ const CaseStudy = () => {
                     backgroundColor: '#FFFFFF'
                   }}
                 >
-                  <option value="small">Small (&lt;100 donations/month)</option>
-                  <option value="medium">Medium (100-500 donations/month)</option>
-                  <option value="large">Large (&gt;500 donations/month)</option>
+                  <option value="small">{t('caseStudyPage.roiCalculator.orgSizeSmall')}</option>
+                  <option value="medium">{t('caseStudyPage.roiCalculator.orgSizeMedium')}</option>
+                  <option value="large">{t('caseStudyPage.roiCalculator.orgSizeLarge')}</option>
                 </select>
               </div>
 
@@ -2263,7 +2260,7 @@ const CaseStudy = () => {
                     marginBottom: '8px'
                   }}
                 >
-                  Current No-Show Rate (%)
+                  {t('caseStudyPage.roiCalculator.noShowRate')}
                 </label>
                 <div className="flex items-center gap-3">
                   <input
@@ -2295,7 +2292,7 @@ const CaseStudy = () => {
                     marginBottom: '8px'
                   }}
                 >
-                  Monthly Donations
+                  {t('caseStudyPage.roiCalculator.monthlyDonations')}
                 </label>
                 <input
                   type="number"
@@ -2323,7 +2320,7 @@ const CaseStudy = () => {
                     marginBottom: '8px'
                   }}
                 >
-                  Number of Coordinators
+                  {t('caseStudyPage.roiCalculator.coordinators')}
                 </label>
                 <input
                   type="number"
@@ -2365,7 +2362,7 @@ const CaseStudy = () => {
                   }
                 }}
               >
-                {roiResults !== null ? 'ROI Calculated' : 'Calculate ROI'}
+                {roiResults !== null ? t('caseStudyPage.roiCalculator.calculated') : t('caseStudyPage.roiCalculator.calculate')}
               </button>
             </div>
 
@@ -2386,7 +2383,7 @@ const CaseStudy = () => {
                     marginBottom: '20px'
                   }}
                 >
-                  Your Estimated Impact with Vitalita
+                  {t('caseStudyPage.roiCalculator.resultsTitle')}
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -2409,7 +2406,7 @@ const CaseStudy = () => {
                       {roiResults.hoursSaved}
                     </div>
                     <div style={{ fontSize: '14px', color: '#6B7280' }}>
-                      Hours saved per week
+                      {t('caseStudyPage.roiCalculator.hoursSaved')}
                     </div>
                   </div>
 
@@ -2432,7 +2429,7 @@ const CaseStudy = () => {
                       {roiResults.noShowReduction}%
                     </div>
                     <div style={{ fontSize: '14px', color: '#6B7280' }}>
-                      Reduction in no-shows
+                      {t('caseStudyPage.roiCalculator.noShowReduction')}
                     </div>
                   </div>
 
@@ -2455,7 +2452,7 @@ const CaseStudy = () => {
                       +{roiResults.additionalDonations}
                     </div>
                     <div style={{ fontSize: '14px', color: '#6B7280' }}>
-                      More donations per month
+                      {t('caseStudyPage.roiCalculator.additionalDonations')}
                     </div>
                   </div>
 
@@ -2478,7 +2475,7 @@ const CaseStudy = () => {
                       {roiResults.roiMonths} months
                     </div>
                     <div style={{ fontSize: '14px', color: '#6B7280' }}>
-                      Estimated ROI timeline
+                      {t('caseStudyPage.roiCalculator.roiTimeline')}
                     </div>
                   </div>
                 </div>
@@ -2501,7 +2498,7 @@ const CaseStudy = () => {
                     e.currentTarget.style.backgroundColor = '#FF6B6B';
                   }}
                 >
-                  Get Your Custom Implementation Plan
+                  {t('caseStudyPage.roiCalculator.cta')}
                   <ArrowRight style={{ width: '20px', height: '20px' }} />
                 </a>
               </div>
