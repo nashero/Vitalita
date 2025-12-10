@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   ArrowRight, 
   Play, 
@@ -12,7 +12,6 @@ import {
   Server, 
   Plus, 
   Minus, 
-  Download,
   Linkedin,
   X
 } from 'lucide-react';
@@ -20,6 +19,19 @@ import {
 const CaseStudy = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [openFaq, setOpenFaq] = useState<number | null>(0); // First question open by default
+  const [showRoiCalculator, setShowRoiCalculator] = useState(false);
+  const [roiInputs, setRoiInputs] = useState({
+    orgSize: 'medium',
+    noShowRate: '18',
+    monthlyDonations: '500',
+    coordinators: '3'
+  });
+  const [roiResults, setRoiResults] = useState<{
+    hoursSaved: number;
+    noShowReduction: number;
+    additionalDonations: number;
+    roiMonths: number;
+  } | null>(null);
 
   const filters = ['all', 'avis', 'croce-rossa', 'fidas', 'more'];
   const filterLabels = ['All Studies', 'AVIS', 'Croce Rossa', 'FIDAS', '+44 More'];
@@ -105,6 +117,51 @@ const CaseStudy = () => {
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
   };
+
+  const calculateROI = () => {
+    const noShowRate = parseFloat(roiInputs.noShowRate);
+    const monthlyDonations = parseFloat(roiInputs.monthlyDonations);
+    const coordinators = parseFloat(roiInputs.coordinators);
+
+    // Calculations based on case study metrics
+    const noShowReduction = Math.round(noShowRate * 0.22); // 22% reduction
+    const hoursSavedPerWeek = coordinators * 16; // 16 hours per coordinator per week
+    const additionalDonations = Math.round(monthlyDonations * 0.35); // 35% efficiency increase
+    const roiMonths = roiInputs.orgSize === 'small' ? 3 : roiInputs.orgSize === 'medium' ? 4 : 6;
+
+    setRoiResults({
+      hoursSaved: hoursSavedPerWeek,
+      noShowReduction,
+      additionalDonations,
+      roiMonths
+    });
+  };
+
+  const handleRoiInputChange = (field: string, value: string) => {
+    setRoiInputs(prev => ({ ...prev, [field]: value }));
+    setRoiResults(null); // Reset results when inputs change
+  };
+
+  // Close modal on ESC key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showRoiCalculator) {
+        setShowRoiCalculator(false);
+        setRoiResults(null);
+      }
+    };
+
+    if (showRoiCalculator) {
+      document.addEventListener('keydown', handleEscape);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showRoiCalculator]);
 
   return (
     <>
@@ -327,8 +384,8 @@ const CaseStudy = () => {
             </div>
 
             {/* Primary CTA Button */}
-            <a
-              href="/contact"
+            <button
+              onClick={() => setShowRoiCalculator(true)}
               className="inline-flex items-center gap-2 rounded-lg font-bold transition-colors"
               style={{
                 backgroundColor: '#FF6B6B',
@@ -337,7 +394,8 @@ const CaseStudy = () => {
                 borderRadius: '8px',
                 fontSize: '16px',
                 fontWeight: 700,
-                textDecoration: 'none'
+                border: 'none',
+                cursor: 'pointer'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = '#E55555';
@@ -348,7 +406,7 @@ const CaseStudy = () => {
             >
               Calculate Your Organization's ROI
               <ArrowRight className="h-5 w-5" />
-            </a>
+            </button>
           </div>
         </div>
       </header>
@@ -1331,37 +1389,10 @@ const CaseStudy = () => {
                 </ul>
 
                 {/* Timeline */}
-                <div className="flex items-center gap-2 mb-6" style={{ color: '#6B7280', fontSize: '12px', fontStyle: 'italic' }}>
+                <div className="flex items-center gap-2" style={{ color: '#6B7280', fontSize: '12px', fontStyle: 'italic' }}>
                   <Clock style={{ width: '14px', height: '14px' }} />
                   <span>{study.timeline}</span>
                 </div>
-
-                {/* CTA Button */}
-                <button
-                  className="w-full md:w-auto"
-                  style={{
-                    backgroundColor: 'transparent',
-                    border: '2px solid #1A2332',
-                    color: '#1A2332',
-                    fontSize: '14px',
-                    fontWeight: 700,
-                    padding: '12px 24px',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    width: '100%'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#1A2332';
-                    e.currentTarget.style.color = '#FFFFFF';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = '#1A2332';
-                  }}
-                >
-                  Read Full Implementation Story
-                </button>
               </div>
             ))}
           </div>
@@ -2075,18 +2106,19 @@ const CaseStudy = () => {
             Join 47+ organizations already saving time
           </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
+          {/* CTA Button */}
+          <div className="flex justify-center items-center mb-6">
             {/* Primary Button */}
-            <a
-              href="/contact"
+            <button
+              onClick={() => setShowRoiCalculator(true)}
               className="inline-flex items-center gap-2 px-9 py-4 rounded-lg font-bold transition-all"
               style={{
                 backgroundColor: '#FF6B6B',
                 color: '#FFFFFF',
                 fontSize: '16px',
                 fontWeight: 700,
-                textDecoration: 'none'
+                border: 'none',
+                cursor: 'pointer'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = '#E55555';
@@ -2099,30 +2131,8 @@ const CaseStudy = () => {
             >
               Get Your Custom ROI Analysis
               <ArrowRight style={{ width: '20px', height: '20px' }} />
-            </a>
+            </button>
 
-            {/* Secondary Button */}
-            <a
-              href="/case-studies/download-all"
-              className="inline-flex items-center gap-2 px-9 py-4 rounded-lg font-bold transition-all"
-              style={{
-                backgroundColor: 'transparent',
-                border: '2px solid #F9FAFB',
-                color: '#F9FAFB',
-                fontSize: '16px',
-                fontWeight: 700,
-                textDecoration: 'none'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(249, 250, 251, 0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }}
-            >
-              <Download style={{ width: '20px', height: '20px' }} />
-              Download All Case Studies
-            </a>
           </div>
 
           {/* Micro-copy */}
@@ -2143,6 +2153,362 @@ const CaseStudy = () => {
           {/* Additional content sections can be added here */}
         </main>
       </div>
+
+      {/* ROI Calculator Modal */}
+      {showRoiCalculator && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            backdropFilter: 'blur(4px)'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowRoiCalculator(false);
+            }
+          }}
+        >
+          <div
+            className="relative w-full max-w-2xl rounded-2xl p-8"
+            style={{
+              backgroundColor: '#FFFFFF',
+              maxHeight: '90vh',
+              overflowY: 'auto'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => {
+                setShowRoiCalculator(false);
+                setRoiResults(null);
+              }}
+              className="absolute top-4 right-4 p-2 rounded-lg transition-colors"
+              style={{
+                color: '#6B7280',
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#F9FAFB';
+                e.currentTarget.style.color = '#111827';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = '#6B7280';
+              }}
+              aria-label="Close calculator"
+            >
+              <X style={{ width: '24px', height: '24px' }} />
+            </button>
+
+            {/* Modal Header */}
+            <div className="mb-8">
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: 700,
+                  color: '#111827',
+                  marginBottom: '8px'
+                }}
+              >
+                Calculate Your Organization's ROI
+              </h2>
+              <p style={{ fontSize: '16px', color: '#6B7280' }}>
+                See how much time and money you'll save with Vitalita
+              </p>
+            </div>
+
+            {/* Calculator Form */}
+            <div className="space-y-6 mb-8">
+              {/* Organization Size */}
+              <div>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    color: '#111827',
+                    marginBottom: '8px'
+                  }}
+                >
+                  Organization Size
+                </label>
+                <select
+                  value={roiInputs.orgSize}
+                  onChange={(e) => handleRoiInputChange('orgSize', e.target.value)}
+                  className="w-full rounded-lg border px-4 py-3"
+                  style={{
+                    borderColor: '#E5E7EB',
+                    fontSize: '16px',
+                    color: '#111827',
+                    backgroundColor: '#FFFFFF'
+                  }}
+                >
+                  <option value="small">Small (&lt;100 donations/month)</option>
+                  <option value="medium">Medium (100-500 donations/month)</option>
+                  <option value="large">Large (&gt;500 donations/month)</option>
+                </select>
+              </div>
+
+              {/* Current No-Show Rate */}
+              <div>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    color: '#111827',
+                    marginBottom: '8px'
+                  }}
+                >
+                  Current No-Show Rate (%)
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={roiInputs.noShowRate}
+                    onChange={(e) => handleRoiInputChange('noShowRate', e.target.value)}
+                    className="flex-1 rounded-lg border px-4 py-3"
+                    style={{
+                      borderColor: '#E5E7EB',
+                      fontSize: '16px',
+                      color: '#111827',
+                      backgroundColor: '#FFFFFF'
+                    }}
+                  />
+                  <span style={{ fontSize: '16px', color: '#6B7280', minWidth: '20px' }}>%</span>
+                </div>
+              </div>
+
+              {/* Monthly Donations */}
+              <div>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    color: '#111827',
+                    marginBottom: '8px'
+                  }}
+                >
+                  Monthly Donations
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={roiInputs.monthlyDonations}
+                  onChange={(e) => handleRoiInputChange('monthlyDonations', e.target.value)}
+                  className="w-full rounded-lg border px-4 py-3"
+                  style={{
+                    borderColor: '#E5E7EB',
+                    fontSize: '16px',
+                    color: '#111827',
+                    backgroundColor: '#FFFFFF'
+                  }}
+                />
+              </div>
+
+              {/* Number of Coordinators */}
+              <div>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    color: '#111827',
+                    marginBottom: '8px'
+                  }}
+                >
+                  Number of Coordinators
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={roiInputs.coordinators}
+                  onChange={(e) => handleRoiInputChange('coordinators', e.target.value)}
+                  className="w-full rounded-lg border px-4 py-3"
+                  style={{
+                    borderColor: '#E5E7EB',
+                    fontSize: '16px',
+                    color: '#111827',
+                    backgroundColor: '#FFFFFF'
+                  }}
+                />
+              </div>
+
+              {/* Calculate Button */}
+              <button
+                onClick={calculateROI}
+                disabled={roiResults !== null}
+                className="w-full rounded-lg font-bold py-4 transition-all"
+                style={{
+                  backgroundColor: roiResults !== null ? '#9CA3AF' : '#FF6B6B',
+                  color: '#FFFFFF',
+                  fontSize: '16px',
+                  fontWeight: 700,
+                  border: 'none',
+                  cursor: roiResults !== null ? 'not-allowed' : 'pointer',
+                  opacity: roiResults !== null ? 0.6 : 1
+                }}
+                onMouseEnter={(e) => {
+                  if (roiResults === null) {
+                    e.currentTarget.style.backgroundColor = '#E55555';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (roiResults === null) {
+                    e.currentTarget.style.backgroundColor = '#FF6B6B';
+                  }
+                }}
+              >
+                {roiResults !== null ? 'ROI Calculated' : 'Calculate ROI'}
+              </button>
+            </div>
+
+            {/* Results Display */}
+            {roiResults && (
+              <div
+                className="rounded-xl p-6 mb-6"
+                style={{
+                  backgroundColor: '#F9FAFB',
+                  border: '2px solid #E5E7EB'
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: 700,
+                    color: '#111827',
+                    marginBottom: '20px'
+                  }}
+                >
+                  Your Estimated Impact with Vitalita
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  {/* Hours Saved */}
+                  <div
+                    className="rounded-lg p-4"
+                    style={{
+                      backgroundColor: '#FFFFFF',
+                      border: '1px solid #E5E7EB'
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '32px',
+                        fontWeight: 700,
+                        color: '#14B8A6',
+                        marginBottom: '4px'
+                      }}
+                    >
+                      {roiResults.hoursSaved}
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#6B7280' }}>
+                      Hours saved per week
+                    </div>
+                  </div>
+
+                  {/* No-Show Reduction */}
+                  <div
+                    className="rounded-lg p-4"
+                    style={{
+                      backgroundColor: '#FFFFFF',
+                      border: '1px solid #E5E7EB'
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '32px',
+                        fontWeight: 700,
+                        color: '#14B8A6',
+                        marginBottom: '4px'
+                      }}
+                    >
+                      {roiResults.noShowReduction}%
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#6B7280' }}>
+                      Reduction in no-shows
+                    </div>
+                  </div>
+
+                  {/* Additional Donations */}
+                  <div
+                    className="rounded-lg p-4"
+                    style={{
+                      backgroundColor: '#FFFFFF',
+                      border: '1px solid #E5E7EB'
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '32px',
+                        fontWeight: 700,
+                        color: '#0EA5E9',
+                        marginBottom: '4px'
+                      }}
+                    >
+                      +{roiResults.additionalDonations}
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#6B7280' }}>
+                      More donations per month
+                    </div>
+                  </div>
+
+                  {/* ROI Timeline */}
+                  <div
+                    className="rounded-lg p-4"
+                    style={{
+                      backgroundColor: '#FFFFFF',
+                      border: '1px solid #E5E7EB'
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '32px',
+                        fontWeight: 700,
+                        color: '#F59E0B',
+                        marginBottom: '4px'
+                      }}
+                    >
+                      {roiResults.roiMonths} months
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#6B7280' }}>
+                      Estimated ROI timeline
+                    </div>
+                  </div>
+                </div>
+
+                {/* CTA to Contact */}
+                <a
+                  href="/contact"
+                  className="inline-flex items-center gap-2 w-full justify-center rounded-lg font-bold py-4 transition-all"
+                  style={{
+                    backgroundColor: '#FF6B6B',
+                    color: '#FFFFFF',
+                    fontSize: '16px',
+                    fontWeight: 700,
+                    textDecoration: 'none'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#E55555';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#FF6B6B';
+                  }}
+                >
+                  Get Your Custom Implementation Plan
+                  <ArrowRight style={{ width: '20px', height: '20px' }} />
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 };
