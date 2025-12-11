@@ -16,7 +16,8 @@
     "search": "Search",
     "filter": "Filter",
     "clear": "Clear",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "skipToContent": "Skip to main content"
   },
   "sessionTimeout": {
     "warning": {
@@ -868,130 +869,153 @@
   },
   "featuresPage": {
     "header": {
-      "badge": "Platform",
-      "title": "Everything You Need to Manage Blood Donations Efficiently",
-      "description": "Vitalita unifies scheduling, donor engagement, and analytics into a single operating platform tailored for AVIS and Italian healthcare networks. Give every coordinator and volunteer a modern workspace designed for faster decisions and safer collections.",
+      "badge": "PLATFORM",
+      "title": "One Platform. Zero Chaos. Every Donor Tracked.",
+      "description": "Vitalita unifies scheduling, donor engagement, and analytics into a single operating platform tailored for AVIS and Italian healthcare networks. Empower coordinators with real-time intelligence. Protect donors with automated safety checks.",
       "tags": {
         "enterpriseCloud": "Enterprise-ready cloud",
         "clinicalCompliance": "Built with clinical compliance",
         "trustedCenters": "Trusted by leading donor centers"
       }
     },
-    "features": {
-      "smartScheduling": {
-        "title": "Smart Scheduling System",
-        "description": "Give coordinators a live command center to balance donation slots, staff, and equipment across every location with confidence.",
-        "bullets": {
-          "realTimeTracking": "Real-time availability tracking",
-          "capacityManagement": "Automated capacity management",
-          "multiLocation": "Multi-location coordination",
-          "conflictDetection": "Conflict detection and prevention"
-        },
-        "benefits": "Reduce scheduling conflicts by 90%, save 15 hours per week",
-        "mockup": {
-          "today": "Today",
-          "romeCenter": "Rome Collection Center",
-          "full": "full",
-          "onTrack": "On Track",
-          "noConflicts": "No conflicts",
-          "staffShortage": "Staff shortage detected"
-        }
+    "donorManagement": {
+      "label": "COMPREHENSIVE DONOR MANAGEMENT",
+      "title": "Complete Donor Intelligence at Your Fingertips",
+      "description": "Maintain a complete view of every donor—from health history to eligibility windows—so teams can focus on relationships, not spreadsheets.",
+      "bullets": {
+        "completeProfiles": "Complete donor profiles",
+        "medicalHistory": "Medical history tracking",
+        "eligibilityStatus": "Eligibility status monitoring",
+        "healthScreening": "Automated health screening"
       },
-      "donorManagement": {
-        "title": "Comprehensive Donor Management",
-        "description": "Maintain a complete view of every donor—from health history to eligibility windows—so teams can focus on relationships, not spreadsheets.",
-        "bullets": {
-          "completeProfiles": "Complete donor profiles",
-          "medicalHistory": "Medical history tracking",
-          "eligibilityStatus": "Eligibility status monitoring",
-          "healthScreening": "Automated health screening"
-        },
-        "benefits": "Track 10,000+ donors effortlessly, ensure compliance automatically",
-        "mockup": {
-          "donorProfile": "Donor Profile",
-          "donated": "Donated",
-          "times": "times",
-          "eligible": "Eligible",
-          "bloodType": "Blood Type",
-          "lastDonation": "Last Donation",
-          "nextEligible": "Next Eligible",
-          "automatedScreening": "Automated Screening",
-          "ok": "OK"
-        }
+      "benefits": "Track 10,000+ donors effortlessly, ensure compliance automatically",
+      "cta": "See Donor Management",
+      "mockup": {
+        "donorProfile": "DONOR PROFILE",
+        "donorName": "Giulia Rossi",
+        "donorSubtitle": "Donated 11 times • Rome",
+        "eligible": "Eligible",
+        "bloodType": "Blood Type",
+        "lastDonation": "Last Donation",
+        "nextEligible": "Next Eligible",
+        "automatedScreening": "AUTOMATED SCREENING",
+        "hbCheck": "Hb Check • 13.8 g/dL",
+        "travelDeferment": "Travel Deferment • Cleared",
+        "ok": "OK"
+      }
+    },
+    "smartScheduling": {
+      "label": "SMART SCHEDULING SYSTEM",
+      "title": "Eliminate Scheduling Conflicts in Real-Time",
+      "description": "Give coordinators a live command center to balance donation slots, staff, and equipment across every location with confidence.",
+      "bullets": {
+        "realTimeTracking": "Real-time availability tracking",
+        "capacityManagement": "Automated capacity management",
+        "multiLocation": "Multi-location coordination",
+        "conflictDetection": "Conflict detection and prevention"
       },
-      "communicationTools": {
-        "title": "Intelligent Communication Tools",
-        "description": "Launch multi-channel, personalized outreach that keeps donors engaged—without adding work for coordinators.",
-        "bullets": {
-          "automatedReminders": "Automated appointment reminders (Email, SMS, Calendar)",
-          "customizableTemplates": "Customizable notification templates",
-          "recallCampaigns": "Donor recall campaigns",
-          "emergencyBroadcasts": "Emergency blood request broadcasts"
-        },
-        "benefits": "Increase show-up rates by 40%, reduce no-shows dramatically",
-        "mockup": {
-          "campaignComposer": "Campaign Composer",
-          "channels": "Channels",
-          "reminderTemplate": "Reminder template",
-          "automatedFollowup": "Automated follow-up enabled",
-          "attendance": "attendance",
-          "liveDeliveryStatus": "Live delivery status",
-          "smsSent": "SMS sent",
-          "donors": "donors",
-          "emailsScheduled": "Emails scheduled",
-          "calendarInvitesConfirmed": "Calendar invites confirmed"
-        }
+      "benefits": "Reduce scheduling conflicts by 90%, save 15 hours per week",
+      "cta": "Explore Scheduling Intelligence",
+      "mockup": {
+        "today": "TODAY",
+        "romeCenter": "Rome Collection Center",
+        "full": "92% full",
+        "onTrack": "On Track",
+        "fiumicinoUnit": "Fiumicino Mobile Unit",
+        "noConflicts": "No conflicts",
+        "trastevereClinic": "Trastevere Clinic",
+        "staffShortage": "Staff shortage detected"
+      }
+    },
+    "communicationTools": {
+      "label": "INTELLIGENT COMMUNICATION TOOLS",
+      "title": "Automate Outreach. Maximize Show-Up Rates.",
+      "description": "Launch multi-channel, personalized outreach that keeps donors engaged—without adding work for coordinators.",
+      "bullets": {
+        "automatedReminders": "Automated appointment reminders (Email, SMS, Calendar)",
+        "customizableTemplates": "Customizable notification templates",
+        "recallCampaigns": "Donor recall campaigns",
+        "emergencyBroadcasts": "Emergency blood request broadcasts"
       },
-      "analyticsDashboard": {
-        "title": "Advanced Analytics Dashboard",
-        "description": "Measure donation performance, understand donor behavior, and forecast demand with clear visualizations tailored to your network.",
-        "bullets": {
-          "realTimeMetrics": "Real-time donation metrics",
-          "demographicInsights": "Donor demographic insights",
-          "centerPerformance": "Center performance tracking",
-          "inventoryForecasting": "Inventory forecasting",
-          "customReports": "Custom report generation"
-        },
-        "benefits": "Make data-driven decisions, optimize operations",
-        "mockup": {
-          "dashboard": "Dashboard",
-          "nationalPerformance": "National Performance",
-          "live": "Live",
-          "donations": "Donations",
-          "vsPrevious": "vs. previous 30 days",
-          "unitsCollected": "units collected",
-          "forecast": "Forecast",
-          "inventoryForecast": "Inventory Forecast",
-          "safeFor": "Safe for",
-          "days": "days",
-          "customReportGeneration": "Custom report generation",
-          "exportDescription": "Export executive-ready PDF summaries or schedule CSV pushes to your BI stack—tailored to regions, centers, or campaigns."
-        }
+      "benefits": "Increase show-up rates by 40%, reduce no-shows dramatically",
+      "cta": "See Communication Tools",
+      "mockup": {
+        "campaignComposer": "CAMPAIGN COMPOSER",
+        "campaignTitle": "AVIS Rome - Weekend Recall",
+        "channels": "Email • SMS • Calendar",
+        "reminderTemplate": "REMINDER TEMPLATE",
+        "templateText": "Ciao {donor_first_name}, ci vediamo sabato alle 09:30 presso AVIS Roma - Via Veneto.",
+        "automatedFollowup": "Automated follow-up: +40% enabled attendance",
+        "liveDeliveryStatus": "LIVE DELIVERY STATUS",
+        "smsSent": "SMS sent - 1,248 donors",
+        "emailsScheduled": "Emails scheduled - 1,248",
+        "calendarInvitesConfirmed": "Calendar invites confirmed - 842"
+      }
+    },
+    "analyticsDashboard": {
+      "label": "ADVANCED ANALYTICS DASHBOARD",
+      "title": "Turn Data Into Decisions in Seconds",
+      "description": "Measure donation performance, understand donor behavior, and forecast demand with clear visualizations tailored to your network.",
+      "bullets": {
+        "realTimeMetrics": "Real-time donation metrics",
+        "demographicInsights": "Donor demographic insights",
+        "centerPerformance": "Center performance tracking",
+        "inventoryForecasting": "Inventory forecasting",
+        "customReports": "Custom report generation"
       },
-      "integrationSecurity": {
-        "title": "Integration & Security",
-        "description": "Connect Vitalita with clinical systems while keeping donor data secure with enterprise-grade controls built for healthcare.",
-        "bullets": {
-          "medicalRecordIntegration": "Medical record system integration",
-          "gdprCompliant": "GDPR compliant data handling",
-          "encryptedStorage": "Secure encrypted storage",
-          "roleBasedAccess": "Role-based access control"
-        },
-        "benefits": "Confidence to scale with ironclad security guardrails",
-        "mockup": {
-          "securityCenter": "Security Center",
-          "accessOverview": "Access Overview",
-          "encryptedAtRest": "Encrypted at rest",
-          "gdprProcessingLog": "GDPR processing log",
-          "compliant": "Compliant",
-          "roleMatrix": "Role matrix",
-          "enforced": "enforced",
-          "hospitalEhrSync": "Hospital EHR sync"
-        }
+      "benefits": "Make data-driven decisions, optimize operations",
+      "cta": "Explore Analytics",
+      "mockup": {
+        "dashboard": "DASHBOARD",
+        "nationalPerformance": "National Performance",
+        "live": "Live",
+        "donations": "DONATIONS",
+        "vsPrevious": "vs. previous 30 days",
+        "unitsCollected": "785 units collected",
+        "forecast": "Forecast: 820",
+        "inventoryForecast": "INVENTORY FORECAST",
+        "safeFor": "Safe for 8 days",
+        "customReportGeneration": "CUSTOM REPORT GENERATION",
+        "exportDescription": "Export executive-ready PDF summaries or schedule CSV pushes to your BI stack—tailored to regions, centers, or campaigns.",
+        "reportFile": "Q4_Performance_Summary.pdf"
+      }
+    },
+    "integrationSecurity": {
+      "label": "INTEGRATION & SECURITY",
+      "title": "Enterprise Security. Healthcare-Grade Compliance.",
+      "description": "Connect Vitalita with clinical systems while keeping donor data secure with enterprise-grade controls built for healthcare.",
+      "bullets": {
+        "medicalRecordIntegration": "Medical record system integration",
+        "gdprCompliant": "GDPR compliant data handling",
+        "encryptedStorage": "Secure encrypted storage",
+        "roleBasedAccess": "Role-based access control"
+      },
+      "benefits": "Confidence to scale with ironclad security guardrails",
+      "cta": "Learn About Security",
+      "trustBadges": {
+        "gdprCompliant": "GDPR Compliant",
+        "iso27001": "ISO 27001",
+        "aes256": "AES-256 Encryption",
+        "euHealthcare": "EU Healthcare Standards"
+      },
+      "mockup": {
+        "securityCenter": "SECURITY CENTER",
+        "accessOverview": "Access Overview",
+        "encryptedAtRest": "Encrypted at rest",
+        "aes256": "AES-256",
+        "gdprProcessingLog": "GDPR processing log",
+        "compliant": "Compliant",
+        "roleMatrix": "ROLE MATRIX",
+        "admin": "Admin",
+        "coordinator": "Coordinator",
+        "volunteer": "Volunteer",
+        "samlSso": "SAML + SSO enforced",
+        "hospitalEhrSync": "Hospital EHR sync",
+        "live": "Live"
       }
     },
     "cta": {
-      "badge": "Explore the platform",
+      "badge": "EXPLORE THE PLATFORM",
       "title": "Experience Every Feature Live",
       "description": "See how all features work together in one unified platform with real scenarios from your donation centers.",
       "tags": {
@@ -1029,11 +1053,101 @@
     },
     "copyright": "All rights reserved."
   },
+  "contactPage": {
+    "title": "CONTACT US",
+    "heading": "Request Your Personalized Demo",
+    "subtitle": "See how Vitalita can transform your donation management",
+    "form": {
+      "organizationName": "Organization Name",
+      "organizationNamePlaceholder": "e.g. AVIS Milano",
+      "yourName": "Your Name",
+      "yourNamePlaceholder": "Your full name",
+      "yourRole": "Your Role/Position",
+      "selectRole": "Select your role",
+      "emailAddress": "Email Address",
+      "emailPlaceholder": "you@organization.it",
+      "currentChallenges": "Current Challenges",
+      "challengesPlaceholder": "Tell us about your biggest operational challenges",
+      "howDidYouHear": "How did you hear about us?",
+      "selectOption": "Select an option",
+      "webSearch": "Web Search",
+      "referral": "Referral",
+      "conference": "Conference",
+      "other": "Other",
+      "requestDemo": "Request Demo",
+      "privacyNotice": "By submitting this form you agree to Vitalita contacting you about our platform. View our Privacy Policy for details.",
+      "thankYou": "Thank you!",
+      "thankYouMessage": "A Vitalita expert will reach out within the next business day to coordinate a tailored demo."
+    },
+    "whatToExpect": {
+      "title": "What to Expect",
+      "item1": "30-minute personalized demo",
+      "item2": "Live Q&A with product specialist",
+      "item3": "Custom use case discussion",
+      "item4": "No obligation, no pressure"
+    },
+    "contactInfo": {
+      "title": "Contact Information",
+      "email": "info@vitalita.com",
+      "phone": "+39 02 1234 5678",
+      "hours": "Mon-Fri, 9:00-18:00 CET",
+      "location": "Milan, Italy"
+    },
+    "quickStats": {
+      "title": "Quick Stats",
+      "organizations": "Organizations Trust Vitalita",
+      "donationsManaged": "Donations Managed",
+      "livesSaved": "Lives Saved",
+      "platformUptime": "Platform Uptime"
+    },
+    "trustBadges": {
+      "gdprCompliant": "GDPR Compliant",
+      "isoCertified": "ISO Certified",
+      "secureEncryption": "Secure Encryption"
+    },
+    "testimonials": {
+      "title": "TESTIMONIALS",
+      "heading": "What Our Partners Say",
+      "quote": "Vitalita transformed our donation management. We've seen a 40% increase in donor engagement and streamlined our entire operation.",
+      "author": "Marco Rossi",
+      "position": "Operations Manager",
+      "organization": "AVIS Milano"
+    },
+    "roles": {
+      "manager": "Manager",
+      "director": "Director",
+      "itAdministrator": "IT Administrator",
+      "other": "Other"
+    }
+  },
   "simplicityDelivered": {
     "hero": {
       "badge": "Innovation",
       "title": "How We Transform Blood Donation",
-      "description": "Vitalita reimagines the complex world of blood donation into a streamlined, intuitive experience for organizations and donors alike. Discover how we've simplified every step of the process."
+      "description": "Vitalita reimagines the complex world of blood donation into a streamlined, intuitive experience for organizations and donors alike. Discover how we've simplified every step of the process.",
+      "variants": {
+        "variant1": {
+          "badge": "Proven Solution",
+          "title": "No more scheduling chaos. Automated in minutes.",
+          "description": "AVIS centers save 15+ hours weekly on appointments. Donors book instantly. Zero phone calls, zero conflicts.",
+          "primaryCta": "See Your Time Savings",
+          "secondaryCta": "View Case Study"
+        },
+        "variant2": {
+          "badge": "Trusted by Italian Centers",
+          "title": "Schedule thousands of donations. Zero manual work.",
+          "description": "AVIS coordinators manage 5,000+ donors effortlessly. Automated eligibility, instant booking, 90% fewer no-shows.",
+          "primaryCta": "Calculate Your Savings",
+          "secondaryCta": "Watch 2-Min Demo"
+        },
+        "variant3": {
+          "badge": "Donor-Centered Innovation",
+          "title": "Every donor appointment matters. Never miss one.",
+          "description": "Reduce donor dropout by 40%. Automated reminders and eligibility checks keep donors engaged and donating regularly.",
+          "primaryCta": "Start Free Pilot",
+          "secondaryCta": "See Donor Results"
+        }
+      }
     },
     "organizations": {
       "badge": "For Organizations",
@@ -1170,7 +1284,64 @@
       "badge": "See it in action",
       "title": "Experience the Simplification",
       "description": "See how we transform complex processes into simple, automated workflows. Watch hours of manual work become minutes of effortless automation.",
-      "button": "See Demo"
+      "button": "See Demo",
+      "implementationProof": "2-week implementation. No IT team required. We handle data migration, training, and setup."
+    },
+    "trustBar": {
+      "title": "Trusted by 47+ AVIS chapters managing 487,000+ donations annually across Italy",
+      "viewCaseStudies": "View case studies"
+    },
+    "metricsAttribution": {
+      "basedOn": "Based on aggregate data from 47+ AVIS chapters using Vitalita (2023-2024)"
+    },
+    "caseStudyTeaser": {
+      "text": "See how AVIS Milano reduced no-shows by 40% in 3 months",
+      "link": "View case study"
+    },
+    "trustSection": {
+      "title": "Trusted by Italy's Leading Blood Donation Organizations",
+      "testimonials": {
+        "testimonial1": {
+          "quote": "We handle 3x more donors with the same staff. Vitalita eliminated our scheduling nightmares completely. What used to take 15 hours per week now takes 2 hours. Our coordinators can finally focus on donor care instead of phone calls.",
+          "author": "Maria Rossi",
+          "role": "Coordinator",
+          "organization": "AVIS Lombardia",
+          "stat": "3x more donors, same staff"
+        },
+        "testimonial2": {
+          "quote": "35% more donations processed with the same resources. Real-time inventory tracking eliminated delays completely. We know exactly what we need and when we need it.",
+          "author": "Giovanni Bianchi",
+          "role": "Director",
+          "organization": "Croce Rossa Toscana",
+          "stat": "35% more donations"
+        }
+      },
+      "certifications": {
+        "title": "Certified & Compliant",
+        "gdpr": "GDPR Compliant",
+        "iso": "ISO 27001",
+        "euDigital": "EU Digital Standards",
+        "avisApproved": "AVIS Approved"
+      },
+      "privacy": {
+        "message": "Your donor data is encrypted, GDPR-compliant, and never shared with third parties. We're ISO 27001 certified and undergo annual security audits. Privacy isn't a feature—it's our foundation."
+      }
+    },
+    "bornInItaly": {
+      "title": "Born in Italy, Built for Europe",
+      "description": "Vitalita was created by Italian healthcare professionals who understand AVIS workflows firsthand. We know the challenges coordinators face because we've lived them. Today, we serve 47+ AVIS chapters across Italy and are expanding to serve blood donation organizations across the European Union."
+    },
+    "mission": {
+      "title": "Why We Built Vitalita",
+      "description": "After years of coordinating blood donations manually, our team of Italian healthcare professionals saw the need for a platform that understands AVIS workflows. We built Vitalita to eliminate scheduling chaos, reduce no-shows, and help coordinators focus on what matters: saving lives. Today, we're proud to serve 47+ AVIS chapters and expanding across Europe."
+    },
+    "donorTestimonial": {
+      "title": "What Donors Say",
+      "quote": "Booking takes 5 minutes. No phone calls, no confusion. I love getting reminders and seeing my donation history.",
+      "author": "Elena Conti",
+      "role": "Regular Donor",
+      "organization": "AVIS Milano",
+      "stat": "Donated 12 times via Vitalita"
     }
   },
   "howItWorks": {
@@ -1295,6 +1466,146 @@
       "sunday": "Sun"
     }
   },
+  "howItWorksPage": {
+    "hero": {
+      "badge": "PROVEN IMPLEMENTATION",
+      "headline": "From Chaos to Control in 14 Days",
+      "subtitle": "Enterprise-grade blood donation management, implemented without disrupting operations. Used by 47+ AVIS organizations across Italy.",
+      "trustBadges": {
+        "avisCertified": "AVIS Certified",
+        "gdprCompliant": "GDPR Compliant",
+        "isoPending": "ISO 27001 Pending"
+      },
+      "ctaButton": "See Implementation Timeline",
+      "timeline": {
+        "start": "Day 1: Setup Begins",
+        "end": "Day 14: Fully Operational",
+        "comparison": "Industry average: 6 months | Vitalita: 2 weeks"
+      }
+    },
+    "step1": {
+      "statsCallout": "Average Setup Time: 2 hours | Industry Average: 2-3 weeks",
+      "badge": "STEP 1 • WEEK 1",
+      "headline": "Zero-Touch Configuration",
+      "description": "We configure everything for you—ready to go from day one. Average setup time: 2 hours.",
+      "bullets": [
+        "Configure 3 donation centers in under 2 hours—no technical expertise required",
+        "Import your existing donor database with one click (CSV/Excel supported)",
+        "Set capacity limits and operating hours automatically based on your specifications",
+        "Import existing donor database with GDPR-compliant security (AES-256 encryption)"
+      ],
+      "customerQuote": {
+        "text": "Setup was so fast, we thought something was broken. Turns out it just works.",
+        "author": "Coordinator, AVIS Firenze"
+      }
+    },
+    "step2": {
+      "badge": "STEP 2 • WEEK 1-2",
+      "headline": "Smart Workflow Activation for Blood Donation Management",
+      "description": "Pre-built templates for AVIS standards. Customize only what you need.",
+      "bullets": [
+        "Pre-configured eligibility criteria based on Italian Ministry of Health guidelines",
+        "Health screening workflows with automatic risk flagging",
+        "Notification templates for SMS, email, and in-app messages—ready to use",
+        "Open workflow definitions: Modify rules without developer support"
+      ],
+      "trustSignal": "AVIS-Certified Workflows | Compliant with Italian Healthcare Standards",
+      "expandableFeature": {
+        "linkText": "See workflow examples",
+        "examples": {
+          "eligibility": {
+            "title": "Eligibility Criteria",
+            "description": "Age 18-65, hemoglobin > 12.5 g/dL, weight > 50kg, no recent travel to high-risk areas, minimum 56 days since last donation."
+          },
+          "autoNotification": {
+            "title": "Auto-Notification",
+            "description": "When a donor becomes eligible again (e.g., after 56-day waiting period), the system automatically sends a personalized invitation via their preferred channel (SMS, email, or in-app notification)."
+          }
+        }
+      },
+      "socialProof": "Used by 47+ AVIS organizations across Italy"
+    },
+    "step3": {
+      "badge": "STEP 3 • WEEK 2",
+      "headline": "Automated Donor Invitation & Enrollment System",
+      "description": "Launch your donor invitations via SMS, email, and web portal—all from one dashboard.",
+      "bullets": [
+        "Send 1,000+ invitations in minutes with personalized messaging",
+        "Track open rates, click rates, and portal registrations in real time",
+        "Automatic reminders for non-responders (configurable timing)",
+        "Zero technical training required—your staff is ready day one"
+      ],
+      "customerQuote": {
+        "text": "We reached more donors in one week than we had in the previous quarter.",
+        "author": "Communications Director, AVIS Roma"
+      },
+      "successMetric": {
+        "value": "87%",
+        "label": "donor response rate within 48 hours"
+      },
+      "additionalCTA": "See donor enrollment in action"
+    },
+    "step4": {
+      "badge": "STEP 4 • ONGOING",
+      "headline": "Blood Donation Performance Tracking & KPI Management",
+      "description": "Monitor KPIs, optimize operations, and maintain compliance—all in one unified command center.",
+      "bullets": [
+        "Track appointment rates, utilization, and donor retention across all locations",
+        "Automated compliance audits flag issues before they become problems",
+        "Predictive capacity planning prevents last-minute scheduling chaos",
+        "Export reports for regulatory submissions (Ministry of Health formats supported)"
+      ],
+      "dataQualityBadge": "GDPR-Compliant Data Storage | ISO 27001 Pending",
+      "performanceImprovement": {
+        "title": "Before Vitalita vs After Vitalita",
+        "before": {
+          "utilization": "68%",
+          "utilizationLabel": "utilization",
+          "reporting": "4 hrs/week",
+          "reportingLabel": "Manual reporting"
+        },
+        "after": {
+          "utilization": "87%",
+          "utilizationLabel": "utilization",
+          "reporting": "0 hrs/week",
+          "reportingLabel": "Automated"
+        }
+      },
+      "trustSignal": "Trusted by coordinators managing 487,000+ annual donations"
+    },
+    "faq": {
+      "badge": "FAQS",
+      "headline": "Implementation Questions",
+      "subtitle": "Everything you need to know about getting started with Vitalita",
+      "questions": {
+        "setupTime": {
+          "question": "How long does setup actually take?",
+          "answer": "Most organizations complete full implementation in 10-14 days. Week 1 covers configuration and workflow setup (2-4 hours of your time). Week 2 focuses on donor enrollment and team training (3-5 hours). We handle the technical heavy lifting—you provide the organizational context."
+        },
+        "technicalExpertise": {
+          "question": "Do we need technical expertise on our team?",
+          "answer": "No. Vitalita is designed for coordinators and administrators, not IT teams. Our interface uses plain language, and our implementation specialists configure complex settings for you. If you can use email and spreadsheets, you can use Vitalita."
+        },
+        "databaseImport": {
+          "question": "Can we import our existing donor database?",
+          "answer": "Yes. We support CSV and Excel imports with automatic field mapping. Our system securely processes your data, removes duplicates, and validates contact information. GDPR compliance is maintained throughout. Average import time for 10,000 donors: under 10 minutes."
+        }
+      }
+    },
+    "finalCTA": {
+      "badge": "READY TO GET STARTED?",
+      "headline": "See Your Implementation Plan",
+      "description": "See how we handle onboarding, workflows, and optimization—tailored to your needs. We do the heavy lifting, you focus on saving lives.",
+      "valueProps": {
+        "setupTimeline": "1-2 week setup timeline",
+        "noTechnicalExpertise": "Zero technical expertise needed",
+        "fullSupport": "Full implementation support"
+      },
+      "primaryButton": "Request Implementation Demo",
+      "secondaryLink": "Or view our 2-week implementation roadmap",
+      "trustReinforcement": "Join 47+ AVIS organizations already using Vitalita"
+    }
+  },
   "home": {
     "hero": {
       "trustedByAvis": "TRUSTED BY AVIS NAZIONALE",
@@ -1352,7 +1663,7 @@
       "cta": {
         "title": "Don't let another life be lost to inefficient systems.",
         "description": "Vitalita ensures that when someone like Maria needs blood, it's found and delivered in minutes—not hours.",
-        "getEmergencyReady": "Get Emergency-Ready",
+        "getEmergencyReady": "Transform Your Operations",
         "scheduleDemo": "Schedule a Demo",
         "seeHowItWorks": "See How It Works"
       }
@@ -1471,13 +1782,385 @@
       "title": "Ready to turn coordination chaos into lifesaving speed?",
       "description": "Join the Italian organizations modernizing their operations with Vitalita. Let's orchestrate recruitment, logistics, and donor loyalty with one adaptive platform.",
       "primaryButton": "Schedule Your Demo",
-      "secondaryButton": "Talk to Our Team",
+      "secondaryButton": "Learn More",
       "trustText": "Trusted by 47+ AVIS chapters across Italy",
       "certifications": {
         "iso27001": "ISO 27001",
         "gdprCompliant": "GDPR Compliant",
         "avisApproved": "AVIS Approved"
       }
+    }
+  },
+  "howWeSimplify": {
+    "hero": {
+      "badge": "INNOVATION",
+      "title": "Blood Donation Without the Chaos",
+      "subtitle": "Italian-built AI that turns 40 hours of scheduling work into 5 minutes of automated precision.",
+      "cta": "View Case Studies",
+      "trustLine": "Trusted by AVIS Nazionale and 50+ blood donation centers across Italy"
+    },
+    "comparison": {
+      "badge": "STOP WASTING TIME",
+      "title": "From Chaos to Clarity in 2 Weeks",
+      "subtitle": "See exactly what changes when Italian blood centers switch to Vitalita",
+      "before": {
+        "title": "Before Vitalita",
+        "items": [
+          "40+ hours per week on phone scheduling",
+          "€15,000 lost annually to no-shows",
+          "Paper forms buried in filing cabinets",
+          "Staff burnout from manual reminders"
+        ]
+      },
+      "after": {
+        "title": "With Vitalita",
+        "items": [
+          "AI scheduling eliminates phone tag completely",
+          "90% reduction in no-shows (€12K saved)",
+          "Digital screening completed in 3 minutes",
+          "Automated SMS/email—staff freed for patient care"
+        ]
+      }
+    },
+    "organizations": {
+      "badge": "FOR ORGANIZATIONS",
+      "title": "Control Center for Blood Supply",
+      "subtitle": "The command center that Italian blood banks wish they had 20 years ago.",
+      "features": [
+        {
+          "title": "One-Click Scheduling",
+          "description": "Donors see real-time availability. Book instantly. Zero phone calls needed.",
+          "badge": "Save 30+ hours/week"
+        },
+        {
+          "title": "Automated Donor Management",
+          "description": "AI tracks eligibility, medical history, and donation patterns. Flags issues before they happen.",
+          "badge": "99.8% accuracy rate"
+        },
+        {
+          "title": "Smart Notifications",
+          "description": "Personalized SMS and email reminders. Sent at optimal times based on donor behavior patterns.",
+          "badge": "90% open rate"
+        },
+        {
+          "title": "Real-Time Analytics",
+          "description": "Live dashboards track donation trends, capacity, and staff performance. Export reports in seconds.",
+          "badge": "24/7 insights"
+        },
+        {
+          "title": "GDPR & EU Compliance Built-In",
+          "description": "Automated health screening meets Italian healthcare regulations. Data hosted in Milan.",
+          "badge": "100% compliant"
+        },
+        {
+          "title": "Live in 2 Weeks",
+          "description": "Full onboarding, training, and data migration. We handle everything while you keep operating.",
+          "badge": "Minimal disruption"
+        }
+      ]
+    },
+    "donors": {
+      "badge": "FOR INDIVIDUAL DONORS",
+      "title": "Stress-Free Donation Experience",
+      "subtitle": "Book your appointment in 5 minutes. Never miss another donation window.",
+      "features": [
+        {
+          "title": "Register Once, Book Forever",
+          "description": "Your profile is saved securely. Next time, just log in and pick your slot."
+        },
+        {
+          "title": "See All Available Slots",
+          "description": "Real-time calendar shows every open appointment. Pick morning, afternoon, or evening—whatever works for you."
+        },
+        {
+          "title": "Never Forget Again",
+          "description": "Automatic alerts 48 hours before your appointment. Plus: 'You're eligible to donate again!' notifications."
+        },
+        {
+          "title": "Complete Forms from Home",
+          "description": "Fill out health questionnaires on your phone. No clipboards, no waiting room paperwork."
+        },
+        {
+          "title": "Find Your Center Instantly",
+          "description": "Built-in directions to your donation location. Open Google Maps with one tap."
+        },
+        {
+          "title": "See Your Lifesaving Stats",
+          "description": "View your complete donation history. Know exactly how many lives you've helped save."
+        }
+      ]
+    },
+    "metrics": {
+      "badge": "THE RESULT",
+      "title": "Simple for Everyone",
+      "subtitle": "From complex processes to streamlined experiences that work for everyone.",
+      "stats": [
+        {
+          "value": "minutes",
+          "label": "To book an appointment",
+          "sublabel": "Down from 20+ minutes of phone calls"
+        },
+        {
+          "value": "Zero",
+          "label": "Paper forms required",
+          "sublabel": "100% digital screening process"
+        },
+        {
+          "value": "%",
+          "label": "Digital experience",
+          "sublabel": "Works on any device, any browser"
+        }
+      ]
+    },
+    "trust": {
+      "badge": "SEE IT IN ACTION",
+      "title": "Trusted by Italy's Leading Blood Donation Network",
+      "subtitle": "50+ blood centers. 25 hours saved per week. €12,000 saved annually.",
+      "avis": {
+        "label": "Official Partner",
+        "name": "AVIS Nazionale",
+        "quote": "Vitalita eliminated 95% of our scheduling conflicts in the first month.",
+        "attribution": "— Dr. Paolo Rossi, AVIS Milano Operations Director"
+      },
+      "centers": {
+        "label": "Blood donation centers",
+        "regions": "Across Lombardy, Veneto, and Emilia-Romagna",
+        "hours": "25 hours",
+        "hoursLabel": "Saved per week",
+        "savings": "€12,000",
+        "savingsLabel": "Saved annually per center"
+      },
+      "certifications": {
+        "gdpr": "GDPR Compliant",
+        "iso": "ISO 27001 Certified",
+        "dataHosted": "Data Hosted in Milan"
+      }
+    },
+    "cta": {
+      "badge": "SEE IT IN ACTION",
+      "title": "Ready to Eliminate Scheduling Chaos?",
+      "subtitle": "Join 50+ blood centers across Italy. See your center on Vitalita in 2 weeks.",
+      "primaryButton": "Schedule Your Free Demo",
+      "secondaryButton": "Explore Features First →",
+      "trustLine": "15-minute call. No commitment. See if Vitalita fits your center."
+    }
+  },
+  "caseStudyPage": {
+    "hero": {
+      "badge": "TRUSTED BY 47+ AVIS CHAPTERS",
+      "headline": "47+ Organizations. 487,000+ Lives Saved. Zero Spreadsheets.",
+      "subheadline": "See exactly how Italian blood networks eliminated chaos and scaled impact with Vitalita.",
+      "statCard1": {
+        "value": "487,000+",
+        "label": "Donations Managed Annually"
+      },
+      "statCard2": {
+        "value": "3-6 months",
+        "label": "Average Results Timeline"
+      },
+      "statCard3": {
+        "value": "2 weeks",
+        "label": "Typical Implementation"
+      },
+      "cta": "Calculate Your Organization's ROI"
+    },
+    "trustBar": {
+      "heading": "Organizations Using Vitalita for Donor Management",
+      "subtext": "Join 47+ organizations already saving time"
+    },
+    "videoTestimonials": {
+      "heading": "Watch How Coordinators Saved 16 Hours Per Week",
+      "card1": {
+        "title": "How Maria Eliminated 3 Spreadsheets",
+        "organization": "AVIS Lombardia"
+      },
+      "card2": {
+        "title": "Real-Time Tracking Across 12 Provinces",
+        "organization": "Croce Rossa Toscana"
+      },
+      "card3": {
+        "title": "2-Month Digital Transformation Timeline",
+        "organization": "FIDAS Veneto"
+      }
+    },
+    "impactMetrics": {
+      "heading": "Measured Impact Across Italian Blood Networks",
+      "card1": {
+        "badge": "22%",
+        "headline": "Reduction in No-Show Rates",
+        "description": "Blood donation centers using Vitalita reduced missed appointments from 30% to 8% within 3 months through automated SMS reminders and donor preference scheduling.",
+        "ministat": "From 30% → 8% in 3 months"
+      },
+      "card2": {
+        "badge": "35%",
+        "headline": "Increase in Coordinator Efficiency",
+        "description": "Real-time inventory tracking and AI-powered scheduling allowed coordinators to manage 3x more donors without additional staff.",
+        "ministat": "3x donors per coordinator"
+      },
+      "card3": {
+        "badge": "40%",
+        "headline": "Less Administrative Time",
+        "description": "Automated appointment confirmations, rescheduling, and reporting freed up 16 hours per week per coordinator for patient care and donor engagement.",
+        "ministat": "16 hours saved weekly"
+      }
+    },
+    "caseStudyGrid": {
+      "heading": "Blood Donation Management Success Stories by Organization",
+      "subheading": "Real implementations, measurable outcomes, documented timelines",
+      "filters": {
+        "all": "All Studies",
+        "avis": "AVIS",
+        "croceRossa": "Croce Rossa",
+        "fidas": "FIDAS",
+        "more": "+44 More"
+      },
+      "card1": {
+        "badge": "40%",
+        "organization": "FIDAS VENETO",
+        "headline": "FIDAS Veneto Eliminated Paperwork in 60 Days—Now Manages 3x Donors Per Week",
+        "challenge": "Managing 15,000+ donors across 12 provinces using disconnected spreadsheets and phone calls",
+        "solution": "Unified Vitalita platform with automated scheduling, SMS reminders, and real-time inventory tracking",
+        "result1": "40% reduction in admin time",
+        "result2": "22% fewer no-shows",
+        "result3": "100% digital in 2 months",
+        "timeline": "Results achieved in 3 months"
+      },
+      "card2": {
+        "badge": "35%",
+        "organization": "CROCE ROSSA TOSCANA",
+        "headline": "Croce Rossa Toscana Tracks 487K Donations in Real-Time—Zero Stock-Outs",
+        "challenge": "No visibility into inventory across 8 regional centers, frequent emergency shortages",
+        "solution": "Real-time inventory tracking and AI-powered scheduling across all collection sites",
+        "result1": "Real-time tracking across all centers",
+        "result2": "35% efficiency increase",
+        "result3": "Zero stock-outs in 4 months",
+        "timeline": "Results achieved in 4 months"
+      },
+      "card3": {
+        "badge": "22%",
+        "organization": "AVIS LOMBARDIA",
+        "headline": "AVIS Lombardia Unified 12 Provinces—22% Fewer No-Shows in 3 Months",
+        "challenge": "Fragmented communication across chapters, 30% no-show rate",
+        "solution": "Unified scheduling platform with automated SMS reminders and donor preference management",
+        "result1": "22% no-show reduction",
+        "result2": "Unified scheduling",
+        "result3": "SMS automation",
+        "timeline": "Results achieved in 3 months"
+      },
+      "labels": {
+        "challenge": "Challenge:",
+        "solution": "Solution:"
+      }
+    },
+    "testimonials": {
+      "heading": "What Blood Donation Coordinators Say About Vitalita",
+      "subheading": "Verified coordinators from leading organizations",
+      "testimonial1": {
+        "name": "Maria Rossi",
+        "title": "Coordinator, AVIS Lombardia",
+        "quote": "Vitalita transformed our coordination. We now handle 3x more donors with the same staff. Real-time inventory tracking eliminated our biggest headache.",
+        "organization": "AVIS LOMBARDIA"
+      },
+      "testimonial2": {
+        "name": "Giovanni Bianchi",
+        "title": "Director, Croce Rossa Toscana",
+        "quote": "We process 35% more donations with the same resources. Real-time inventory tracking eliminated delays. Our coordinators finally have time to focus on donors, not paperwork.",
+        "organization": "CROCE ROSSA TOSCANA"
+      },
+      "testimonial3": {
+        "name": "Laura Conti",
+        "title": "Operations Manager, FIDAS Veneto",
+        "quote": "Digital transformation completed in 2 months. Staff now focuses on donor engagement instead of paperwork. The ROI was immediate—we saw results in week one.",
+        "organization": "FIDAS VENETO"
+      },
+      "verified": "Verified on LinkedIn"
+    },
+    "compliance": {
+      "heading": "Regulatory Compliance & Certifications",
+      "subheading": "Built to meet Italian and EU healthcare data standards",
+      "card1": {
+        "name": "GDPR Compliant",
+        "description": "Full compliance with EU General Data Protection Regulation. Your donor data is encrypted, access-controlled, and stored within EU borders."
+      },
+      "card2": {
+        "name": "ISO 27001",
+        "description": "International standard for information security management. Regular third-party audits ensure your data is protected at the highest level."
+      },
+      "card3": {
+        "name": "EU Digital Standards",
+        "description": "Meets European Interoperability Framework requirements. Seamless integration with national healthcare systems and donor registries."
+      },
+      "card4": {
+        "name": "Ministry of Health Approved",
+        "description": "Certified by Italian Ministry of Health for blood donation management. Meets all national healthcare data handling requirements."
+      },
+      "trustSignals": {
+        "breaches": "Zero data breaches since launch",
+        "infrastructure": "EU-hosted infrastructure",
+        "uptime": "99.9% uptime guarantee"
+      }
+    },
+    "faq": {
+      "heading": "Frequently Asked Questions",
+      "q1": {
+        "question": "How do organizations measure success with Vitalita?",
+        "answer": "Organizations track three primary metrics: no-show rate reduction (average 22% decrease), coordinator efficiency (3x more donors managed per staff member), and administrative time savings (40% reduction). We provide a custom ROI calculator and real-time analytics dashboard showing your specific results compared to baseline."
+      },
+      "q2": {
+        "question": "How long does it take to see results?",
+        "answer": "Most organizations see measurable improvements within 2-4 weeks of implementation. Initial setup takes 2 weeks on average, including data migration, staff training, and system configuration. Coordinators report time savings immediately, while donor-facing improvements (reduced no-shows, better scheduling) typically show impact within the first month."
+      },
+      "q3": {
+        "question": "What is the return on investment for blood donation management software?",
+        "answer": "The average organization recoups their investment within 3-6 months through reduced administrative costs, fewer missed appointments, and better resource utilization. AVIS chapters report saving 16 hours per week per coordinator, while Croce Rossa regions handle 35% more donations with existing staff. We provide a custom ROI calculator based on your organization's size and current processes."
+      },
+      "q4": {
+        "question": "Is Vitalita compatible with existing systems and workflows?",
+        "answer": "Yes. Vitalita integrates with existing donor databases, national registries, and scheduling systems used by AVIS, Croce Rossa, and FIDAS. We handle data migration from spreadsheets, legacy software, and paper records. Our API connects to laboratory systems, inventory management, and communication platforms already in use."
+      },
+      "q5": {
+        "question": "What support is provided during and after implementation?",
+        "answer": "Full implementation support includes: dedicated onboarding specialist, data migration assistance, staff training (in-person or virtual), customized workflow setup, and 24/7 technical support. Post-launch, you get ongoing training, feature updates, priority support, and quarterly optimization reviews."
+      }
+    },
+    "trustFooter": {
+      "column1": {
+        "heading": "Born in Italy, proven across Europe",
+        "text": "Developed in collaboration with Italian blood donation networks. GDPR-compliant and EU-certified from day one."
+      },
+      "column2": {
+        "heading": "97% coordinator satisfaction rate",
+        "text": "Blood donation coordinators report significant time savings, better donor engagement, and reduced stress after implementing Vitalita."
+      },
+      "column3": {
+        "heading": "Zero data breaches since launch",
+        "text": "ISO 27001 certified, GDPR compliant, Ministry of Health approved. Your donor data is protected at the highest security standards."
+      }
+    },
+    "finalCta": {
+      "heading": "Ready to See These Results?",
+      "subheading": "Join 47+ organizations already saving time",
+      "button": "Get Your Custom ROI Analysis",
+      "microcopy": "Free demo. No credit card. Setup in 2 weeks."
+    },
+    "roiCalculator": {
+      "title": "Calculate Your Organization's ROI",
+      "subtitle": "See how much time and money you'll save with Vitalita",
+      "orgSize": "Organization Size",
+      "orgSizeSmall": "Small (<100 donations/month)",
+      "orgSizeMedium": "Medium (100-500 donations/month)",
+      "orgSizeLarge": "Large (>500 donations/month)",
+      "noShowRate": "Current No-Show Rate (%)",
+      "monthlyDonations": "Monthly Donations",
+      "coordinators": "Number of Coordinators",
+      "calculate": "Calculate ROI",
+      "calculated": "ROI Calculated",
+      "resultsTitle": "Your Estimated Impact with Vitalita",
+      "hoursSaved": "Hours saved per week",
+      "noShowReduction": "Reduction in no-shows",
+      "additionalDonations": "More donations per month",
+      "roiTimeline": "Estimated ROI timeline",
+      "cta": "Get Your Custom Implementation Plan"
     }
   }
 }

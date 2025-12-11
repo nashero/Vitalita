@@ -9,19 +9,14 @@ import {
   CalendarCheck,
   FileText,
   Bell,
-  BarChart3,
   TrendingUp,
-  Zap,
   Smartphone,
   MapPin,
   Shield,
   ShieldCheck,
   Heart,
-  Building2,
-  UserCheck,
   Sparkles,
   X,
-  Trophy,
   Settings,
   Rocket,
   UserPlus,
@@ -47,7 +42,7 @@ const HowWeSimplify = () => {
 
   // Refs for intersection observer
   const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
-  const statsRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLElement | null>(null);
 
   // SEO: Set page title and meta tags
   useEffect(() => {
@@ -379,8 +374,8 @@ const HowWeSimplify = () => {
           {/* CTA Button */}
           <div className="mb-5 sm:mb-6 w-full sm:w-auto">
             <Link
-              to="/contact"
-              aria-label="Get started with Vitalita - Schedule your free demo"
+              to="/case-studies"
+              aria-label="View case studies to see real results from Italian blood donation centers"
               className="flex sm:inline-flex w-full sm:w-auto items-center justify-center transition-all duration-200 text-sm sm:text-base"
               style={{
                 background: '#FF6B6B',
