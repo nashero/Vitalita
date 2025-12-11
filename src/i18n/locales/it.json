@@ -16,7 +16,8 @@
     "search": "Cerca",
     "filter": "Filtra",
     "clear": "Cancella",
-    "refresh": "Aggiorna"
+    "refresh": "Aggiorna",
+    "skipToContent": "Salta al contenuto principale"
   },
   "sessionTimeout": {
     "warning": {
@@ -1331,6 +1332,146 @@
       "sunday": "Dom"
     }
   },
+  "howItWorksPage": {
+    "hero": {
+      "badge": "IMPLEMENTAZIONE PROVATA",
+      "headline": "Dal Caos al Controllo in 14 Giorni",
+      "subtitle": "Gestione delle donazioni di sangue di livello enterprise, implementata senza interrompere le operazioni. Utilizzato da oltre 47 organizzazioni AVIS in tutta Italia.",
+      "trustBadges": {
+        "avisCertified": "Certificato AVIS",
+        "gdprCompliant": "Conforme al GDPR",
+        "isoPending": "ISO 27001 in Attesa"
+      },
+      "ctaButton": "Vedi Timeline di Implementazione",
+      "timeline": {
+        "start": "Giorno 1: Inizio Configurazione",
+        "end": "Giorno 14: Completamente Operativo",
+        "comparison": "Media del settore: 6 mesi | Vitalita: 2 settimane"
+      }
+    },
+    "step1": {
+      "statsCallout": "Tempo Medio di Configurazione: 2 ore | Media del Settore: 2-3 settimane",
+      "badge": "PASSO 1 • SETTIMANA 1",
+      "headline": "Configurazione Zero-Touch",
+      "description": "Configuriamo tutto per te—pronto all'uso dal primo giorno. Tempo medio di configurazione: 2 ore.",
+      "bullets": [
+        "Configura 3 centri donazione in meno di 2 ore—nessuna competenza tecnica richiesta",
+        "Importa il tuo database donatori esistente con un clic (supporto CSV/Excel)",
+        "Imposta limiti di capacità e orari operativi automaticamente in base alle tue specifiche",
+        "Importa database donatori esistente con sicurezza conforme al GDPR (crittografia AES-256)"
+      ],
+      "customerQuote": {
+        "text": "La configurazione è stata così veloce che pensavamo che qualcosa fosse rotto. Si scopre che funziona semplicemente.",
+        "author": "Coordinatore, AVIS Firenze"
+      }
+    },
+    "step2": {
+      "badge": "PASSO 2 • SETTIMANA 1-2",
+      "headline": "Attivazione Workflow Intelligente per la Gestione delle Donazioni di Sangue",
+      "description": "Modelli predefiniti per standard AVIS. Personalizza solo ciò di cui hai bisogno.",
+      "bullets": [
+        "Criteri di idoneità preconfigurati basati sulle linee guida del Ministero della Salute italiano",
+        "Workflow di screening sanitario con segnalazione automatica dei rischi",
+        "Modelli di notifica per SMS, email e messaggi in-app—pronti all'uso",
+        "Definizioni workflow aperte: Modifica regole senza supporto sviluppatore"
+      ],
+      "trustSignal": "Workflow Certificati AVIS | Conformi agli Standard Sanitari Italiani",
+      "expandableFeature": {
+        "linkText": "Vedi esempi di workflow",
+        "examples": {
+          "eligibility": {
+            "title": "Criteri di Idoneità",
+            "description": "Età 18-65, emoglobina > 12,5 g/dL, peso > 50kg, nessun viaggio recente in aree ad alto rischio, minimo 56 giorni dall'ultima donazione."
+          },
+          "autoNotification": {
+            "title": "Notifica Automatica",
+            "description": "Quando un donatore diventa nuovamente idoneo (ad esempio, dopo il periodo di attesa di 56 giorni), il sistema invia automaticamente un invito personalizzato tramite il canale preferito (SMS, email o notifica in-app)."
+          }
+        }
+      },
+      "socialProof": "Utilizzato da oltre 47 organizzazioni AVIS in tutta Italia"
+    },
+    "step3": {
+      "badge": "PASSO 3 • SETTIMANA 2",
+      "headline": "Sistema di Invito e Iscrizione Donatori Automatizzato",
+      "description": "Lancia i tuoi inviti donatori tramite SMS, email e portale web—tutto da una dashboard.",
+      "bullets": [
+        "Invia oltre 1.000 inviti in pochi minuti con messaggi personalizzati",
+        "Traccia tassi di apertura, tassi di clic e registrazioni portale in tempo reale",
+        "Promemoria automatici per i non rispondenti (tempistica configurabile)",
+        "Nessuna formazione tecnica richiesta—il tuo staff è pronto dal primo giorno"
+      ],
+      "customerQuote": {
+        "text": "Abbiamo raggiunto più donatori in una settimana di quanti ne avessimo nel trimestre precedente.",
+        "author": "Direttore Comunicazioni, AVIS Roma"
+      },
+      "successMetric": {
+        "value": "87%",
+        "label": "tasso di risposta donatori entro 48 ore"
+      },
+      "additionalCTA": "Vedi l'iscrizione donatori in azione"
+    },
+    "step4": {
+      "badge": "PASSO 4 • CONTINUO",
+      "headline": "Monitoraggio delle Prestazioni e Gestione KPI per le Donazioni di Sangue",
+      "description": "Monitora KPI, ottimizza le operazioni e mantieni la conformità—tutto in un unico centro di comando.",
+      "bullets": [
+        "Traccia tassi di appuntamento, utilizzo e fidelizzazione donatori in tutte le sedi",
+        "Audit di conformità automatizzati segnalano problemi prima che diventino critici",
+        "Pianificazione capacità predittiva previene il caos dell'ultimo minuto",
+        "Esporta report per sottomissioni normative (formati Ministero della Salute supportati)"
+      ],
+      "dataQualityBadge": "Archiviazione Dati Conforme al GDPR | ISO 27001 in Attesa",
+      "performanceImprovement": {
+        "title": "Prima di Vitalita vs Dopo Vitalita",
+        "before": {
+          "utilization": "68%",
+          "utilizationLabel": "utilizzo",
+          "reporting": "4 ore/settimana",
+          "reportingLabel": "Reportistica manuale"
+        },
+        "after": {
+          "utilization": "87%",
+          "utilizationLabel": "utilizzo",
+          "reporting": "0 ore/settimana",
+          "reportingLabel": "Automatizzato"
+        }
+      },
+      "trustSignal": "Fidato da coordinatori che gestiscono oltre 487.000 donazioni annuali"
+    },
+    "faq": {
+      "badge": "DOMANDE FREQUENTI",
+      "headline": "Domande sull'Implementazione",
+      "subtitle": "Tutto ciò che devi sapere per iniziare con Vitalita",
+      "questions": {
+        "setupTime": {
+          "question": "Quanto tempo richiede effettivamente la configurazione?",
+          "answer": "La maggior parte delle organizzazioni completa l'implementazione completa in 10-14 giorni. La Settimana 1 copre la configurazione e l'impostazione del workflow (2-4 ore del tuo tempo). La Settimana 2 si concentra sull'iscrizione dei donatori e sulla formazione del team (3-5 ore). Gestiamo noi il lavoro tecnico pesante—tu fornisci il contesto organizzativo."
+        },
+        "technicalExpertise": {
+          "question": "Abbiamo bisogno di competenze tecniche nel nostro team?",
+          "answer": "No. Vitalita è progettato per coordinatori e amministratori, non per team IT. La nostra interfaccia usa un linguaggio semplice e i nostri specialisti di implementazione configurano impostazioni complesse per te. Se puoi usare email e fogli di calcolo, puoi usare Vitalita."
+        },
+        "databaseImport": {
+          "question": "Possiamo importare il nostro database donatori esistente?",
+          "answer": "Sì. Supportiamo importazioni CSV ed Excel con mappatura automatica dei campi. Il nostro sistema elabora in modo sicuro i tuoi dati, rimuove duplicati e convalida le informazioni di contatto. La conformità GDPR è mantenuta in tutto il processo. Tempo medio di importazione per 10.000 donatori: meno di 10 minuti."
+        }
+      }
+    },
+    "finalCTA": {
+      "badge": "PRONTO PER INIZIARE?",
+      "headline": "Vedi il Tuo Piano di Implementazione",
+      "description": "Vedi come gestiamo onboarding, workflow e ottimizzazione—su misura per le tue esigenze. Facciamo noi il lavoro pesante, tu ti concentri sul salvare vite.",
+      "valueProps": {
+        "setupTimeline": "Timeline configurazione 1-2 settimane",
+        "noTechnicalExpertise": "Nessuna competenza tecnica necessaria",
+        "fullSupport": "Supporto implementazione completo"
+      },
+      "primaryButton": "Richiedi Demo di Implementazione",
+      "secondaryLink": "Oppure visualizza la nostra roadmap di implementazione di 2 settimane",
+      "trustReinforcement": "Unisciti a oltre 47 organizzazioni AVIS che già utilizzano Vitalita"
+    }
+  },
   "home": {
     "hero": {
       "trustedByAvis": "AFFIDATO DA AVIS NAZIONALE",
@@ -1383,7 +1524,7 @@
       "cta": {
         "title": "Non lasciare che un'altra vita venga persa a causa di sistemi inefficienti.",
         "description": "Vitalita garantisce che quando qualcuno come Maria ha bisogno di sangue, venga trovato e consegnato in minuti—non ore.",
-        "getEmergencyReady": "Preparati per le Emergenze",
+        "getEmergencyReady": "Trasforma le Tue Operazioni",
         "scheduleDemo": "Prenota una Demo",
         "seeHowItWorks": "Vedi Come Funziona"
       },
@@ -1488,7 +1629,7 @@
       "title": "Pronto a trasformare il caos di coordinamento in velocità salvavita?",
       "description": "Unisciti alle organizzazioni italiane che stanno modernizzando le loro operazioni con Vitalita. Orchestriamo reclutamento, logistica e fedeltà dei donatori con un'unica piattaforma adattiva.",
       "primaryButton": "Prenota la Tua Demo",
-      "secondaryButton": "Vedi Come Funziona",
+      "secondaryButton": "Scopri di Più",
       "trustText": "Affidato da oltre 47 sezioni AVIS in tutta Italia",
       "certifications": {
         "iso27001": "ISO 27001",
