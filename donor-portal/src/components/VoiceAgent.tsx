@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, MicOff, Volume2, X, Send, MessageCircle } from 'lucide-react';
+import { Mic, MicOff, Volume2, X, Send, MessageCircle, AlertCircle } from 'lucide-react';
 import Vapi from '@vapi-ai/web';
 import { CHAT_CONFIG, getRandomFallbackResponse } from '../config/chat';
 
@@ -646,25 +646,31 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
           setTranscript('I heard your question. Let me help you with that.');
         }
         
-        // Set error for user feedback
-        setError(`n8n webhook error: ${response.status} ${response.statusText}`);
+        // Set error for user feedback, but auto-dismiss after showing fallback
+        setError(`Server responded with an error. Providing a general response.`);
+        
+        // Auto-dismiss error after 5 seconds
+        setTimeout(() => {
+          setError(null);
+        }, 5000);
       }
     } catch (error: unknown) {
       console.error(`❌ Error sending ${inputType} message to n8n:`, error);
       
       // Provide specific error messages for common issues
-      let errorMessage = 'Failed to connect to n8n webhook.';
+      let errorMessage = 'Unable to connect to the knowledge base. Using fallback response.';
       
       if (error instanceof Error) {
         if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-          errorMessage = 'Network error: Could not connect to n8n server. Check if the server is running and accessible.';
+          errorMessage = 'Connection issue: Please check your internet connection. Providing a general response.';
           console.error('🔍 Network connectivity issue detected');
         } else if (error.name === 'TypeError' && error.message.includes('CORS')) {
-          errorMessage = 'CORS error: n8n server is blocking requests from this domain.';
+          errorMessage = 'Server configuration issue. Providing a general response.';
           console.error('🔍 CORS issue detected');
         }
       }
       
+      // Show error briefly, then auto-dismiss after showing fallback
       setError(errorMessage);
       
       // Fallback response on error - CONSOLIDATED
@@ -674,6 +680,11 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
       if (inputType === 'voice') {
         setTranscript('I heard your question. Let me help you with that.');
       }
+      
+      // Auto-dismiss error after 5 seconds
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
     } finally {
       setIsProcessing(false);
     }
@@ -681,113 +692,129 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
 
   return (
     <div 
-      className={`fixed z-50 pointer-events-auto ${className}`} 
+      className={`fixed pointer-events-auto transition-all duration-300 ease-in-out z-[1000] bottom-4 left-1/2 -translate-x-1/2 md:bottom-6 md:right-6 md:left-auto md:translate-x-0 transform-gpu ${className}`}
       style={{ 
-        pointerEvents: 'auto', 
-        maxHeight: 'calc(100vh - 100px)',
-        top: 'auto',
-        bottom: '32px',
-        left: 'auto',
-        right: '32px',
-        position: 'fixed',
-        transform: 'translateZ(0)'
+        maxHeight: 'calc(100vh - 100px)'
       }}
     >
-             {/* Compact Voice Agent */}
+             {/* Compact Voice Agent - Mobile Compact / Desktop Full */}
        {!isExpanded && (
-         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 w-64 hover:shadow-2xl transition-all duration-300">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center space-x-3">
-              <div className="relative">
-                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                  <Mic className="w-5 h-5 text-red-600" />
-                </div>
-                {/* Animated sound bars */}
-                <div className="absolute -top-1 -left-1 w-12 h-12">
-                  {[...Array(6)].map((_, i) => (
-                    <div
-                      key={i}
-                      className={`absolute w-1 bg-red-400 rounded-full transition-all duration-300 ${
-                        isListening ? 'animate-pulse' : 'opacity-0'
-                      }`}
-                      style={{
-                        height: `${Math.random() * 16 + 6}px`,
-                        left: `${i * 1.5}px`,
-                        top: `${16 - (Math.random() * 16 + 6) / 2}px`,
-                        animationDelay: `${i * 100}ms`
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 text-sm">Voice Assistant</h3>
-                <p className="text-xs text-gray-600">
-                  {!isVapiLoaded ? 'Loading...' : isListening ? 'Listening' : conversationHistory.length > 0 ? `${conversationHistory.length} messages` : 'Ready with n8n'}
-                </p>
-                <p className="text-xs text-blue-600 font-medium">
-                  🔗 n8n Connected
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={toggleExpanded}
-              className="text-gray-400 hover:text-red-600 transition-colors p-1 rounded-full hover:bg-red-50"
-              title="Open chat window"
-            >
-              <MessageCircle className="w-4 h-4" />
-            </button>
-          </div>
-          
+         <>
+           {/* Mobile: Compact Icon Button */}
+           <div className="md:hidden relative">
+             <button
+               onClick={handleVoiceChat}
+               disabled={isProcessing || !isVapiLoaded}
+               className={`min-w-[56px] min-h-[56px] bg-red-600 text-white rounded-full shadow-xl border-2 border-white flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-red-400 focus:ring-offset-2 ${
+                 isListening ? 'bg-red-700 scale-110 shadow-2xl' : 'hover:bg-red-700 hover:scale-105'
+               } ${(isProcessing || !isVapiLoaded) ? 'opacity-50 cursor-not-allowed' : ''}`}
+               title={isListening ? 'Stop listening' : 'Start voice chat'}
+               aria-label={isListening ? 'Stop listening' : 'Start voice chat'}
+             >
+               {!isVapiLoaded ? (
+                 <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+               ) : isProcessing ? (
+                 <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+               ) : isListening ? (
+                 <MicOff className="w-6 h-6" />
+               ) : (
+                 <Mic className="w-6 h-6" />
+               )}
+             </button>
+             {/* Status indicator badge */}
+             {(isListening || isProcessing) && (
+               <div className="absolute top-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse transform translate-x-1/4 -translate-y-1/4"></div>
+             )}
+           </div>
 
-          
-          <button
-            onClick={handleVoiceChat}
-            disabled={isProcessing || !isVapiLoaded}
-            className={`w-full py-2.5 px-3 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 text-sm ${
-              isListening
-                ? 'bg-red-600 text-white shadow-lg hover:bg-red-700'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            } ${(isProcessing || !isVapiLoaded) ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            {!isVapiLoaded ? (
-              <div className="flex items-center justify-center space-x-2">
-                <div className="w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-                <span>Loading...</span>
-              </div>
-            ) : isProcessing ? (
-              <div className="flex items-center justify-center space-x-2">
-                <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Processing...</span>
-              </div>
-            ) : isListening ? (
-              <div className="flex items-center justify-center space-x-2">
-                <MicOff className="w-3 h-3" />
-                <span>Stop listening</span>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center space-x-2">
-                <Mic className="w-3 h-3" />
-                <span>Start voice chat (n8n)</span>
-              </div>
-            )}
-          </button>
-        </div>
-      )}
+           {/* Desktop: Full Card */}
+           <div className="hidden md:block bg-white rounded-2xl shadow-xl border border-gray-200 p-4 w-64 hover:shadow-2xl transition-all duration-300">
+             <div className="flex items-center justify-between mb-3">
+               <div className="flex items-center space-x-3">
+                 <div className="relative">
+                   <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                     <Mic className="w-5 h-5 text-red-600" />
+                   </div>
+                   {/* Animated sound bars */}
+                   <div className="absolute -top-1 -left-1 w-12 h-12">
+                     {[...Array(6)].map((_, i) => (
+                       <div
+                         key={i}
+                         className={`absolute w-1 bg-red-400 rounded-full transition-all duration-300 ${
+                           isListening ? 'animate-pulse' : 'opacity-0'
+                         }`}
+                         style={{
+                           height: `${Math.random() * 16 + 6}px`,
+                           left: `${i * 1.5}px`,
+                           top: `${16 - (Math.random() * 16 + 6) / 2}px`,
+                           animationDelay: `${i * 100}ms`
+                         }}
+                       />
+                     ))}
+                   </div>
+                 </div>
+                 <div>
+                   <h3 className="font-semibold text-gray-900 text-sm">Voice Assistant</h3>
+                   <p className="text-xs text-gray-600">
+                     {!isVapiLoaded ? 'Loading...' : isListening ? 'Listening' : conversationHistory.length > 0 ? `${conversationHistory.length} messages` : 'Ready with n8n'}
+                   </p>
+                   <p className="text-xs text-blue-600 font-medium">
+                     🔗 n8n Connected
+                   </p>
+                 </div>
+               </div>
+               <button
+                 onClick={toggleExpanded}
+                 className="text-gray-400 hover:text-red-600 transition-colors p-1 rounded-full hover:bg-red-50 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                 title="Open chat window"
+                 aria-label="Open chat window"
+               >
+                 <MessageCircle className="w-4 h-4" />
+               </button>
+             </div>
+             
+             <button
+               onClick={handleVoiceChat}
+               disabled={isProcessing || !isVapiLoaded}
+               className={`w-full py-2.5 px-3 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 text-sm min-h-[44px] ${
+                 isListening
+                   ? 'bg-red-600 text-white shadow-lg hover:bg-red-700'
+                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+               } ${(isProcessing || !isVapiLoaded) ? 'opacity-50 cursor-not-allowed' : ''}`}
+             >
+               {!isVapiLoaded ? (
+                 <div className="flex items-center justify-center space-x-2">
+                   <div className="w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                   <span>Loading...</span>
+                 </div>
+               ) : isProcessing ? (
+                 <div className="flex items-center justify-center space-x-2">
+                   <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                   <span>Processing...</span>
+                 </div>
+               ) : isListening ? (
+                 <div className="flex items-center justify-center space-x-2">
+                   <MicOff className="w-3 h-3" />
+                   <span>Stop listening</span>
+                 </div>
+               ) : (
+                 <div className="flex items-center justify-center space-x-2">
+                   <Mic className="w-3 h-3" />
+                   <span>Start voice chat (n8n)</span>
+                 </div>
+               )}
+             </button>
+           </div>
+         </>
+       )}
 
-             {/* Expanded Voice Agent */}
+             {/* Expanded Voice Agent - Responsive */}
        {isExpanded && (
          <div 
-           className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-5 w-72"  
+           className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 md:p-5 w-[calc(100vw-32px)] max-w-sm md:w-72"
           style={{ 
-            maxHeight: 'calc(100vh - 120px)', 
+            maxHeight: 'calc(100vh - 100px)', 
             overflowY: 'auto',
-            position: 'fixed',
-            bottom: '24px',
-            left: 'auto',
-            right: '24px',
-            top: 'auto',
-            zIndex: 30
           }}
         >
           <div className="flex items-center justify-between mb-4">
@@ -808,10 +835,11 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
             </div>
             <button
               onClick={toggleExpanded}
-              className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100"
+              className="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-full hover:bg-gray-100 min-w-[44px] min-h-[44px] flex items-center justify-center"
               title="Minimize voice assistant"
+              aria-label="Minimize voice assistant"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
           </div>
 
@@ -819,15 +847,19 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
 
           {/* Error Display */}
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-              <div className="flex items-center space-x-2">
-                <MicOff className="w-4 h-4 text-red-600" />
-                <span className="text-sm text-red-800">{error}</span>
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 transition-all duration-300">
+              <div className="flex items-start space-x-2">
+                <div className="flex-shrink-0 mt-0.5">
+                  <AlertCircle className="w-4 h-4 text-amber-600" />
+                </div>
+                <span className="text-sm text-amber-800 flex-1">{error}</span>
                 <button
                   onClick={clearError}
-                  className="ml-auto text-red-600 hover:text-red-800"
+                  className="ml-2 flex-shrink-0 text-amber-600 hover:text-amber-800 min-w-[32px] min-h-[32px] flex items-center justify-center p-1 rounded-full hover:bg-amber-100 transition-colors"
+                  aria-label="Dismiss message"
+                  title="Dismiss"
                 >
-                  <X className="w-3 h-3" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -926,10 +958,11 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
                   }
                 }}
                 disabled={isProcessing || !isVapiLoaded}
-                className="bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white p-2 rounded-lg transition-colors disabled:cursor-not-allowed"
+                className="bg-red-600 hover:bg-red-700 disabled:bg-gray-300 text-white p-2 rounded-lg transition-colors disabled:cursor-not-allowed min-w-[44px] min-h-[44px] flex items-center justify-center"
                 title="Send text message"
+                aria-label="Send text message"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-5 h-5" />
               </button>
             </div>
             <p className="text-xs text-gray-500 mt-2 text-center">
@@ -942,7 +975,7 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
             <button
               onClick={handleVoiceChat}
               disabled={isProcessing || !isVapiLoaded}
-              className={`w-full py-2.5 px-3 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 text-sm ${
+              className={`w-full py-2.5 px-3 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 text-sm min-h-[44px] ${
                 isListening
                   ? 'bg-red-600 text-white shadow-lg hover:bg-red-700'
                   : 'bg-red-100 text-red-700 hover:bg-red-200'
@@ -979,8 +1012,9 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
                   console.log('Quick action: Requirements');
                   sendTextMessage(message);
                 }}
-                className="py-2 px-2 text-xs bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                className="py-3 px-2 text-xs bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors min-h-[44px] flex items-center justify-center"
                 title="Ask about donation requirements"
+                aria-label="Ask about donation requirements"
               >
                 Requirements
               </button>
@@ -990,8 +1024,9 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
                   console.log('Quick action: Center locations');
                   sendTextMessage(message);
                 }}
-                className="py-2 px-2 text-xs bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                className="py-3 px-2 text-xs bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors min-h-[44px] flex items-center justify-center"
                 title="Ask about center locations"
+                aria-label="Ask about center locations"
               >
                 Center locations
               </button>
@@ -1003,8 +1038,9 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
               <div className="grid grid-cols-2 gap-2 mb-2">
                 <button 
                   onClick={startNewConversation}
-                  className="py-2 px-2 text-xs bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="py-3 px-2 text-xs bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors min-h-[44px] flex items-center justify-center"
                   title="Start a new conversation"
+                  aria-label="Start a new conversation"
                 >
                   🔄 New Conversation
                 </button>
@@ -1013,8 +1049,9 @@ const VoiceAgent: React.FC<VoiceAgentProps> = ({ className = '' }) => {
                     setConversationHistory([]);
                     setTranscript('');
                   }}
-                  className="py-2 px-2 text-xs bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                  className="py-3 px-2 text-xs bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors min-h-[44px] flex items-center justify-center"
                   title="Clear all messages from chat"
+                  aria-label="Clear all messages from chat"
                 >
                   🧹 Clean Messages
                 </button>
