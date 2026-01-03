@@ -150,7 +150,7 @@ const ImplementationCTA = () => {
                 }}
                 aria-label="AVIS"
               >
-                AVIS
+                Org 1
               </div>
               <div
                 className="flex items-center justify-center rounded px-3 py-2 bg-white"
@@ -162,7 +162,7 @@ const ImplementationCTA = () => {
                 }}
                 aria-label="Organization 1"
               >
-                Org 1
+                Org 2
               </div>
               <div
                 className="flex items-center justify-center rounded px-3 py-2 bg-white"
@@ -174,7 +174,7 @@ const ImplementationCTA = () => {
                 }}
                 aria-label="Organization 2"
               >
-                Org 2
+                Org 3
               </div>
               <div
                 className="flex items-center justify-center rounded px-3 py-2 bg-white"
@@ -186,7 +186,7 @@ const ImplementationCTA = () => {
                 }}
                 aria-label="Organization 3"
               >
-                Org 3
+                Org 4
               </div>
             </div>
           </div>

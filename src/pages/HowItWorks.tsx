@@ -261,7 +261,7 @@ const HowItWorks = () => {
                     "@type": "HowToDirection",
                     "text": text
                   })),
-                  "keywords": "AVIS workflows, donor eligibility automation, blood donation software"
+                  "keywords": "Healthcare workflows, donor eligibility automation, blood donation software"
                 })
               }}
             />

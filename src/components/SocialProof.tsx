@@ -30,7 +30,7 @@ const SocialProof = () => {
           <div className="flex flex-col items-center text-center">
             {/* AVIS Logo Placeholder - You can replace this with actual logo */}
             <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-2xl bg-white shadow-md">
-              <span className="text-4xl font-bold text-red-600">AVIS</span>
+              <span className="text-4xl font-bold text-red-600">TRUSTED</span>
             </div>
             
             {/* Badge */}
