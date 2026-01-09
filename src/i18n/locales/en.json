@@ -1469,8 +1469,8 @@
   "howItWorksPage": {
     "hero": {
       "badge": "PROVEN IMPLEMENTATION",
-      "headline": "From Chaos to Control in 14 Days",
-      "subtitle": "Enterprise-grade blood donation management, implemented without disrupting operations. Trusted by healthcare organizations across Italy",
+      "headline": "From Chaos to Control in Weeks, Not Months",
+      "subtitle": "Enterprise-grade blood donation management, implemented without disrupting operations. Seeking the trust of key Healthcare Providers Worldwide ",
       "trustBadges": {
         "avisCertified": "Healthcare Certified",
         "gdprCompliant": "GDPR Compliant",
@@ -1478,9 +1478,13 @@
       },
       "ctaButton": "See Implementation Timeline",
       "timeline": {
-        "start": "Day 1: Setup Begins",
-        "end": "Day 14: Fully Operational",
-        "comparison": "Industry average: 6 months | Vitalita: 2 weeks"
+        "phases": {
+          "setup": "Setup",
+          "testing": "Testing",
+          "launch": "Launch",
+          "operational": "Operational"
+        },
+        "comparison": "Industry average: 6 months | Vitalita: Weeks, not months"
       }
     },
     "step1": {
@@ -1528,9 +1532,9 @@
     "step3": {
       "badge": "STEP 3 • WEEK 2",
       "headline": "Automated Donor Invitation & Enrollment System",
-      "description": "Launch your donor invitations via SMS, email, and web portal—all from one dashboard.",
+      "description": "Launch your donor invitations via Phone, SMS, email, and web portal—all from one dashboard.",
       "bullets": [
-        "Send 1,000+ invitations in minutes with personalized messaging",
+        "Send invitations in minutes with personalized messaging",
         "Track open rates, click rates, and portal registrations in real time",
         "Automatic reminders for non-responders (configurable timing)",
         "Zero technical training required—your staff is ready day one"
@@ -1547,7 +1551,7 @@
     },
     "step4": {
       "badge": "STEP 4 • ONGOING",
-      "headline": "Blood Donation Performance Tracking & KPI Management",
+      "headline": "Blood Donation Management Performance Tracking & KPI Management",
       "description": "Monitor KPIs, optimize operations, and maintain compliance—all in one unified command center.",
       "bullets": [
         "Track appointment rates, utilization, and donor retention across all locations",
@@ -1612,7 +1616,7 @@
       "heading": "The Operating System for Modern Blood Supply",
       "subtitle": "AI-powered coordination that keeps Italy's donation network running 24/7—so every call for blood gets an answer.",
       "avisLogo": {
-        "name": "Healthcare Partners",
+        "name": "AVIS",
         "description": "National coordination & regional integrations",
         "highlight": "Partner Highlight"
       },
@@ -1780,10 +1784,10 @@
     "cta": {
       "badge": "Next Steps",
       "title": "Ready to turn coordination chaos into lifesaving speed?",
-      "description": "Join the Italian organizations modernizing their operations with Vitalita. Let's orchestrate recruitment, logistics, and donor loyalty with one adaptive platform.",
+      "description": "Join Healthcare organizations modernizing their operations with Vitalita. Let's orchestrate recruitment, logistics, and donor loyalty with one adaptive platform.",
       "primaryButton": "Schedule Your Demo",
       "secondaryButton": "Learn More",
-      "trustText": "Trusted by partner organizations across Italy",
+      "trustText": "Seeking the trust of key Healthcare Providers Worldwide",
       "certifications": {
         "iso27001": "ISO 27001",
         "gdprCompliant": "GDPR Compliant",
@@ -1801,7 +1805,7 @@
     },
     "comparison": {
       "badge": "STOP WASTING TIME",
-      "title": "From Chaos to Clarity in 2 Weeks",
+      "title": "From Chaos to Control Without the Wait",
       "subtitle": "See exactly what changes when Italian blood centers switch to Vitalita",
       "before": {
         "title": "Before Vitalita",

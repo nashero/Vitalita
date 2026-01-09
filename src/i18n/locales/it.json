@@ -1335,8 +1335,8 @@
   "howItWorksPage": {
     "hero": {
       "badge": "IMPLEMENTAZIONE PROVATA",
-      "headline": "Dal Caos al Controllo in 14 Giorni",
-      "subtitle": "Gestione delle donazioni di sangue di livello enterprise, implementata senza interrompere le operazioni. Utilizzato da oltre 47 organizzazioni AVIS in tutta Italia.",
+      "headline": "Dal Caos al Controllo in Settimane, Non Mesi",
+      "subtitle": "Gestione delle donazioni di sangue di livello enterprise, implementata senza interrompere le operazioni. Cercando la fiducia dei principali fornitori di servizi sanitari in tutto il mondo",
       "trustBadges": {
         "avisCertified": "Certificato Sanitario",
         "gdprCompliant": "Conforme al GDPR",
@@ -1344,9 +1344,13 @@
       },
       "ctaButton": "Vedi Timeline di Implementazione",
       "timeline": {
-        "start": "Giorno 1: Inizio Configurazione",
-        "end": "Giorno 14: Completamente Operativo",
-        "comparison": "Media del settore: 6 mesi | Vitalita: 2 settimane"
+        "phases": {
+          "setup": "Configurazione",
+          "testing": "Test",
+          "launch": "Lancio",
+          "operational": "Operativo"
+        },
+        "comparison": "Media del settore: 6 mesi | Vitalita: Settimane, non mesi"
       }
     },
     "step1": {
@@ -1362,7 +1366,7 @@
       ],
       "customerQuote": {
         "text": "La configurazione è stata così veloce che pensavamo che qualcosa fosse rotto. Si scopre che funziona semplicemente.",
-        "author": "Coordinatore, AVIS Firenze"
+        "author": "Coordinatore, Organizzazione Sanitaria"
       }
     },
     "step2": {
@@ -1375,7 +1379,7 @@
         "Modelli di notifica per SMS, email e messaggi in-app—pronti all'uso",
         "Definizioni workflow aperte: Modifica regole senza supporto sviluppatore"
       ],
-      "trustSignal": "Workflow Certificati AVIS | Conformi agli Standard Sanitari Italiani",
+      "trustSignal": "Workflow Certificati Sanitari | Conformi agli Standard Sanitari Italiani",
       "expandableFeature": {
         "linkText": "Vedi esempi di workflow",
         "examples": {
@@ -1389,21 +1393,21 @@
           }
         }
       },
-      "socialProof": "Utilizzato da oltre 47 organizzazioni AVIS in tutta Italia"
+      "socialProof": "Utilizzato da organizzazioni sanitarie in tutta Italia"
     },
     "step3": {
       "badge": "PASSO 3 • SETTIMANA 2",
       "headline": "Sistema di Invito e Iscrizione Donatori Automatizzato",
       "description": "Lancia i tuoi inviti donatori tramite SMS, email e portale web—tutto da una dashboard.",
       "bullets": [
-        "Invia oltre 1.000 inviti in pochi minuti con messaggi personalizzati",
+        "Invia inviti in pochi minuti con messaggi personalizzati",
         "Traccia tassi di apertura, tassi di clic e registrazioni portale in tempo reale",
         "Promemoria automatici per i non rispondenti (tempistica configurabile)",
         "Nessuna formazione tecnica richiesta—il tuo staff è pronto dal primo giorno"
       ],
       "customerQuote": {
         "text": "Abbiamo raggiunto più donatori in una settimana di quanti ne avessimo nel trimestre precedente.",
-        "author": "Direttore Comunicazioni, AVIS Roma"
+        "author": "Direttore Comunicazioni, Organizzazione Sanitaria"
       },
       "successMetric": {
         "value": "87%",
@@ -1469,7 +1473,7 @@
       },
       "primaryButton": "Richiedi Demo di Implementazione",
       "secondaryLink": "Oppure visualizza la nostra roadmap di implementazione di 2 settimane",
-      "trustReinforcement": "Unisciti a oltre 47 organizzazioni AVIS che già utilizzano Vitalita"
+      "trustReinforcement": "Unisciti alle organizzazioni sanitarie che già utilizzano Vitalita"
     }
   },
   "home": {
@@ -1627,10 +1631,10 @@
     "cta": {
       "badge": "Prossimi Passi",
       "title": "Pronto a trasformare il caos di coordinamento in velocità salvavita?",
-      "description": "Unisciti alle organizzazioni italiane che stanno modernizzando le loro operazioni con Vitalita. Orchestriamo reclutamento, logistica e fedeltà dei donatori con un'unica piattaforma adattiva.",
+      "description": "Unisciti alle organizzazioni sanitarie che stanno modernizzando le loro operazioni con Vitalita. Orchestriamo reclutamento, logistica e fedeltà dei donatori con un'unica piattaforma adattiva.",
       "primaryButton": "Prenota la Tua Demo",
       "secondaryButton": "Scopri di Più",
-      "trustText": "Affidato da organizzazioni partner in tutta Italia",
+      "trustText": "Cercando la fiducia dei principali fornitori sanitari in tutto il mondo",
       "certifications": {
         "iso27001": "ISO 27001",
         "gdprCompliant": "Conforme GDPR",
