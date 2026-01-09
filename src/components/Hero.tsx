@@ -107,7 +107,7 @@ const Hero = () => {
       {/* What You're Losing Section */}
       <div className="mb-12 px-5 md:px-0">
         <div className="mx-auto max-w-6xl">
-          <h2 className="text-2xl md:text-[32px] font-semibold text-center text-slate-900 mb-8 md:mb-12">
+          <h2 className="text-2xl md:text-[32px] font-semibold text-center text-[#F9FAFB] mb-8 md:mb-12">
             {t('home.hero.whatYouLose.title')}
           </h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">

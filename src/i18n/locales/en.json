@@ -1469,18 +1469,22 @@
   "howItWorksPage": {
     "hero": {
       "badge": "PROVEN IMPLEMENTATION",
-      "headline": "From Chaos to Control in 14 Days",
-      "subtitle": "Enterprise-grade blood donation management, implemented without disrupting operations. Used by 47+ AVIS organizations across Italy.",
+      "headline": "From Chaos to Control in Weeks, Not Months",
+      "subtitle": "Enterprise-grade blood donation management, implemented without disrupting operations. Seeking the trust of key Healthcare Providers Worldwide ",
       "trustBadges": {
-        "avisCertified": "AVIS Certified",
+        "avisCertified": "Healthcare Certified",
         "gdprCompliant": "GDPR Compliant",
         "isoPending": "ISO 27001 Pending"
       },
       "ctaButton": "See Implementation Timeline",
       "timeline": {
-        "start": "Day 1: Setup Begins",
-        "end": "Day 14: Fully Operational",
-        "comparison": "Industry average: 6 months | Vitalita: 2 weeks"
+        "phases": {
+          "setup": "Setup",
+          "testing": "Testing",
+          "launch": "Launch",
+          "operational": "Operational"
+        },
+        "comparison": "Industry average: 6 months | Vitalita: Weeks, not months"
       }
     },
     "step1": {
@@ -1496,20 +1500,20 @@
       ],
       "customerQuote": {
         "text": "Setup was so fast, we thought something was broken. Turns out it just works.",
-        "author": "Coordinator, AVIS Firenze"
+        "author": "Coordinator, Healthcare Organization"
       }
     },
     "step2": {
       "badge": "STEP 2 • WEEK 1-2",
       "headline": "Smart Workflow Activation for Blood Donation Management",
-      "description": "Pre-built templates for AVIS standards. Customize only what you need.",
+      "description": "Pre-built templates for Healthcare standards. Customize only what you need.",
       "bullets": [
         "Pre-configured eligibility criteria based on Italian Ministry of Health guidelines",
         "Health screening workflows with automatic risk flagging",
         "Notification templates for SMS, email, and in-app messages—ready to use",
         "Open workflow definitions: Modify rules without developer support"
       ],
-      "trustSignal": "AVIS-Certified Workflows | Compliant with Italian Healthcare Standards",
+      "trustSignal": "Healthcare-Certified Workflows | Compliant with Italian Healthcare Standards",
       "expandableFeature": {
         "linkText": "See workflow examples",
         "examples": {
@@ -1523,21 +1527,21 @@
           }
         }
       },
-      "socialProof": "Used by 47+ AVIS organizations across Italy"
+      "socialProof": "Used by Healthcare organizations across Italy"
     },
     "step3": {
       "badge": "STEP 3 • WEEK 2",
       "headline": "Automated Donor Invitation & Enrollment System",
-      "description": "Launch your donor invitations via SMS, email, and web portal—all from one dashboard.",
+      "description": "Launch your donor invitations via Phone, SMS, email, and web portal—all from one dashboard.",
       "bullets": [
-        "Send 1,000+ invitations in minutes with personalized messaging",
+        "Send invitations in minutes with personalized messaging",
         "Track open rates, click rates, and portal registrations in real time",
         "Automatic reminders for non-responders (configurable timing)",
         "Zero technical training required—your staff is ready day one"
       ],
       "customerQuote": {
         "text": "We reached more donors in one week than we had in the previous quarter.",
-        "author": "Communications Director, AVIS Roma"
+        "author": "Communications Director, Healthcare Organization"
       },
       "successMetric": {
         "value": "87%",
@@ -1547,7 +1551,7 @@
     },
     "step4": {
       "badge": "STEP 4 • ONGOING",
-      "headline": "Blood Donation Performance Tracking & KPI Management",
+      "headline": "Blood Donation Management Performance Tracking & KPI Management",
       "description": "Monitor KPIs, optimize operations, and maintain compliance—all in one unified command center.",
       "bullets": [
         "Track appointment rates, utilization, and donor retention across all locations",
@@ -1603,16 +1607,16 @@
       },
       "primaryButton": "Request Implementation Demo",
       "secondaryLink": "Or view our 2-week implementation roadmap",
-      "trustReinforcement": "Join 47+ AVIS organizations already using Vitalita"
+      "trustReinforcement": "Join Healthcare organizations already using Vitalita"
     }
   },
   "home": {
     "hero": {
-      "trustedByAvis": "TRUSTED BY AVIS NAZIONALE",
+      "trustedByAvis": "TRUSTED BY HEALTHCARE NETWORKS",
       "heading": "The Operating System for Modern Blood Supply",
       "subtitle": "AI-powered coordination that keeps Italy's donation network running 24/7—so every call for blood gets an answer.",
       "avisLogo": {
-        "name": "AVIS Nazionale",
+        "name": "AVIS",
         "description": "National coordination & regional integrations",
         "highlight": "Partner Highlight"
       },
@@ -1696,8 +1700,8 @@
         },
         "avisChapters": {
           "number": "47+",
-          "label": "AVIS Chapters",
-          "description": "Regional and provincial organizations using Vitalita"
+          "label": "Partner Organizations",
+          "description": "Regional and provincial blood donation centers using Vitalita"
         },
         "avgResponseTime": {
           "number": "23 min",
@@ -1713,7 +1717,7 @@
       "benefits": {
         "oneOperatingSystem": {
           "title": "One operating system",
-          "description": "Configurable for regional structures, supporting AVIS provincial chapters."
+          "description": "Configurable for regional structures, supporting multi-level organizational hierarchies."
         },
         "intelligentAutomation": {
           "title": "Intelligent automation",
@@ -1753,14 +1757,14 @@
       "badge": "STRATEGIC PARTNER",
       "organizations": {
         "avisNazionale": {
-          "name": "AVIS Nazionale",
+          "name": "Leading Healthcare Partners",
           "description": "National coordination & regional integrations"
         }
       },
       "testimonial": {
         "quote": "Vitalita transformed how we coordinate blood collection across 47 regional chapters. What used to take hours now happens in minutes—and that means lives saved.",
         "author": "[Name]",
-        "role": "National Coordinator, AVIS Nazionale"
+        "role": "National Coordinator, Healthcare System"
       },
       "impactStats": {
         "donorsConnected": {
@@ -1780,14 +1784,14 @@
     "cta": {
       "badge": "Next Steps",
       "title": "Ready to turn coordination chaos into lifesaving speed?",
-      "description": "Join the Italian organizations modernizing their operations with Vitalita. Let's orchestrate recruitment, logistics, and donor loyalty with one adaptive platform.",
+      "description": "Join Healthcare organizations modernizing their operations with Vitalita. Let's orchestrate recruitment, logistics, and donor loyalty with one adaptive platform.",
       "primaryButton": "Schedule Your Demo",
       "secondaryButton": "Learn More",
-      "trustText": "Trusted by 47+ AVIS chapters across Italy",
+      "trustText": "Seeking the trust of key Healthcare Providers Worldwide",
       "certifications": {
         "iso27001": "ISO 27001",
         "gdprCompliant": "GDPR Compliant",
-        "avisApproved": "AVIS Approved"
+        "avisApproved": "Regulatory Compliant"
       }
     }
   },
@@ -1801,7 +1805,7 @@
     },
     "comparison": {
       "badge": "STOP WASTING TIME",
-      "title": "From Chaos to Clarity in 2 Weeks",
+      "title": "From Chaos to Control Without the Wait",
       "subtitle": "See exactly what changes when Italian blood centers switch to Vitalita",
       "before": {
         "title": "Before Vitalita",
