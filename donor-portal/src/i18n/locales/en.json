@@ -366,7 +366,8 @@
       "slotBookedByOther": "Slot was just booked by someone else. Please select another time.",
       "errorOccurred": "An error occurred. Please try again.",
       "failedToLoadCenters": "Failed to load donation centers. Please try again.",
-      "errorLoadingCenters": "An error occurred while loading centers. Please try again."
+      "errorLoadingCenters": "An error occurred while loading centers. Please try again.",
+      "errorFetchingDonorData": "Failed to fetch donor information. Please try again."
     },
     "buttons": {
       "back": "Back",

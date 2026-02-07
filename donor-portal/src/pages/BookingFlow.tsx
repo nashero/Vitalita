@@ -10,6 +10,7 @@ import { ensureLeafletIcon } from '../utils/mapDefaults';
 import { supabase } from '../lib/supabase';
 import { isAuthenticated } from '../utils/auth';
 import AppointmentConfirmation from '../components/AppointmentConfirmation';
+import { validateDonationRules } from '../utils/donationRules';
 
 type RiskLevel = 'normal' | 'high';
 
@@ -51,76 +52,15 @@ interface DonationCenter {
   isDefault?: boolean;
 }
 
-interface PersonalInfo {
-  fullName: string;
-  dob: string;
-  phone: string;
-  email: string;
-  hasDonatedBefore: '' | 'yes' | 'no';
-  autofillKey: string | null;
-}
 
-type HealthAnswer = '' | 'yes' | 'no';
-
-interface HealthAnswers {
-  recentDonation: HealthAnswer;
-  feelsHealthy: HealthAnswer;
-  medications: HealthAnswer;
-  travel: HealthAnswer;
-}
-
-// Health questions will be translated in the component using useTranslation
-const healthQuestionKeys: ReadonlyArray<{
-  id: keyof HealthAnswers;
-  textKey: string;
-  helpKey: string;
-}> = [
-  {
-    id: 'recentDonation',
-    textKey: 'booking.step4.recentDonation',
-    helpKey: 'booking.step4.recentDonationHelp',
-  },
-  {
-    id: 'feelsHealthy',
-    textKey: 'booking.step4.feelsHealthy',
-    helpKey: 'booking.step4.feelsHealthyHelp',
-  },
-  {
-    id: 'medications',
-    textKey: 'booking.step4.medications',
-    helpKey: 'booking.step4.medicationsHelp',
-  },
-  {
-    id: 'travel',
-    textKey: 'booking.step4.travel',
-    helpKey: 'booking.step4.travelHelp',
-  },
-];
 
 // Steps will be translated in the component using useTranslation
 const stepKeys = [
   { id: 1, labelKey: 'booking.steps.selectCenter' },
   { id: 2, labelKey: 'booking.steps.dateTime' },
-  { id: 3, labelKey: 'booking.steps.yourDetails' },
-  { id: 4, labelKey: 'booking.steps.healthCheck' },
-  { id: 5, labelKey: 'booking.steps.confirmation' },
+  { id: 3, labelKey: 'booking.steps.confirmation' },
 ];
 
-const returningDonorProfiles: Record<
-  string,
-  Pick<PersonalInfo, 'fullName' | 'dob' | 'email'>
-> = {
-  '3335551212': {
-    fullName: 'Giulia Rossi',
-    dob: '1990-04-12',
-    email: 'giulia.rossi@email.com',
-  },
-  '3471118899': {
-    fullName: 'Marco Bianchi',
-    dob: '1986-09-28',
-    email: 'marco.bianchi@email.com',
-  },
-};
 
 type SlotTemplate = {
   time: string;
@@ -273,26 +213,8 @@ const BookingFlow = () => {
   const [alternativeSlots, setAlternativeSlots] = useState<TimeSlotWithDate[]>(
     [],
   );
-  const [autofillMessage, setAutofillMessage] = useState<string | null>(null);
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const [currentMonthView, setCurrentMonthView] = useState(new Date());
-  
-
-  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
-    fullName: '',
-    dob: '',
-    phone: '',
-    email: '',
-    hasDonatedBefore: '',
-    autofillKey: null,
-  });
-
-  const [healthAnswers, setHealthAnswers] = useState<HealthAnswers>({
-    recentDonation: '',
-    feelsHealthy: '',
-    medications: '',
-    travel: '',
-  });
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -541,34 +463,6 @@ const BookingFlow = () => {
     setSelectedSlotId(null);
   }, [selectedDateIso]);
 
-  useEffect(() => {
-    if (personalInfo.hasDonatedBefore !== 'yes') {
-      if (personalInfo.autofillKey) {
-        setPersonalInfo((prev) => ({
-          ...prev,
-          autofillKey: null,
-        }));
-      }
-      return;
-    }
-
-    const normalizedPhone = personalInfo.phone.replace(/\D/g, '');
-    if (!normalizedPhone || normalizedPhone === personalInfo.autofillKey) {
-      return;
-    }
-
-    const profile = returningDonorProfiles[normalizedPhone];
-    if (profile) {
-      setPersonalInfo((prev) => ({
-        ...prev,
-        ...profile,
-        hasDonatedBefore: 'yes',
-        phone: prev.phone,
-        autofillKey: normalizedPhone,
-      }));
-      setAutofillMessage(t('booking.step3.autofillMessage'));
-    }
-  }, [personalInfo]);
 
   const handleSelectCenter = (centerId: string) => {
     setSelectedCenterId(centerId);
@@ -579,7 +473,11 @@ const BookingFlow = () => {
   };
 
   const handleNext = async () => {
-    setValidationMessage(null);
+    // Only clear validation message if we're not on step 2 (where validation happens)
+    // This prevents clearing validation errors that were just set
+    if (currentStep !== 2) {
+      setValidationMessage(null);
+    }
 
     if (currentStep === 1) {
       if (!selectedCenter) {
@@ -637,61 +535,19 @@ const BookingFlow = () => {
 
       setSlotError(null);
       setAlternativeSlots([]);
-    }
-
-    if (currentStep === 3) {
-      const errors: Record<string, string> = {};
-      
-      if (!personalInfo.fullName.trim()) {
-        errors.fullName = t('booking.step3.fullNameRequired');
-      }
-      
-      if (!personalInfo.dob) {
-        errors.dob = t('booking.step3.dobRequired');
-      }
-      
-      if (!personalInfo.phone.trim()) {
-        errors.phone = t('booking.step3.phoneRequired');
-      }
-      
-      if (!personalInfo.hasDonatedBefore) {
-        errors.hasDonatedBefore = t('booking.step3.hasDonatedBeforeRequired');
-      }
-      
-      if (Object.keys(errors).length > 0) {
-        setFieldErrors(errors);
-        setValidationMessage(t('booking.step3.pleaseCorrectErrors'));
-        return;
-      }
-      
-      setFieldErrors({});
-    }
-
-    if (currentStep === 4) {
-      const unanswered: HealthAnswers[keyof HealthAnswers][] = [];
-      for (const question of healthQuestionKeys) {
-        if (healthAnswers[question.id] === '') {
-          unanswered.push(healthAnswers[question.id]);
-        }
-      }
-
-      if (unanswered.length > 0) {
-        setValidationMessage(t('booking.step4.pleaseAnswerAll'));
-        return;
-      }
 
       // Submit appointment before advancing to confirmation step
       const success = await handleSubmitAppointment();
       if (success) {
-        // Only advance to step 5 if appointment was successfully saved
+        // Only advance to step 3 (confirmation) if appointment was successfully saved
         setCurrentStep((step) => step + 1);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
       return;
     }
 
-    if (currentStep === 5) {
-      // Step 5 is just the confirmation view - appointment is already saved
+    if (currentStep === 3) {
+      // Step 3 is just the confirmation view - appointment is already saved
       // No action needed here
       return;
     }
@@ -717,6 +573,136 @@ const BookingFlow = () => {
         navigate('/login');
         return false;
       }
+
+      // Fetch donor data to validate donation rules
+      const { data: donorData, error: donorError } = await supabase
+        .from('donors')
+        .select('last_donation_date, total_donations_this_year')
+        .eq('donor_hash_id', donorHashId)
+        .single();
+
+      if (donorError) {
+        console.error('Error fetching donor data:', donorError);
+        setValidationMessage(t('booking.validation.errorFetchingDonorData'));
+        setIsSubmitting(false);
+        return false;
+      }
+
+      // Fetch all appointments (scheduled and completed) to check both rules
+      const currentYear = new Date().getFullYear();
+      const yearStart = new Date(currentYear, 0, 1).toISOString();
+      const yearEnd = new Date(currentYear + 1, 0, 1).toISOString();
+      
+      const { data: allAppointments, error: appointmentsError } = await supabase
+        .from('appointments')
+        .select('appointment_id, appointment_datetime, donation_type, status')
+        .eq('donor_hash_id', donorHashId)
+        .eq('donation_type', selectedDonationType)
+        .order('appointment_datetime', { ascending: false });
+
+      if (appointmentsError) {
+        console.error('Error fetching appointments:', appointmentsError);
+      }
+
+      // Find the most recent appointment date (for 90-day interval check)
+      const appointments = allAppointments || [];
+      // Get the most recent appointment that is before the new appointment date
+      const pastAppointments = appointments.filter(apt => 
+        new Date(apt.appointment_datetime) < new Date(selectedSlot.slot_datetime)
+      );
+      const mostRecentAppointment = pastAppointments.length > 0 
+        ? pastAppointments.reduce((latest, current) => 
+            new Date(current.appointment_datetime) > new Date(latest.appointment_datetime) ? current : latest
+          )
+        : null;
+      
+      // Use the most recent appointment date or last donation date, whichever is later
+      let lastRelevantDate = donorData?.last_donation_date || null;
+      if (mostRecentAppointment) {
+        const mostRecentDate = mostRecentAppointment.appointment_datetime;
+        if (!lastRelevantDate || new Date(mostRecentDate) > new Date(lastRelevantDate)) {
+          lastRelevantDate = mostRecentDate;
+        }
+      }
+
+      // Count scheduled appointments for the current year (for 4 donations/year limit)
+      const scheduledThisYear = appointments.filter(apt => {
+        const aptDate = new Date(apt.appointment_datetime);
+        return aptDate >= new Date(yearStart) && 
+               aptDate < new Date(yearEnd) &&
+               ['SCHEDULED', 'scheduled', 'CONFIRMED', 'confirmed'].includes(apt.status);
+      }).length;
+      
+      // Total donations this year = completed donations + scheduled appointments
+      const totalDonationsThisYear = (donorData?.total_donations_this_year || 0) + scheduledThisYear;
+
+      // Debug logging (can be removed in production)
+      console.log('Donation validation check:', {
+        lastDonationDate: donorData?.last_donation_date,
+        mostRecentAppointmentDate: mostRecentAppointment?.appointment_datetime,
+        lastRelevantDate,
+        completedDonationsThisYear: donorData?.total_donations_this_year,
+        scheduledThisYear: scheduledThisYear,
+        totalDonationsThisYear,
+        newAppointmentDate: selectedSlot.slot_datetime
+      });
+
+      // Validate Italian donation rules (90 days interval, max 4 donations/year)
+      const appointmentDate = new Date(selectedSlot.slot_datetime);
+      const donationValidation = validateDonationRules(
+        lastRelevantDate,
+        totalDonationsThisYear,
+        appointmentDate,
+        selectedDonationType
+      );
+
+      if (!donationValidation.isValid) {
+        // Ensure we have a specific error message - validation function should always return one
+        let errorMessage = donationValidation.error;
+        
+        // If no error message from validation function, create one based on error code
+        if (!errorMessage || errorMessage.trim() === '') {
+          if (donationValidation.errorCode === 'INSUFFICIENT_INTERVAL') {
+            const daysSince = lastRelevantDate ? Math.floor((new Date(selectedSlot.slot_datetime).getTime() - new Date(lastRelevantDate).getTime()) / (1000 * 60 * 60 * 24)) : 0;
+            const daysRemaining = 90 - daysSince;
+            errorMessage = `You must wait 90 days between blood donations. Your last donation was ${daysSince} days ago. Please wait ${daysRemaining} more days before booking.`;
+          } else if (donationValidation.errorCode === 'MAX_DONATIONS_REACHED') {
+            const currentYear = new Date().getFullYear();
+            errorMessage = `You have reached the maximum of 4 blood donations per year (${currentYear}). You can book again starting from ${currentYear + 1}.`;
+          } else if (donationValidation.errorCode === 'INSUFFICIENT_INTERVAL_PLASMA') {
+            const daysSince = lastRelevantDate ? Math.floor((new Date(selectedSlot.slot_datetime).getTime() - new Date(lastRelevantDate).getTime()) / (1000 * 60 * 60 * 24)) : 0;
+            const daysRemaining = 14 - daysSince;
+            errorMessage = `You must wait 14 days between plasma donations. Your last donation was ${daysSince} days ago. Please wait ${daysRemaining} more days before booking.`;
+          } else {
+            errorMessage = 'This appointment cannot be booked due to donation eligibility rules. Please select a different date or contact support for assistance.';
+          }
+        }
+        
+        // Log for debugging
+        console.error('❌ Donation validation FAILED:', {
+          errorCode: donationValidation.errorCode,
+          errorMessage: errorMessage,
+          validationResult: donationValidation,
+          lastRelevantDate,
+          totalDonationsThisYear,
+          appointmentDate: selectedSlot.slot_datetime,
+          donationType: selectedDonationType
+        });
+        
+        // Force set the specific error message - this should never be generic
+        setValidationMessage(errorMessage);
+        setIsSubmitting(false);
+        // Scroll to top to ensure error is visible
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return false;
+      }
+      
+      // Log successful validation
+      console.log('✅ Donation validation PASSED:', {
+        lastRelevantDate,
+        totalDonationsThisYear,
+        appointmentDate: selectedSlot.slot_datetime
+      });
 
       // Create appointment
       const appointmentData = {
@@ -800,7 +786,17 @@ const BookingFlow = () => {
       return true;
     } catch (err) {
       console.error('Error submitting appointment:', err);
-      setValidationMessage(t('booking.validation.errorOccurred'));
+      // Only show generic error if we don't already have a specific validation message
+      // Check if validationMessage state already has a specific error (not generic)
+      // We use a ref-like check by looking at the error object
+      const isGenericError = !validationMessage || 
+                            validationMessage === t('booking.validation.errorOccurred') ||
+                            validationMessage === 'An error occurred. Please try again.';
+      
+      if (isGenericError) {
+        setValidationMessage(t('booking.validation.errorOccurred'));
+      }
+      // If validationMessage already has a specific error, don't overwrite it
       setIsSubmitting(false);
       return false;
     }
@@ -899,20 +895,6 @@ const BookingFlow = () => {
     setSelectedCenterId(centers.length > 0 ? centers[0]?.id ?? null : null);
     setSelectedDateIso(centers.length > 0 && centers[0]?.availability.length > 0 ? centers[0]?.availability[0]?.isoDate ?? null : null);
     setSelectedSlotId(null);
-    setPersonalInfo({
-      fullName: '',
-      dob: '',
-      phone: '',
-      email: '',
-      hasDonatedBefore: '',
-      autofillKey: null,
-    });
-    setHealthAnswers({
-      recentDonation: '',
-      feelsHealthy: '',
-      medications: '',
-      travel: '',
-    });
     navigate('/appointments');
   };
 
@@ -1970,370 +1952,8 @@ const BookingFlow = () => {
     </section>
   );
 
-  const renderStepThree = () => (
-    <section className="wizard-step">
-      {/* Step Header with Progress Indicator */}
-      <div style={{
-        marginBottom: '2rem',
-        padding: '1rem',
-        backgroundColor: '#f9fafb',
-        borderRadius: '0.5rem',
-        border: '1px solid #e5e7eb',
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.75rem',
-        }}>
-          <span style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '32px',
-            height: '32px',
-            borderRadius: '50%',
-            backgroundColor: '#D97757',
-            color: 'white',
-            fontWeight: 'bold',
-            fontSize: '0.875rem',
-          }}>
-            3
-          </span>
-          <div>
-            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
-              {t('booking.step3.stepTitle')}
-            </h3>
-            <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>
-              {t('booking.step3.stepDescription')}
-            </p>
-          </div>
-        </div>
-      </div>
 
-      {renderStepTitle(
-        t('booking.step3.title'),
-        t('booking.step3.subtitle'),
-      )}
-
-      {autofillMessage && (
-        <div className="inline-notice">
-          <p>{autofillMessage}</p>
-          <button
-            type="button"
-            className="text-button"
-            onClick={() => setAutofillMessage(null)}
-          >
-            {t('booking.step3.gotIt')}
-          </button>
-        </div>
-      )}
-
-      <form className="info-form" onSubmit={(event) => event.preventDefault()}>
-        <div className="form-field">
-          <label htmlFor="fullName">
-            {t('booking.step3.fullName')} <span aria-label="required">{t('booking.step3.required')}</span>
-          </label>
-          <input
-            id="fullName"
-            type="text"
-            autoComplete="name"
-            required
-            aria-required="true"
-            aria-invalid={fieldErrors.fullName ? 'true' : 'false'}
-            aria-describedby={fieldErrors.fullName ? 'fullName-error' : undefined}
-            value={personalInfo.fullName}
-            onChange={(event) => {
-              setPersonalInfo((prev) => ({ ...prev, fullName: event.target.value }));
-              if (fieldErrors.fullName) {
-                setFieldErrors((prev) => {
-                  const newErrors = { ...prev };
-                  delete newErrors.fullName;
-                  return newErrors;
-                });
-              }
-            }}
-            placeholder={t('booking.step3.fullNamePlaceholder')}
-          />
-          {fieldErrors.fullName && (
-            <span id="fullName-error" className="field-error" role="alert">
-              {fieldErrors.fullName}
-            </span>
-          )}
-        </div>
-
-        <div className="form-field">
-          <label htmlFor="dob">
-            {t('booking.step3.dateOfBirth')} <span aria-label="required">{t('booking.step3.required')}</span>
-          </label>
-          <input
-            id="dob"
-            type="date"
-            required
-            aria-required="true"
-            aria-invalid={fieldErrors.dob ? 'true' : 'false'}
-            aria-describedby={fieldErrors.dob ? 'dob-error' : undefined}
-            max={format(addDays(new Date(), -1), 'yyyy-MM-dd')}
-            value={personalInfo.dob}
-            onChange={(event) => {
-              setPersonalInfo((prev) => ({ ...prev, dob: event.target.value }));
-              if (fieldErrors.dob) {
-                setFieldErrors((prev) => {
-                  const newErrors = { ...prev };
-                  delete newErrors.dob;
-                  return newErrors;
-                });
-              }
-            }}
-          />
-          {fieldErrors.dob && (
-            <span id="dob-error" className="field-error" role="alert">
-              {fieldErrors.dob}
-            </span>
-          )}
-        </div>
-
-        <div className="form-field">
-          <label htmlFor="phone">
-            {t('booking.step3.phoneNumber')} <span aria-label="required">{t('booking.step3.required')}</span>
-          </label>
-          <input
-            id="phone"
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel"
-            required
-            aria-required="true"
-            aria-invalid={fieldErrors.phone ? 'true' : 'false'}
-            aria-describedby={fieldErrors.phone ? 'phone-error phone-hint' : 'phone-hint'}
-            placeholder={t('booking.step3.phonePlaceholder')}
-            value={personalInfo.phone}
-            onChange={(event) => {
-              setPersonalInfo((prev) => ({
-                ...prev,
-                phone: event.target.value,
-              }));
-              setAutofillMessage(null);
-              if (fieldErrors.phone) {
-                setFieldErrors((prev) => {
-                  const newErrors = { ...prev };
-                  delete newErrors.phone;
-                  return newErrors;
-                });
-              }
-            }}
-          />
-          <small id="phone-hint" className="field-hint">{t('booking.step3.phoneHint')}</small>
-          {fieldErrors.phone && (
-            <span id="phone-error" className="field-error" role="alert">
-              {fieldErrors.phone}
-            </span>
-          )}
-        </div>
-
-        <div className="form-field">
-          <label htmlFor="email">
-            {t('booking.step3.email')} <span className="field-optional">{t('booking.step3.optional')}</span>
-          </label>
-          <input
-            id="email"
-            type="email"
-            autoComplete="email"
-            aria-invalid={fieldErrors.email ? 'true' : 'false'}
-            aria-describedby={fieldErrors.email ? 'email-error' : undefined}
-            placeholder={t('booking.step3.emailPlaceholder')}
-            value={personalInfo.email}
-            onChange={(event) => {
-              setPersonalInfo((prev) => ({ ...prev, email: event.target.value }));
-              if (fieldErrors.email) {
-                setFieldErrors((prev) => {
-                  const newErrors = { ...prev };
-                  delete newErrors.email;
-                  return newErrors;
-                });
-              }
-            }}
-          />
-          {fieldErrors.email && (
-            <span id="email-error" className="field-error" role="alert">
-              {fieldErrors.email}
-            </span>
-          )}
-        </div>
-
-        <fieldset className="form-field">
-          <legend>{t('booking.step3.hasDonatedBefore')} <span aria-label="required">{t('booking.step3.required')}</span></legend>
-          <div className="choice-group" role="radiogroup" aria-required="true" aria-invalid={fieldErrors.hasDonatedBefore ? 'true' : 'false'}>
-            <label>
-              <input
-                type="radio"
-                name="hasDonatedBefore"
-                value="yes"
-                checked={personalInfo.hasDonatedBefore === 'yes'}
-                onChange={(event) => {
-                  setPersonalInfo((prev) => ({
-                    ...prev,
-                    hasDonatedBefore: event.target.value as PersonalInfo['hasDonatedBefore'],
-                  }));
-                  if (fieldErrors.hasDonatedBefore) {
-                    setFieldErrors((prev) => {
-                      const newErrors = { ...prev };
-                      delete newErrors.hasDonatedBefore;
-                      return newErrors;
-                    });
-                  }
-                }}
-                aria-describedby={fieldErrors.hasDonatedBefore ? 'hasDonatedBefore-error' : undefined}
-              />
-              {t('booking.step3.yesReturning')}
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="hasDonatedBefore"
-                value="no"
-                checked={personalInfo.hasDonatedBefore === 'no'}
-                onChange={(event) => {
-                  setPersonalInfo((prev) => ({
-                    ...prev,
-                    hasDonatedBefore: event.target.value as PersonalInfo['hasDonatedBefore'],
-                    autofillKey: null,
-                  }));
-                  if (fieldErrors.hasDonatedBefore) {
-                    setFieldErrors((prev) => {
-                      const newErrors = { ...prev };
-                      delete newErrors.hasDonatedBefore;
-                      return newErrors;
-                    });
-                  }
-                }}
-                aria-describedby={fieldErrors.hasDonatedBefore ? 'hasDonatedBefore-error' : undefined}
-              />
-              {t('booking.step3.noFirstTime')}
-            </label>
-          </div>
-          {fieldErrors.hasDonatedBefore && (
-            <span id="hasDonatedBefore-error" className="field-error" role="alert">
-              {fieldErrors.hasDonatedBefore}
-            </span>
-          )}
-        </fieldset>
-      </form>
-    </section>
-  );
-
-  const renderStepFour = () => {
-    return (
-      <section className="wizard-step">
-        {/* Step Header with Progress Indicator */}
-        <div style={{
-          marginBottom: '2rem',
-          padding: '1rem',
-          backgroundColor: '#f9fafb',
-          borderRadius: '0.5rem',
-          border: '1px solid #e5e7eb',
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-          }}>
-            <span style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              backgroundColor: '#D97757',
-              color: 'white',
-              fontWeight: 'bold',
-              fontSize: '0.875rem',
-            }}>
-              4
-            </span>
-            <div>
-              <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
-                {t('booking.step4.stepTitle')}
-              </h3>
-              <p style={{ margin: 0, fontSize: '0.875rem', color: '#6b7280' }}>
-                {t('booking.step4.stepDescription')}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {renderStepTitle(
-          t('booking.step4.title'),
-          t('booking.step4.subtitle'),
-          'health-questions-title',
-        )}
-
-        <div className="health-questions" role="group" aria-labelledby="health-questions-title">
-          {healthQuestionKeys.map((question) => {
-            const questionText = t(question.textKey);
-            const questionHelp = t(question.helpKey);
-            return (
-              <fieldset className="health-question" key={question.id}>
-                <div className="health-question-header">
-                  <legend className="health-question-title">{questionText}</legend>
-                  <button
-                    type="button"
-                    className="info-icon"
-                    aria-label={`Help for ${questionText}: ${questionHelp}`}
-                    aria-expanded="false"
-                  >
-                    i
-                  </button>
-                </div>
-                <p className="health-help" id={`${question.id}-help`}>{questionHelp}</p>
-                <div className="choice-group" role="radiogroup" aria-required="true" aria-labelledby={`${question.id}-label`}>
-                  <span id={`${question.id}-label`} className="sr-only">{questionText}</span>
-                  <label>
-                    <input
-                      type="radio"
-                      name={question.id}
-                      value="yes"
-                      required
-                      aria-required="true"
-                      aria-describedby={`${question.id}-help`}
-                      checked={healthAnswers[question.id] === 'yes'}
-                      onChange={() =>
-                        setHealthAnswers((prev) => ({
-                          ...prev,
-                          [question.id]: 'yes',
-                        }))
-                      }
-                    />
-                    {t('booking.step4.yes')}
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      name={question.id}
-                      value="no"
-                      required
-                      aria-required="true"
-                      aria-describedby={`${question.id}-help`}
-                      checked={healthAnswers[question.id] === 'no'}
-                      onChange={() =>
-                        setHealthAnswers((prev) => ({
-                          ...prev,
-                          [question.id]: 'no',
-                        }))
-                      }
-                    />
-                    {t('booking.step4.no')}
-                  </label>
-                </div>
-              </fieldset>
-            );
-          })}
-        </div>
-      </section>
-    );
-  };
-
-  const renderStepFive = () => {
+  const renderStepThree = () => {
     if (!selectedCenter || !selectedDateAvailability || !selectedSlot) {
       return null;
     }
@@ -2360,10 +1980,6 @@ const BookingFlow = () => {
         return renderStepTwo();
       case 3:
         return renderStepThree();
-      case 4:
-        return renderStepFour();
-      case 5:
-        return renderStepFive();
       default:
         return null;
     }
@@ -2418,8 +2034,31 @@ const BookingFlow = () => {
         </nav>
 
         {validationMessage && (
-          <div className="inline-alert warning" role="alert" aria-live="polite">
-            <p>{validationMessage}</p>
+          <div 
+            className="inline-alert warning" 
+            role="alert" 
+            aria-live="polite"
+            style={{
+              backgroundColor: '#fef2f2',
+              border: '2px solid #dc2626',
+              borderRadius: '0.5rem',
+              padding: '1rem 1.5rem',
+              marginBottom: '1.5rem',
+              color: '#991b1b',
+              fontWeight: 500
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+              <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>⚠️</span>
+              <div>
+                <strong style={{ display: 'block', marginBottom: '0.5rem', fontSize: '1rem' }}>
+                  Cannot Book Appointment
+                </strong>
+                <p style={{ margin: 0, fontSize: '0.9375rem', lineHeight: 1.5 }}>
+                  {validationMessage}
+                </p>
+              </div>
+            </div>
           </div>
         )}
 
@@ -2498,10 +2137,6 @@ const BookingFlow = () => {
               ) : currentStep === 1 ? (
                 t('booking.buttons.continueToDateTime')
               ) : currentStep === 2 ? (
-                t('booking.buttons.selectDateTime')
-              ) : currentStep === 3 ? (
-                t('booking.buttons.continueToHealthCheck')
-              ) : currentStep === 4 ? (
                 t('booking.buttons.confirmAppointment')
               ) : (
                 t('common.next')

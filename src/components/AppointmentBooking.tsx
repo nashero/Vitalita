@@ -25,6 +25,7 @@ import { getAppointmentError, AppointmentError } from '../utils/appointmentError
 import AppointmentErrorDisplay from './AppointmentErrorDisplay';
 import LanguageSwitcher from './LanguageSwitcher';
 import { getCurrentLocale, formatDate, formatTime } from '../utils/languageUtils';
+import { validateDonationRules } from '../utils/donationRules';
 
 /**
  * AppointmentBooking Component
@@ -474,6 +475,145 @@ export default function AppointmentBooking({ onBack, onBookingSuccess, onBooking
         setLoading(false);
         return;
       }
+
+      // Fetch fresh donor data to validate donation rules (donor object from useAuth might be stale)
+      const { data: freshDonorData, error: donorError } = await supabase
+        .from('donors')
+        .select('last_donation_date, total_donations_this_year')
+        .eq('donor_hash_id', donor.donor_hash_id)
+        .single();
+
+      if (donorError) {
+        console.error('Error fetching donor data for validation:', donorError);
+        setError(getAppointmentError({
+          code: 'DONOR_DATA_FETCH_ERROR',
+          message: 'Failed to fetch donor information for validation',
+          userMessage: 'Unable to validate donation eligibility. Please try again or contact support.',
+          suggestion: 'Please try again or contact support if the problem persists.',
+          severity: 'error'
+        }));
+        setLoading(false);
+        return;
+      }
+
+      // Fetch all appointments (scheduled and completed) to check both rules
+      const currentYear = new Date().getFullYear();
+      const yearStart = new Date(currentYear, 0, 1).toISOString();
+      const yearEnd = new Date(currentYear + 1, 0, 1).toISOString();
+      
+      const { data: allAppointments, error: appointmentsError } = await supabase
+        .from('appointments')
+        .select('appointment_id, appointment_datetime, donation_type, status')
+        .eq('donor_hash_id', donor.donor_hash_id)
+        .eq('donation_type', selectedType === 'Blood' ? 'Blood' : 'Plasma')
+        .order('appointment_datetime', { ascending: false });
+
+      if (appointmentsError) {
+        console.error('Error fetching appointments:', appointmentsError);
+      }
+
+      // Find the most recent appointment date (for 90-day interval check)
+      const appointments = allAppointments || [];
+      // Get the most recent appointment that is before or on the new appointment date
+      const pastAppointments = appointments.filter(apt => 
+        new Date(apt.appointment_datetime) < new Date(selectedSlot.slot_datetime)
+      );
+      const mostRecentAppointment = pastAppointments.length > 0 
+        ? pastAppointments.reduce((latest, current) => 
+            new Date(current.appointment_datetime) > new Date(latest.appointment_datetime) ? current : latest
+          )
+        : null;
+      
+      // Use the most recent appointment date or last donation date, whichever is later
+      let lastRelevantDate = freshDonorData?.last_donation_date || null;
+      if (mostRecentAppointment) {
+        const mostRecentDate = mostRecentAppointment.appointment_datetime;
+        if (!lastRelevantDate || new Date(mostRecentDate) > new Date(lastRelevantDate)) {
+          lastRelevantDate = mostRecentDate;
+        }
+      }
+
+      // Count scheduled appointments for the current year (for 4 donations/year limit)
+      const scheduledThisYear = appointments.filter(apt => {
+        const aptDate = new Date(apt.appointment_datetime);
+        return aptDate >= new Date(yearStart) && 
+               aptDate < new Date(yearEnd) &&
+               ['SCHEDULED', 'scheduled', 'CONFIRMED', 'confirmed'].includes(apt.status);
+      }).length;
+      
+      // Total donations this year = completed donations + scheduled appointments
+      const totalDonationsThisYear = (freshDonorData?.total_donations_this_year || 0) + scheduledThisYear;
+
+      // Debug logging (can be removed in production)
+      console.log('Donation validation check:', {
+        lastDonationDate: freshDonorData?.last_donation_date,
+        mostRecentAppointmentDate: mostRecentAppointment?.appointment_datetime,
+        lastRelevantDate,
+        completedDonationsThisYear: freshDonorData?.total_donations_this_year,
+        scheduledThisYear: scheduledThisYear,
+        totalDonationsThisYear,
+        newAppointmentDate: selectedSlot.slot_datetime
+      });
+
+      // Validate Italian donation rules (90 days interval, max 4 donations/year)
+      const appointmentDate = new Date(selectedSlot.slot_datetime);
+      const donationValidation = validateDonationRules(
+        lastRelevantDate,
+        totalDonationsThisYear,
+        appointmentDate,
+        selectedType
+      );
+
+      if (!donationValidation.isValid) {
+        // Ensure we have a specific error message - validation function should always return one
+        let errorMessage = donationValidation.error;
+        
+        // If no error message from validation function, create one based on error code
+        if (!errorMessage || errorMessage.trim() === '') {
+          if (donationValidation.errorCode === 'INSUFFICIENT_INTERVAL') {
+            const daysSince = lastRelevantDate ? Math.floor((new Date(selectedSlot.slot_datetime).getTime() - new Date(lastRelevantDate).getTime()) / (1000 * 60 * 60 * 24)) : 0;
+            const daysRemaining = 90 - daysSince;
+            errorMessage = `You must wait 90 days between blood donations. Your last donation was ${daysSince} days ago. Please wait ${daysRemaining} more days before booking.`;
+          } else if (donationValidation.errorCode === 'MAX_DONATIONS_REACHED') {
+            const currentYear = new Date().getFullYear();
+            errorMessage = `You have reached the maximum of 4 blood donations per year (${currentYear}). You can book again starting from ${currentYear + 1}.`;
+          } else if (donationValidation.errorCode === 'INSUFFICIENT_INTERVAL_PLASMA') {
+            const daysSince = lastRelevantDate ? Math.floor((new Date(selectedSlot.slot_datetime).getTime() - new Date(lastRelevantDate).getTime()) / (1000 * 60 * 60 * 24)) : 0;
+            const daysRemaining = 14 - daysSince;
+            errorMessage = `You must wait 14 days between plasma donations. Your last donation was ${daysSince} days ago. Please wait ${daysRemaining} more days before booking.`;
+          } else {
+            errorMessage = 'This appointment cannot be booked due to donation eligibility rules. Please select a different date or contact support for assistance.';
+          }
+        }
+        
+        // Log for debugging
+        console.error('❌ Donation validation FAILED:', {
+          errorCode: donationValidation.errorCode,
+          errorMessage: errorMessage,
+          validationResult: donationValidation,
+          lastRelevantDate,
+          totalDonationsThisYear,
+          appointmentDate: selectedSlot.slot_datetime,
+          donationType: selectedType
+        });
+        
+        setError(getAppointmentError({
+          code: donationValidation.errorCode || 'DONATION_RULES_VIOLATION',
+          message: errorMessage,
+          userMessage: errorMessage,
+          suggestion: 'Please select a different date that meets the donation requirements, or contact support if you have questions about your eligibility.',
+          severity: 'error'
+        }));
+        setLoading(false);
+        return;
+      }
+      
+      // Log successful validation
+      console.log('✅ Donation validation PASSED:', {
+        lastRelevantDate,
+        totalDonationsThisYear,
+        appointmentDate: selectedSlot.slot_datetime
+      });
 
       // Create the appointment record
       const appointmentData = {
