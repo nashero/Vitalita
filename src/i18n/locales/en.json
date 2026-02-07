@@ -289,6 +289,12 @@
     "failedToUpdateSlot": "Failed to update slot availability",
     "appointmentBookedFor": "Appointment booked for {type} donation on {date}",
     "warningSlotLimit": "Warning: May have hit slot limit. Some slots might not be displayed.",
+    "donationRules": {
+      "insufficientInterval": "You must wait 90 days between blood donations. Your last donation was {days} days ago. Please wait {remaining} more days before booking.",
+      "maxDonationsReached": "You have reached the maximum of 4 blood donations per year ({year}). You can book again starting from {nextYear}.",
+      "insufficientIntervalPlasma": "You must wait 14 days between plasma donations. Your last donation was {days} days ago. Please wait {remaining} more days before booking.",
+      "validationError": "Unable to validate donation eligibility. Please try again or contact support."
+    },
     "mondayToFriday": "Monday - Friday, 9:00 AM - 6:00 PM",
     "sunday": "Sun",
     "monday": "Mon", 
