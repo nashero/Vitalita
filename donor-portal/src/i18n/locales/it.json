@@ -366,7 +366,13 @@
       "slotBookedByOther": "Lo slot è stato appena prenotato da qualcun altro. Seleziona un altro orario.",
       "errorOccurred": "Si è verificato un errore. Riprova.",
       "failedToLoadCenters": "Impossibile caricare i centri di donazione. Riprova.",
-      "errorLoadingCenters": "Si è verificato un errore durante il caricamento dei centri. Riprova."
+      "errorLoadingCenters": "Si è verificato un errore durante il caricamento dei centri. Riprova.",
+      "errorFetchingDonorData": "Impossibile recuperare le informazioni del donatore. Riprova.",
+      "cannotBookAppointment": "Impossibile Prenotare l'Appuntamento",
+      "insufficientInterval": "Devi aspettare 90 giorni tra le donazioni di sangue. La tua ultima donazione risale a {{days}} giorni fa. Attendi ancora {{remaining}} giorni prima di prenotare.",
+      "maxDonationsReached": "Hai raggiunto il massimo di 4 donazioni di sangue all'anno ({{year}}). Potrai prenotare di nuovo a partire dal {{nextYear}}.",
+      "insufficientIntervalPlasma": "Devi aspettare 14 giorni tra le donazioni di plasma. La tua ultima donazione risale a {{days}} giorni fa. Attendi ancora {{remaining}} giorni prima di prenotare.",
+      "donationRulesGeneric": "Questo appuntamento non può essere prenotato a causa delle regole di idoneità alla donazione. Seleziona una data diversa o contatta il supporto per assistenza."
     },
     "buttons": {
       "back": "Indietro",

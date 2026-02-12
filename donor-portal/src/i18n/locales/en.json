@@ -367,7 +367,12 @@
       "errorOccurred": "An error occurred. Please try again.",
       "failedToLoadCenters": "Failed to load donation centers. Please try again.",
       "errorLoadingCenters": "An error occurred while loading centers. Please try again.",
-      "errorFetchingDonorData": "Failed to fetch donor information. Please try again."
+      "errorFetchingDonorData": "Failed to fetch donor information. Please try again.",
+      "cannotBookAppointment": "Cannot Book Appointment",
+      "insufficientInterval": "You must wait 90 days between blood donations. Your last donation was {{days}} days ago. Please wait {{remaining}} more days before booking.",
+      "maxDonationsReached": "You have reached the maximum of 4 blood donations per year ({{year}}). You can book again starting from {{nextYear}}.",
+      "insufficientIntervalPlasma": "You must wait 14 days between plasma donations. Your last donation was {{days}} days ago. Please wait {{remaining}} more days before booking.",
+      "donationRulesGeneric": "This appointment cannot be booked due to donation eligibility rules. Please select a different date or contact support for assistance."
     },
     "buttons": {
       "back": "Back",

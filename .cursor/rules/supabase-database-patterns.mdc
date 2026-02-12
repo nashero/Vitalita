@@ -1,0 +1,184 @@
+---
+description: Supabase and database query patterns
+globs: **/*supabase*.ts,**/*database*.ts,**/*.sql
+alwaysApply: false
+---
+
+# Supabase & Database Patterns
+
+## Supabase Client Setup
+
+- Create client once and export from `lib/supabase.ts`
+- Validate environment variables before creating client
+- Use TypeScript types for query results
+- Handle connection errors gracefully
+
+```typescript
+// ✅ GOOD - Supabase client setup
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Missing Supabase credentials');
+  throw new Error('Missing Supabase credentials. Check your .env file.');
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+```
+
+## Query Patterns
+
+- Always check for errors after queries
+- Use TypeScript interfaces for query results
+- Prefer `.single()` when expecting one result
+- Use `.maybeSingle()` when result might not exist
+
+```typescript
+// ✅ GOOD - Query with error handling
+interface Donor {
+  donor_hash_id: string;
+  email_hash: string;
+  created_at: string;
+}
+
+const { data, error } = await supabase
+  .from('donors')
+  .select('donor_hash_id, email_hash, created_at')
+  .eq('donor_hash_id', hashId)
+  .single();
+
+if (error) {
+  console.error('Failed to fetch donor:', error);
+  return null;
+}
+
+return data as Donor;
+```
+
+## Real-time Subscriptions
+
+- Clean up subscriptions in useEffect cleanup
+- Handle connection errors
+- Use proper TypeScript types for payloads
+
+```typescript
+// ✅ GOOD - Real-time subscription
+useEffect(() => {
+  const subscription = supabase
+    .channel('appointments')
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'appointments',
+      },
+      (payload) => {
+        const newAppointment = payload.new as Appointment;
+        setAppointments((prev) => [...prev, newAppointment]);
+      }
+    )
+    .subscribe();
+
+  return () => {
+    subscription.unsubscribe();
+  };
+}, []);
+```
+
+## Row Level Security (RLS)
+
+- Always assume RLS is enabled
+- Test queries with appropriate user context
+- Never bypass RLS policies
+- Document RLS requirements
+
+```sql
+-- ✅ GOOD - RLS policy example
+CREATE POLICY "Donors can view own data"
+ON donors FOR SELECT
+USING (auth.uid()::text = donor_hash_id);
+```
+
+## Database Functions
+
+- Use PostgreSQL functions for complex logic
+- Document function parameters and return types
+- Handle errors within functions
+- Use proper transaction handling
+
+```sql
+-- ✅ GOOD - Database function
+CREATE OR REPLACE FUNCTION create_appointment(
+  p_donor_hash_id TEXT,
+  p_slot_id UUID,
+  p_donation_type TEXT
+)
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  v_appointment_id UUID;
+BEGIN
+  -- Validate slot availability
+  IF NOT EXISTS (
+    SELECT 1 FROM availability_slots 
+    WHERE slot_id = p_slot_id AND is_available = true
+  ) THEN
+    RAISE EXCEPTION 'Slot not available';
+  END IF;
+
+  -- Create appointment
+  INSERT INTO appointments (donor_hash_id, slot_id, donation_type)
+  VALUES (p_donor_hash_id, p_slot_id, p_donation_type)
+  RETURNING appointment_id INTO v_appointment_id;
+
+  -- Update slot availability
+  UPDATE availability_slots
+  SET is_available = false
+  WHERE slot_id = p_slot_id;
+
+  RETURN v_appointment_id;
+END;
+$$;
+```
+
+## Migrations
+
+- Use versioned migration files
+- Include rollback scripts
+- Test migrations on staging first
+- Document breaking changes
+
+```sql
+-- ✅ GOOD - Migration file naming
+-- migrations/001_create_donors_table.sql
+-- migrations/002_add_appointments_table.sql
+```
+
+## Query Optimization
+
+- Use `.select()` to limit returned columns
+- Add appropriate indexes
+- Use `.limit()` for pagination
+- Avoid N+1 queries with joins
+
+```typescript
+// ✅ GOOD - Optimized query
+const { data } = await supabase
+  .from('appointments')
+  .select(`
+    appointment_id,
+    donation_type,
+    slot:availability_slots(
+      slot_time,
+      center:donation_centers(name, address)
+    )
+  `)
+  .eq('donor_hash_id', donorId)
+  .order('created_at', { ascending: false })
+  .limit(10);
+```

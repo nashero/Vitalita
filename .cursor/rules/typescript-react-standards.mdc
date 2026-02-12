@@ -1,0 +1,158 @@
+---
+description: TypeScript and React coding standards for Vitalita
+alwaysApply: true
+---
+
+# TypeScript & React Standards
+
+## TypeScript Conventions
+
+- Use explicit types for function parameters and return values
+- Prefer `interface` over `type` for object shapes
+- Use `const` assertions for immutable data structures
+- Avoid `any` - use `unknown` when type is truly unknown
+
+```typescript
+// ❌ BAD
+function fetchData(id) {
+  return supabase.from('table').select('*').eq('id', id);
+}
+
+// ✅ GOOD
+interface DonorData {
+  donor_hash_id: string;
+  email_hash: string;
+  created_at: string;
+}
+
+async function fetchDonorData(id: string): Promise<DonorData | null> {
+  const { data, error } = await supabase
+    .from('donors')
+    .select('*')
+    .eq('donor_hash_id', id)
+    .single();
+  
+  if (error) {
+    console.error('Failed to fetch donor:', error);
+    return null;
+  }
+  
+  return data;
+}
+```
+
+## React Component Patterns
+
+- Use functional components with hooks
+- Extract custom hooks for reusable logic
+- Use TypeScript interfaces for component props
+- Include JSDoc comments for complex components
+
+```typescript
+// ❌ BAD
+const Component = (props) => {
+  return <div>{props.name}</div>;
+};
+
+// ✅ GOOD
+/**
+ * AppointmentBooking Component
+ * 
+ * Features:
+ * - Integrated calendar and time slot selection
+ * - Real-time slot validation
+ * - Enhanced error handling
+ */
+interface AppointmentBookingProps {
+  donorId: string;
+  onBookingComplete?: (appointmentId: string) => void;
+}
+
+const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
+  donorId,
+  onBookingComplete,
+}) => {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  
+  return (
+    <div>
+      {/* Component implementation */}
+    </div>
+  );
+};
+```
+
+## Error Handling
+
+- Always handle errors explicitly
+- Provide meaningful error messages
+- Use custom error classes when appropriate
+- Log errors for debugging
+
+```typescript
+// ❌ BAD
+try {
+  await supabase.from('appointments').insert(data);
+} catch (e) {}
+
+// ✅ GOOD
+try {
+  const { data, error } = await supabase
+    .from('appointments')
+    .insert(appointmentData);
+  
+  if (error) {
+    console.error('Failed to create appointment:', error);
+    throw new AppointmentError('Failed to book appointment', {
+      code: 'BOOKING_FAILED',
+      cause: error,
+    });
+  }
+  
+  return data;
+} catch (error) {
+  if (error instanceof AppointmentError) {
+    throw error;
+  }
+  throw new AppointmentError('Unexpected error during booking', {
+    code: 'UNKNOWN_ERROR',
+    cause: error,
+  });
+}
+```
+
+## Accessibility
+
+- Include ARIA labels for interactive elements
+- Use semantic HTML elements
+- Provide skip links for main content
+- Include live regions for dynamic content updates
+
+```typescript
+// ✅ GOOD
+<div 
+  id="live-region" 
+  className="live-region" 
+  role="status" 
+  aria-live="polite" 
+  aria-atomic="true"
+>
+  {announcement}
+</div>
+```
+
+## Internationalization
+
+- Use `react-i18next` for all user-facing text
+- Extract translation keys to JSON files
+- Use `useTranslation` hook in components
+- Never hardcode strings that users will see
+
+```typescript
+// ❌ BAD
+<h1>Welcome to Vitalita</h1>
+
+// ✅ GOOD
+const { t } = useTranslation();
+<h1>{t('welcome.title')}</h1>
+```

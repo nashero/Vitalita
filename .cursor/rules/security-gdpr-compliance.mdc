@@ -1,0 +1,132 @@
+---
+description: Security and GDPR compliance standards for Vitalita
+alwaysApply: true
+---
+
+# Security & GDPR Compliance
+
+## GDPR Compliance
+
+- **Never store PII** (Personally Identifiable Information) in plain text
+- Use hash-based authentication instead of passwords
+- Encrypt sensitive data at rest using AES-256-GCM
+- Store credentials locally only (never on server)
+- Implement data expiration (7 days default)
+
+```typescript
+// ❌ BAD - Storing PII
+await supabase.from('donors').insert({
+  email: 'user@example.com',
+  phone: '+1234567890',
+  name: 'John Doe',
+});
+
+// ✅ GOOD - Hash-based approach
+import crypto from 'crypto';
+
+const emailHash = crypto
+  .createHash('sha256')
+  .update(email.toLowerCase().trim())
+  .digest('hex');
+
+await supabase.from('donors').insert({
+  email_hash: emailHash,
+  donor_hash_id: generateDonorHashId(),
+});
+```
+
+## Encryption Standards
+
+- Use Web Crypto API for client-side encryption
+- Use AES-256-GCM for symmetric encryption
+- Implement device fingerprinting for local storage
+- Never log sensitive data
+
+```typescript
+// ✅ GOOD - Secure encryption
+import { encryptData, decryptData } from '../utils/encryption';
+
+const encryptedCredentials = await encryptData(
+  credentials,
+  deviceFingerprint
+);
+
+localStorage.setItem('donor_credentials', encryptedCredentials);
+```
+
+## Authentication
+
+- Use hash-based authentication (no passwords)
+- Implement salt-based hashing for additional security
+- Use JWT tokens with appropriate expiration
+- Store tokens securely (httpOnly cookies preferred)
+
+```typescript
+// ✅ GOOD - Hash-based auth
+const donorHash = crypto
+  .createHash('sha256')
+  .update(`${email}:${salt}`)
+  .digest('hex');
+
+const { data } = await supabase
+  .from('donors')
+  .select('*')
+  .eq('email_hash', donorHash)
+  .single();
+```
+
+## Database Security
+
+- Always use Row Level Security (RLS) policies
+- Never expose sensitive data in API responses
+- Use parameterized queries to prevent SQL injection
+- Implement audit logging for sensitive operations
+
+```typescript
+// ✅ GOOD - RLS protected query
+const { data, error } = await supabase
+  .from('donors')
+  .select('donor_hash_id, created_at')
+  .eq('donor_hash_id', hashId)
+  .single();
+```
+
+## Input Validation
+
+- Validate and sanitize all user inputs
+- Use express-validator for API endpoints
+- Implement rate limiting to prevent abuse
+- Reject malformed data early
+
+```typescript
+// ✅ GOOD - Input validation
+import { body, validationResult } from 'express-validator';
+
+const validateDonorRegistration = [
+  body('email')
+    .isEmail()
+    .normalizeEmail()
+    .withMessage('Invalid email format'),
+  body('phone')
+    .optional()
+    .matches(/^\+?[1-9]\d{1,14}$/)
+    .withMessage('Invalid phone format'),
+];
+```
+
+## Error Messages
+
+- Never expose sensitive information in error messages
+- Use generic error messages for authentication failures
+- Log detailed errors server-side only
+- Return user-friendly messages to clients
+
+```typescript
+// ❌ BAD
+throw new Error(`User ${email} not found in database`);
+
+// ✅ GOOD
+throw new Error('Invalid credentials');
+// Log detailed error server-side:
+logger.error('Authentication failed', { emailHash, error });
+```

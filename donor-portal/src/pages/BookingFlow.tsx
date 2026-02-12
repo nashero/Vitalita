@@ -657,25 +657,28 @@ const BookingFlow = () => {
       );
 
       if (!donationValidation.isValid) {
-        // Ensure we have a specific error message - validation function should always return one
-        let errorMessage = donationValidation.error;
-        
-        // If no error message from validation function, create one based on error code
-        if (!errorMessage || errorMessage.trim() === '') {
-          if (donationValidation.errorCode === 'INSUFFICIENT_INTERVAL') {
-            const daysSince = lastRelevantDate ? Math.floor((new Date(selectedSlot.slot_datetime).getTime() - new Date(lastRelevantDate).getTime()) / (1000 * 60 * 60 * 24)) : 0;
+        // Build translated error message from error code
+        const daysSince = lastRelevantDate ? Math.floor((new Date(selectedSlot.slot_datetime).getTime() - new Date(lastRelevantDate).getTime()) / (1000 * 60 * 60 * 24)) : 0;
+        let errorMessage: string;
+
+        switch (donationValidation.errorCode) {
+          case 'INSUFFICIENT_INTERVAL': {
             const daysRemaining = 90 - daysSince;
-            errorMessage = `You must wait 90 days between blood donations. Your last donation was ${daysSince} days ago. Please wait ${daysRemaining} more days before booking.`;
-          } else if (donationValidation.errorCode === 'MAX_DONATIONS_REACHED') {
-            const currentYear = new Date().getFullYear();
-            errorMessage = `You have reached the maximum of 4 blood donations per year (${currentYear}). You can book again starting from ${currentYear + 1}.`;
-          } else if (donationValidation.errorCode === 'INSUFFICIENT_INTERVAL_PLASMA') {
-            const daysSince = lastRelevantDate ? Math.floor((new Date(selectedSlot.slot_datetime).getTime() - new Date(lastRelevantDate).getTime()) / (1000 * 60 * 60 * 24)) : 0;
-            const daysRemaining = 14 - daysSince;
-            errorMessage = `You must wait 14 days between plasma donations. Your last donation was ${daysSince} days ago. Please wait ${daysRemaining} more days before booking.`;
-          } else {
-            errorMessage = 'This appointment cannot be booked due to donation eligibility rules. Please select a different date or contact support for assistance.';
+            errorMessage = t('booking.validation.insufficientInterval', { days: daysSince, remaining: daysRemaining });
+            break;
           }
+          case 'MAX_DONATIONS_REACHED': {
+            const currentYear = new Date().getFullYear();
+            errorMessage = t('booking.validation.maxDonationsReached', { year: currentYear, nextYear: currentYear + 1 });
+            break;
+          }
+          case 'INSUFFICIENT_INTERVAL_PLASMA': {
+            const daysRemaining = 14 - daysSince;
+            errorMessage = t('booking.validation.insufficientIntervalPlasma', { days: daysSince, remaining: daysRemaining });
+            break;
+          }
+          default:
+            errorMessage = t('booking.validation.donationRulesGeneric');
         }
         
         // Log for debugging
@@ -2052,7 +2055,7 @@ const BookingFlow = () => {
               <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>⚠️</span>
               <div>
                 <strong style={{ display: 'block', marginBottom: '0.5rem', fontSize: '1rem' }}>
-                  Cannot Book Appointment
+                  {t('booking.validation.cannotBookAppointment')}
                 </strong>
                 <p style={{ margin: 0, fontSize: '0.9375rem', lineHeight: 1.5 }}>
                   {validationMessage}

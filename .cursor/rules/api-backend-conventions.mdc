@@ -1,0 +1,164 @@
+---
+description: API and backend coding conventions for staff-portal-api
+globs: staff-portal-api/**/*.ts
+alwaysApply: false
+---
+
+# API & Backend Conventions
+
+## Express.js Structure
+
+- Use TypeScript for all backend code
+- Organize routes in separate files under `routes/`
+- Use middleware for cross-cutting concerns
+- Implement consistent error handling
+
+```typescript
+// ✅ GOOD - Route structure
+import express from 'express';
+import { authenticateToken } from '../middleware/auth.middleware.js';
+import { validateRequest } from '../middleware/validation.middleware.js';
+
+const router = express.Router();
+
+router.get(
+  '/appointments',
+  authenticateToken,
+  validateRequest,
+  async (req: Request, res: Response) => {
+    // Route handler
+  }
+);
+
+export default router;
+```
+
+## Error Handling
+
+- Use custom error classes extending `AppError`
+- Return consistent error response format
+- Log errors with context
+- Use appropriate HTTP status codes
+
+```typescript
+// ✅ GOOD - Error handling
+import { AppError, createErrorResponse } from '../utils/errors.js';
+
+try {
+  const appointment = await getAppointmentById(id);
+  if (!appointment) {
+    throw new AppError('Appointment not found', 404);
+  }
+  res.json({ success: true, data: appointment });
+} catch (error) {
+  const errorResponse = createErrorResponse(error);
+  const statusCode = error instanceof AppError ? error.statusCode : 500;
+  res.status(statusCode).json(errorResponse);
+}
+```
+
+## Database Queries
+
+- Use connection pooling
+- Always use parameterized queries
+- Handle transaction rollbacks
+- Log query performance
+
+```typescript
+// ✅ GOOD - Database query
+import { query, getClient } from '../config/database.js';
+
+const getAppointment = async (id: string) => {
+  const result = await query(
+    'SELECT * FROM appointments WHERE appointment_id = $1',
+    [id]
+  );
+  return result.rows[0];
+};
+
+// For transactions
+const client = await getClient();
+try {
+  await client.query('BEGIN');
+  await client.query('INSERT INTO ...');
+  await client.query('UPDATE ...');
+  await client.query('COMMIT');
+} catch (error) {
+  await client.query('ROLLBACK');
+  throw error;
+} finally {
+  client.release();
+}
+```
+
+## Middleware
+
+- Use helmet for security headers
+- Implement rate limiting
+- Add request/error logging
+- Validate CORS origins
+
+```typescript
+// ✅ GOOD - Middleware setup
+import helmet from 'helmet';
+import cors from 'cors';
+import { generalRateLimiter } from './middleware/rateLimit.middleware.js';
+import { requestLogger, errorLogger } from './middleware/logger.middleware.js';
+
+app.use(helmet());
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true,
+}));
+app.use(generalRateLimiter);
+app.use(requestLogger);
+```
+
+## Response Format
+
+- Use consistent response structure
+- Include success flag
+- Provide meaningful error messages
+- Include timestamps for audit purposes
+
+```typescript
+// ✅ GOOD - Consistent responses
+// Success response
+res.json({
+  success: true,
+  data: appointment,
+  timestamp: new Date().toISOString(),
+});
+
+// Error response
+res.status(400).json({
+  success: false,
+  error: {
+    message: 'Invalid appointment data',
+    statusCode: 400,
+    details: validationErrors,
+  },
+});
+```
+
+## Environment Variables
+
+- Never commit `.env` files
+- Validate required environment variables on startup
+- Use descriptive variable names
+- Document all environment variables
+
+```typescript
+// ✅ GOOD - Environment validation
+const requiredEnvVars = [
+  'DATABASE_URL',
+  'JWT_SECRET',
+  'FRONTEND_URL',
+];
+
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    throw new Error(`Missing required environment variable: ${envVar}`);
+  }
+}
+```

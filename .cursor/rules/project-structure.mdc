@@ -1,0 +1,147 @@
+---
+description: Project structure and organization conventions
+alwaysApply: true
+---
+
+# Project Structure Conventions
+
+## Directory Organization
+
+The Vitalita project follows a multi-portal architecture:
+
+```
+Vitalita/
+├── src/                    # Main public-facing portal
+├── donor-portal/          # Donor-specific portal
+├── staff-portal/          # Staff management portal
+├── staff-portal-api/      # Backend API for staff portal
+├── supabase/              # Database migrations and functions
+└── .cursor/rules/         # Cursor AI rules
+```
+
+## File Naming
+
+- Use PascalCase for React components: `AppointmentBooking.tsx`
+- Use camelCase for utilities: `appointmentErrors.ts`
+- Use kebab-case for pages/routes: `how-it-works.tsx`
+- Use descriptive names that indicate purpose
+
+```typescript
+// ✅ GOOD
+components/AppointmentBooking.tsx
+utils/appointmentErrors.ts
+hooks/useAuth.ts
+pages/how-it-works.tsx
+
+// ❌ BAD
+components/appointment.tsx
+utils/utils.ts
+hooks/hook.ts
+```
+
+## Component Organization
+
+- Colocate related files (component + styles + tests)
+- Export components from `index.tsx` when needed
+- Keep components focused and single-purpose
+- Extract reusable logic into custom hooks
+
+```
+components/
+├── AppointmentBooking/
+│   ├── index.tsx
+│   ├── AppointmentBooking.tsx
+│   └── AppointmentBooking.test.tsx
+└── Header.tsx
+```
+
+## Import Organization
+
+- Group imports: external → internal → relative
+- Use absolute imports for shared utilities
+- Keep imports organized and clean
+
+```typescript
+// ✅ GOOD - Organized imports
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Calendar, Clock } from 'lucide-react';
+
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../hooks/useAuth';
+import AppointmentErrorDisplay from './AppointmentErrorDisplay';
+```
+
+## Environment Variables
+
+- Use `VITE_` prefix for Vite environment variables
+- Document all required variables in `.env.example`
+- Never commit `.env` files
+- Use descriptive variable names
+
+```typescript
+// ✅ GOOD
+VITE_SUPABASE_URL=https://xxx.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGc...
+
+// Backend uses no prefix
+DATABASE_URL=postgresql://...
+JWT_SECRET=...
+```
+
+## Portal-Specific Code
+
+- Keep portal-specific code in respective directories
+- Share utilities via `src/utils/` when appropriate
+- Use consistent patterns across portals
+- Document portal-specific requirements
+
+```typescript
+// Donor portal specific
+donor-portal/src/components/DonorDashboard.tsx
+
+// Staff portal specific  
+staff-portal/src/components/StaffDashboard.tsx
+
+// Shared utilities
+src/utils/dateUtils.ts
+```
+
+## Documentation
+
+- Include JSDoc comments for complex functions
+- Document component props with TypeScript interfaces
+- Keep README files updated
+- Document breaking changes in migration files
+
+```typescript
+/**
+ * Creates a new appointment for a donor
+ * 
+ * @param donorHashId - The hash ID of the donor
+ * @param slotId - The UUID of the availability slot
+ * @param donationType - Type of donation ('blood' | 'plasma')
+ * @returns Promise resolving to the created appointment ID
+ * @throws AppointmentError if slot is unavailable or validation fails
+ */
+async function createAppointment(
+  donorHashId: string,
+  slotId: string,
+  donationType: 'blood' | 'plasma'
+): Promise<string> {
+  // Implementation
+}
+```
+
+## Testing
+
+- Place test files next to source files
+- Use descriptive test names
+- Test error cases, not just happy paths
+- Keep tests focused and independent
+
+```typescript
+// ✅ GOOD
+components/AppointmentBooking.test.tsx
+utils/appointmentErrors.test.ts
+```
